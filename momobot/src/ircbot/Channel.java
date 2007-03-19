@@ -4,8 +4,6 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -64,32 +62,26 @@ public class Channel implements IIrcSpecialChars {
     public static void removeChannel(final String channel) {
         CHANNELS.remove(channel);
     }
-
     /**
      * liste des évènements enregistrés sur ce chan.
      */
-    private AChannelEvent                                 event      = null;
-
+    private AChannelEvent                         event      = null;
     /**
      * Si le channel est en mode +i.
      */
     private boolean                               inviteOnly = false;
-
     /**
      * la key du channel.
      */
     private String                                key        = "";
-
     /**
      * le nom.
      */
     private final String                          nom;
-
     /**
      * le topic du channel.
      */
     private Topic                                 topic      = null;
-
     /**
      * les modes des users sur le channel.
      */

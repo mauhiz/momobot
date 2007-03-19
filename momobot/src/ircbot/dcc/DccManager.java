@@ -3,11 +3,9 @@ package ircbot.dcc;
 import ircbot.ACtcp;
 import ircbot.IrcUser;
 import ircbot.AIrcBot;
-
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import utils.MyRunnable;
 
 /**
@@ -17,12 +15,11 @@ import utils.MyRunnable;
  *         href="http://www.jibble.org/">http://www.jibble.org/</a>
  * @version 1.4.4 (Build time: Tue Mar 29 20:58:46 2005)
  */
-public class DccManager implements DccSubCommands {
+public class DccManager implements IDccSubCommands {
     /**
      * mes DCC à reprendre.
      */
     private final List < DccFileTransfer > awaitingResume = new Vector < DccFileTransfer >();
-
     /**
      * mon bot.
      */
@@ -133,12 +130,10 @@ public class DccManager implements DccSubCommands {
  * @author viper
  */
 class MiniThread extends MyRunnable {
-
     /**
      * mon bot.
      */
     private final AIrcBot bot;
-
     /**
      * mon minet.
      */

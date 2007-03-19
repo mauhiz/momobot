@@ -2,7 +2,6 @@ package ircbot.dcc;
 
 import ircbot.IIrcSpecialChars;
 import ircbot.IrcUser;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,9 +11,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-
 import org.apache.commons.io.IOUtils;
-
 import utils.NetUtils;
 
 /**
@@ -28,27 +25,22 @@ public class DccChat implements IIrcSpecialChars {
      * message d'erreur.
      */
     private static final String NOT_ACCEPTABLE = "You must call the accept() method of the DccChat request before you can use it.";
-
     /**
      * c'est bon?
      */
     private boolean             acceptable     = false;
-
     /**
      * son ip et son port.
      */
     private InetSocketAddress   address        = null;
-
     /**
      * mon lecteur.
      */
     private BufferedReader      reader         = null;
-
     /**
      * ma chaussette.
      */
     private Socket              socket         = null;
-
     /**
      * mon écrivain.
      */

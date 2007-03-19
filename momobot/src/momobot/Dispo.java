@@ -8,12 +8,10 @@ public class Dispo {
      * La première heure (21h00).
      */
     private int    heure1 = 0;
-
     /**
      * La deuxième heure (22h30).
      */
     private int    heure2 = 0;
-
     /**
      * L'auth Qnet.
      */

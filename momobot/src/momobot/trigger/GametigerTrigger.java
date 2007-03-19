@@ -2,16 +2,13 @@ package momobot.trigger;
 
 import ircbot.IrcUser;
 import ircbot.ATrigger;
-
 import java.util.Iterator;
-
 import momobot.MomoBot;
 import momobot.WebQuery;
 
 /**
  * @author Administrator
  */
-
 public class GametigerTrigger extends ATrigger {
     /**
      * @param trigger

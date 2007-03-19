@@ -6,44 +6,36 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-
 import utils.Utils;
 
 /**
  * @author Administrator
  */
 public class Server {
-
     /**
      * indique que le serveur est dédié.
      */
     static final char DEDICATED  = 'd';
-
     /**
      * moteur de HL 1.
      */
     static final char GOLDSOURCE = 'm';
-
     /**
      * indique que le serveur est un hltv.
      */
     static final char HLTV       = 'p';
-
     /**
      * indique que le serveur est sous linux.
      */
     static final char LINUX      = 'l';
-
     /**
      * indique que le serveur est listen.
      */
     static final char LISTEN     = 'l';
-
     /**
      * moteur source.
      */
     static final char SOURCE     = 'I';
-
     /**
      * indique que le serveur est sous windows.
      */
@@ -69,48 +61,39 @@ public class Server {
         }
         return retour.toString();
     }
-
     /**
      * Ip et port du serveur.
      */
     private InetSocketAddress            ipay        = null;
-
     /**
      * map actuelle.
      */
     private String                       map         = "";
-
     /**
      * capacité du serveur en nombre de joueurs.
      */
     private short                        maxPlayers  = 0;
-
     /**
      * hostname du serveur.
      */
     private String                       name        = "";
-
     /**
      * mot de passe.
      */
     private String                       pass        = "";
-
     /**
      * Temps de latence en ms.
      */
     private long                         ping        = -1;
-
     /**
      * Nombre de joueurs présents sur le serveur. Utilisé avant d'avoir tous les
      * joueurs dans {@link #players}
      */
     private short                        playerCount = 0;
-
     /**
      * Les joueurs présents. Clé = steamId, Valeur = objet Player associé.
      */
     private final Map < String, Player > players     = new TreeMap < String, Player >();
-
     /**
      * Le client Valve UDP.
      */
@@ -353,7 +336,6 @@ public class Server {
      */
     public final void setCvar(final String cvar, final String value) {
         this.vuc.rconCmd('"' + cvar + "\" \"" + value + '"');
-
     }
 
     /**

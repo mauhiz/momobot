@@ -28,17 +28,14 @@ public abstract class APersonalEvent extends MyRunnable {
          */
         OFF;
     }
-
     /**
      * le temps d'attente dans un thread.
      */
     protected static final long SLEEPTIME = 1000;
-
     /**
      * l'état, off par défaut.
      */
     private ETAT                etat      = ETAT.OFF;
-
     /**
      * L'user associé.
      */

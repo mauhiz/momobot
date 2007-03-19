@@ -7,10 +7,8 @@ import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-
 import utils.MyRunnable;
 import utils.Utils;
 
@@ -22,22 +20,18 @@ public class OutputQueue extends MyRunnable implements IIrcSpecialChars {
      * Longueur maximale d'un message sur IRC.
      */
     private static final int               MAXLINELENGTH = 512;
-
     /**
      * Durée de la protection antiflood en secondes.
      */
     private static final int               MESSAGEDELAY  = 1000;
-
     /**
      * Taille de la file d'attente.
      */
     private static final int               QUEUESIZE     = 30;
-
     /**
      * Permet d'écrire au serveur.
      */
     private BufferedWriter                 bwriter       = null;
-
     /**
      * La file d'attente elle-même.
      */

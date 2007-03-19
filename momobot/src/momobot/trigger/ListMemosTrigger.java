@@ -8,7 +8,6 @@ import momobot.MomoBot;
 /**
  * @author Administrator
  */
-
 public class ListMemosTrigger extends ATrigger {
     /**
      * @param trigger

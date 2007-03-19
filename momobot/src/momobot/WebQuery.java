@@ -6,12 +6,10 @@ import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
-
 import utils.Utils;
 
 /**
@@ -22,27 +20,22 @@ public class WebQuery {
      * longueur.
      */
     private int          len       = 0;
-
     /**
      * le nombre de résultats.
      */
     private int          numResult = 1;
-
     /**
      * la requete.
      */
     private String       query;
-
     /**
      * le séparateur de résultats.
      */
     private String       resultSep;
-
     /**
      * le type.
      */
     private final String type;
-
     /**
      * url.
      */

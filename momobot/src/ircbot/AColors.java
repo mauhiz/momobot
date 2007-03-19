@@ -29,77 +29,62 @@ public abstract class AColors implements IIrcSpecialChars {
      * Black coloured text.
      */
     public static final String BLACK      = "01";
-
     /**
      * Blue coloured text.
      */
     public static final String BLUE       = "12";
-
     /**
      * Brown coloured text.
      */
     public static final String BROWN      = "05";
-
     /**
      * Cyan coloured text.
      */
     public static final String CYAN       = "11";
-
     /**
      * Dark blue coloured text.
      */
     public static final String DARK_BLUE  = "02";
-
     /**
      * Dark gray coloured text.
      */
     public static final String DARK_GRAY  = "14";
-
     /**
      * Dark green coloured text.
      */
     public static final String DARK_GREEN = "03";
-
     /**
      * Green coloured text.
      */
     public static final String GREEN      = "09";
-
     /**
      * Light gray coloured text.
      */
     public static final String LIGHT_GRAY = "15";
-
     /**
      * Magenta coloured text.
      */
     public static final String MAGENTA    = "13";
-
     /**
      * Olive coloured text.
      */
     public static final String OLIVE      = "07";
-
     /**
      * Purple coloured text.
      */
     public static final String PURPLE     = "06";
-
     /**
      * Red coloured text.
      */
     public static final String RED        = "04";
-
     /**
      * Teal coloured text.
      */
     public static final String TEAL       = "10";
-
     /**
      * White coloured text.
      */
     public static final String WHITE      = "00";
-
     /**
      * Yellow coloured text.
      */
@@ -164,7 +149,6 @@ public abstract class AColors implements IIrcSpecialChars {
                 }
                 continue;
             }
-
             buffer.append(ch);
             i++;
         }

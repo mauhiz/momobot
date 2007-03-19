@@ -9,19 +9,16 @@ public class Topic {
      * Date à laquelle le topic a été set.
      */
     private long    date;
-
     /**
      * Le mec qui a set le topic. Comme il est sans doute plus sur IRC, on a
      * juste son nick, pas d'objet {@link IrcUser}. C'est d'ailleurs une faille
      * du système d'authentification des users sur IRC.
      */
     private String  setBy;
-
     /**
      * Contenu du topic.
      */
     private String  topic;
-
     /**
      * Indique si le topic est protégé contre les non-ops.
      */

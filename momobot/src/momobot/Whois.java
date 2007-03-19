@@ -3,9 +3,7 @@ package momobot;
 import ircbot.IIrcCommands;
 import ircbot.IrcUser;
 import ircbot.QnetUser;
-
 import java.util.concurrent.TimeUnit;
-
 import utils.MyRunnable;
 
 /**
@@ -16,37 +14,30 @@ public class Whois extends MyRunnable implements IIrcCommands {
      * période minimale du whois en ms.
      */
     private static final long PERIOD     = 5000;
-
     /**
      * le temps d'attente entre deux boucles.
      */
     private static final int  SLEEPTIME  = 300;
-
     /**
      * le nombre de fois ou je peux boucler mon thread.
      */
     private static final int  Z_MAXTIMES = (int) Math.floor(PERIOD / SLEEPTIME);
-
     /**
      * fait attendre la reponse.
      */
     private boolean           done       = false;
-
     /**
      * si c'est un whois privé.
      */
     private boolean           prive      = false;
-
     /**
      * à qui renvoyer le résultat.
      */
     private IrcUser           returnTo   = null;
-
     /**
      * ma cible.
      */
     private final String      target;
-
     /**
      * le user sur lequel on whois (s'il existe).
      */

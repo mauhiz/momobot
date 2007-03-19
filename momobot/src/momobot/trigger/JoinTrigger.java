@@ -7,7 +7,6 @@ import momobot.MomoBot;
 /**
  * @author Administrator
  */
-
 public class JoinTrigger extends ATrigger {
     /**
      * @param trigger

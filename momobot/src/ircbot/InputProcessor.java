@@ -7,9 +7,7 @@ import java.io.InterruptedIOException;
 import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.lang.StringUtils;
-
 import utils.MyRunnable;
 import utils.Utils;
 
@@ -28,17 +26,14 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
      * mon mastah.
      */
     private AIrcBot        bot    = null;
-
     /**
      * si je suis loggé.
      */
     private boolean        logged = false;
-
     /**
      * mon lecteur.
      */
     private BufferedReader reader = null;
-
     /**
      * le nombre d'essais.
      */
@@ -273,7 +268,6 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                     if (isLogged()) {
                         continue;
                     }
-
                     final int firstSpace = line.indexOf(SPC);
                     final int secondSpace = line.indexOf(SPC, firstSpace + 1);
                     if (secondSpace >= 0) {

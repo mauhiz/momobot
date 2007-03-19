@@ -2,17 +2,13 @@ package momobot.trigger;
 
 import ircbot.IrcUser;
 import ircbot.ATrigger;
-
 import java.io.IOException;
 import java.net.URLEncoder;
-
 import momobot.MomoBot;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang.StringUtils;
-
 import utils.Utils;
 
 /**

@@ -10,7 +10,6 @@ import momobot.event.channel.Gather;
 /**
  * @author Administrator
  */
-
 public class TagTrigger extends ATrigger {
     /**
      * @param trigger

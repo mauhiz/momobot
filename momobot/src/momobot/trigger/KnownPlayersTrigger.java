@@ -2,17 +2,14 @@ package momobot.trigger;
 
 import ircbot.IrcUser;
 import ircbot.ATrigger;
-
 import java.util.Iterator;
 import java.util.Map;
-
 import momobot.Db;
 import momobot.MomoBot;
 
 /**
  * @author Administrator
  */
-
 public class KnownPlayersTrigger extends ATrigger {
     /**
      * @param trigger

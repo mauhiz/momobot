@@ -16,41 +16,33 @@ public abstract class Utils extends Calendar {
     /**
      * le nmobre de jours dans une semaine.
      */
-    private static final int               DAYS_PER_WEEK = 7;
-
+    private static final int                     DAYS_PER_WEEK = 7;
     /**
      * les jours de la semaine.
      */
-    private static Map < String, Integer > jours         = new HashMap < String, Integer >(
-                                                                 DAYS_PER_WEEK);
-
+    private static final Map < String, Integer > JOURS;
     /**
      * mon format de date local.
      */
-    public static final DateFormat         MY_DATE       = DateFormat
-                                                                 .getDateInstance(
-                                                                         DateFormat.MEDIUM,
-                                                                         Locale.FRANCE);
-
+    public static final DateFormat               MY_DATE;
     /**
      * mon format d'heure local.
      */
-    private static final DateFormat        TIME          = DateFormat
-                                                                 .getTimeInstance(
-                                                                         DateFormat.MEDIUM,
-                                                                         Locale.FRANCE);
-
+    private static final DateFormat              TIME;
     /**
      * remplit les jours de la semaine.
      */
     static {
-        jours.put("lundi", Integer.valueOf(MONDAY));
-        jours.put("mardi", Integer.valueOf(TUESDAY));
-        jours.put("mercredi", Integer.valueOf(WEDNESDAY));
-        jours.put("jeudi", Integer.valueOf(THURSDAY));
-        jours.put("vendredi", Integer.valueOf(FRIDAY));
-        jours.put("samedi", Integer.valueOf(SATURDAY));
-        jours.put("dimanche", Integer.valueOf(SUNDAY));
+        MY_DATE = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.FRANCE);
+        TIME = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.FRANCE);
+        JOURS = new HashMap < String, Integer >(DAYS_PER_WEEK);
+        JOURS.put("lundi", Integer.valueOf(MONDAY));
+        JOURS.put("mardi", Integer.valueOf(TUESDAY));
+        JOURS.put("mercredi", Integer.valueOf(WEDNESDAY));
+        JOURS.put("jeudi", Integer.valueOf(THURSDAY));
+        JOURS.put("vendredi", Integer.valueOf(FRIDAY));
+        JOURS.put("samedi", Integer.valueOf(SATURDAY));
+        JOURS.put("dimanche", Integer.valueOf(SUNDAY));
     }
 
     /**
@@ -66,7 +58,7 @@ public abstract class Utils extends Calendar {
         final int entierNow = jourNow.get(DAY_OF_WEEK);
         // plus tard
         long longFutur = aujourdhui.getTime();
-        final int entierFutur = jours.get(jour).intValue();
+        final int entierFutur = JOURS.get(jour).intValue();
         // calcul du decalage
         final long unJour = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
         // update : le +7 pour eviter les resultats negatifs
@@ -84,7 +76,7 @@ public abstract class Utils extends Calendar {
         final Calendar cld = Calendar.getInstance();
         cld.setTime(d);
         final int jour = cld.get(DAY_OF_WEEK);
-        for (final Entry < String, Integer > en : jours.entrySet()) {
+        for (final Entry < String, Integer > en : JOURS.entrySet()) {
             if (en.getValue().intValue() == jour) {
                 return en.getKey();
             }
@@ -107,7 +99,7 @@ public abstract class Utils extends Calendar {
      *            ledit message
      */
     public static void log(final Class < ? > c, final String msg) {
-        System.out.println("[" + getTimeStamp() + "] [" + c.getSimpleName()
+        System.out.println('[' + getTimeStamp() + "] [" + c.getSimpleName()
                 + "] " + msg);
     }
 

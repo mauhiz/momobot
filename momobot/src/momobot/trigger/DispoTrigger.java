@@ -3,10 +3,8 @@ package momobot.trigger;
 import ircbot.IrcUser;
 import ircbot.QnetUser;
 import ircbot.ATrigger;
-
 import java.util.Date;
 import java.util.StringTokenizer;
-
 import momobot.Db;
 import momobot.MomoBot;
 import momobot.Whois;
@@ -15,7 +13,6 @@ import utils.Utils;
 /**
  * @author Administrator
  */
-
 public class DispoTrigger extends ATrigger {
     /**
      * @param trigger
@@ -70,7 +67,6 @@ public class DispoTrigger extends ATrigger {
                 return;
             }
         }
-
         try {
             final StringTokenizer st = new StringTokenizer(getArgs(message));
             final String jour = st.nextToken();

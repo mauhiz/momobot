@@ -10,17 +10,14 @@ public class IrcServerBean {
      * port par défaut.
      */
     private static final int DEFAULT_IRC_PORT = 6667;
-
     /**
      * Hôte.
      */
     private String           hostname         = "";
-
     /**
      * Mot de passe.
      */
     private String           password         = "";
-
     /**
      * port.
      */

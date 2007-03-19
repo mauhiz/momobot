@@ -25,7 +25,6 @@ public class CountUsersTrigger extends ATrigger {
     @Override
     public final void executePrivateTrigger(final IrcUser user,
             final String message) {
-
         MomoBot.getInstance().sendMessage(user.getNick(),
                 "Je connais " + IrcUser.countUsers() + " utilisateur(s).");
     }

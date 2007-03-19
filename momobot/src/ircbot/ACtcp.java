@@ -4,7 +4,6 @@ package ircbot;
  * @author viper
  */
 public abstract class ACtcp implements ICtcpCommands, IIrcCommands {
-
     /**
      * @param toQuote
      *            le message à quoter

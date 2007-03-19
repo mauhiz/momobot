@@ -22,7 +22,6 @@ public class RegisterAutomate extends APersonalEvent {
      * mon SteamID.
      */
     private String steamid = "";
-
     // private static final int LIFETIME = ?
     /**
      * mon Whois.

@@ -4,15 +4,12 @@ import ircbot.Channel;
 import ircbot.IrcUser;
 import ircbot.QnetUser;
 import ircbot.ATrigger;
-
 import java.util.Iterator;
-
 import momobot.MomoBot;
 
 /**
  * @author Administrator
  */
-
 public class MassHlTrigger extends ATrigger {
     /**
      * @param trigger
@@ -56,7 +53,6 @@ public class MassHlTrigger extends ATrigger {
             }
             msg.append(' ').append(nextIrcUser);
         }
-
         MomoBot.getInstance().sendAction(channel, msg.toString());
     }
 }

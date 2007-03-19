@@ -3,7 +3,6 @@ package ircbot.dcc;
 import ircbot.ACtcp;
 import ircbot.IrcUser;
 import ircbot.AIrcBot;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -14,10 +13,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-
 import utils.MyRunnable;
 import utils.NetUtils;
 import utils.Utils;
@@ -29,7 +26,7 @@ import utils.Utils;
  *         href="http://www.jibble.org/">http://www.jibble.org/</a>
  * @version 1.4.4 (Build time: Tue Mar 29 20:58:46 2005)
  */
-public class DccFileTransfer implements DccSubCommands {
+public class DccFileTransfer implements IDccSubCommands {
     /**
      * @author viper
      */
@@ -38,12 +35,10 @@ public class DccFileTransfer implements DccSubCommands {
          * mon dft.
          */
         private final DccFileTransfer dft;
-
         /**
          * mon fichier.
          */
         private final File            myFile;
-
         /**
          * mon resume.
          */
@@ -121,9 +116,7 @@ public class DccFileTransfer implements DccSubCommands {
             }
             this.dft.getBot().onFileTransferFinished(this.dft, exception);
         }
-
     }
-
     /**
      * @author viper
      */
@@ -132,7 +125,6 @@ public class DccFileTransfer implements DccSubCommands {
          * Si j'ai le droit de resume.
          */
         private final boolean         allowResume;
-
         /**
          * Mon dcc file transfer.
          */
@@ -254,77 +246,62 @@ public class DccFileTransfer implements DccSubCommands {
             getBot().onFileTransferFinished(DccFileTransfer.this, exception);
         }
     }
-
     /**
      * The default buffer size to use when sending and receiving files.
      */
     public static final int BUFFER_SIZE = 1024;
-
     /**
      * son adresse.
      */
     private long            address     = 0;
-
     /**
      * mon mastah.
      */
     private AIrcBot         bot         = null;
-
     /**
      * mon fichier local.
      */
     private File            file        = null;
-
     /**
      * si je recois.
      */
     private boolean         incoming    = false;
-
     /**
      * le délai.
      */
     private long            packetDelay = 0;
-
     /**
      * le port utilisé.
      */
     private int             port        = 0;
-
     /**
      * l'avancement.
      */
     private long            progress    = 0;
-
     /**
      * si j'ai fini.
      */
     private boolean         received    = false;
-
     /**
      * la taille.
      */
     private long            size        = 0;
-
     /**
      * la socket.
      */
     private Socket          socket      = null;
-
     /**
      * le moment de départ.
      */
     private long            startTime   = 0;
-
     /**
      * le timeout.
      */
     private int             timeout     = 0;
-
     /**
      * le type.
      */
     private String          type;
-
     /**
      * le user.
      */

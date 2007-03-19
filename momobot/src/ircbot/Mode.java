@@ -10,69 +10,56 @@ public class Mode implements IIrcSpecialChars {
      * ban.
      */
     public static final char BAN             = 'b';
-
     /**
      * .
      */
     public static final char INVITE_ONLY     = 'i';
-
     /**
      * .
      */
     public static final char KEY             = 'k';
-
     /**
      * .
      */
     public static final char LIMIT           = 'l';
-
     /**
      * .
      */
     public static final char MODERATED       = 'm';
-
     /**
      * .
      */
     public static final char NO_EXT_MSG      = 'n';
-
     /**
      * op.
      */
     public static final char OP              = 'o';
-
     /**
      * .
      */
     public static final char PRIVATE         = 'p';
-
     /**
      * .
      */
     public static final char SECRET          = 's';
-
     /**
      * .
      */
     public static final char TOPIC_PROTECTED = 't';
-
     /**
      * voice.
      */
     public static final char VOICE           = 'v';
-
     /*
      * i - invite-only channel flag; t - topic settable by channel operator only
      * flag; n - no messages to channel from clients on the outside; m -
      * moderated channel; l - set the user limit to channel; k - set a channel
      * key (password).
      */
-
     /**
      * si je suis un op.
      */
     private boolean          op              = false;
-
     /**
      * si je suis un voice.
      */

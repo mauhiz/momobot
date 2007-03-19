@@ -2,7 +2,6 @@ package momobot.event.channel;
 
 import ircbot.AChannelEvent;
 import ircbot.IrcUser;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -10,23 +9,19 @@ import java.util.Set;
 /**
  * @author Administrator
  */
-
 public class Pickup extends AChannelEvent {
     /**
      * le nombre de teams.
      */
     private static final int        NBTEAMS = 2;
-
     /**
      * les noms de teams.
      */
     private final String[]          nom     = new String[NBTEAMS];
-
     /**
      * la taille des teams.
      */
     private final int               size    = 5;
-
     /**
      * les teams.
      */
@@ -147,7 +142,6 @@ public class Pickup extends AChannelEvent {
         }
         return temp.toString();
     }
-
     /*
      * public String getServ() { return "Serv: " + serv.getIp() + ":" +
      * serv.getPort() + " - Pass: " + serv.pass; }
