@@ -277,10 +277,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected final void onNickChange(final IrcUser user, final String newNick) {
-        if (user.getNick().equalsIgnoreCase(getNick())) {
-            setNick(newNick);
-        }
-        IrcUser.updateUser(user, newNick);
+       // rien
     }
 
     /**
