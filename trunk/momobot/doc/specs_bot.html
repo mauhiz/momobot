@@ -1,0 +1,479 @@
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>Specs bot multifonctions</TITLE>
+</HEAD>
+<BODY LANG="fr-FR" DIR="LTR">
+<H1>Bot multifonctions</H1>
+<H2 CLASS="western">1. Positionnement</H2>
+<P><IMG SRC="chart.PNG" NAME="Image1" ALIGN=LEFT WIDTH=513 HEIGHT=301 BORDER=0><BR CLEAR=LEFT>Le
+bot dialogue avec diverses entit&eacute;s : serveur IRC, site Web,
+serveur CS.<BR>Cependant il ne peut pas se trouver sur le serveur CS
+(plugin AMX) parce qu'il doit pouvoir g&eacute;rer plusieurs
+serveurs, m&ecirc;me si un plugin amx additionnel n'est pas exclu.<BR>Il
+ne peut pas &ecirc;tre sur le site Web qui n'autorisera pas de
+processus en fond de t&acirc;che.<BR>Il doit donc etre standalone. On
+peut ensuite imaginer d'autres interfaces comme TeamSpeak,MSN... 
+</P>
+<H2 CLASS="western">2. Fonctions</H2>
+<H3 CLASS="western">2.1 Reconnaissance des utilisateurs</H3>
+<P>Les utilisateurs sont reconnus selon leur point d'acc&egrave;s par
+le moyen le plus adapt&eacute; : 
+</P>
+<UL>
+	<LI>sur le serveur CS, par leur
+	</LI>
+	<LI>sur IRC, par leur auth Qnet. 
+	</LI>
+	<LI>sur le site web, par un login et mot de passe. 
+	</LI>
+</UL>
+<P>Ces donn&eacute;es sont stock&eacute;es sur la base de donn&eacute;es
+MySQL. 
+</P>
+<H3>2.2 Niveaux des utilisateurs</H3>
+<P>Selon leur niveau, les utilisateurs auront acc&egrave;s &agrave;
+plus ou moins de fonctionnalit&eacute;s. Les niveaux sont d&eacute;finis
+comme suit : 
+</P>
+<UL>
+	<LI>niveau 0 : utilisateur inconnu 
+	</li>
+	<LI>niveau 1 : utilisateur enregistr&eacute;
+	(qui a fait la proc&eacute;dure d'inscription sur le site, o&ugrave;
+	il pr&eacute;cise son auth Qnet et son STEAM_ID) 
+	</li>
+	<LI>niveau 1,5 : op&eacute;rateur (ce
+	statut est propre &agrave; chaque canal, et d&eacute;signe un
+	utilisateur de niveau 1 ayant le mode +o) 
+	</li>
+	<LI>niveau 2 : administrateur (a des
+	droits d'administration) 
+	</li>
+	<LI>niveau 3 : technicien (nomme des administrateurs, a tous les
+	acc&egrave;s)</li>
+	
+</UL>
+<P>Ces donn&eacute;es sont stock&eacute;es sur la base de donn&eacute;es
+MySQL. 
+</P>
+<H3 CLASS="western">2.3 Administration d'un gather</H3>
+<P>Les utilisateurs de niveau 1,5 et plus ont la possibilit&eacute;
+de lancer un gather sur un channel IRC sur lequel est pr&eacute;sent
+le bot avec la commande !gather .Cet op&eacute;rateur sera d&eacute;sign&eacute;
+par la suite par 'leader'. <BR>Les usagers du channel peuvent
+s'ajouter par la commande !add et annuler leur ajout par la commande
+!rmv <BR>Lorsque cinq personnes sont inscrites, le 'leader' peut
+confirmer l'&eacute;quipe avec la commande !start .Le bot d&eacute;signe
+alors l'un des cinq pour g&eacute;rer le matchmaking.<BR>Tant que la
+commande n'a pas &eacute;t&eacute; tap&eacute;e, les utilisateurs de
+niveau 1 et plus peuvent encore s'ajouter et prendre la place
+d'utilisateurs non enregistr&eacute;s. <BR>Une fois le gather
+confirm&eacute; par la commande !start, les joueurs doivent rejoindre
+le serveur TeamSpeak, pendant que la personne d&eacute;sign&eacute;e
+trouve des adversaires. Le leader peut choisir de confier la gestion
+du match in-game au bot avec la commande !serv &lt;alias&gt; o&ugrave;
+&lt;alias&gt; d&eacute;signe un alias de serveur enregistr&eacute;
+sur le site web. Si le bot n'a pas d'alias correspondant, o&ugrave;
+si le rcon est incorrect, il ne pourra pas administrer et donc le
+dira. Lorsque le matchmaker a trouv&eacute; des adversaires, il
+utilise la commande !go, pour signaler aux joueurs qu'il faut
+rejoindre le serveur. 
+</P>
+<H3 CLASS="western">2.4 Administration in-game 
+</H3>
+<P>Si le bot peut administrer le match, il va automatiquement
+contr&ocirc;ler que tous les joueurs arrivent sur le serveur, gr&acirc;ce
+aux STEAM_ID. Si des utilisateurs non-enregistr&eacute;s participent,
+il va essayer de reconna&icirc;tre leur nick. Si le bot reconna&icirc;t
+les 5 joueurs, il va confirmer au leader qu'il est pr&ecirc;t &agrave;
+administrer le match, avec activation des statistiques. Le leader
+&eacute;crit alors en say_team !go, et alors le bot configure le
+serveur et envoie trois restart. Le leader peut lancer le match m&ecirc;me
+si le bot n'a pas reconnu tous les joueurs, avec la m&ecirc;me
+commande !go, mais alors les statistiques seront d&eacute;sactiv&eacute;es
+pour ce match. <BR>Le bot est configur&eacute; par d&eacute;faut pour
+un maxrounds 15, mais il peut &ecirc;tre configur&eacute; pour un
+maxrounds sp&eacute;cifique avec la commande !mr &lt;nb&gt;. <BR>Il
+d&eacute;tectera si un joueur part, et activera la pause en fin de
+round. N'importe qui peut choisir de reprendre la partie avec la
+commande (en say_team) !unpause , mais seul le leader peut la
+r&eacute;activer avec la commande !pause. Il peut aussi choisir de
+revenir au warmup avec !reset, et d'annuler le tout avec !cancel,
+commande qui va changer le sv_password et kicker tous les joueurs
+sauf ceux qui sont enregistr&eacute;s dans le gather.<BR>Le bot peut,
+s'il est configur&eacute; pour, lancer un hltv et l'administrer.</P>
+<H3 CLASS="western">2.5 Dodgelist et Blacklist</H3>
+<UL>
+	<LI>Dodge list : sur le site web, tous
+	les joueurs enregistr&eacute;s peuvent choisir d'ajouter d'autres
+	joueurs enregistr&eacute;s &agrave; leur dodgelist, et le bot
+	refusera d'ajouter un utilisateur qui se trouve sur votre dodgelist
+	&agrave; un gather dans lequel vous etes d&eacute;j&agrave; ajout&eacute;.
+	Vous risquez simplement de vous retrouver dans la leur, et celle de
+	leurs amis, et donc de ne plus pouvoir rejoindre de gather si vous
+	en abusez. 
+	</li>
+	<LI>Black list : lorsque le gather ne
+	s'est pas bien d&eacute;roul&eacute;, le leader peut se rendre sur
+	le site internet et consulter le r&eacute;sum&eacute; de la
+	rencontre. 
+	</li>
+	<UL>
+		<LI>des utilisateurs de niveau z&eacute;ro,
+		qu'on retrouve gr&acirc;ce &agrave; leur steam_id, seront bannis
+		des gathers, voire du channel, via leur auth Qnet 
+		</li>
+	</UL>
+	<LI>des adversaires peuvent &ecirc;tre ajout&eacute;s &agrave; la
+	blacklist, avec un motif pr&eacute;cis; cela ne les bannit pas du
+	serveur, mais le bot les reconna&icirc;tra lorsqu'ils reviendront,
+	et affichera un message d'alerte :&nbsp;Attention, le joueur &lt;X&gt;
+	a &eacute;t&eacute; ajout&eacute; &agrave; la blacklist le &lt;date&gt;
+	pour la raison &lt;Y&gt;. 
+	</li>
+</UL>
+<H3 CLASS="western">2.6 Acc&egrave;s aux statistiques</H3>
+<P>Les utilisateurs enregistr&eacute;s peuvent consulter les
+statistiques des gathers, avec plusieurs filtres : dates, maps, ...
+<BR>Ils verront les pr&eacute;f&eacute;rences d'arme, les ratios, les
+fpm (frags par minute). <BR>Il y aura un classement selon des
+crit&egrave;res top secret ;) <BR>Les matchs sont stock&eacute;s dans
+la base de donn&eacute;es avec comme informations : date/heure, map,
+line-up, nom de l'&eacute;quipe adverse, temps total, et frags &agrave;
+chaque round dans l'ordre. 
+</P>
+<H3 CLASS="western">2.7. Pickup</H3>
+<P>Fonctionne sur le m&ecirc;me principe que le gather. Les commandes
+!add peuvent &ecirc;tre compl&eacute;t&eacute;es par la nom de
+l'&eacute;quipe cible ('a' ou 'b'). Le leader peut choisir d'utiliser
+la fonction !shake qui va, dans la mesure du possible, &eacute;quilibrer
+les &eacute;quipes en vertu du classement interne. 
+</P>
+<H3 CLASS="western">2.8 Mix</H3>
+<P>S'il reste de la place dans le nombre de channels sur lequel se
+trouve le bot, on peut lui demander d'administrer un mix (pour un
+tournoi par exemple). Tout fonctionne comme le gather, mis &agrave;
+part que le channel est secret, et le bot restera tant que le leader
+n'a pas tap&eacute; !fin sur le channel du mix. 
+</P>
+<H3 CLASS="western">2.9 Tournoi</H3>
+<P>(A venir.) 
+</P>
+<H3 CLASS="western">2.10 Trigger personnalis&eacute;</H3>
+<P>Il est possible de d&eacute;finir des fa&ccedil;ons pour le bot
+d'attirer votre attention, sur le site.<BR>On peut choisir un message
+public, priv&eacute;, en notice.<BR>On peut aussi d&eacute;finir des
+cas d'utilisation : en cas de gather, avec tel ou tel autre
+utilisateur...</P>
+<H2 CLASS="western">3. Configuration</H2>
+<P>(A venir.) 
+</P>
+<H2 CLASS="western">4. Commandes</H2>
+<H3 CLASS="western">4.1 Commandes IRC</H3>
+<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=31*>
+	<COL WIDTH=35*>
+	<COL WIDTH=63*>
+	<COL WIDTH=127*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=12%>
+				<P>Commande</P>
+			</TH>
+			<TH WIDTH=14%>
+				<P>Niveau requis</P>
+			</TH>
+			<TH WIDTH=25%>
+				<P>Contexte</P>
+			</TH>
+			<TH WIDTH=50%>
+				<P>Effet</P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!add</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>0</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, gather ou pickup lanc&eacute;</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Ajoute l'utilisateur au gather ou au pickup</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!add [a,b]</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>0</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, pickup lanc&eacute;</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Ajoute l'utilisateur au pickup dans la team s&eacute;lectionn&eacute;e,
+				s'il reste de la place et que le pickup est lanc&eacute;.</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!gather</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>1.5</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, pas de pickup ou de gather lanc&eacute;</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>D&eacute;marre un gather sur le channel.</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12% HEIGHT=32>
+				<P>!gather</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>0</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, gather lanc&eacute; ou valid&eacute;</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Affiche l'&eacute;tat du gather.</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!go</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>0</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, gather valid&eacute;</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Si la commande est d&eacute;clench&eacute;e par la personne
+				d&eacute;sign&eacute;e pour matchmaker, alors &ccedil;a lance
+				l'administration in-game</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!pickup</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P><BR>
+				</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Voir !gather, effet similaire</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!rmv</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>0</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, gather lanc&eacute;, utilisateur inscrit</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Retire l'utilisateur de la line-up</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!rmv</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>0</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, gather valid&eacute;, utilisateur inscrit</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Retire l'utilisateur de la line-up, et &eacute;ventuellement
+				(selon config) punit l'utilisateur.</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!serv &lt;alias&gt;</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>1.5</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, gather ou pickup valid&eacute;</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Si un gather ou le pickup est en attente de !go, alors &ccedil;a
+				d&eacute;finit le serveur. Si l'alias est inconnu, affiche un
+				message d'erreur. Si l'alias est connu, le bot monitore le
+				serveur en attente de commande in-games</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!start</P>
+			</TD>
+			<TD WIDTH=14%>
+				<P>1.5</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>Public, gather lanc&eacute;</P>
+			</TD>
+			<TD WIDTH=50%>
+				<P>Valide la line-up actuelle du gather</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<H3 CLASS="western">4.2 Commandes in-game</H3>
+<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=32*>
+	<COL WIDTH=35*>
+	<COL WIDTH=63*>
+	<COL WIDTH=127*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=12%>
+				<P>Commande</P>
+			</TH>
+			<TH WIDTH=13%>
+				<P>Niveau requis</P>
+			</TH>
+			<TH WIDTH=25%>
+				<P>Contexte</P>
+			</TH>
+			<TH WIDTH=49%>
+				<P>Effet</P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!aim &lt;map&gt;</P>
+			</TD>
+			<TD WIDTH=13%>
+				<P>1</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>say_team, pas de match</P>
+			</TD>
+			<TD WIDTH=49%>
+				<P>S'il n'y a pas de gather lanc&eacute;, envoie la map &lt;map&gt;
+				(ak-47_map par d&eacute;faut) et met le freezetime &agrave; z&eacute;ro
+				et le alltalk &agrave; 1. Le bot v&eacute;rifie que la map se
+				trouve dans sa liste de maps d'aim.</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!cancel</P>
+			</TD>
+			<TD WIDTH=13%>
+				<P>leader</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>say_team</P>
+			</TD>
+			<TD WIDTH=49%>
+				<P>Annule le match s'il y en a un, kick les joueurs non
+				enregistr&eacute;s et change de pass</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!go</P>
+			</TD>
+			<TD WIDTH=13%>
+				<P>leader</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>say_team, match pr&ecirc;t</P>
+			</TD>
+			<TD WIDTH=49%>
+				<P>D&eacute;marre le match</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!map &lt;map&gt;</P>
+			</TD>
+			<TD WIDTH=13%>
+				<P>leader</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>say_team, warmup</P>
+			</TD>
+			<TD WIDTH=49%>
+				<P>Si un gather est lanc&eacute;, envoie la map &lt;map&gt;
+				(de_dust2 par d&eacute;faut). Le bot v&eacute;rifie qu'il s'agit
+				bien d'une map officielle.</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!pause</P>
+			</TD>
+			<TD WIDTH=13%>
+				<P>leader</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>say_team, match en cours</P>
+			</TD>
+			<TD WIDTH=49%>
+				<P>Demande une pause (effectif &agrave; la fin du round)</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!reset</P>
+			</TD>
+			<TD WIDTH=13%>
+				<P>leader</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>say_team, match en cours</P>
+			</TD>
+			<TD WIDTH=49%>
+				<P>Revient au warmup</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=12%>
+				<P>!unpause</P>
+			</TD>
+			<TD WIDTH=13%>
+				<P>0</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P>say_team, pause en cours</P>
+			</TD>
+			<TD WIDTH=49%>
+				<P>Annule la pause.</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<H2 CLASS="western">5. Interface Web</H2>
+<P>(A venir)</P>
+</BODY>
+</HTML>

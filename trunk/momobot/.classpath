@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/jarlibs/commons-dbutils-1.1.jar"/>
+	<classpathentry kind="lib" path="D:/jarlibs/commons-io-1.3.jar"/>
+	<classpathentry kind="lib" path="D:/jarlibs/commons-lang-2.3.jar"/>
+	<classpathentry kind="lib" path="D:/jarlibs/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="D:/jarlibs/commons-net-1.4.1.jar"/>
+	<classpathentry kind="lib" path="D:/jarlibs/commons-httpclient-3.0.1.jar"/>
+	<classpathentry kind="lib" path="D:/jarlibs/mysql-connector-java-5.0.4-bin.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
