@@ -176,6 +176,7 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                 // Update our nick if it was us that changed nick.
                 this.bot.setNick(target);
             }
+            IrcUser.updateUser(user, target);
             this.bot.onNickChange(user, target);
         } else if (command.equals("NOTICE")) {
             // Someone is sending a notice.

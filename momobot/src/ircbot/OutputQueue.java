@@ -35,14 +35,14 @@ public class OutputQueue extends MyRunnable implements IIrcSpecialChars {
     /**
      * La file d'attente elle-même.
      */
-    private final BlockingQueue < String > queue         = new LinkedBlockingQueue < String >(
-                                                                 QUEUESIZE);
+    private final BlockingQueue < String > queue;
 
     /**
      * @param socket
      *            Le socket qu'on me donne
      */
     OutputQueue(final Socket socket) {
+        this.queue = new LinkedBlockingQueue < String >(QUEUESIZE);
         try {
             this.bwriter = new BufferedWriter(new OutputStreamWriter(socket
                     .getOutputStream()));

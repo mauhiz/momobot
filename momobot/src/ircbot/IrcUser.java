@@ -12,7 +12,10 @@ public class IrcUser {
     /**
      * tous les users que je connais (string = nick).
      */
-    private static final ConcurrentMap < String, IrcUser > USERS = new ConcurrentSkipListMap < String, IrcUser >();
+    private static final ConcurrentMap < String, IrcUser > USERS;
+    static {
+        USERS = new ConcurrentSkipListMap < String, IrcUser >();
+    }
 
     /**
      * @return le nombre de users connus
@@ -72,7 +75,7 @@ public class IrcUser {
      *            le nouveau nick
      * @return le IrcUser en question
      */
-    public static IrcUser updateUser(final IrcUser user, final String newnick) {
+    protected static IrcUser updateUser(final IrcUser user, final String newnick) {
         final String nickLowerCase = newnick.toLowerCase();
         USERS.remove(user.getNick().toLowerCase(), user);
         user.setNick(newnick);
@@ -197,7 +200,7 @@ public class IrcUser {
      * @param hostname1
      *            The hostname to set.
      */
-    public void setHostname(final String hostname1) {
+    protected void setHostname(final String hostname1) {
         this.hostname = hostname1;
     }
 
@@ -213,7 +216,7 @@ public class IrcUser {
      * @param login1
      *            The login to set.
      */
-    public final void setLogin(final String login1) {
+    protected final void setLogin(final String login1) {
         this.login = login1;
     }
 
@@ -221,7 +224,7 @@ public class IrcUser {
      * @param newnick
      *            le nouveau nick
      */
-    public final void setNick(final String newnick) {
+    protected final void setNick(final String newnick) {
         this.nick = newnick;
     }
 
