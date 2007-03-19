@@ -19,17 +19,14 @@ public class Player {
      * nombre de frags.
      */
     private int     frags   = 0;
-
     /**
      * si le joueur a du pouvoir sur le bot.
      */
     private boolean master  = false;
-
     /**
      * nom.
      */
     private String  nom     = "";
-
     /**
      * steam ID.
      */

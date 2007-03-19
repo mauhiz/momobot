@@ -4,10 +4,8 @@ import ircbot.AChannelEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-
 import utils.MyStringUtils;
 import utils.Utils;
 
@@ -19,17 +17,14 @@ public class Pendu extends AChannelEvent {
      * un générateur de nombres aléatoires.
      */
     private static final Random    ALEA       = new Random();
-
     /**
      * un dictionnaire de mots.
      */
     private static List < String > dico       = null;
-
     /**
      * la taille de mon dictionnaire.
      */
     private static int             dicosize   = 0;
-
     /**
      * le caractère underscore.
      */
@@ -74,32 +69,26 @@ public class Pendu extends AChannelEvent {
         }
         return mot;
     }
-
     /**
      * le mot en cours de devinage (négatif).
      */
     private final StringBuffer devinage = new StringBuffer();
-
     /**
      * Le nombre d'échecs.
      */
     private int                failures = 0;
-
     /**
      * le mot en cours de devinage (positif).
      */
     private final StringBuffer mot      = new StringBuffer();
-
     /**
      * la solution.
      */
     private final String       solution;
-
     /**
      * la solution avec les accents.
      */
     private final String       solutionPure;
-
     /**
      * le nombre de vies.
      */

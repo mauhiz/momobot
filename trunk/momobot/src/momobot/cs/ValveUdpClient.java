@@ -6,15 +6,12 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.StringTokenizer;
-
 import momobot.Db;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.commons.net.DatagramSocketClient;
 import org.apache.commons.net.DefaultDatagramSocketFactory;
 import org.apache.commons.net.io.Util;
-
 import utils.Utils;
 
 /**
@@ -25,44 +22,36 @@ class ValveUdpClient extends DatagramSocketClient {
      * requete!
      */
     private static final String    A2S_INFO   = "Source Engine Query";
-
     /**
      * challenger!
      */
     private static final String    CHALLENGE  = "challenge rcon";
-
     /**
      * moins 1.
      */
     static final String            MOINS_UN   = new String(ByteBuffer.allocate(
                                                       Integer.SIZE / Byte.SIZE)
                                                       .putInt(-1).array());
-
     /**
      * mon challenge.
      */
     private String                 challenge  = "";
-
     /**
      * Mon rcon.
      */
     private String                 rcon       = "";
-
     /**
      * le tampon sur lequel je vais travailler.
      */
     private final byte[]           receiveBuf = new byte[Util.DEFAULT_COPY_BUFFER_SIZE];
-
     /**
      * le tampon d'envoi.
      */
     private byte[]                 sendBuf;
-
     /**
      * Serveur associé.
      */
     private Server                 server     = null;
-
     /**
      * ah, mon écouteur préféré.
      */
@@ -303,15 +292,12 @@ class ValveUdpClient extends DatagramSocketClient {
                     .createDatagramSocket();
         }
         this.sendBuf = (MOINS_UN + cmd + '\n').getBytes();
-
         final DatagramPacket sendPacket = new DatagramPacket(this.sendBuf,
                 this.sendBuf.length, this.server.getIpay());
         final DatagramPacket recPacket = new DatagramPacket(this.receiveBuf,
                 this.receiveBuf.length);
-
         this._socket_.send(sendPacket);
         this._socket_.receive(recPacket);
-
         return new String(recPacket.getData());
     }
 

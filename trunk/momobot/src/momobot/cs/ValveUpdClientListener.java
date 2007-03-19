@@ -3,7 +3,6 @@ package momobot.cs;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Random;
-
 import utils.MyRunnable;
 import utils.Utils;
 
@@ -24,7 +23,6 @@ class ValveUpdClientListener extends MyRunnable {
         this.vuc = vuc1;
         final Random r = new Random();
         final int localPort = r.nextInt(5000) + 0x400;
-
         try {
             this.vuc.getChallenge();
             this.vuc.rconCmd("logaddress "

@@ -3,7 +3,7 @@ package ircbot;
 import ircbot.dcc.DccChat;
 import ircbot.dcc.DccFileTransfer;
 import ircbot.dcc.DccManager;
-import ircbot.dcc.DccSubCommands;
+import ircbot.dcc.IDccSubCommands;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -26,7 +26,7 @@ import utils.Utils;
  * @author viper
  */
 public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
-        IIrcSpecialChars, ICtcpCommands {
+        IIrcSpecialChars, ICtcpCommands, IDccSubCommands {
     /**
      * Les ports pour le DCC. Osef complètement, il est pas prévu que le bot
      * fasse des xdcc pour l'instant
@@ -63,7 +63,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
     /**
      * Mon thread qui me débarasse de ce que je dois dire.
      */
-    private OutputQueue                           outputThread = null;
+    private OutputQueue                            outputThread = null;
     /**
      * Mon serveur IRC où je vais me connecter.
      */
@@ -185,7 +185,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
             ss.setSoTimeout(timeout);
             final int port = ss.getLocalPort();
             // TODO : autoriser le réglage externe dans le cas d'un NAT.
-            ACtcp.sendCtcpMsg(DccSubCommands.DCC_CHAT
+            ACtcp.sendCtcpMsg(DCC_CHAT
                     + SPC
                     + "chat"
                     + SPC
@@ -1094,7 +1094,8 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @param user
      *            le user
      */
-    protected abstract void onSetNoExternalMessages(Channel channel, IrcUser user);
+    protected abstract void onSetNoExternalMessages(Channel channel,
+            IrcUser user);
 
     /**
      * Called when a channel is marked as being in private mode.

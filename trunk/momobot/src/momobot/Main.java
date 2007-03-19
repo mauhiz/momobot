@@ -1,7 +1,6 @@
 package momobot;
 
 import org.apache.commons.dbutils.DbUtils;
-
 import utils.Utils;
 
 /**

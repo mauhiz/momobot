@@ -29,7 +29,7 @@ public class HostMask {
     /**
      * .
      */
-    private String hostmask;
+    private final String hostmask;
 
     /**
      * @param hostmask1

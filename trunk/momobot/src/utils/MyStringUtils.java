@@ -3,7 +3,6 @@ package utils;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -14,7 +13,6 @@ public abstract class MyStringUtils {
      * mon tableau avec le code morse.
      */
     private static Map < Character, String > codeMorse = new TreeMap < Character, String >();
-
     static {
         codeMorse.put(new Character('A'), ".-");
         codeMorse.put(new Character('B'), "-...");

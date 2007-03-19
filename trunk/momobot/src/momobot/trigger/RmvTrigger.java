@@ -11,7 +11,6 @@ import momobot.event.channel.Pickup;
 /**
  * @author Administrator
  */
-
 public class RmvTrigger extends ATrigger {
     /**
      * @param trigger

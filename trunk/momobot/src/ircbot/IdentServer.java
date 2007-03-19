@@ -8,9 +8,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.io.IOUtils;
-
 import utils.MyRunnable;
 import utils.Utils;
 
@@ -42,12 +40,10 @@ public class IdentServer extends MyRunnable {
      * le port sur lequel on écoute.
      */
     private static final int PORT = 113;
-
     /**
      * le login à faire passer.
      */
     private final String     login;
-
     /**
      * le serversocket.
      */

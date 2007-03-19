@@ -6,22 +6,19 @@ import ircbot.IIrcSpecialChars;
 /**
  * @author viper
  */
-public interface DccSubCommands extends ICtcpCommands, IIrcSpecialChars {
+public interface IDccSubCommands extends ICtcpCommands, IIrcSpecialChars {
     /**
      * .
      */
     String DCC_ACCEPT = E_DCC + SPC + "ACCEPT";
-
     /**
      * .
      */
     String DCC_CHAT   = E_DCC + SPC + "CHAT";
-
     /**
      * .
      */
     String DCC_RESUME = E_DCC + SPC + "RESUME";
-
     /**
      * .
      */

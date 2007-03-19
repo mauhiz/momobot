@@ -109,10 +109,31 @@ public abstract class ATrigger {
     }
 
     /**
+     * @return this.notice
+     */
+    public final boolean isNotice() {
+        return this.notice;
+    }
+
+    /**
      * @return Returns the onlyAdmin.
      */
     public final boolean isOnlyAdmin() {
         return this.onlyAdmin;
+    }
+
+    /**
+     * @return this.prive
+     */
+    public final boolean isPrive() {
+        return this.prive;
+    }
+
+    /**
+     * @return this.public
+     */
+    public final boolean isPublic() {
+        return this.publique;
     }
 
     /**
@@ -121,6 +142,38 @@ public abstract class ATrigger {
      */
     protected final void setActif(final boolean actif1) {
         this.actif = actif1;
+    }
+
+    /**
+     * @param notice1
+     *            un booléen
+     */
+    protected final void setNotice(final boolean notice1) {
+        this.notice = notice1;
+    }
+
+    /**
+     * @param b
+     *            un booléen
+     */
+    protected final void setOnlyAdmin(final boolean b) {
+        this.onlyAdmin = b;
+    }
+
+    /**
+     * @param prive1
+     *            un booléen
+     */
+    protected final void setPrive(final boolean prive1) {
+        this.prive = prive1;
+    }
+
+    /**
+     * @param publique1
+     *            un booléen
+     */
+    protected final void setPublic(final boolean publique1) {
+        this.publique = publique1;
     }
 
     /**
@@ -169,58 +222,5 @@ public abstract class ATrigger {
         }
         Utils.log(getClass(), getTriggerText());
         return true;
-    }
-
-    /**
-     * @param publique1
-     *            un booléen
-     */
-    protected final void setPublic(final boolean publique1) {
-        this.publique = publique1;
-    }
-
-    /**
-     * @param prive1
-     *            un booléen
-     */
-    protected final void setPrive(final boolean prive1) {
-        this.prive = prive1;
-    }
-
-    /**
-     * @param notice1
-     *            un booléen
-     */
-    protected final void setNotice(final boolean notice1) {
-        this.notice = notice1;
-    }
-
-    /**
-     * @return this.public
-     */
-    public final boolean isPublic() {
-        return this.publique;
-    }
-
-    /**
-     * @return this.prive
-     */
-    public final boolean isPrive() {
-        return this.prive;
-    }
-
-    /**
-     * @return this.notice
-     */
-    public final boolean isNotice() {
-        return this.notice;
-    }
-
-    /**
-     * @param b
-     *            un booléen
-     */
-    protected final void setOnlyAdmin(final boolean b) {
-        this.onlyAdmin = b;
     }
 }

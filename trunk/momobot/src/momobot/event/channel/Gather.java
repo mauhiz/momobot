@@ -3,13 +3,10 @@ package momobot.event.channel;
 import ircbot.AColors;
 import ircbot.AChannelEvent;
 import ircbot.IrcUser;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import momobot.cs.Server;
-
 import utils.Utils;
 
 /**
@@ -20,22 +17,18 @@ public class Gather extends AChannelEvent {
      * La taille d'un gather.
      */
     private static final int             SIZE      = 5;
-
     /**
      * Un serveur?
      */
     private final Server                 serv      = null;
-
     /**
      * le temps où je commence.
      */
     private final String                 startTime = Utils.getTimeStamp();
-
     /**
      * le tag.
      */
     private String                       tag;
-
     /**
      * l'ensemble de joueurs.
      */

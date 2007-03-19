@@ -15,7 +15,6 @@ public class QnetUser extends IrcUser {
         return nick.equalsIgnoreCase("L") || nick.equalsIgnoreCase("Q")
                 || nick.equalsIgnoreCase("R") || nick.equalsIgnoreCase("O");
     }
-
     /**
      * L'auth Qnet.
      */

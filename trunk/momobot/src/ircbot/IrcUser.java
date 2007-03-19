@@ -3,7 +3,6 @@ package ircbot;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-
 /**
  * Les utilisateurs sont rangés dans une Map (nickLowerCase, object) permettant
  * un accès rapide lorsqu'un évènement associé à un utilisateur apparaît.
@@ -88,36 +87,30 @@ public class IrcUser {
     public static boolean userExists(final String nick1) {
         return USERS.containsKey(nick1.toLowerCase());
     }
-
     /**
      * Si je suis admin.
      */
-    private boolean  admin     = false;
-
+    private boolean        admin     = false;
     /**
      * L'automate.
      */
     private APersonalEvent auto      = null;
-
     /**
      * Le hostname.
      */
-    private String   hostname  = "";
-
+    private String         hostname  = "";
     /**
      * la dernière fois que je l'ai whois.
      */
-    private long     lastWhois = 0;
-
+    private long           lastWhois = 0;
     /**
      * Le login.
      */
-    private String   login     = "";
-
+    private String         login     = "";
     /**
      * Le nick.
      */
-    private String   nick;
+    private String         nick;
 
     /**
      * @param nick1

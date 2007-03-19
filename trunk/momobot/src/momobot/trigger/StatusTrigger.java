@@ -9,7 +9,6 @@ import momobot.MomoBot;
 /**
  * @author Administrator
  */
-
 public class StatusTrigger extends ATrigger {
     /**
      * @param trigger
