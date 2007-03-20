@@ -132,7 +132,7 @@ public abstract class Db {
      */
     public static String getMemo(final String cle) {
         if (!MEMOS.containsKey(cle)) {
-            return "Pas de memo pour " + cle;
+            return "Pas de mémo pour " + cle;
         }
         return MEMOS.get(cle);
     }
@@ -141,7 +141,7 @@ public abstract class Db {
      * @return la liste des memos
      */
     public static String getMemos() {
-        String msg = "memos :";
+        String msg = "mémos :";
         for (final String string : MEMOS.keySet()) {
             msg += " " + string;
         }
@@ -168,7 +168,7 @@ public abstract class Db {
      * @param string
      *            le nom du profil
      */
-    public static void loadBot(final String string) {
+    public static void loadMomoBot(final String string) {
         // init le bot
         MomoBot.getInstance();
         String server = "";
@@ -184,7 +184,7 @@ public abstract class Db {
                 if (paramName.equals("login")) {
                     MomoBot.getInstance().setLogin(param);
                 } else if (paramName.equals("nick")) {
-                    MomoBot.getInstance().setName(param);
+                    MomoBot.getInstance().setMyName(param);
                 } else if (paramName.equals("autojoin")) {
                     MomoBot.getInstance().addToAutoJoin(param);
                 } else if (paramName.equals("trigger")) {
@@ -208,10 +208,14 @@ public abstract class Db {
                 }
             }
             // connect le bot
-            if (identServer) {
-                MomoBot.getInstance().startIdentServer();
+            if (server != null) {
+                if (identServer) {
+                    MomoBot.getInstance().startIdentServer();
+                }
+                MomoBot.getInstance().connect(new IrcServerBean(server));
+                return;
             }
-            MomoBot.getInstance().connect(new IrcServerBean(server));
+            Utils.logError(Db.class, new Exception("pas de serveur"));
         } catch (final Exception e) {
             Utils.logError(Db.class, e);
         }

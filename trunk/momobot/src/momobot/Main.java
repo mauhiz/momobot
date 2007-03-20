@@ -17,7 +17,7 @@ public final class Main {
             DbUtils.loadDriver("com.mysql.jdbc.Driver");
             Db.loadPlayerDB();
             Db.loadMemoDB();
-            Db.loadBot(args[0]);
+            Db.loadMomoBot(args[0]);
         } catch (final Exception e) {
             Utils.logError(Main.class, e);
         }

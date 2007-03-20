@@ -28,7 +28,7 @@ public class Gather extends AChannelEvent {
     /**
      * le tag.
      */
-    private String                       tag;
+    private String                       tag       = "eule^";
     /**
      * l'ensemble de joueurs.
      */
@@ -40,7 +40,7 @@ public class Gather extends AChannelEvent {
      *            le channel
      */
     public Gather(final String channel1) {
-        this(channel1, "eule^");
+        super(channel1);
     }
 
     /**
@@ -87,7 +87,7 @@ public class Gather extends AChannelEvent {
         if (!haveServ()) {
             return "serv off :/";
         }
-        return "IP: " + this.serv.getIp() + ":" + this.serv.getPort()
+        return "IP: " + this.serv.getIp() + ':' + this.serv.getPort()
                 + " pass: " + this.serv.getPass();
     }
 
@@ -156,7 +156,7 @@ public class Gather extends AChannelEvent {
     @Override
     public final String status() {
         final StringBuffer temp = new StringBuffer();
-        temp.append(AColors.toColor("Gather " + this.team.size() + "/" + SIZE,
+        temp.append(AColors.toColor("Gather " + this.team.size() + '/' + SIZE,
                 AColors.BROWN));
         temp.append(" (start: ");
         temp.append(AColors.toColor(this.startTime, AColors.GREEN));

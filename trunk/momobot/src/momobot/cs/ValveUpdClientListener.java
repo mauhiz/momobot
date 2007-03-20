@@ -26,7 +26,7 @@ class ValveUpdClientListener extends MyRunnable {
         try {
             this.vuc.getChallenge();
             this.vuc.rconCmd("logaddress "
-                    + InetAddress.getLocalHost().getHostAddress() + " "
+                    + InetAddress.getLocalHost().getHostAddress() + ' '
                     + localPort);
         } catch (final Exception e) {
             Utils.logError(getClass(), e);

@@ -19,6 +19,7 @@ import momobot.event.channel.Pendu;
 import utils.Utils;
 
 /**
+ * Cette classe suit le design pattern Factory.
  * @author Administrator
  */
 public class MomoBot extends AIrcBot {
@@ -109,36 +110,6 @@ public class MomoBot extends AIrcBot {
     }
 
     /**
-     * @see ircbot.AIrcBot#onDeop(Channel, ircbot.IrcUser, java.lang.String)
-     * @param channel
-     *            le channel
-     */
-    @Override
-    protected final void onDeop(final Channel channel, final IrcUser user,
-            final String recipient) {
-        channel.removeOp(recipient);
-    }
-
-    /**
-     * @see ircbot.AIrcBot#onDeVoice(Channel, ircbot.IrcUser, java.lang.String)
-     * @param channel
-     *            le channel
-     */
-    @Override
-    protected final void onDeVoice(final Channel channel, final IrcUser user,
-            final String recipient) {
-        channel.removeVoice(recipient);
-    }
-
-    /**
-     * @see ircbot.AIrcBot#onDisconnect()
-     */
-    @Override
-    protected final void onDisconnect() {
-        Channel.removeAll();
-    }
-
-    /**
      * @see ircbot.AIrcBot#onFileTransferFinished(ircbot.dcc.DccFileTransfer,
      *      java.lang.Exception)
      * @param e
@@ -149,7 +120,7 @@ public class MomoBot extends AIrcBot {
     @Override
     public void onFileTransferFinished(final DccFileTransfer transfer,
             final Exception e) {
-        //
+        // rien
     }
 
     /**
@@ -159,7 +130,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     public void onIncomingChatRequest(final DccChat chat) {
-        //
+        // rien
     }
 
     /**
@@ -167,7 +138,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     public void onIncomingFileTransfer(final DccFileTransfer transfer) {
-        //
+        // rien
     }
 
     /**
@@ -179,7 +150,7 @@ public class MomoBot extends AIrcBot {
     @Override
     protected final void onInvite(final String targetNick, final IrcUser user,
             final String channel) {
-        //
+        // rien
     }
 
     /**
@@ -191,7 +162,6 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected final void onJoin(final Channel channel, final IrcUser user) {
-        channel.addUser(user);
         // j'évite de flooder en joinant clanwar
         if (this.autojoin.contains(channel)) {
             new Whois((QnetUser) user).execute();
@@ -199,56 +169,37 @@ public class MomoBot extends AIrcBot {
     }
 
     /**
-     * @see ircbot.AIrcBot#onKick(java.lang.String, ircbot.IrcUser,
-     *      java.lang.String, java.lang.String)
+     * @see ircbot.AIrcBot#onMessage(Channel, IrcUser, String)
      * @param channel
      *            le channel
      */
     @Override
-    protected final void onKick(final String channel, final IrcUser user,
-            final String recipientNick, final String reason) {
-        if (recipientNick.equalsIgnoreCase(getNick())) {
-            Channel.removeChannel(channel);
-            return;
-        }
-        Channel.getChannel(channel).removeUser(recipientNick);
-    }
-
-    /**
-     * @see ircbot.AIrcBot#onMessage(java.lang.String, ircbot.IrcUser,
-     *      java.lang.String)
-     * @param channel
-     *            le channel
-     */
-    @Override
-    protected final void onMessage(final String channel, final IrcUser user,
+    protected final void onMessage(final Channel channel, final IrcUser user,
             final String message) {
         Utils.log(getClass(), user.getNick() + channel + ":" + message);
         for (final Iterator < ATrigger > ite = ATrigger.getTriggers(); ite
                 .hasNext();) {
             final ATrigger t = ite.next();
             if (t.testPublic(message)) {
-                t.executePublicTrigger(user, channel, message);
+                t.executePublicTrigger(user, channel.getNom(), message);
                 return;
             }
         }
-        final Channel c = Channel.getChannel(channel);
-        if (!c.hasRunningEvent()) {
+        if (!channel.hasRunningEvent()) {
             return;
         }
         // le pendu
-        if (c.getEvent().getClass() != momobot.event.channel.Pendu.class) {
-            return;
-        }
-        final Pendu p = (Pendu) c.getEvent();
-        if (message.length() == 1) {
-            sendMessage(channel, p
-                    .submitLettre(message.toLowerCase().charAt(0)));
-            return;
-        }
-        final String msg = p.submitMot(message);
-        if (msg.length() > 0) {
-            sendMessage(channel, msg);
+        if (channel.getEvent() instanceof Pendu) {
+            final Pendu p = (Pendu) channel.getEvent();
+            if (message.length() == 1) {
+                sendMessage(channel.getNom(), p.submitLettre(message
+                        .toLowerCase().charAt(0)));
+                return;
+            }
+            final String msg = p.submitMot(message);
+            if (msg.length() > 0) {
+                sendMessage(channel.getNom(), msg);
+            }
         }
     }
 
@@ -277,7 +228,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected final void onNickChange(final IrcUser user, final String newNick) {
-       // rien
+        // rien
     }
 
     /**

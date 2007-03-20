@@ -37,6 +37,10 @@ public interface IIrcSpecialChars {
      */
     char   CR            = '\r';
     /**
+     * String vide.
+     */
+    String EMPTY         = "";
+    /**
      * .
      */
     char   LF            = '\n';

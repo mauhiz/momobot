@@ -2,9 +2,9 @@ package momobot.event.channel;
 
 import ircbot.AChannelEvent;
 import ircbot.IrcUser;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * @author Administrator
@@ -13,20 +13,20 @@ public class Pickup extends AChannelEvent {
     /**
      * le nombre de teams.
      */
-    private static final int        NBTEAMS = 2;
+    private static final int               NBTEAMS = 2;
     /**
      * les noms de teams.
      */
-    private final String[]          nom     = new String[NBTEAMS];
+    private final String[]                 nom     = new String[NBTEAMS];
     /**
      * la taille des teams.
      */
-    private final int               size    = 5;
+    private final int                      size    = 5;
     /**
      * les teams.
      */
     @SuppressWarnings("unchecked")
-    private final Set < IrcUser >[] team    = new HashSet[NBTEAMS];
+    private final Collection < IrcUser >[] team    = new HashSet[NBTEAMS];
 
     // private Server serv = null;
     /**
@@ -59,19 +59,19 @@ public class Pickup extends AChannelEvent {
                 for (int i = 0; i < NBTEAMS; i++) {
                     if (this.team[i].add(element)) {
                         return element + " ajouté a la team " + this.nom[i]
-                                + ".";
+                                + '.';
                     }
                 }
             }
             this.team[j].add(element);
-            return element + " ajouté a la team " + this.nom[j] + ".";
+            return element + " ajouté a la team " + this.nom[j] + '.';
         }
         if (j == k || j == NBTEAMS) {
-            return "Tu es deja inscrit dans la team " + this.nom[k] + ".";
+            return "Tu es deja inscrit dans la team " + this.nom[k] + '.';
         }
         this.team[k].remove(element);
         this.team[j].add(element);
-        return element + " deplacé vers la team " + this.nom[j] + ".";
+        return element + " deplacé vers la team " + this.nom[j] + '.';
     }
 
     /**
@@ -124,7 +124,7 @@ public class Pickup extends AChannelEvent {
             return element + ": tu n'étais pas inscrit.";
         }
         this.team[k].remove(element);
-        return element + " retire de la team " + this.nom[k] + ".";
+        return element + " retire de la team " + this.nom[k] + '.';
     }
 
     /**
@@ -142,16 +142,14 @@ public class Pickup extends AChannelEvent {
         }
         return temp.toString();
     }
-    /*
-     * public String getServ() { return "Serv: " + serv.getIp() + ":" +
-     * serv.getPort() + " - Pass: " + serv.pass; }
-     */
-    /*
-     * public void setServ(String ipay, String pass, String rcon) { serv =
-     * NetUtils.findServ(ipay); if (serv == null) return; serv.pass = pass;
-     * serv.setRcon(rcon); }
-     */
-    /*
-     * public void setServ(String ipay, String pass) { setServ(ipay, pass, ""); }
-     */
+    // public String getServ() { return "Serv: " + serv.getIp() + ":" +
+    // serv.getPort() + " - Pass: " + serv.pass; }
+    //
+    // public void setServ(String ipay, String pass, String rcon) {
+    // serv = NetUtils.findServ(ipay);
+    // if (serv == null) return; serv.pass = pass;
+    // serv.setRcon(rcon); }
+    //
+    // public void setServ(String ipay, String pass) { setServ(ipay, pass, "");
+    // }
 }
