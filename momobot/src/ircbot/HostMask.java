@@ -5,15 +5,15 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @author viper
  */
-public class HostMask {
+public class HostMask implements IIrcSpecialChars {
     /**
      * .
      */
-    private static final char TOKEN1 = '@';
+    private static final char AROBAZ = '@';
     /**
      * .
      */
-    private static final char TOKEN2 = '!';
+    private static final char EXCL   = '!';
 
     /**
      * @param test
@@ -40,16 +40,32 @@ public class HostMask {
     }
 
     /**
+     * @return un nouveau user
+     * @throws Exception ?
+     */
+    public final IrcUser createUser() throws Exception {
+        final int exclamation = this.hostmask.indexOf(EXCL);
+        final int at = this.hostmask.indexOf(AROBAZ);
+        if (exclamation > 0 && at > 0 && exclamation < at) {
+            String sourceNick = this.hostmask.substring(1, exclamation);
+            String sourceLogin = this.hostmask.substring(exclamation + 1, at);
+            String sourceHostname = this.hostmask.substring(at + 1);
+            return IrcUser.getUser(sourceNick, sourceLogin, sourceHostname);
+        }
+        throw new Exception("Invalid HostMask");
+    }
+
+    /**
      * @param user
      *            le user
      * @return si le user est matché par le mask
      */
     public final boolean match(final IrcUser user) {
         return localMatch(user.getLogin(), StringUtils.substringBefore(
-                this.hostmask, "" + TOKEN1))
+                this.hostmask, EMPTY + AROBAZ))
                 && localMatch(user.getLogin(), StringUtils.substringBetween(
-                        this.hostmask, "" + TOKEN1, "" + TOKEN2))
+                        this.hostmask, EMPTY + AROBAZ, EMPTY + EXCL))
                 && localMatch(user.getLogin(), StringUtils.substringAfter(
-                        this.hostmask, "" + TOKEN2));
+                        this.hostmask, EMPTY + EXCL));
     }
 }

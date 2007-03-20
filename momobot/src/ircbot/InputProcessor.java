@@ -74,21 +74,17 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
             this.bot.onServerPing(line.substring(PING.length() + 1));
             return;
         }
-        String sourceNick = "";
-        String sourceLogin = "";
-        String sourceHostname = "";
         StringTokenizer tokenizer = new StringTokenizer(line);
-        final String senderInfo = tokenizer.nextToken();
+        String senderInfo = tokenizer.nextToken();
+        IrcUser sender = null;
         String command = tokenizer.nextToken();
         String target = null;
-        if (senderInfo.startsWith(":")) {
-            final int exclamation = senderInfo.indexOf('!');
-            final int at = senderInfo.indexOf('@');
-            if (exclamation > 0 && at > 0 && exclamation < at) {
-                sourceNick = senderInfo.substring(1, exclamation);
-                sourceLogin = senderInfo.substring(exclamation + 1, at);
-                sourceHostname = senderInfo.substring(at + 1);
-            } else {
+        if (senderInfo.charAt(0) == COLON) {
+            senderInfo = senderInfo.substring(1);
+            HostMask hm = new HostMask(senderInfo);
+            try {
+                sender = hm.createUser();
+            } catch (Exception e) {
                 if (tokenizer.hasMoreTokens()) {
                     final String token = command;
                     int code = -1;
@@ -98,11 +94,10 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                                 token, senderInfo.length()) + 4, line.length());
                         this.bot.processServerResponse(code, response);
                         return;
-                    } catch (final NumberFormatException e) {
+                    } catch (final NumberFormatException e1) {
                         // This is not a server response.
                         // It must be a nick without login and hostname.
                         // (or maybe a NOTICE or suchlike from the server)
-                        sourceNick = senderInfo;
                         target = token;
                     }
                 } else {
@@ -113,40 +108,35 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
             }
         }
         command = command.toUpperCase();
-        if (sourceNick.startsWith(":")) {
-            sourceNick = sourceNick.substring(1);
-        }
         if (target == null) {
             target = tokenizer.nextToken();
         }
-        if (target.startsWith(":")) {
+        if (target.charAt(0) == COLON) {
             target = target.substring(1);
         }
-        final IrcUser user = IrcUser.getUser(sourceNick, sourceLogin,
-                sourceHostname);
         if (command.equals(PRIVMSG)) {
-            final int ctcp = line.indexOf("" + COLON + STX);
-            if (ctcp > 0 && line.endsWith("" + STX)) {
+            final int ctcp = line.indexOf(EMPTY + COLON + STX);
+            if (ctcp > 0 && line.endsWith(EMPTY + STX)) {
                 // begin CTCP
                 final String request = line.substring(ctcp + 2,
                         line.length() - 1);
                 if (request.equals(P_VERSION)) {
-                    this.bot.onVersion(user, target);
+                    this.bot.onVersion(sender, target);
                 } else if (request.startsWith(E_ACTION)) {
-                    this.bot.onAction(user, target, request.substring(E_ACTION
-                            .length() + 1));
+                    this.bot.onAction(sender, target, request
+                            .substring(E_ACTION.length() + 1));
                 } else if (request.startsWith(P_PING)) {
-                    this.bot.onPing(user, target, request.substring(P_PING
+                    this.bot.onPing(sender, target, request.substring(P_PING
                             .length() + 1));
                 } else if (request.equals(P_TIME)) {
-                    this.bot.onTime(user, target);
+                    this.bot.onTime(sender, target);
                 } else if (request.equals(P_FINGER)) {
-                    this.bot.onFinger(user, target);
+                    this.bot.onFinger(sender, target);
                 } else {
                     tokenizer = new StringTokenizer(request);
                     if (tokenizer.countTokens() >= 5
                             && tokenizer.nextToken().equals(E_DCC)) {
-                        if (!this.bot.getDccManager().process(user, request)) {
+                        if (!this.bot.getDccManager().process(sender, request)) {
                             this.bot.onUnknown(line);
                         }
                         return;
@@ -157,60 +147,61 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                 return;
             }
             if (Channel.isChannelName(target)) {
-                this.bot.onMessage(target.toLowerCase(), user, line
-                        .substring(line.indexOf("" + SPC + COLON) + 2));
+                this.bot.onMessage(Channel.getChannel(target), sender,
+                        StringUtils.substringAfter(line, EMPTY + SPC + COLON));
                 return;
             }
-            this.bot.onPrivateMessage(user, StringUtils.substringAfter(line, ""
-                    + SPC + COLON));
+            this.bot.onPrivateMessage(sender, StringUtils.substringAfter(line,
+                    EMPTY + SPC + COLON));
         } else if (command.equals(JOIN)) {
             // Someone is joining a channel.
             final Channel channel = Channel.getChannel(target);
-            this.bot.onJoin(channel, user);
+            this.bot.onJoin(channel, sender);
         } else if (command.equals(PART)) {
             final Channel channel = Channel.getChannel(target);
-            this.bot.onPart(channel, user);
+            this.bot.onPart(channel, sender);
         } else if (command.equals(NICK)) {
             // Somebody is changing their nick.
-            if (sourceNick.equals(this.bot.getNick())) {
+            if (senderInfo.equals(this.bot.getNick())) {
                 // Update our nick if it was us that changed nick.
                 this.bot.setNick(target);
             }
-            IrcUser.updateUser(user, target);
-            this.bot.onNickChange(user, target);
-        } else if (command.equals("NOTICE")) {
+            IrcUser.updateUser(sender, target);
+            this.bot.onNickChange(sender, target);
+        } else if (command.equals(NOTICE)) {
             // Someone is sending a notice.
-            this.bot.onNotice(user, target, line
-                    .substring(line.indexOf(" :") + 2));
-        } else if (command.equals("QUIT")) {
+            this.bot.onNotice(sender, target, StringUtils.substringAfter(line,
+                    EMPTY + SPC + COLON));
+        } else if (command.equals(QUIT)) {
             // Someone has quit from the IRC server.
-            if (sourceNick.equals(this.bot.getNick())) {
+            if (senderInfo.equals(this.bot.getNick())) {
                 this.bot.onDisconnect();
             } else {
-                this.bot.onQuit(user, line.substring(line.indexOf(" :") + 2));
+                this.bot.onQuit(sender, StringUtils.substringAfter(line, EMPTY
+                        + SPC + COLON));
             }
-        } else if (command.equals("KICK")) {
+        } else if (command.equals(KICK)) {
             // Somebody has been kicked from a channel.
             final String recipient = tokenizer.nextToken();
-            this.bot.onKick(target.toLowerCase(), user, recipient, line
-                    .substring(line.indexOf(" :") + 2));
-        } else if (command.equals("MODE")) {
+            this.bot.onKick(target.toLowerCase(), sender, recipient,
+                    StringUtils.substringAfter(line, EMPTY + SPC + COLON));
+        } else if (command.equals(MODE)) {
             // Somebody is changing the mode on a channel or user.
             String mode = line.substring(line.indexOf(target, 2)
                     + target.length() + 1);
-            if (mode.startsWith(":")) {
+            if (mode.charAt(0) == COLON) {
                 mode = mode.substring(1);
             }
-            this.bot.processMode(target.toLowerCase(), user, mode);
-        } else if (command.equals("TOPIC")) {
+            this.bot.processMode(target.toLowerCase(), sender, mode);
+        } else if (command.equals(TOPIC)) {
             // Someone is changing the topic.
-            this.bot.onTopic(target.toLowerCase(), line.substring(line
-                    .indexOf(" :") + 2), sourceNick,
-                    System.currentTimeMillis(), true);
-        } else if (command.equals("INVITE")) {
+            this.bot.onTopic(target.toLowerCase(), StringUtils.substringAfter(
+                    line, EMPTY + SPC + COLON), senderInfo, System
+                    .currentTimeMillis(), true);
+        } else if (command.equals(INVITE)) {
             // Somebody is inviting somebody else into a channel.
-            this.bot.onInvite(target.toLowerCase(), user, line.substring(line
-                    .indexOf(" :") + 2));
+            this.bot.onInvite(target.toLowerCase(), sender, StringUtils
+                    .substringAfter(line, EMPTY + SPC + COLON));
         } else {
             // If we reach this point, then we've found something that the
             // PircBot doesn't currently deal with.
@@ -282,13 +273,14 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                             this.bot.onConnect();
                             continue;
                         } else if (code.startsWith("5") || code.startsWith("4")) {
-                            Utils.logError(getClass(), new Exception("[" + code
-                                    + "] Could not log in : " + line));
+                            Utils.logError(getClass(), new Exception(EMPTY
+                                    + '[' + code + "] Could not log in : "
+                                    + line));
                             setRunning(false);
                             break;
                         } else if (Integer.parseInt(code) == ERR_NICKNAMEINUSE) {
                             this.tries++;
-                            this.bot.setNick(this.bot.getName() + this.tries);
+                            this.bot.setNick(this.bot.getMyName() + this.tries);
                             this.bot.send(NICK + this.bot.getNick());
                         }
                     }

@@ -4,6 +4,7 @@ import ircbot.dcc.DccChat;
 import ircbot.dcc.DccFileTransfer;
 import ircbot.dcc.DccManager;
 import ircbot.dcc.IDccSubCommands;
+import ircbot.ident.IdentServer;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -16,7 +17,10 @@ import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrTokenizer;
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+import sun.security.action.GetLongAction;
 import utils.NetUtils;
 import utils.Utils;
 
@@ -27,6 +31,10 @@ import utils.Utils;
  */
 public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
         IIrcSpecialChars, ICtcpCommands, IDccSubCommands {
+    /**
+     * le nom.
+     */
+    private static final String                    DEFAULT_NAME = "PircBot";
     /**
      * Les ports pour le DCC. Osef complètement, il est pas prévu que le bot
      * fasse des xdcc pour l'instant
@@ -50,16 +58,16 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
     /**
      * le login.
      */
-    private String                                 login        = "PircBot";
+    private String                                 myLogin      = "PircBot";
+    /**
+     * Mon nom, celui que je veux avoir comme nick.
+     */
+    private String                                 myName       = DEFAULT_NAME;
     /**
      * le nick que le bot a conscience d'avoir. Il peut parfois différer de son
      * nick réel en cas de désynchro.
      */
-    private String                                 myNick       = this.name;
-    /**
-     * le nom.
-     */
-    private String                                 name         = "PircBot";
+    private String                                 myNick       = EMPTY;
     /**
      * Mon thread qui me débarasse de ce que je dois dire.
      */
@@ -72,7 +80,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * une poubelle avec un topic temporaire dedans. Il faudrait que je trouve
      * plus élégant.
      */
-    private String                                 tempTopic    = "";
+    private String                                 tempTopic    = EMPTY;
     /**
      * une poubelle avec plein d'users.
      */
@@ -128,10 +136,10 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
             if (this.server.getPassword().length() > 0) {
                 send(PASS + SPC + this.server.getPassword());
             }
-            send(NICK + SPC + this.name);
-            send(USER + SPC + this.login.toLowerCase() + SPC + '8' + SPC + '*'
-                    + SPC + COLON + this.version);
-            this.myNick = this.name;
+            send(NICK + SPC + getMyName());
+            send(USER + SPC + this.myLogin.toLowerCase() + SPC + '8' + SPC
+                    + '*' + SPC + COLON + this.version);
+            this.myNick = getMyName();
         } catch (final Exception e) {
             Utils.logError(getClass(), e);
         }
@@ -262,12 +270,10 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
     }
 
     /**
-     * Gets the name of the PircBot. This is the name that will be used as as a
-     * nick when we try to join servers.
-     * @return The name of the PircBot.
+     * @return le myName
      */
-    public final String getName() {
-        return this.name;
+    public final String getMyName() {
+        return this.myName;
     }
 
     /**
@@ -339,7 +345,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      *            The nick of the user to kick.
      */
     public final void kick(final String channel, final String tempNick) {
-        kick(channel, tempNick, "");
+        kick(channel, tempNick, EMPTY);
     }
 
     /**
@@ -453,8 +459,9 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @param recipient
      *            The nick of the user that got 'deopped'.
      */
-    protected abstract void onDeop(Channel channel, IrcUser user,
-            String recipient);
+    protected void onDeop(Channel channel, IrcUser user, String recipient) {
+        channel.removeOp(recipient);
+    }
 
     /**
      * Called when a user (possibly us) gets voice status removed.
@@ -472,8 +479,9 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @param recipient
      *            The nick of the user that got 'devoiced'.
      */
-    protected abstract void onDeVoice(Channel channel, IrcUser user,
-            String recipient);
+    protected void onDeVoice(Channel channel, IrcUser user, String recipient) {
+        channel.removeVoice(recipient);
+    }
 
     /**
      * This method carries out the actions to be performed when the PircBot gets
@@ -495,6 +503,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      */
     protected void onDisconnect() {
         this.outputThread.setRunning(false);
+        Channel.removeAll();
     }
 
     /**
@@ -622,7 +631,9 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @param user
      *            le user
      */
-    protected abstract void onJoin(Channel channel, IrcUser user);
+    protected void onJoin(Channel channel, IrcUser user) {
+        channel.addUser(user);
+    }
 
     /**
      * This method is called whenever someone (possibly us) is kicked from any
@@ -639,8 +650,14 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @param reason
      *            The reason given by the user who performed the kick.
      */
-    protected abstract void onKick(String channel, IrcUser user,
-            String recipientNick, String reason);
+    protected void onKick(String channel, IrcUser user, String recipientNick,
+            String reason) {
+        if (recipientNick.equalsIgnoreCase(getNick())) {
+            Channel.removeChannel(channel);
+            return;
+        }
+        Channel.getChannel(channel).removeUser(recipientNick);
+    }
 
     /**
      * This method is called whenever a message is sent to a channel.
@@ -654,7 +671,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @param message
      *            The actual message sent to the channel.
      */
-    protected abstract void onMessage(String channel, IrcUser user,
+    protected abstract void onMessage(Channel channel, IrcUser user,
             String message);
 
     /**
@@ -1454,18 +1471,19 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
                 final String setBy = tokenizer.nextToken();
                 final long date = Long.parseLong(tokenizer.nextToken()) * 1000;
                 onTopic(channel, this.tempTopic, setBy, date, false);
-                this.tempTopic = "";
+                this.tempTopic = EMPTY;
                 break;
             case RPL_NAMREPLY:
                 // This is a list of nicks in a channel that we've just joined.
-                final int channelEndIndex = response.indexOf("" + SPC + COLON);
+                final int channelEndIndex = response.indexOf(EMPTY + SPC
+                        + COLON);
                 response.substring(response.lastIndexOf(SPC,
                         channelEndIndex - 1) + 1, channelEndIndex);
-                tokenizer = new StringTokenizer(response.substring(response
-                        .indexOf("" + SPC + COLON) + 2));
+                tokenizer = new StringTokenizer(StringUtils.substringAfter(
+                        response, EMPTY + SPC + COLON));
                 while (tokenizer.hasMoreTokens()) {
                     String tempNick = tokenizer.nextToken();
-                    String prefix = "";
+                    String prefix = EMPTY;
                     if (tempNick.charAt(0) == PREFIX_OP) {
                         // User is an operator in this channel.
                         prefix += PREFIX_OP;
@@ -1481,12 +1499,12 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
                 // This is the end of a NAMES list, so we know that we've got
                 // the full list of users in the channel that we just joined.
                 channel = response.substring(response.indexOf(SPC) + 1,
-                        response.indexOf("" + SPC + COLON));
+                        response.indexOf(EMPTY + SPC + COLON));
                 onUserList(channel, this.tempUsers.entrySet().iterator());
                 this.tempUsers.clear();
                 break;
             default:
-                Utils.log(getClass(), "[" + code + "]" + response);
+                Utils.log(getClass(), EMPTY + '[' + code + ']' + response);
                 return;
         }
         onServerResponse(code, response);
@@ -1498,7 +1516,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * server disconnects us.
      */
     public final void quitServer() {
-        quitServer("");
+        quitServer(EMPTY);
     }
 
     /**
@@ -1619,7 +1637,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      *            The new login of the Bot.
      */
     public final void setLogin(final String login1) {
-        this.login = login1;
+        this.myLogin = login1;
     }
 
     /**
@@ -1640,18 +1658,11 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
     }
 
     /**
-     * Sets the name of the bot, which will be used as its nick when it tries to
-     * join an IRC server. This should be set before joining any servers,
-     * otherwise the default nick will be used. You would typically call this
-     * method from the constructor of the class that extends PircBot.
-     * <p>
-     * The changeNick method should be used if you wish to change your nick when
-     * you are connected to a server.
-     * @param name1
-     *            The new name of the Bot.
+     * @param name
+     *            le myName à régler
      */
-    public final void setName(final String name1) {
-        this.name = name1;
+    public final void setMyName(final String name) {
+        this.myName = name;
     }
 
     /**
@@ -1707,7 +1718,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @since PircBot 0.9c
      */
     public final void startIdentServer() {
-        new IdentServer(this.login).execute();
+        new IdentServer(this.myLogin).execute();
     }
 
     /**

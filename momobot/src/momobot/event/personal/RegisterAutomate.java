@@ -59,7 +59,7 @@ public class RegisterAutomate extends APersonalEvent {
                     }
                     if (((QnetUser) getUser()).getQnetAuth().length() == 0) {
                         MomoBot.getInstance().sendMessage(getUser().getNick(),
-                                "Tu getInstance()s authe sur Qnet.");
+                                "Tu es authe sur Qnet.");
                         MomoBot
                                 .getInstance()
                                 .sendMessage(getUser().getNick(),
@@ -69,7 +69,7 @@ public class RegisterAutomate extends APersonalEvent {
                     }
                     MomoBot.getInstance().sendMessage(
                             getUser().getNick(),
-                            "Ton auth Qnet est "
+                            "Ton auth Qnet est: "
                                     + ((QnetUser) getUser()).getQnetAuth());
                     if (Db.authIsKnown(((QnetUser) getUser()).getQnetAuth())) {
                         MomoBot.getInstance().sendMessage(getUser().getNick(),
@@ -77,7 +77,7 @@ public class RegisterAutomate extends APersonalEvent {
                         MomoBot
                                 .getInstance()
                                 .sendMessage(getUser().getNick(),
-                                        "Pour changer de steamid, getInstance()z par $unregister");
+                                        "Pour changer de steamid, commencez par $unregister");
                         setRunning(false);
                         break;
                     }

@@ -48,7 +48,7 @@ public class MassHlTrigger extends ATrigger {
             // no self
             if (nextIrcUser.equals(user)
                     || nextIrcUser.getNick().equalsIgnoreCase(
-                            MomoBot.getInstance().getName())) {
+                            MomoBot.getInstance().getNick())) {
                 continue;
             }
             msg.append(' ').append(nextIrcUser);

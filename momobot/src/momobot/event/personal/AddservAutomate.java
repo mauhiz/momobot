@@ -4,6 +4,7 @@ import ircbot.APersonalEvent;
 import ircbot.IrcUser;
 
 /**
+ * TODO : le faire.
  * @author Administrator
  */
 public class AddservAutomate extends APersonalEvent {
