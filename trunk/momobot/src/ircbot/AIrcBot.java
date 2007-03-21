@@ -19,8 +19,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrTokenizer;
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-import sun.security.action.GetLongAction;
 import utils.NetUtils;
 import utils.Utils;
 
