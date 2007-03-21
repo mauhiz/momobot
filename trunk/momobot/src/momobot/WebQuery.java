@@ -3,9 +3,9 @@ package momobot;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
@@ -89,7 +89,7 @@ public class WebQuery {
      * @return un iterateur sur les resultats
      */
     public final Iterator < String > results() {
-        final Set < String > results = new HashSet < String >(this.numResult);
+        final Collection < String > results = new HashSet < String >(this.numResult);
         String page;
         try {
             final GetMethod gm = new GetMethod(this.url.toString());
