@@ -1,11 +1,12 @@
 package momobot.event.channel;
 
-import ircbot.AColors;
 import ircbot.AChannelEvent;
+import ircbot.AColors;
 import ircbot.IrcUser;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import org.apache.log4j.Logger;
 import momobot.cs.Server;
 import utils.Utils;
 
@@ -14,26 +15,34 @@ import utils.Utils;
  */
 public class Gather extends AChannelEvent {
     /**
+     * un générateur aléatoire.
+     */
+    private static final Random    ALEA      = new Random();
+    /**
+     * logger.
+     */
+    private static final Logger LOG = Logger.getLogger(Gather.class);
+    /**
      * La taille d'un gather.
      */
-    private static final int             SIZE      = 5;
+    private static final int       SIZE      = 5;
     /**
      * Un serveur?
      */
-    private final Server                 serv      = null;
+    private Server                 serv      = null;
     /**
      * le temps où je commence.
      */
-    private final String                 startTime = Utils.getTimeStamp();
+    private final String           startTime = Utils.getTimeStamp();
     /**
      * le tag.
      */
-    private String                       tag       = "eule^";
+    private String                 tag       = "eule^";
+
     /**
      * l'ensemble de joueurs.
      */
-    private final Collection < IrcUser > team      = new HashSet < IrcUser >(
-                                                           SIZE);
+    private final List < IrcUser > team      = new ArrayList < IrcUser >(SIZE);
 
     /**
      * @param channel1
@@ -120,23 +129,16 @@ public class Gather extends AChannelEvent {
         }
         return element + ": tu n'étais pas inscrit tfaçon.";
     }
-
     /**
      * @return un pauvre mec pris au hasard
      */
     public final String roll() {
-        if (this.team.size() == 0) {
+        if (this.team.isEmpty()) {
             return "Personne n'est inscrit au gather.";
         }
-        final double s = Math.floor(Math.random() * this.team.size());
-        final Iterator < IrcUser > ite = this.team.iterator();
-        for (int i = 0; i < s; i++) {
-            if (!ite.hasNext()) {
-                break;
-            }
-            ite.next();
-        }
-        return "Plouf, plouf, ce sera " + ite.next() + " qui ira seek!";
+        return "Plouf, plouf, ce sera "
+                + this.team.get(ALEA.nextInt(this.team.size()))
+                + " qui ira seek!";
     }
 
     /**
@@ -146,7 +148,9 @@ public class Gather extends AChannelEvent {
      */
     public final String setTag(final String string) {
         this.tag = string;
-        Utils.log(getClass(), "Nouveau tag = " + this.tag);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Nouveau tag = " + this.tag);
+        }
         return "Nouveau tag : " + this.tag;
     }
 
@@ -163,7 +167,7 @@ public class Gather extends AChannelEvent {
         temp.append(") (tag: ");
         temp.append(AColors.toColor(this.tag, AColors.RED));
         temp.append(") ");
-        if (this.team.size() == 0) {
+        if (this.team.isEmpty()) {
             return temp.toString();
         }
         for (final IrcUser ircUser : this.team) {

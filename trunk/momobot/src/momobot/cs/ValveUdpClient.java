@@ -5,19 +5,23 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
-import java.util.StringTokenizer;
 import momobot.Db;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.commons.net.DatagramSocketClient;
 import org.apache.commons.net.DefaultDatagramSocketFactory;
 import org.apache.commons.net.io.Util;
-import utils.Utils;
+import org.apache.log4j.Logger;
 
 /**
  * @author viper
  */
 class ValveUdpClient extends DatagramSocketClient {
+    /**
+     * logger.
+     */
+    private static final Logger    LOG        = Logger
+                                                      .getLogger(ValveUdpClient.class);
     /**
      * requete!
      */
@@ -55,7 +59,7 @@ class ValveUdpClient extends DatagramSocketClient {
     /**
      * ah, mon écouteur préféré.
      */
-    private ValveUpdClientListener vucl       = null;
+    private ValveUdpClientListener vucl       = null;
 
     /**
      * @param server1
@@ -105,7 +109,7 @@ class ValveUdpClient extends DatagramSocketClient {
         if (StringUtils.isEmpty(this.rcon)) {
             throw new Exception("pas de rcon défini");
         }
-        this.vucl = new ValveUpdClientListener(this);
+        this.vucl = new ValveUdpClientListener(this);
         this.vucl.execute();
     }
 
@@ -123,25 +127,31 @@ class ValveUdpClient extends DatagramSocketClient {
             return;
         }
         if (s.equals("1Bad rcon_password.")) {
-            Utils.logError(getClass(), new Exception("mauvais rcon"));
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("mauvais rcon");
+            }
             unsetRcon();
             return;
         }
         if (s.equals("9Bad challenge.")) {
-            Utils.logError(getClass(), new Exception("mauvais challenge"));
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("mauvais challenge");
+            }
             this.challenge = "";
             return;
         }
         s = s.substring(1);
-        // reponse au status
+        /* réponse au status */
         if (s.startsWith("hostname")) {
             processStatus(s);
             return;
         }
-        // cvar quelconque. Forme : "sv_restart" "1"
+        /* cvar quelconque. Forme : "sv_restart" "1" */
         if (s.startsWith("\"")) {
             final String[] pair = StringUtils.split(s, '"');
-            Utils.log(getClass(), "CVAR : " + pair[0] + " = " + pair[2]);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("CVAR : " + pair[0] + " = " + pair[2]);
+            }
         }
     }
 
@@ -150,7 +160,9 @@ class ValveUdpClient extends DatagramSocketClient {
      *            le log à étudier
      */
     private void processLog(final String s) {
-        Utils.log(getClass(), s);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(s);
+        }
         if (s.charAt(0) != '"') {
             return;
         }
@@ -163,8 +175,11 @@ class ValveUdpClient extends DatagramSocketClient {
         String action = temp.substring(temp.indexOf('"') + 2);
         if (action.startsWith("say_team") && Db.isMaster(steamid)) {
             action = action.substring(10, action.lastIndexOf('"'));
-            Utils.log(getClass(), playerName + " (" + steamid + ") orders me :"
-                    + action);
+            if (LOG.isInfoEnabled()) {
+                LOG
+                        .info(playerName + " (" + steamid + ") orders me :"
+                                + action);
+            }
             if (action.equals("!rs")) {
                 this.server.svRestart(1);
                 return;
@@ -189,10 +204,13 @@ class ValveUdpClient extends DatagramSocketClient {
      *            le message de status
      */
     private void processStatus(final String status) {
-        Utils.log(getClass(), "Status");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Status");
+        }
         if (status.length() < 25) {
-            Utils.logError(getClass(),
-                    new Exception("erreur status trop court"));
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(new Exception("erreur status trop court"));
+            }
             return;
         }
         final StrTokenizer lignes = new StrTokenizer(status);
@@ -230,7 +248,7 @@ class ValveUdpClient extends DatagramSocketClient {
             }
             // TODO : ajouter le traitement des joueurs.
             line = line.substring(2);
-            final StringTokenizer st3 = new StringTokenizer(line);
+            final StrTokenizer st3 = new StrTokenizer(line);
             st3.nextToken(); // numero de joueur
             String playernick = st3.nextToken(); // nom du joueur
             playernick = playernick.substring(1, playernick.length() - 1);
@@ -249,14 +267,16 @@ class ValveUdpClient extends DatagramSocketClient {
      */
     void rconCmd(final String cmd) {
         // antiban
-        if (this.rcon.equals("")) {
-            Utils.logError(getClass(), new Exception("Pas de rcon défini"));
+        if (this.rcon.isEmpty()) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Pas de rcon défini");
+            }
             return;
         }
-        if (this.challenge.equals("")) {
-            Utils
-                    .logError(getClass(), new Exception(
-                            "Pas de challenge défini"));
+        if (this.challenge.isEmpty()) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Pas de challenge défini");
+            }
             return;
         }
         if (this._socket_ == null) {
@@ -264,7 +284,9 @@ class ValveUdpClient extends DatagramSocketClient {
                 this._socket_ = new DefaultDatagramSocketFactory()
                         .createDatagramSocket();
             } catch (final SocketException e) {
-                e.printStackTrace();
+                if (LOG.isErrorEnabled()) {
+                    LOG.error(e, e);
+                }
                 return;
             }
         }
@@ -275,7 +297,9 @@ class ValveUdpClient extends DatagramSocketClient {
                     this.sendBuf.length, this.server.getIpay());
             this._socket_.send(sendPacket);
         } catch (final IOException e) {
-            Utils.logError(getClass(), e);
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e, e);
+            }
         }
     }
 

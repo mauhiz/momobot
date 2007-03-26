@@ -6,13 +6,17 @@ import java.util.List;
 import java.util.Random;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import utils.MyStringUtils;
-import utils.Utils;
 
 /**
  * @author Administrator
  */
 public class Pendu extends AChannelEvent {
+    /**
+     * logger.
+     */
+    private static final Logger    LOG        = Logger.getLogger(Pendu.class);
     /**
      * un générateur de nombres aléatoires.
      */
@@ -63,7 +67,7 @@ public class Pendu extends AChannelEvent {
      */
     private static String getNextMot() {
         final String mot = dico.get(ALEA.nextInt(dicosize));
-        // pas de mots composés
+        /* pas de mots composés */
         if (mot.indexOf("-") > 0) {
             return getNextMot();
         }
@@ -106,7 +110,9 @@ public class Pendu extends AChannelEvent {
                 dico = FileUtils.readLines(new File("dico.txt"));
                 dicosize = dico.size();
             } catch (final Exception e) {
-                Utils.logError(getClass(), e);
+                if (LOG.isErrorEnabled()) {
+                    LOG.error(e, e);
+                }
             }
         }
         this.solutionPure = getNextMot();
@@ -116,7 +122,9 @@ public class Pendu extends AChannelEvent {
         for (int k = 0; k < this.mot.length(); k++) {
             this.devinage.append(UNDERSCORE);
         }
-        Utils.log(getClass(), this.solutionPure);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(this.solutionPure);
+        }
     }
 
     /**
@@ -165,7 +173,7 @@ public class Pendu extends AChannelEvent {
             if (present) {
                 penduMsg.append("présente! ");
                 if (this.devinage.equals(this.solutionPure)) {
-                    // arreter le pendu
+                    /* arrêter le pendu */
                     stop();
                     return penduMsg.append("Bravo! Vous avez trouvé le mot ")
                             .append(this.solutionPure).append('.').toString();
@@ -176,7 +184,7 @@ public class Pendu extends AChannelEvent {
             final int v = this.vies - this.failures++;
             switch (v) {
                 case 0:
-                    // arreter le pendu
+                    /* arrêter le pendu */
                     stop();
                     return penduMsg.append("Vous avez perdu! le mot était: ")
                             .append(this.solutionPure).toString();
@@ -203,7 +211,7 @@ public class Pendu extends AChannelEvent {
             return "";
         }
         if (test.equals(this.solution) || test.equals(this.solutionPure)) {
-            // arreter le pendu
+            /* arrêter le pendu */
             stop();
             return "Bravo! Vous avez trouvé le mot " + this.solutionPure;
         }
@@ -213,9 +221,8 @@ public class Pendu extends AChannelEvent {
             case 0:
                 stop();
                 return penduMsg + "Vous avez perdu! le mot était: "
-                        + this.solutionPure; // arreter
-                // le
-                // pendu
+                        + this.solutionPure;
+                /* arrêter le pendu */
             case 1:
                 return penduMsg + "Plus qu'un essai!";
             default:

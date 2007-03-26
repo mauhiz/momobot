@@ -28,15 +28,14 @@ public class HelpTrigger extends ATrigger {
     @Override
     public final void executePrivateTrigger(final IrcUser user,
             final String message) {
-        final Iterator < ATrigger > ite = ATrigger.getTriggers();
-        String msg = "Commandes : ";
-        while (ite.hasNext()) {
-            final ATrigger t = ite.next();
+        StringBuffer msg = new StringBuffer("Commandes : ");
+        for (ATrigger t : ATrigger.getTriggers()) {
             if (t.isPrive()) {
-                msg += t.getTriggerText() + " ";
+                msg.append(t.getTriggerText());
+                msg.append(' ');
             }
         }
-        MomoBot.getInstance().sendMessage(user.getNick(), msg);
+        MomoBot.getInstance().sendMessage(user.getNick(), msg.toString());
     }
 
     /**
@@ -46,14 +45,13 @@ public class HelpTrigger extends ATrigger {
     @Override
     public final void executePublicTrigger(final IrcUser user,
             final String channel, final String message) {
-        final Iterator < ATrigger > ite = ATrigger.getTriggers();
-        String msg = "Commandes : ";
-        while (ite.hasNext()) {
-            final ATrigger t = ite.next();
+        StringBuffer msg = new StringBuffer("Commandes : ");
+        for (ATrigger t : ATrigger.getTriggers()) {
             if (t.isPublic()) {
-                msg += t.getTriggerText() + " ";
+                msg.append(t.getTriggerText());
+                msg.append(' ');
             }
         }
-        MomoBot.getInstance().sendNotice(user, msg);
+        MomoBot.getInstance().sendNotice(user, msg.toString());
     }
 }

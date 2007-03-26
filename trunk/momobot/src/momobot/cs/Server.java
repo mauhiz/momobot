@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import utils.Utils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Administrator
@@ -15,31 +15,35 @@ public class Server {
     /**
      * indique que le serveur est dédié.
      */
-    static final char DEDICATED  = 'd';
+    static final char           DEDICATED  = 'd';
     /**
      * moteur de HL 1.
      */
-    static final char GOLDSOURCE = 'm';
+    static final char           GOLDSOURCE = 'm';
     /**
      * indique que le serveur est un hltv.
      */
-    static final char HLTV       = 'p';
+    static final char           HLTV       = 'p';
     /**
      * indique que le serveur est sous linux.
      */
-    static final char LINUX      = 'l';
+    static final char           LINUX      = 'l';
     /**
      * indique que le serveur est listen.
      */
-    static final char LISTEN     = 'l';
+    static final char           LISTEN     = 'l';
+    /**
+     * logger.
+     */
+    private static final Logger LOG        = Logger.getLogger(Server.class);
     /**
      * moteur source.
      */
-    static final char SOURCE     = 'I';
+    static final char           SOURCE     = 'I';
     /**
      * indique que le serveur est sous windows.
      */
-    static final char WINDOWS    = 'w';
+    static final char           WINDOWS    = 'w';
 
     /**
      * @param bb
@@ -171,83 +175,153 @@ public class Server {
                     TimeUnit.NANOSECONDS);
             result.position(Integer.SIZE / Byte.SIZE);
             final char type = (char) result.get();
-            System.out.println(type);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(Character.toString(type));
+            }
             if (type == GOLDSOURCE) {
                 final String ip = getNextString(result);
-                Utils.log(getClass(), ip);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(ip);
+                }
                 this.name = getNextString(result);
-                Utils.log(getClass(), this.name);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(this.name);
+                }
                 this.map = getNextString(result);
-                Utils.log(getClass(), this.map);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(this.map);
+                }
                 final String gameDir = getNextString(result);
-                Utils.log(getClass(), gameDir);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(gameDir);
+                }
                 final String gameDesc = getNextString(result);
-                Utils.log(getClass(), gameDesc);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(gameDesc);
+                }
                 this.playerCount = result.get();
-                System.out.println(this.playerCount);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Integer.toString(this.playerCount));
+                }
                 this.maxPlayers = result.get();
-                System.out.println(this.maxPlayers);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Integer.toString(this.maxPlayers));
+                }
                 final short version = result.get();
-                System.out.println(version);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Integer.toString(version));
+                }
                 final char dedicated = (char) result.get();
-                System.out.println(dedicated);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Integer.toString(dedicated));
+                }
                 final char os = (char) result.get();
-                System.out.println(os);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Character.toString(os));
+                }
                 final boolean pw = result.get() == 0x1;
-                System.out.println(pw);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Boolean.toString(pw));
+                }
                 final boolean isMod = result.get() == 0x1;
-                System.out.println(isMod);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Boolean.toString(isMod));
+                }
                 if (isMod) {
                     final String urlInfo = getNextString(result);
-                    Utils.log(getClass(), urlInfo);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(urlInfo);
+                    }
                     final String urlDl = getNextString(result);
-                    Utils.log(getClass(), urlDl);
-                    result.get(); // byte nul
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(urlDl);
+                    }
+                    result.get(); /* byte nul */
                     final int modVersion = result.getInt();
-                    System.out.println(modVersion);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(Integer.toString(modVersion));
+                    }
                     final int modSize = result.getInt();
-                    System.out.println(modSize);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(Integer.toString(modSize));
+                    }
                     final boolean svOnly = result.get() == 0x1;
-                    System.out.println(svOnly);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(Boolean.toString(svOnly));
+                    }
                     final boolean clDll = result.get() == 0x1;
-                    System.out.println(clDll);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(Boolean.toString(clDll));
+                    }
                 }
                 final boolean secure = result.get() == 0x1;
-                System.out.println(secure);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Boolean.toString(secure));
+                }
                 final short nbBots = result.get();
-                System.out.println(nbBots);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Integer.toString(nbBots));
+                }
             } else if (type == SOURCE) {
                 final short version = result.get();
-                System.out.println(version);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Integer.toString(version));
+                }
                 this.name = getNextString(result);
-                Utils.log(getClass(), this.name);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(this.name);
+                }
                 this.map = getNextString(result);
-                Utils.log(getClass(), this.map);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(this.map);
+                }
                 final String gameDir = getNextString(result);
-                Utils.log(getClass(), gameDir);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(gameDir);
+                }
                 final String gameDesc = getNextString(result);
-                Utils.log(getClass(), gameDesc);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(gameDesc);
+                }
                 final short appId = result.getShort();
-                System.out.println(appId);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Integer.toString(appId));
+                }
                 this.playerCount = result.get();
                 this.maxPlayers = result.get();
                 final short nbBots = result.get();
-                System.out.println(nbBots);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Integer.toString(nbBots));
+                }
                 final char dedicated = (char) result.get();
-                System.out.println(dedicated);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Character.toString(dedicated));
+                }
                 final char os = (char) result.get();
-                System.out.println(os);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Character.toString(os));
+                }
                 final boolean pw = result.get() == 0x1;
-                System.out.println(pw);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Boolean.toString(pw));
+                }
                 final boolean secure = result.get() == 0x1;
-                System.out.println(secure);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(Boolean.toString(secure));
+                }
                 final String gameVersion = getNextString(result);
-                Utils.log(getClass(), gameVersion);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(gameVersion);
+                }
             } else {
-                Utils.log(getClass(), "Serveur non Goldsource (type = " + type
-                        + ")");
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Serveur non Goldsource (type = " + type + ")");
+                }
             }
         } catch (final IOException ioe) {
+            if (LOG.isErrorEnabled()) {
+                LOG.error(ioe, ioe);
+            }
             return;
         }
     }
