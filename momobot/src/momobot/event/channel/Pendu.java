@@ -108,7 +108,8 @@ public class Pendu extends AChannelEvent {
         super(channel1);
         if (dico == null) {
             try {
-                dico = FileUtils.readLines(new File("dico.txt"));
+                dico = FileUtils.readLines(new File("res" + File.separatorChar
+                        + "dico.txt"));
                 dicosize = dico.size();
             } catch (final Exception e) {
                 if (LOG.isErrorEnabled()) {
