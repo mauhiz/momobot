@@ -27,7 +27,7 @@ public class PickupTrigger extends ATrigger {
     @Override
     public final void executePrivateTrigger(final IrcUser user,
             final String message) {
-        // rien
+        /* rien */
     }
 
     /**
@@ -39,9 +39,9 @@ public class PickupTrigger extends ATrigger {
             final String channel, final String message) {
         final Channel c = Channel.getChannel(channel);
         if (!c.hasRunningEvent()) {
-            new Pickup(channel);
+            new Pickup(c);
             MomoBot.getInstance().sendMessage(channel,
-                    "Pickup lance par " + user);
+                    "Pickup lancé par " + user);
             return;
         }
         final AChannelEvent e = c.getEvent();

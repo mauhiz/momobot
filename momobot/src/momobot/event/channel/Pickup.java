@@ -1,6 +1,7 @@
 package momobot.event.channel;
 
 import ircbot.AChannelEvent;
+import ircbot.Channel;
 import ircbot.IrcUser;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +13,7 @@ public class Pickup extends AChannelEvent {
     /**
      * le nombre de teams.
      */
-    private static final int               NBTEAMS = 2;
+    private static final short             NBTEAMS = 2;
     /**
      * les noms de teams.
      */
@@ -20,7 +21,7 @@ public class Pickup extends AChannelEvent {
     /**
      * la taille des teams.
      */
-    private final int                      size    = 5;
+    private final short                    size    = 5;
     /**
      * les teams.
      */
@@ -32,7 +33,7 @@ public class Pickup extends AChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Pickup(final String channel1) {
+    public Pickup(final Channel channel1) {
         super(channel1);
         for (int k = 0; k < NBTEAMS; k++) {
             this.nom[k] = "" + (char) ('a' + k);

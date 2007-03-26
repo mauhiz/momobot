@@ -121,8 +121,8 @@ public class Channel implements IIrcSpecialChars {
     /**
      * @return la liste des users (sans prefixe)
      */
-    public final Iterator < IrcUser > getAllUsers() {
-        return this.users.keySet().iterator();
+    public final Iterable < IrcUser > getAllUsers() {
+        return this.users.keySet();
     }
 
     /**
@@ -289,5 +289,14 @@ public class Channel implements IIrcSpecialChars {
      */
     public final void unSetKey() {
         this.key = "";
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     * @return le nom du channel
+     */
+    @Override
+    public final String toString() {
+        return this.nom;
     }
 }

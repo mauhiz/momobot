@@ -39,7 +39,7 @@ public class GatherTrigger extends ATrigger {
             final String channel, final String message) {
         final Channel c = Channel.getChannel(channel);
         if (!c.hasRunningEvent()) {
-            (new Gather(channel)).add(user);
+            (new Gather(c)).add(user);
             MomoBot.getInstance().sendMessage(channel,
                     "Gather lancé par " + user);
             return;
@@ -49,7 +49,7 @@ public class GatherTrigger extends ATrigger {
             MomoBot.getInstance().sendMessage(
                     channel,
                     "Un " + e.getClass().getSimpleName()
-                            + " est déjà lancé sur " + channel);
+                            + " est déjà lancé sur " + c);
         }
     }
 }

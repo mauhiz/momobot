@@ -1,6 +1,7 @@
 package momobot.event.channel;
 
 import ircbot.AChannelEvent;
+import ircbot.Channel;
 import java.io.File;
 import java.util.List;
 import java.util.Random;
@@ -68,7 +69,7 @@ public class Pendu extends AChannelEvent {
     private static String getNextMot() {
         final String mot = dico.get(ALEA.nextInt(dicosize));
         /* pas de mots composés */
-        if (mot.indexOf("-") > 0) {
+        if (mot.indexOf('-') > 0) {
             return getNextMot();
         }
         return mot;
@@ -103,7 +104,7 @@ public class Pendu extends AChannelEvent {
      *            le channel
      */
     @SuppressWarnings("unchecked")
-    public Pendu(final String channel1) {
+    public Pendu(final Channel channel1) {
         super(channel1);
         if (dico == null) {
             try {

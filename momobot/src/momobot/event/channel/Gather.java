@@ -2,12 +2,13 @@ package momobot.event.channel;
 
 import ircbot.AChannelEvent;
 import ircbot.AColors;
+import ircbot.Channel;
 import ircbot.IrcUser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.apache.log4j.Logger;
 import momobot.cs.Server;
+import org.apache.log4j.Logger;
 import utils.Utils;
 
 /**
@@ -21,11 +22,11 @@ public class Gather extends AChannelEvent {
     /**
      * logger.
      */
-    private static final Logger LOG = Logger.getLogger(Gather.class);
+    private static final Logger    LOG       = Logger.getLogger(Gather.class);
     /**
      * La taille d'un gather.
      */
-    private static final int       SIZE      = 5;
+    private static final short     SIZE      = 5;
     /**
      * Un serveur?
      */
@@ -38,7 +39,6 @@ public class Gather extends AChannelEvent {
      * le tag.
      */
     private String                 tag       = "eule^";
-
     /**
      * l'ensemble de joueurs.
      */
@@ -48,7 +48,7 @@ public class Gather extends AChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Gather(final String channel1) {
+    public Gather(final Channel channel1) {
         super(channel1);
     }
 
@@ -58,7 +58,7 @@ public class Gather extends AChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Gather(final String channel1, final String tag1) {
+    public Gather(final Channel channel1, final String tag1) {
         super(channel1);
         this.tag = tag1;
     }
@@ -129,6 +129,7 @@ public class Gather extends AChannelEvent {
         }
         return element + ": tu n'étais pas inscrit tfaçon.";
     }
+
     /**
      * @return un pauvre mec pris au hasard
      */
