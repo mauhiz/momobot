@@ -28,13 +28,13 @@ public abstract class Utils extends Calendar {
     /**
      * mon format d'heure local.
      */
-    private static final DateFormat              TIME;
+    private static final DateFormat              MY_TIME;
     /**
      * remplit les jours de la semaine.
      */
     static {
         MY_DATE = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.FRANCE);
-        TIME = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.FRANCE);
+        MY_TIME = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.FRANCE);
         JOURS = new HashMap < String, Integer >(DAYS_PER_WEEK);
         JOURS.put("lundi", Integer.valueOf(MONDAY));
         JOURS.put("mardi", Integer.valueOf(TUESDAY));
@@ -89,28 +89,6 @@ public abstract class Utils extends Calendar {
      */
     public static String getTimeStamp() {
         final Date d = new Date(System.currentTimeMillis());
-        return TIME.format(d);
-    }
-
-    /**
-     * @param c
-     *            la classe qui a un message à faire passer
-     * @param msg
-     *            ledit message
-     */
-    public static void log(final Class < ? > c, final String msg) {
-        System.out.println('[' + getTimeStamp() + "] [" + c.getSimpleName()
-                + "] " + msg);
-    }
-
-    /**
-     * @param c
-     *            la classe qui a merdé
-     * @param t
-     *            sa merde
-     */
-    public static void logError(final Class < ? > c, final Throwable t) {
-        log(c, t.getMessage());
-        t.printStackTrace();
+        return MY_TIME.format(d);
     }
 }
