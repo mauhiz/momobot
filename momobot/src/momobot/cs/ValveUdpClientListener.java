@@ -3,23 +3,28 @@ package momobot.cs;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Random;
+import org.apache.log4j.Logger;
 import utils.MyRunnable;
-import utils.Utils;
 
 /**
  * @author viper
  */
-class ValveUpdClientListener extends MyRunnable {
+class ValveUdpClientListener extends MyRunnable {
+    /**
+     * logger.
+     */
+    private static final Logger LOG = Logger
+                                            .getLogger(ValveUdpClientListener.class);
     /**
      * my mastah.
      */
-    private ValveUdpClient vuc = null;
+    private ValveUdpClient      vuc = null;
 
     /**
      * @param vuc1
      *            mon maitre!
      */
-    ValveUpdClientListener(final ValveUdpClient vuc1) {
+    ValveUdpClientListener(final ValveUdpClient vuc1) {
         this.vuc = vuc1;
         final Random r = new Random();
         final int localPort = r.nextInt(5000) + 0x400;
@@ -29,7 +34,9 @@ class ValveUpdClientListener extends MyRunnable {
                     + InetAddress.getLocalHost().getHostAddress() + ' '
                     + localPort);
         } catch (final Exception e) {
-            Utils.logError(getClass(), e);
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e, e);
+            }
         }
     }
 
@@ -46,7 +53,9 @@ class ValveUpdClientListener extends MyRunnable {
                 this.vuc.processLine(new String(receivePacket.getData(), 0,
                         receivePacket.getLength()));
             } catch (final Exception e) {
-                Utils.logError(getClass(), e);
+                if (LOG.isErrorEnabled()) {
+                    LOG.error(e, e);
+                }
                 setRunning(false);
             }
         }

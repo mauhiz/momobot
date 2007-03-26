@@ -1,15 +1,20 @@
 package momobot.trigger;
 
-import ircbot.IrcUser;
 import ircbot.ATrigger;
+import ircbot.IrcUser;
 import momobot.Db;
 import momobot.MomoBot;
-import utils.Utils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Administrator
  */
 public class ReloadDBTrigger extends ATrigger {
+    /**
+     * logger.
+     */
+    private static final Logger LOG = Logger.getLogger(ReloadDBTrigger.class);
+
     /**
      * @param trigger
      *            le trigger
@@ -34,8 +39,10 @@ public class ReloadDBTrigger extends ATrigger {
             MomoBot.getInstance().sendMessage(user.getNick(), "DB reloaded");
         } catch (final Exception e) {
             MomoBot.getInstance().sendMessage(user.getNick(),
-                    "Erreur " + e.getMessage());
-            Utils.logError(getClass(), e);
+                    "Erreur : " + e.getMessage());
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e, e);
+            }
         }
     }
 
@@ -46,6 +53,6 @@ public class ReloadDBTrigger extends ATrigger {
     @Override
     public final void executePublicTrigger(final IrcUser user,
             final String channel, final String message) {
-        // rien
+        /* rien */
     }
 }

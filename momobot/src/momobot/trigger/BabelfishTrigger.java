@@ -1,7 +1,7 @@
 package momobot.trigger;
 
-import ircbot.IrcUser;
 import ircbot.ATrigger;
+import ircbot.IrcUser;
 import java.io.IOException;
 import java.net.URLEncoder;
 import momobot.MomoBot;
@@ -9,7 +9,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang.StringUtils;
-import utils.Utils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Administrator
@@ -80,6 +80,10 @@ public class BabelfishTrigger extends ATrigger {
             final String message) {
         throw new UnsupportedOperationException();
     }
+    /**
+     * logger.
+     */
+    private static final Logger LOG = Logger.getLogger(BabelfishTrigger.class);
 
     /**
      * @see ircbot.ATrigger#executePublicTrigger(ircbot.IrcUser,
@@ -103,7 +107,9 @@ public class BabelfishTrigger extends ATrigger {
             MomoBot.getInstance().sendNotice(user,
                     result(lang1, lang2, message));
         } catch (final Exception e) {
-            Utils.logError(getClass(), e);
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(e, e);
+            }
             MomoBot.getInstance().sendNotice(
                     user,
                     "syntaxe : $" + getTriggerText()

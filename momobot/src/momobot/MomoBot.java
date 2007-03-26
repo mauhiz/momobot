@@ -1,22 +1,21 @@
 package momobot;
 
+import ircbot.AIrcBot;
+import ircbot.ATrigger;
 import ircbot.Channel;
 import ircbot.IrcUser;
-import ircbot.AIrcBot;
 import ircbot.QnetUser;
 import ircbot.Topic;
-import ircbot.ATrigger;
 import ircbot.dcc.DccChat;
 import ircbot.dcc.DccFileTransfer;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import momobot.event.channel.Pendu;
-import utils.Utils;
+import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.log4j.Logger;
 
 /**
  * Cette classe suit le design pattern Factory.
@@ -24,9 +23,13 @@ import utils.Utils;
  */
 public class MomoBot extends AIrcBot {
     /**
+     * logger.
+     */
+    private static final Logger LOG      = Logger.getLogger(MomoBot.class);
+    /**
      * référence au bot.
      */
-    private static MomoBot instance = null;
+    private static MomoBot      instance = null;
 
     /**
      * @return une instance de momobot
@@ -40,11 +43,11 @@ public class MomoBot extends AIrcBot {
     /**
      * la liste des channels à autojoin.
      */
-    private final Collection < String >           autojoin = new TreeSet < String >();
+    private final Collection < String > autojoin = new TreeSet < String >();
     /**
      * la liste des whois en cours.
      */
-    private final ConcurrentMap < String, Whois > whois    = new ConcurrentHashMap < String, Whois >();
+    private final Map < String, Whois > whois    = new ConcurrentHashMap < String, Whois >();
 
     /**
      * @param channel
@@ -82,7 +85,9 @@ public class MomoBot extends AIrcBot {
     @Override
     protected final void onAction(final IrcUser user, final String target,
             final String action) {
-        Utils.log(getClass(), user.getNick() + " " + target + "%" + action);
+        if (LOG.isInfoEnabled()) {
+            LOG.info(user.getNick() + " " + target + "%" + action);
+        }
     }
 
     /**
@@ -96,7 +101,7 @@ public class MomoBot extends AIrcBot {
     @Override
     protected void onChannelInfo(final String channel, final int userCount,
             final String topic) {
-        //
+        /* rien */
     }
 
     /**
@@ -120,7 +125,7 @@ public class MomoBot extends AIrcBot {
     @Override
     public void onFileTransferFinished(final DccFileTransfer transfer,
             final Exception e) {
-        // rien
+        /* rien */
     }
 
     /**
@@ -130,7 +135,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     public void onIncomingChatRequest(final DccChat chat) {
-        // rien
+        /* rien */
     }
 
     /**
@@ -138,7 +143,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     public void onIncomingFileTransfer(final DccFileTransfer transfer) {
-        // rien
+        /* rien */
     }
 
     /**
@@ -150,7 +155,7 @@ public class MomoBot extends AIrcBot {
     @Override
     protected final void onInvite(final String targetNick, final IrcUser user,
             final String channel) {
-        // rien
+        /* rien */
     }
 
     /**
@@ -162,7 +167,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected final void onJoin(final Channel channel, final IrcUser user) {
-        // j'évite de flooder en joinant clanwar
+        /* j'évite de flooder en joinant clanwar */
         if (this.autojoin.contains(channel)) {
             new Whois((QnetUser) user).execute();
         }
@@ -176,10 +181,10 @@ public class MomoBot extends AIrcBot {
     @Override
     protected final void onMessage(final Channel channel, final IrcUser user,
             final String message) {
-        Utils.log(getClass(), user.getNick() + channel + ":" + message);
-        for (final Iterator < ATrigger > ite = ATrigger.getTriggers(); ite
-                .hasNext();) {
-            final ATrigger t = ite.next();
+        if (LOG.isInfoEnabled()) {
+            LOG.info(user.getNick() + channel + ":" + message);
+        }
+        for (ATrigger t : ATrigger.getTriggers()) {
             if (t.testPublic(message)) {
                 t.executePublicTrigger(user, channel.getNom(), message);
                 return;
@@ -188,7 +193,7 @@ public class MomoBot extends AIrcBot {
         if (!channel.hasRunningEvent()) {
             return;
         }
-        // le pendu
+        /* le pendu */
         if (channel.getEvent() instanceof Pendu) {
             final Pendu p = (Pendu) channel.getEvent();
             if (message.length() == 1) {
@@ -204,8 +209,7 @@ public class MomoBot extends AIrcBot {
     }
 
     /**
-     * @see ircbot.AIrcBot#onMode(java.lang.String, ircbot.IrcUser,
-     *      java.lang.String)
+     * @see ircbot.AIrcBot#onMode(Channel, ircbot.IrcUser, java.lang.String)
      * @param channel
      *            le channel
      * @param user
@@ -214,7 +218,7 @@ public class MomoBot extends AIrcBot {
      *            le mode
      */
     @Override
-    protected final void onMode(final String channel, final IrcUser user,
+    protected final void onMode(final Channel channel, final IrcUser user,
             final String mode) {
         //
     }
@@ -244,7 +248,20 @@ public class MomoBot extends AIrcBot {
     @Override
     protected final void onNotice(final IrcUser user, final String target,
             final String notice) {
-        Utils.log(getClass(), user.getNick() + "&" + notice);
+        if (LOG.isInfoEnabled()) {
+            LOG.info(getClass(), user.getNick() + "&" + notice);
+        }
+        // for (ATrigger t : ATrigger.getTriggers()) {
+        // if (t.testNotice(notice)) {
+        // if (t.isOnlyAdmin()) {
+        // if (!user.isAdmin()) {
+        // return;
+        // }
+        // }
+        // /* t.executeNoticeTrigger(user, notice); */
+        // return;
+        // }
+        // }
     }
 
     /**
@@ -280,10 +297,10 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected void onPrivateMessage(final IrcUser user, final String message) {
-        Utils.log(getClass(), user.getNick() + ":" + message);
-        final Iterator < ATrigger > ite = ATrigger.getTriggers();
-        while (ite.hasNext()) {
-            final ATrigger t = ite.next();
+        if (LOG.isInfoEnabled()) {
+            LOG.info(user.getNick() + ":" + message);
+        }
+        for (ATrigger t : ATrigger.getTriggers()) {
             if (t.testPrive(message)) {
                 if (t.isOnlyAdmin()) {
                     if (!user.isAdmin()) {
@@ -302,9 +319,8 @@ public class MomoBot extends AIrcBot {
     @Override
     protected void onQuit(final IrcUser user, final String reason) {
         IrcUser.removeUser(user.getNick());
-        final Iterator < Channel > ite = Channel.getAll();
-        while (ite.hasNext()) {
-            ite.next().removeUser(user.getNick());
+        for (Channel c : Channel.getAll()) {
+            c.removeUser(user.getNick());
         }
     }
 
@@ -317,7 +333,7 @@ public class MomoBot extends AIrcBot {
     @Override
     protected void onRemoveChannelBan(final Channel channel,
             final IrcUser user, final String hostmask) {
-        // rien pour l'instant.
+        /* rien pour l'instant. */
     }
 
     /**
@@ -371,7 +387,7 @@ public class MomoBot extends AIrcBot {
     @Override
     protected void onRemoveNoExternalMessages(final Channel channel,
             final IrcUser user) {
-        // rien pour l'instant.
+        /* rien pour l'instant. */
     }
 
     /**
@@ -381,7 +397,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected void onRemovePrivate(final Channel channel, final IrcUser user) {
-        // rien pour l'instant.
+        /* rien pour l'instant. */
     }
 
     /**
@@ -391,7 +407,7 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected void onRemoveSecret(final Channel channel, final IrcUser user) {
-        // rien pour l'instant.
+        /* rien pour l'instant. */
     }
 
     /**
@@ -415,36 +431,36 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected void onServerResponse(final int code, final String response) {
-        StringTokenizer st;
+        StrTokenizer st;
         String nick;
         Whois w;
         switch (code) {
             case RPL_WHOISUSER:
-                // rien
+                /* rien */
                 break;
             case RPL_WHOISCHANNELS:
-                // osef
+                /* osef */
                 break;
             case RPL_WHOISSERVER:
-                // osef
+                /* osef */
                 break;
             case RPL_WHOISAUTH:
-                st = new StringTokenizer(response, " ");
+                st = new StrTokenizer(response, SPC);
                 st.nextToken();
                 nick = st.nextToken();
                 w = this.whois.get(nick);
                 w.setQnetAuth(st.nextToken());
                 break;
             case RPL_WHOISIDLE:
-                // osef
+                /* osef */
                 break;
             case RPL_ENDOFWHOIS:
-                st = new StringTokenizer(response, " ");
+                st = new StrTokenizer(response, SPC);
                 st.nextToken();
                 nick = st.nextToken();
                 w = this.whois.get(nick);
                 w.setDone(true);
-                // le thread va s'arreter tout seul tfacon
+                /* le thread va s'arreter tout seul tfacon */
                 this.whois.remove(nick);
                 break;
             default:
@@ -461,7 +477,7 @@ public class MomoBot extends AIrcBot {
     @Override
     protected void onSetChannelBan(final Channel channel, final IrcUser user,
             final String hostmask) {
-        //
+        /* rien */
     }
 
     /**
@@ -484,11 +500,11 @@ public class MomoBot extends AIrcBot {
     @Override
     protected void onSetChannelLimit(final Channel channel, final IrcUser user,
             final int limit) {
-        //
+        /* rien */
     }
 
     /**
-     * @see ircbot.AIrcBot#onSetInviteOnly(java.lang.String, ircbot.IrcUser)
+     * @see ircbot.AIrcBot#onSetInviteOnly(Channel, ircbot.IrcUser)
      * @param channel
      *            le channel
      */
@@ -504,39 +520,38 @@ public class MomoBot extends AIrcBot {
      */
     @Override
     protected void onSetModerated(final Channel channel, final IrcUser user) {
-        //
+        /* rien */
     }
 
     /**
-     * @see ircbot.AIrcBot#onSetNoExternalMessages(java.lang.String,
-     *      ircbot.IrcUser)
+     * @see ircbot.AIrcBot#onSetNoExternalMessages(Channel, ircbot.IrcUser)
      * @param channel
      *            le channel
      */
     @Override
     protected void onSetNoExternalMessages(final Channel channel,
             final IrcUser user) {
-        //
+        /* rien */
     }
 
     /**
-     * @see ircbot.AIrcBot#onSetPrivate(java.lang.String, ircbot.IrcUser)
+     * @see ircbot.AIrcBot#onSetPrivate(Channel, ircbot.IrcUser)
      * @param channel
      *            le channel
      */
     @Override
     protected void onSetPrivate(final Channel channel, final IrcUser user) {
-        //
+        /* rien */
     }
 
     /**
-     * @see ircbot.AIrcBot#onSetSecret(java.lang.String, ircbot.IrcUser)
+     * @see ircbot.AIrcBot#onSetSecret(Channel, ircbot.IrcUser)
      * @param channel
      *            le channel
      */
     @Override
     protected void onSetSecret(final Channel channel, final IrcUser user) {
-        //
+        /* rien */
     }
 
     /**
@@ -605,7 +620,7 @@ public class MomoBot extends AIrcBot {
     @Override
     protected final void onUserMode(final String targetNick,
             final IrcUser user, final String mode) {
-        //
+        /* rien */
     }
 
     /**

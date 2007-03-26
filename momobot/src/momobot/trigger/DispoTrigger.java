@@ -5,6 +5,7 @@ import ircbot.QnetUser;
 import ircbot.ATrigger;
 import java.util.Date;
 import java.util.StringTokenizer;
+import org.apache.log4j.Logger;
 import momobot.Db;
 import momobot.MomoBot;
 import momobot.Whois;
@@ -14,6 +15,11 @@ import utils.Utils;
  * @author Administrator
  */
 public class DispoTrigger extends ATrigger {
+    /**
+     * logger.
+     */
+    private static final Logger LOG = Logger.getLogger(DispoTrigger.class);
+
     /**
      * @param trigger
      *            le trigger
@@ -47,7 +53,9 @@ public class DispoTrigger extends ATrigger {
     public final synchronized void executePublicTrigger(final IrcUser user,
             final String channel, final String message) {
         if (!(user instanceof QnetUser)) {
-            Utils.log(getClass(), "user non Qnet");
+            if (LOG.isErrorEnabled()) {
+                LOG.error("user non Qnet");
+            }
             return;
         }
         if (((QnetUser) user).getQnetAuth().length() == 0) {

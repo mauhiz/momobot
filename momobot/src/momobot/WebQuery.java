@@ -5,41 +5,44 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
-import utils.Utils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Administrator
  */
 public class WebQuery {
     /**
+     * logger.
+     */
+    private static final Logger LOG       = Logger.getLogger(WebQuery.class);
+    /**
      * longueur.
      */
-    private int          len       = 0;
+    private int                 len       = 0;
     /**
      * le nombre de résultats.
      */
-    private int          numResult = 1;
+    private int                 numResult = 1;
     /**
      * la requete.
      */
-    private String       query;
+    private String              query;
     /**
      * le séparateur de résultats.
      */
-    private String       resultSep;
+    private String              resultSep;
     /**
      * le type.
      */
-    private final String type;
+    private final String        type;
     /**
      * url.
      */
-    private HttpURL      url       = null;
+    private HttpURL             url       = null;
 
     /**
      * @param type1
@@ -52,7 +55,9 @@ public class WebQuery {
         try {
             this.query = URLEncoder.encode(query1, "utf-8");
         } catch (final UnsupportedEncodingException e) {
-            Utils.logError(getClass(), e);
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(e, e);
+            }
         }
         if (this.type.equals("gametiger")) {
             try {
@@ -78,7 +83,9 @@ public class WebQuery {
                         HttpURL.DEFAULT_PORT, "/search?ie=UTF-8&num="
                                 + this.numResult + "&p=" + this.query);
             } catch (final URIException e) {
-                e.printStackTrace();
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn(e, e);
+                }
             }
             this.resultSep = "<a class=yschttl  href=\"";
         }
@@ -88,15 +95,18 @@ public class WebQuery {
     /**
      * @return un iterateur sur les resultats
      */
-    public final Iterator < String > results() {
-        final Collection < String > results = new HashSet < String >(this.numResult);
+    public final Iterable < String > results() {
+        final Collection < String > results = new HashSet < String >(
+                this.numResult);
         String page;
         try {
             final GetMethod gm = new GetMethod(this.url.toString());
             new HttpClient().executeMethod(gm);
             page = gm.getResponseBodyAsString();
         } catch (final IOException e) {
-            e.printStackTrace();
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(e, e);
+            }
             return null;
         }
         if (page.length() == 0) {
@@ -110,7 +120,7 @@ public class WebQuery {
             if (this.type.equals("gametiger")) {
                 i = page.indexOf(this.resultSep);
                 if (i == -1) {
-                    return results.iterator();
+                    return results;
                 }
                 page = page.substring(i + this.len);
                 i = page.indexOf('>');
@@ -124,7 +134,7 @@ public class WebQuery {
                 while (!page.startsWith("http") && !page.startsWith("ftp")) {
                     i = page.indexOf(this.resultSep);
                     if (i == -1) {
-                        return results.iterator();
+                        return results;
                     }
                     page = page.substring(i + this.len);
                 }
@@ -140,7 +150,7 @@ public class WebQuery {
                 while (!page.startsWith("http") && !page.startsWith("ftp")) {
                     i = page.indexOf(this.resultSep);
                     if (i == -1) {
-                        return results.iterator();
+                        return results;
                     }
                     page = page.substring(i + this.len);
                 }
@@ -154,6 +164,6 @@ public class WebQuery {
                 page = page.substring(i);
             }
         }
-        return results.iterator();
+        return results;
     }
 }

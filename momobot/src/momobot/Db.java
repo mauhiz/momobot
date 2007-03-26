@@ -1,7 +1,7 @@
 package momobot;
 
-import ircbot.IrcServerBean;
 import ircbot.ATrigger;
+import ircbot.IrcServerBean;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.Date;
@@ -15,12 +15,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import utils.Utils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Administrator
  */
 public abstract class Db {
+    /**
+     * logger.
+     */
+    private static final Logger                 LOG     = Logger
+                                                                .getLogger(Db.class);
     /**
      * mes maîtres.
      */
@@ -109,12 +114,12 @@ public abstract class Db {
      * @throws SQLException
      *             en cas d'erreur.
      */
-    public static Iterator < Dispo > getDispos(final String channel,
+    public static Iterable < Dispo > getDispos(final String channel,
             final long date) throws SQLException {
         final Date datesql = new Date(date);
         final ResultSet rs = doSqlQuery("SELECT `qauth`, `heure1`, `heure2` FROM `dispo` WHERE `channel` = '"
                 + channel + "' AND `date`= '" + datesql.toString() + "'");
-        final Set < Dispo > dispos = new HashSet < Dispo >();
+        final Collection < Dispo > dispos = new HashSet < Dispo >();
         while (rs.next()) {
             final String qauth = rs.getString("qauth");
             final int heure1 = rs.getInt("heure1");
@@ -122,19 +127,19 @@ public abstract class Db {
             final Dispo dispo = new Dispo(qauth, heure1, heure2);
             dispos.add(dispo);
         }
-        return dispos.iterator();
+        return dispos;
     }
 
     /**
-     * @param cle
+     * @param key
      *            la clé
      * @return le mémo associé
      */
-    public static String getMemo(final String cle) {
-        if (!MEMOS.containsKey(cle)) {
-            return "Pas de mémo pour " + cle;
+    public static String getMemo(final String key) {
+        if (!MEMOS.containsKey(key)) {
+            return "Pas de mémo pour " + key;
         }
-        return MEMOS.get(cle);
+        return MEMOS.get(key);
     }
 
     /**
@@ -165,11 +170,27 @@ public abstract class Db {
     }
 
     /**
+     * @throws Exception
+     *             en cas de foirage.
+     */
+    public static void loadMemoDB() throws Exception {
+        final ResultSet rs = doSqlQuery("SELECT `cle`, `memo` FROM `memos`");
+        while (rs.next()) {
+            final String cle = rs.getString("cle");
+            final String memo = rs.getString("memo");
+            MEMOS.put(cle, memo);
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("MemoDB loaded");
+        }
+    }
+
+    /**
      * @param string
      *            le nom du profil
      */
     public static void loadMomoBot(final String string) {
-        // init le bot
+        /* init le bot */
         MomoBot.getInstance();
         String server = "";
         boolean identServer = false;
@@ -198,8 +219,10 @@ public abstract class Db {
                     c.newInstance(triggerName);
                 } else if (paramName.equals("identserver")) {
                     if (param.startsWith("1")) {
-                        // on attend avant de le lancer, il y a peut etre 50
-                        // params a venir la
+                        /*
+                         * on attend avant de le lancer, il y a peut etre 50
+                         * params à venir là
+                         */
                         identServer = true;
                     }
                 } else if (paramName.equals("server")) {
@@ -207,7 +230,7 @@ public abstract class Db {
                     server = param;
                 }
             }
-            // connect le bot
+            /* connect le bot */
             if (server != null) {
                 if (identServer) {
                     MomoBot.getInstance().startIdentServer();
@@ -215,24 +238,10 @@ public abstract class Db {
                 MomoBot.getInstance().connect(new IrcServerBean(server));
                 return;
             }
-            Utils.logError(Db.class, new Exception("pas de serveur"));
+            LOG.fatal("pas de serveur");
         } catch (final Exception e) {
-            Utils.logError(Db.class, e);
+            LOG.fatal(e, e);
         }
-    }
-
-    /**
-     * @throws Exception
-     *             en cas de foirage.
-     */
-    public static void loadMemoDB() throws Exception {
-        final ResultSet rs = doSqlQuery("SELECT `cle`, `memo` FROM `memos`");
-        while (rs.next()) {
-            final String cle = rs.getString("cle");
-            final String memo = rs.getString("memo");
-            MEMOS.put(cle, memo);
-        }
-        Utils.log(Db.class, "MemoDB loaded");
     }
 
     /**
@@ -250,7 +259,9 @@ public abstract class Db {
                 MASTERS.add(steamid);
             }
         }
-        Utils.log(Db.class, "PlayerDB loaded");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("PlayerDB loaded");
+        }
     }
 
     /**
@@ -266,10 +277,12 @@ public abstract class Db {
         try {
             doSqlUpdate("INSERT INTO `players`(`steamid`, `qauth`) VALUES('"
                     + steamid + "', '" + qnetAuth + "')");
-            return "Joueur enregistre";
+            return "Joueur enregistré";
         } catch (final Exception e) {
-            Utils.logError(Db.class, e);
-            return "Erreur : joueur non enregistre";
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e, e);
+            }
+            return "Erreur : joueur non enregistré";
         }
     }
 
@@ -312,7 +325,9 @@ public abstract class Db {
                     + "', '" + memo + "')");
             return msg;
         } catch (final Exception e) {
-            Utils.logError(Db.class, e);
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e, e);
+            }
             return "Erreur, memo non enregistre";
         }
     }

@@ -1,8 +1,7 @@
 package momobot.trigger;
 
-import ircbot.IrcUser;
 import ircbot.ATrigger;
-import java.util.Iterator;
+import ircbot.IrcUser;
 import momobot.MomoBot;
 import momobot.WebQuery;
 
@@ -26,7 +25,7 @@ public class GametigerTrigger extends ATrigger {
     @Override
     public final void executePrivateTrigger(final IrcUser user,
             final String message) {
-        // rien
+        /* rien */
     }
 
     /**
@@ -42,9 +41,9 @@ public class GametigerTrigger extends ATrigger {
             final String channel, final String message) {
         final WebQuery wq = new WebQuery("gametiger", getArgs(message));
         boolean resultFound = false;
-        for (final Iterator < String > ite = wq.results(); ite.hasNext();) {
+        for (String next : wq.results()) {
             resultFound = true;
-            MomoBot.getInstance().sendNotice(user, ite.next());
+            MomoBot.getInstance().sendNotice(user, next);
         }
         if (!resultFound) {
             MomoBot.getInstance().sendNotice(user, "rien trouve :/");

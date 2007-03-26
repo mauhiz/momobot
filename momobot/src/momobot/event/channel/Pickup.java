@@ -2,9 +2,8 @@ package momobot.event.channel;
 
 import ircbot.AChannelEvent;
 import ircbot.IrcUser;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * @author Administrator
@@ -26,7 +25,7 @@ public class Pickup extends AChannelEvent {
      * les teams.
      */
     @SuppressWarnings("unchecked")
-    private final Collection < IrcUser >[] team    = new HashSet[NBTEAMS];
+    private final Collection < IrcUser >[] team    = new Collection[NBTEAMS];
 
     // private Server serv = null;
     /**
@@ -37,7 +36,7 @@ public class Pickup extends AChannelEvent {
         super(channel1);
         for (int k = 0; k < NBTEAMS; k++) {
             this.nom[k] = "" + (char) ('a' + k);
-            this.team[k] = new HashSet < IrcUser >(this.size);
+            this.team[k] = new ArrayList < IrcUser >(this.size);
         }
     }
 
@@ -67,7 +66,7 @@ public class Pickup extends AChannelEvent {
             return element + " ajouté a la team " + this.nom[j] + '.';
         }
         if (j == k || j == NBTEAMS) {
-            return "Tu es deja inscrit dans la team " + this.nom[k] + '.';
+            return "Tu es déjà inscrit dans la team " + this.nom[k] + '.';
         }
         this.team[k].remove(element);
         this.team[j].add(element);
@@ -124,7 +123,7 @@ public class Pickup extends AChannelEvent {
             return element + ": tu n'étais pas inscrit.";
         }
         this.team[k].remove(element);
-        return element + " retire de la team " + this.nom[k] + '.';
+        return element + " retiré de la team " + this.nom[k] + '.';
     }
 
     /**
@@ -135,9 +134,8 @@ public class Pickup extends AChannelEvent {
         final StringBuffer temp = new StringBuffer();
         for (int k = 0; k < NBTEAMS; k++) {
             temp.append("Team " + this.nom[k] + ": ");
-            final Iterator < IrcUser > ite = this.team[k].iterator();
-            while (ite.hasNext()) {
-                temp.append(ite.next()).append(". ");
+            for (IrcUser u : this.team[k]) {
+                temp.append(u).append(". ");
             }
         }
         return temp.toString();

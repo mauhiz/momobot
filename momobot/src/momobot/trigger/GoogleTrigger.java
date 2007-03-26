@@ -1,8 +1,7 @@
 package momobot.trigger;
 
-import ircbot.IrcUser;
 import ircbot.ATrigger;
-import java.util.Iterator;
+import ircbot.IrcUser;
 import momobot.MomoBot;
 import momobot.WebQuery;
 
@@ -26,7 +25,7 @@ public class GoogleTrigger extends ATrigger {
     @Override
     public final void executePrivateTrigger(final IrcUser user,
             final String message) {
-        // rien
+        /* rien */
     }
 
     /**
@@ -37,8 +36,8 @@ public class GoogleTrigger extends ATrigger {
     public final void executePublicTrigger(final IrcUser user,
             final String channel, final String message) {
         final WebQuery wq = new WebQuery("google", getArgs(message));
-        for (final Iterator < String > ite = wq.results(); ite.hasNext();) {
-            MomoBot.getInstance().sendNotice(user, ite.next());
+        for (String next : wq.results()) {
+            MomoBot.getInstance().sendNotice(user, next);
         }
     }
 }
