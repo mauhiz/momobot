@@ -9,8 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import utils.MyRunnable;
-import utils.Utils;
 
 /**
  * A simple IdentServer (also know as "The Identification Protocol"). An ident
@@ -23,17 +23,21 @@ import utils.Utils;
  */
 public class IdentServer extends MyRunnable {
     /**
+     * logger.
+     */
+    private static final Logger LOG  = Logger.getLogger(IdentServer.class);
+    /**
      * le port sur lequel on écoute.
      */
-    private static final int PORT = 113;
+    private static final int    PORT = 113;
     /**
      * le login à faire passer.
      */
-    private final String     login;
+    private final String        login;
     /**
      * le serversocket.
      */
-    private ServerSocket     ss   = null;
+    private ServerSocket        ss   = null;
 
     /**
      * Constructs and starts an instance of an IdentServer that will respond to
@@ -54,7 +58,7 @@ public class IdentServer extends MyRunnable {
             this.ss.setSoTimeout((int) TimeUnit.MILLISECONDS.convert(1,
                     TimeUnit.MINUTES));
         } catch (final Exception e) {
-            Utils.logError(getClass(), e);
+            LOG.error(e, e);
             return;
         }
     }
@@ -67,8 +71,10 @@ public class IdentServer extends MyRunnable {
     @Override
     public final void run() {
         setRunning(true);
-        Utils.log(getClass(), "server running on port " + PORT
-                + " for the next 60 seconds...");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("server running on port " + PORT
+                    + " for the next 60 seconds...");
+        }
         try {
             final Socket socket = this.ss.accept();
             socket.setSoTimeout((int) TimeUnit.MILLISECONDS.convert(1,
@@ -78,17 +84,25 @@ public class IdentServer extends MyRunnable {
             final String line = new BufferedReader(new InputStreamReader(socket
                     .getInputStream())).readLine();
             if (line != null) {
-                Utils.log(getClass(), "request received: " + line);
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("request received: " + line);
+                }
                 IOUtils.write(line + " : USERID : UNIX : " + this.login
                         + "\r\n", writer);
-                Utils.log(getClass(), ">> " + line);
+                if (LOG.isInfoEnabled()) {
+                    LOG.info(">> " + line);
+                }
             }
-            this.ss.close();
             IOUtils.closeQuietly(writer);
+            this.ss.close();
         } catch (final IOException e) {
-            Utils.logError(getClass(), e);
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e, e);
+            }
         }
         setRunning(false);
-        Utils.log(getClass(), "server has been shut down.");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("server has been shut down.");
+        }
     }
 }

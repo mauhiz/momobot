@@ -108,6 +108,8 @@ public class DccChat implements IIrcSpecialChars {
         if (this.acceptable) {
             throw new IOException(NOT_ACCEPTABLE);
         }
+        IOUtils.closeQuietly(this.reader);
+        IOUtils.closeQuietly(this.writer);
         this.socket.close();
     }
 

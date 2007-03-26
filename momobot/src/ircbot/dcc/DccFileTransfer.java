@@ -1,23 +1,25 @@
 package ircbot.dcc;
 
 import ircbot.ACtcp;
-import ircbot.IrcUser;
 import ircbot.AIrcBot;
+import ircbot.IrcUser;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import utils.MyRunnable;
 import utils.NetUtils;
-import utils.Utils;
 
 /**
  * This class is used to administer a DCC file transfer.
@@ -65,7 +67,7 @@ public class DccFileTransfer implements IDccSubCommands {
          */
         @Override
         public final void run() {
-            BufferedOutputStream foutput = null;
+            OutputStream foutput = null;
             Exception exception = null;
             try {
                 // Convert the integer address to a proper IP address.
@@ -79,10 +81,10 @@ public class DccFileTransfer implements IDccSubCommands {
                 // No longer possible to resume this transfer once it's
                 // underway.
                 getManager().removeAwaitingResume(this.dft);
-                final BufferedInputStream input = new BufferedInputStream(
-                        this.dft.getSocket().getInputStream());
-                final BufferedOutputStream output = new BufferedOutputStream(
-                        this.dft.getSocket().getOutputStream());
+                final InputStream input = new BufferedInputStream(this.dft
+                        .getSocket().getInputStream());
+                final OutputStream output = new BufferedOutputStream(this.dft
+                        .getSocket().getOutputStream());
                 foutput = new BufferedOutputStream(new FileOutputStream(
                         this.myFile.getCanonicalPath(), this.resume));
                 final byte[] inBuffer = new byte[BUFFER_SIZE];
@@ -94,8 +96,10 @@ public class DccFileTransfer implements IDccSubCommands {
                     }
                     IOUtils.write(inBuffer, foutput);
                     updateProgress(bytesRead);
-                    // Send back an acknowledgement of how many bytes we
-                    // have got so far.
+                    /*
+                     * Send back an acknowledgement of how many bytes we have
+                     * got so far.
+                     */
                     IOUtils.write(NetUtils
                             .unsignedIntegerToByteArray(getProgress()), output);
                     output.flush();
@@ -105,13 +109,13 @@ public class DccFileTransfer implements IDccSubCommands {
             } catch (final Exception e) {
                 exception = e;
             } finally {
+                IOUtils.closeQuietly(foutput);
                 try {
-                    if (foutput != null) {
-                        foutput.close();
-                    }
                     this.dft.getSocket().close();
                 } catch (final IOException e) {
-                    Utils.logError(getClass(), e);
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(e, e);
+                    }
                 }
             }
             this.dft.getBot().onFileTransferFinished(this.dft, exception);
@@ -151,22 +155,21 @@ public class DccFileTransfer implements IDccSubCommands {
             Exception exception = null;
             try {
                 ServerSocket ss = null;
-                final int[] ports = AIrcBot.PORTS;
-                if (ports == null) {
-                    // Use any free port.
+                if (AIrcBot.PORTS.isEmpty()) {
+                    /* Use any free port. */
                     ss = new ServerSocket(0);
                 } else {
-                    for (final int element : ports) {
+                    for (final short element : AIrcBot.PORTS) {
                         try {
                             ss = new ServerSocket(element);
-                            // Found a port number we could use.
+                            /* Found a port number we could use. */
                             break;
                         } catch (final IOException e) {
                             continue;
                         }
                     }
                     if (ss == null) {
-                        // No ports could be used.
+                        /* No ports could be used. */
                         throw new IOException(
                                 "All ports returned by getDccPorts() are in use.");
                     }
@@ -177,16 +180,20 @@ public class DccFileTransfer implements IDccSubCommands {
                 final InetAddress inetAddress = InetAddress.getLocalHost();
                 final long ipNum = NetUtils.byteTabIpToLong(inetAddress
                         .getAddress());
-                // Rename the filename so it has no whitespace in it when we
-                // send it.
+                /*
+                 * Rename the filename so it has no whitespace in it when we
+                 * send it.
+                 */
                 final String safeFilename = StringUtils
                         .deleteWhitespace(this.dft.getFile().getName());
                 if (this.allowResume) {
                     this.dft.getManager().addAwaitingResume(
                             DccFileTransfer.this);
                 }
-                // Send the message to the user, telling them where to
-                // connect to in order to get the file.
+                /*
+                 * Send the message to the user, telling them where to connect
+                 * to in order to get the file.
+                 */
                 ACtcp.sendCtcpMsg(DCC_SEND + SPC + safeFilename + SPC + ipNum
                         + SPC + this.dft.getPort() + SPC
                         + this.dft.getFile().length(), this.dft.getUser()
@@ -205,10 +212,10 @@ public class DccFileTransfer implements IDccSubCommands {
                 // Might as well close the server socket now; it's finished
                 // with.
                 ss.close();
-                final BufferedOutputStream output = new BufferedOutputStream(
-                        this.dft.getSocket().getOutputStream());
-                final BufferedInputStream input = new BufferedInputStream(
-                        this.dft.getSocket().getInputStream());
+                final OutputStream output = new BufferedOutputStream(this.dft
+                        .getSocket().getOutputStream());
+                final InputStream input = new BufferedInputStream(this.dft
+                        .getSocket().getInputStream());
                 finput = new BufferedInputStream(new FileInputStream(this.dft
                         .getFile()));
                 // Check for resuming.
@@ -240,7 +247,9 @@ public class DccFileTransfer implements IDccSubCommands {
                 try {
                     this.dft.getSocket().close();
                 } catch (final IOException e) {
-                    Utils.logError(getClass(), e);
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(e, e);
+                    }
                 }
             }
             getBot().onFileTransferFinished(DccFileTransfer.this, exception);
@@ -250,6 +259,11 @@ public class DccFileTransfer implements IDccSubCommands {
      * The default buffer size to use when sending and receiving files.
      */
     public static final int BUFFER_SIZE = 1024;
+    /**
+     * logger.
+     */
+    static final Logger     LOG         = Logger
+                                                .getLogger(DccFileTransfer.class);
     /**
      * son adresse.
      */
@@ -377,7 +391,9 @@ public class DccFileTransfer implements IDccSubCommands {
             try {
                 Thread.sleep(this.packetDelay);
             } catch (final InterruptedException e) {
-                Utils.logError(getClass(), e);
+                if (LOG.isErrorEnabled()) {
+                    LOG.error(e, e);
+                }
             }
         }
     }
