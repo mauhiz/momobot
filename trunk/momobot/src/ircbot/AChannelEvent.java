@@ -1,15 +1,19 @@
 package ircbot;
 
-import utils.Utils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Administrator
  */
 public abstract class AChannelEvent {
     /**
+     * logger.
+     */
+    private static final Logger LOG     = Logger.getLogger(AChannelEvent.class);
+    /**
      * le nom du channel sur lequel se déroule l'Event.
      */
-    private String channel = "";
+    private String              channel = "";
 
     /**
      * @param channel1
@@ -17,7 +21,9 @@ public abstract class AChannelEvent {
      */
     public AChannelEvent(final String channel1) {
         this.channel = channel1;
-        Utils.log(getClass(), "start sur " + channel1);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("start sur " + channel1);
+        }
         Channel.getChannel(channel1).registerEvent(this);
     }
 
@@ -30,7 +36,9 @@ public abstract class AChannelEvent {
      * @return un msg
      */
     public final String stop() {
-        Utils.log(getClass(), "reset sur " + this.channel);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("reset sur " + this.channel);
+        }
         Channel.getChannel(this.channel).unRegisterEvent();
         return "Fin du " + getClass().getSimpleName() + " !";
     }

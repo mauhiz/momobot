@@ -3,13 +3,17 @@ package ircbot;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import utils.Utils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Administrator
  */
 public abstract class ATrigger {
+    /**
+     * logger.
+     */
+    private static final Logger                  LOG = Logger
+                                                             .getLogger(ATrigger.class);
     /**
      * tous les triggers qui existent.
      */
@@ -28,8 +32,8 @@ public abstract class ATrigger {
     /**
      * @return un iterateur sur les triggers
      */
-    public static Iterator < ATrigger > getTriggers() {
-        return TRIGGERS.iterator();
+    public static Iterable < ATrigger > getTriggers() {
+        return TRIGGERS;
     }
     /**
      * si le trigger est actif.
@@ -202,7 +206,9 @@ public abstract class ATrigger {
         if (!b) {
             return false;
         }
-        Utils.log(getClass(), getTriggerText());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(getTriggerText());
+        }
         return true;
     }
 
@@ -220,7 +226,9 @@ public abstract class ATrigger {
         if (!b) {
             return false;
         }
-        Utils.log(getClass(), getTriggerText());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(getTriggerText());
+        }
         return true;
     }
 }

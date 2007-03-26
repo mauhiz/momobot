@@ -3,19 +3,26 @@ package ircbot;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import utils.MyRunnable;
-import utils.Utils;
 
 /**
  * @author viper
  */
 public class OutputQueue extends MyRunnable implements IIrcSpecialChars {
+    /**
+     * logger.
+     */
+    private static final Logger            LOG           = Logger
+                                                                 .getLogger(OutputQueue.class);
     /**
      * Longueur maximale d'un message sur IRC.
      */
@@ -27,11 +34,11 @@ public class OutputQueue extends MyRunnable implements IIrcSpecialChars {
     /**
      * Taille de la file d'attente.
      */
-    private static final int               QUEUESIZE     = 30;
+    private static final int               QUEUE_SIZE    = 30;
     /**
      * Permet d'écrire au serveur.
      */
-    private BufferedWriter                 bwriter       = null;
+    private Writer                         bwriter       = null;
     /**
      * La file d'attente elle-même.
      */
@@ -42,13 +49,13 @@ public class OutputQueue extends MyRunnable implements IIrcSpecialChars {
      *            Le socket qu'on me donne
      */
     OutputQueue(final Socket socket) {
-        this.queue = new LinkedBlockingQueue < String >(QUEUESIZE);
+        this.queue = new LinkedBlockingQueue < String >(QUEUE_SIZE);
         try {
-            this.bwriter = new BufferedWriter(new OutputStreamWriter(socket
-                    .getOutputStream()));
+            this.bwriter = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())));
             setRunning(true);
-        } catch (final Exception e2) {
-            Utils.logError(this.getClass(), e2);
+        } catch (final Exception e) {
+            LOG.fatal(e, e);
         }
     }
 
@@ -62,7 +69,7 @@ public class OutputQueue extends MyRunnable implements IIrcSpecialChars {
             this.queue.offer(StringUtils.left(string, MAXLINELENGTH - 2) + CR
                     + LF, 1, TimeUnit.SECONDS);
         } catch (final InterruptedException e) {
-            Utils.logError(getClass(), e);
+            LOG.fatal(e, e);
         }
     }
 
@@ -72,31 +79,41 @@ public class OutputQueue extends MyRunnable implements IIrcSpecialChars {
      */
     @Override
     public final void run() {
-        Utils.log(getClass(), "started");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("started");
+        }
         String line;
         try {
             while (isRunning()) {
-                // antiflood
+                /* antiflood */
                 Thread.sleep(MESSAGEDELAY);
-                // methode qui bloque
+                /* méthode qui bloque */
                 line = this.queue.poll(1, TimeUnit.SECONDS);
                 if (line == null) {
-                    // arrivera quand le bot a rien sortir
+                    /* arrivera quand le bot a rien sortir */
                     continue;
-                    // on repart pour une boucle; cela permet de voir si on est
-                    // toujours running
+                    /*
+                     * on repart pour une boucle; cela permet de voir si on est
+                     * toujours running
+                     */
                 }
                 try {
                     IOUtils.write(line, this.bwriter);
                     this.bwriter.flush();
                 } catch (final IOException e) {
-                    Utils.logError(getClass(), e);
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(e, e);
+                    }
                 }
-                Utils.log(getClass(), ">> " + line);
+                if (LOG.isInfoEnabled()) {
+                    LOG.info(">> " + line);
+                }
             }
         } catch (final InterruptedException e) {
-            Utils.logError(getClass(), e);
+            LOG.fatal(e, e);
             setRunning(false);
+        } finally {
+            IOUtils.closeQuietly(this.bwriter);
         }
     }
 }
