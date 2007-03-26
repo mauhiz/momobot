@@ -13,18 +13,18 @@ public abstract class AChannelEvent {
     /**
      * le nom du channel sur lequel se déroule l'Event.
      */
-    private String              channel = "";
+    private Channel             channel = null;
 
     /**
      * @param channel1
      *            le channel
      */
-    public AChannelEvent(final String channel1) {
+    public AChannelEvent(final Channel channel1) {
         this.channel = channel1;
         if (LOG.isDebugEnabled()) {
             LOG.debug("start sur " + channel1);
         }
-        Channel.getChannel(channel1).registerEvent(this);
+        this.channel.registerEvent(this);
     }
 
     /**
@@ -39,7 +39,9 @@ public abstract class AChannelEvent {
         if (LOG.isDebugEnabled()) {
             LOG.debug("reset sur " + this.channel);
         }
-        Channel.getChannel(this.channel).unRegisterEvent();
+        if (this.channel != null) {
+            this.channel.unRegisterEvent();
+        }
         return "Fin du " + getClass().getSimpleName() + " !";
     }
 }

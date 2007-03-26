@@ -27,7 +27,7 @@ public class MassHlTrigger extends ATrigger {
     @Override
     public final void executePrivateTrigger(final IrcUser user,
             final String message) {
-        // rien
+        /* rien */
     }
 
     /**
@@ -38,9 +38,7 @@ public class MassHlTrigger extends ATrigger {
     public final void executePublicTrigger(final IrcUser user,
             final String channel, final String message) {
         final StringBuffer msg = new StringBuffer("nudges");
-        for (final Iterator < IrcUser > users = Channel.getChannel(channel)
-                .getAllUsers(); users.hasNext();) {
-            final IrcUser nextIrcUser = users.next();
+        for (IrcUser nextIrcUser : Channel.getChannel(channel).getAllUsers()) {
             // no bots
             if (((QnetUser) nextIrcUser).iAmQnetService()) {
                 continue;

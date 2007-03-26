@@ -40,7 +40,7 @@ public class PenduTrigger extends ATrigger {
         final Channel c = Channel.getChannel(channel);
         if (!c.hasRunningEvent()) {
             MomoBot.getInstance().sendMessage(channel,
-                    "Devinez ce mot: " + (new Pendu(channel)).getDevinage());
+                    "Devinez ce mot: " + (new Pendu(c)).getDevinage());
             return;
         }
         final AChannelEvent e = c.getEvent();
@@ -48,7 +48,7 @@ public class PenduTrigger extends ATrigger {
             MomoBot.getInstance().sendMessage(
                     channel,
                     "Un " + e.getClass().getSimpleName()
-                            + " est déjà lancé sur " + channel);
+                            + " est déjà lancé sur " + c);
         }
     }
 }
