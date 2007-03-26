@@ -1,11 +1,13 @@
 package ircbot.dcc;
 
 import ircbot.ACtcp;
-import ircbot.IrcUser;
 import ircbot.AIrcBot;
+import ircbot.IrcUser;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.ListIterator;
+import org.apache.commons.lang.text.StrTokenizer;
 import utils.MyRunnable;
 
 /**
@@ -19,7 +21,7 @@ public class DccManager implements IDccSubCommands {
     /**
      * mes DCC à reprendre.
      */
-    private final List < DccFileTransfer > awaitingResume = new Vector < DccFileTransfer >();
+    private final List < DccFileTransfer > awaitingResume;
     /**
      * mon bot.
      */
@@ -31,6 +33,8 @@ public class DccManager implements IDccSubCommands {
      */
     public DccManager(final AIrcBot lebot) {
         this.bot = lebot;
+        this.awaitingResume = Collections
+                .synchronizedList(new LinkedList < DccFileTransfer >());
     }
 
     /**
@@ -39,9 +43,7 @@ public class DccManager implements IDccSubCommands {
      *            the DccFileTransfer that may be resumed.
      */
     final void addAwaitingResume(final DccFileTransfer transfer) {
-        synchronized (this.awaitingResume) {
-            this.awaitingResume.add(transfer);
-        }
+        this.awaitingResume.add(transfer);
     }
 
     /**
@@ -53,7 +55,7 @@ public class DccManager implements IDccSubCommands {
      * @return True if the type of request was handled successfully.
      */
     public final boolean process(final IrcUser user, final String request) {
-        final StringTokenizer tokenizer = new StringTokenizer(request);
+        final StrTokenizer tokenizer = new StrTokenizer(request);
         final String temp1 = tokenizer.nextToken();
         final String type = temp1 + tokenizer.nextToken();
         final String filename = tokenizer.nextToken();
@@ -72,11 +74,12 @@ public class DccManager implements IDccSubCommands {
             final long progress = Long.parseLong(tokenizer.nextToken());
             DccFileTransfer transfer = null;
             synchronized (this.awaitingResume) {
-                for (int i = 0; i < this.awaitingResume.size(); i++) {
-                    transfer = this.awaitingResume.get(i);
+                for (ListIterator < DccFileTransfer > li = this.awaitingResume
+                        .listIterator(); li.hasNext();) {
+                    transfer = li.next();
                     if (transfer.getUser().equals(user)
                             && transfer.getPort() == port) {
-                        this.awaitingResume.remove(i);
+                        li.remove();
                         break;
                     }
                 }
@@ -90,14 +93,16 @@ public class DccManager implements IDccSubCommands {
             }
         } else if (type.equals(DCC_ACCEPT)) {
             final int port = Integer.parseInt(tokenizer.nextToken());
-            /* long progress = */Long.parseLong(tokenizer.nextToken());
+            // long progress =
+            Long.parseLong(tokenizer.nextToken());
             DccFileTransfer transfer = null;
             synchronized (this.awaitingResume) {
-                for (int i = 0; i < this.awaitingResume.size(); i++) {
-                    transfer = this.awaitingResume.get(i);
+                for (ListIterator < DccFileTransfer > li = this.awaitingResume
+                        .listIterator(); li.hasNext();) {
+                    transfer = li.next();
                     if (transfer.getUser().equals(user)
                             && transfer.getPort() == port) {
-                        this.awaitingResume.remove(i);
+                        li.remove();
                         break;
                     }
                 }
