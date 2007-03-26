@@ -1,13 +1,19 @@
 package utils;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Administrator
  */
 public abstract class MyRunnable implements Runnable {
     /**
+     * logger.
+     */
+    private static final Logger LOG     = Logger.getLogger(MyRunnable.class);
+    /**
      * si le thread tourne.
      */
-    private boolean running = false;
+    private boolean             running = false;
 
     /**
      * lance le thread.
@@ -45,7 +51,9 @@ public abstract class MyRunnable implements Runnable {
         try {
             Thread.sleep(duree);
         } catch (final InterruptedException e) {
-            Utils.logError(getClass(), e);
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e, e);
+            }
             setRunning(false);
         }
     }

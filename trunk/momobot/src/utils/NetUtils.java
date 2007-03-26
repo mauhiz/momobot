@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.text.StrBuilder;
+import org.apache.log4j.Logger;
 
 /**
  * @author Administrator
@@ -14,7 +15,11 @@ public abstract class NetUtils {
     /**
      * nombre de champs dans l'Ipv4.
      */
-    static final int IP_FIELDS = 4;
+    static final int            IP_FIELDS = 4;
+    /**
+     * logger.
+     */
+    private static final Logger LOG       = Logger.getLogger(NetUtils.class);
 
     /**
      * Une IP vaut 32 bits, un int aussi. Par contre l'entier est signé...
@@ -43,8 +48,9 @@ public abstract class NetUtils {
      * @return a long representation of the IP address.
      */
     public static long byteTabIpToLong(final byte[] address) {
-        if (address.length != 4) {
-            throw new IllegalArgumentException("byte array must be of length 4");
+        if (address.length != IP_FIELDS) {
+            throw new IllegalArgumentException("byte array must be of length "
+                    + IP_FIELDS);
         }
         long ipNum = 0;
         long multiplier = 1;
@@ -61,13 +67,15 @@ public abstract class NetUtils {
      *            l'IP
      * @return ?
      */
-    static InetAddress intTabToIp(final int[] ip) {
-        final StrBuilder name = new StrBuilder();
-        name.appendWithSeparators(ArrayUtils.toObject(ip), ".");
+    public static InetAddress intTabToIp(final int[] ip) {
+        final StrBuilder name = new StrBuilder().appendWithSeparators(
+                ArrayUtils.toObject(ip), ".");
         try {
             return InetAddress.getByName(name.toString());
         } catch (final UnknownHostException e) {
-            Utils.logError(NetUtils.class, e);
+            if (LOG.isWarnEnabled()) {
+                LOG.warn(e, e);
+            }
             return null;
         }
     }
@@ -178,9 +186,13 @@ public abstract class NetUtils {
                 final int port = Integer.parseInt(s.substring(i + 1));
                 return new InetSocketAddress(ip, port);
             } catch (final IllegalArgumentException e) {
-                Utils.logError(Utils.class, e);
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn(e, e);
+                }
             } catch (final IOException e) {
-                Utils.logError(Utils.class, e);
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn(e, e);
+                }
             }
         }
         return null;

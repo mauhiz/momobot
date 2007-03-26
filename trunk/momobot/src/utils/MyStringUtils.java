@@ -78,30 +78,6 @@ public abstract class MyStringUtils {
     }
 
     /**
-     * @param seq
-     *            la chaine à modifier
-     * @param pos
-     *            l'index de la lettre à manger.
-     * @return la string avec une lettre en moins
-     */
-    public static String mangeLettre(final String seq, final int pos) {
-        final int max = seq.length() - 1;
-        if (max < 1) {
-            return "";
-        }
-        if (pos == 0) {
-            return seq.substring(1);
-        }
-        if (pos > 0 && pos < max) {
-            return seq.substring(0, pos) + seq.substring(pos + 1);
-        }
-        if (pos == max) {
-            return seq.substring(0, pos);
-        }
-        return seq;
-    }
-
-    /**
      * méthode pour le wquizz.
      * @param work
      *            ce que je dois nettoyer
@@ -138,16 +114,16 @@ public abstract class MyStringUtils {
      *            une chaine à shaker
      * @return la chaine randomisee
      */
-    public static StringBuffer shake(final String seq) {
+    public static String shuffle(final String seq) {
         final Random r = new Random();
+        final StringBuffer input = new StringBuffer(seq);
         final StringBuffer output = new StringBuffer();
-        String temp = seq;
-        for (int len = temp.length(); len > 0; len--) {
+        for (int len = 0; len < seq.length(); len++) {
             final int k = r.nextInt(len);
-            output.append(temp.charAt(k));
-            temp = mangeLettre(temp, k);
+            output.append(input.charAt(k));
+            input.deleteCharAt(k);
         }
-        return output;
+        return output.toString();
     }
 
     /**
@@ -156,9 +132,8 @@ public abstract class MyStringUtils {
      * @return la chaine en Morse
      */
     public static StringBuffer toMorse(final String work) {
-        final char[] charArr = work.toUpperCase().toCharArray();
         final StringBuffer output = new StringBuffer();
-        for (final char element : charArr) {
+        for (final char element : work.toUpperCase().toCharArray()) {
             output.append(codeMorse.get(new Character(element)));
         }
         return output;
