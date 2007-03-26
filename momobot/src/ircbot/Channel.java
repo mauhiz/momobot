@@ -18,8 +18,8 @@ public class Channel implements IIrcSpecialChars {
     /**
      * @return un itérateur sur tous les channels
      */
-    public static Iterator < Channel > getAll() {
-        return CHANNELS.values().iterator();
+    public static Iterable < Channel > getAll() {
+        return CHANNELS.values();
     }
 
     /**

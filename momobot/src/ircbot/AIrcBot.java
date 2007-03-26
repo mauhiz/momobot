@@ -10,17 +10,17 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.log4j.Logger;
 import utils.NetUtils;
-import utils.Utils;
 
 /**
  * Tout ce qui reste du PircBot original, c'est le nom et une paire de méthodes.
@@ -32,61 +32,68 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
     /**
      * le nom.
      */
-    private static final String                    DEFAULT_NAME = "PircBot";
+    private static final String              DEFAULT_NAME = "PircBot";
+    /**
+     * logger.
+     */
+    private static final Logger              LOG          = Logger
+                                                                  .getLogger(AIrcBot.class);
     /**
      * Les ports pour le DCC. Osef complètement, il est pas prévu que le bot
      * fasse des xdcc pour l'instant
      */
-    public static final int[]                      PORTS        = {
-            1025, 1026, 1027
-                                                                };
+    public static final Collection < Short > PORTS        = new ArrayList < Short >();
+    static {
+        PORTS.add(new Short((short) 1025));
+        PORTS.add(new Short((short) 1026));
+        PORTS.add(new Short((short) 1027));
+    }
     /**
      * Me dit si je suis connecté.
      */
-    private boolean                                connected    = false;
+    private boolean                          connected    = false;
     /**
      * Un manager to rule them all.
      */
-    private final DccManager                       dccManager   = new DccManager(
-                                                                        this);
+    private final DccManager                 dccManager   = new DccManager(this);
     /**
      * Mon doigt.
      */
-    private String                                 finger       = "You ought to be arrested for fingering a bot!";
+    private String                           finger       = "You ought to be arrested for fingering a bot!";
     /**
      * le login.
      */
-    private String                                 myLogin      = "PircBot";
+    private String                           myLogin      = "PircBot";
     /**
      * Mon nom, celui que je veux avoir comme nick.
      */
-    private String                                 myName       = DEFAULT_NAME;
+    private String                           myName       = DEFAULT_NAME;
     /**
      * le nick que le bot a conscience d'avoir. Il peut parfois différer de son
      * nick réel en cas de désynchro.
      */
-    private String                                 myNick       = EMPTY;
+    private String                           myNick       = EMPTY;
     /**
      * Mon thread qui me débarasse de ce que je dois dire.
      */
-    private OutputQueue                            outputThread = null;
+    private OutputQueue                      outputThread = null;
     /**
      * Mon serveur IRC où je vais me connecter.
      */
-    private IrcServerBean                          server       = null;
+    private IrcServerBean                    server       = null;
     /**
      * une poubelle avec un topic temporaire dedans. Il faudrait que je trouve
      * plus élégant.
      */
-    private String                                 tempTopic    = EMPTY;
+    private String                           tempTopic    = EMPTY;
     /**
      * une poubelle avec plein d'users.
      */
-    private final ConcurrentMap < String, String > tempUsers    = new ConcurrentHashMap < String, String >();
+    private final Map < String, String >     tempUsers    = new ConcurrentHashMap < String, String >();
     /**
      * ce que je réponds sur un CTCP version.
      */
-    private final String                           version      = "momoBot";
+    private final String                     version      = "momoBot";
 
     /**
      * Bans a user from a channel. An example of a valid hostmask is
@@ -139,7 +146,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
                     + '*' + SPC + COLON + this.version);
             this.myNick = getMyName();
         } catch (final Exception e) {
-            Utils.logError(getClass(), e);
+            LOG.fatal(e, e);
         }
     }
 
@@ -169,28 +176,27 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
         DccChat chat = null;
         ServerSocket ss = null;
         try {
-            if (PORTS == null) {
-                // Use any free port.
+            if (PORTS.isEmpty()) {
+                /* Use any free port. */
                 ss = new ServerSocket(0);
             } else {
                 for (final int element : PORTS) {
                     try {
                         ss = new ServerSocket(element);
-                        // Found a port number we could use.
+                        /* Found a port number we could use. */
                         break;
                     } catch (final IOException e) {
                         continue;
                     }
                 }
                 if (ss == null) {
-                    // No ports could be used.
-                    throw new IOException(
-                            "All ports returned by getDccPorts() are in use.");
+                    /* No ports could be used. */
+                    throw new IOException("No available port...");
                 }
             }
             ss.setSoTimeout(timeout);
             final int port = ss.getLocalPort();
-            // TODO : autoriser le réglage externe dans le cas d'un NAT.
+            /* TODO : autoriser le réglage externe dans le cas d'un NAT. */
             ACtcp.sendCtcpMsg(DCC_CHAT
                     + SPC
                     + "chat"
@@ -198,13 +204,15 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
                     + NetUtils.byteTabIpToLong(InetAddress.getLocalHost()
                             .getAddress()) + SPC + port, user.getNick(),
                     this.outputThread);
-            // The client may now connect to us to chat.
+            /* The client may now connect to us to chat. */
             final Socket socket = ss.accept();
-            // Close the server socket now that we've finished with it.
+            /* Close the server socket now that we've finished with it. */
             ss.close();
             chat = new DccChat(user, socket);
         } catch (final IOException e) {
-            Utils.logError(getClass(), e);
+            if (LOG.isErrorEnabled()) {
+                LOG.error(e, e);
+            }
         }
         return chat;
     }
@@ -648,13 +656,13 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @param reason
      *            The reason given by the user who performed the kick.
      */
-    protected void onKick(String channel, IrcUser user, String recipientNick,
+    protected void onKick(Channel channel, IrcUser user, String recipientNick,
             String reason) {
         if (recipientNick.equalsIgnoreCase(getNick())) {
-            Channel.removeChannel(channel);
+            Channel.removeChannel(channel.getNom());
             return;
         }
-        Channel.getChannel(channel).removeUser(recipientNick);
+        channel.removeUser(recipientNick);
     }
 
     /**
@@ -689,7 +697,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      * @param mode
      *            The mode that has been set.
      */
-    protected abstract void onMode(String channel, IrcUser user, String mode);
+    protected abstract void onMode(Channel channel, IrcUser user, String mode);
 
     /**
      * This method is called whenever someone (possibly us) changes nick on any
@@ -1337,7 +1345,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
             final String mode) {
         if (Channel.isChannelName(target)) {
             // The mode of a channel is being changed.
-            final String channel = target;
+            final Channel chan = Channel.getChannel(target);
             final StrTokenizer tok = new StrTokenizer(mode);
             char pn = SPC;
             // All of this is very large and ugly, but it's the only way of
@@ -1345,7 +1353,6 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
             final String param0 = tok.nextToken();
             for (int i = 0; i < param0.length(); i++) {
                 final char atPos = param0.charAt(i);
-                final Channel chan = Channel.getChannel(channel);
                 if (atPos == PLUS || atPos == MINUS) {
                     pn = atPos;
                 } else if (atPos == Mode.OP) {
@@ -1417,9 +1424,9 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
                     onRemoveSecret(chan, user);
                 }
             }
-            onMode(channel, user, mode);
+            onMode(chan, user, mode);
         } else {
-            // The mode of a user is being changed.
+            /* The mode of a user is being changed. */
             onUserMode(target, user, mode);
         }
     }
@@ -1439,11 +1446,10 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
      */
     void processServerResponse(final int code, final String response) {
         int firstSpace, secondSpace, thirdSpace;
-        StringTokenizer tokenizer;
         String channel;
         switch (code) {
             case RPL_LIST:
-                // This is a bit of information about a channel.
+                /* This is a bit of information about a channel. */
                 firstSpace = response.indexOf(SPC);
                 secondSpace = response.indexOf(SPC, firstSpace + 1);
                 thirdSpace = response.indexOf(SPC, secondSpace + 1);
@@ -1463,7 +1469,7 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
                 this.tempTopic = response.substring(colon + 1);
                 break;
             case RPL_TOPICINFO:
-                tokenizer = new StringTokenizer(response);
+                StrTokenizer tokenizer = new StrTokenizer(response);
                 tokenizer.nextToken();
                 channel = tokenizer.nextToken();
                 final String setBy = tokenizer.nextToken();
@@ -1472,40 +1478,41 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
                 this.tempTopic = EMPTY;
                 break;
             case RPL_NAMREPLY:
-                // This is a list of nicks in a channel that we've just joined.
+                /* This is a list of nicks in a channel that we've just joined. */
                 final int channelEndIndex = response.indexOf(EMPTY + SPC
                         + COLON);
                 response.substring(response.lastIndexOf(SPC,
                         channelEndIndex - 1) + 1, channelEndIndex);
-                tokenizer = new StringTokenizer(StringUtils.substringAfter(
-                        response, EMPTY + SPC + COLON));
-                while (tokenizer.hasMoreTokens()) {
-                    String tempNick = tokenizer.nextToken();
+                for (String tempNick : new StrTokenizer(StringUtils
+                        .substringAfter(response, EMPTY + SPC + COLON))
+                        .getTokenArray()) {
                     String prefix = EMPTY;
-                    if (tempNick.charAt(0) == PREFIX_OP) {
-                        // User is an operator in this channel.
-                        prefix += PREFIX_OP;
-                    } else if (tempNick.charAt(0) == PREFIX_VOICE) {
-                        // User is voiced in this channel.
-                        prefix += PREFIX_VOICE;
+                    if (tempNick.charAt(0) == PREFIX_OP
+                            || tempNick.charAt(0) == PREFIX_VOICE) {
+                        /* User is an operator or voiced in this channel. */
+                        prefix += tempNick.charAt(0);
                     }
-                    tempNick = tempNick.substring(prefix.length());
-                    this.tempUsers.put(tempNick, prefix);
+                    this.tempUsers.put(tempNick.substring(prefix.length()),
+                            prefix);
                 }
                 break;
             case RPL_ENDOFNAMES:
-                // This is the end of a NAMES list, so we know that we've got
-                // the full list of users in the channel that we just joined.
+                /*
+                 * This is the end of a NAMES list, so we know that we've got
+                 * the full list of users in the channel that we just joined.
+                 */
                 channel = response.substring(response.indexOf(SPC) + 1,
                         response.indexOf(EMPTY + SPC + COLON));
                 onUserList(channel, this.tempUsers.entrySet().iterator());
                 this.tempUsers.clear();
                 break;
             default:
-                Utils.log(getClass(), EMPTY + '[' + code + ']' + response);
-                return;
+                if (LOG.isInfoEnabled()) {
+                    LOG.info(EMPTY + '[' + code + ']' + response);
+                }
+                onServerResponse(code, response);
+                break;
         }
-        onServerResponse(code, response);
     }
 
     /**
@@ -1541,11 +1548,10 @@ public abstract class AIrcBot implements IIrcConstants, IIrcCommands,
             connect(this.server);
             return;
         }
-        Utils
-                .logError(
-                        getClass(),
-                        new Exception(
-                                "Cannot reconnect to an IRC server because we were never connected to one previously!"));
+        if (LOG.isWarnEnabled()) {
+            LOG
+                    .warn("Cannot reconnect to an IRC server because we were never connected to one previously!");
+        }
     }
 
     /**

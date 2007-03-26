@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.log4j.Logger;
 import utils.MyRunnable;
 import utils.Utils;
 
@@ -23,21 +25,25 @@ import utils.Utils;
 public class InputProcessor extends MyRunnable implements IIrcConstants,
         IIrcCommands, ICtcpCommands {
     /**
+     * logger.
+     */
+    private static final Logger LOG    = Logger.getLogger(InputProcessor.class);
+    /**
      * mon mastah.
      */
-    private AIrcBot        bot    = null;
+    private AIrcBot             bot    = null;
     /**
      * si je suis loggé.
      */
-    private boolean        logged = false;
+    private boolean             logged = false;
     /**
      * mon lecteur.
      */
-    private BufferedReader reader = null;
+    private BufferedReader      reader = null;
     /**
      * le nombre d'essais.
      */
-    private int            tries  = 0;
+    private int                 tries  = 0;
 
     /**
      * The InputThread reads lines from the IRC server and allows the PircBot to
@@ -53,9 +59,11 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
             this.reader = new BufferedReader(new InputStreamReader(socket
                     .getInputStream()));
             setRunning(true);
-            Utils.log(getClass(), "started");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("started");
+            }
         } catch (final IOException e) {
-            Utils.logError(this.getClass(), e);
+            LOG.fatal(e);
         }
     }
 
@@ -70,11 +78,11 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
      */
     protected final void handleLine(final String line) {
         if (line.startsWith(PING)) {
-            // Respond to the ping and return immediately.
+            /* Respond to the ping and return immediately. */
             this.bot.onServerPing(line.substring(PING.length() + 1));
             return;
         }
-        StringTokenizer tokenizer = new StringTokenizer(line);
+        StrTokenizer tokenizer = new StrTokenizer(line);
         String senderInfo = tokenizer.nextToken();
         IrcUser sender = null;
         String command = tokenizer.nextToken();
@@ -85,7 +93,7 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
             try {
                 sender = hm.createUser();
             } catch (Exception e) {
-                if (tokenizer.hasMoreTokens()) {
+                if (tokenizer.hasNext()) {
                     final String token = command;
                     int code = -1;
                     try {
@@ -95,13 +103,15 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                         this.bot.processServerResponse(code, response);
                         return;
                     } catch (final NumberFormatException e1) {
-                        // This is not a server response.
-                        // It must be a nick without login and hostname.
-                        // (or maybe a NOTICE or suchlike from the server)
+                        /*
+                         * This is not a server response. It must be a nick
+                         * without login and hostname. (or maybe a NOTICE or
+                         * suchlike from the server)
+                         */
                         target = token;
                     }
                 } else {
-                    // We don't know what this line means.
+                    /* We don't know what this line means. */
                     this.bot.onUnknown(line);
                     return;
                 }
@@ -117,7 +127,7 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
         if (command.equals(PRIVMSG)) {
             final int ctcp = line.indexOf(EMPTY + COLON + STX);
             if (ctcp > 0 && line.endsWith(EMPTY + STX)) {
-                // begin CTCP
+                /* begin CTCP */
                 final String request = line.substring(ctcp + 2,
                         line.length() - 1);
                 if (request.equals(P_VERSION)) {
@@ -133,8 +143,8 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                 } else if (request.equals(P_FINGER)) {
                     this.bot.onFinger(sender, target);
                 } else {
-                    tokenizer = new StringTokenizer(request);
-                    if (tokenizer.countTokens() >= 5
+                    tokenizer = new StrTokenizer(request);
+                    if (tokenizer.getTokenArray().length >= 5
                             && tokenizer.nextToken().equals(E_DCC)) {
                         if (!this.bot.getDccManager().process(sender, request)) {
                             this.bot.onUnknown(line);
@@ -143,7 +153,7 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                     }
                     this.bot.onUnknown(line);
                 }
-                // end CTCP
+                /* end CTCP */
                 return;
             }
             if (Channel.isChannelName(target)) {
@@ -153,27 +163,27 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
             }
             this.bot.onPrivateMessage(sender, StringUtils.substringAfter(line,
                     EMPTY + SPC + COLON));
+        } else if (command.equals(NICK)) {
+            /* Somebody is changing their nick. */
+            if (senderInfo.equals(this.bot.getNick())) {
+                /* Update our nick if it was us that changed nick. */
+                this.bot.setNick(target);
+            }
+            IrcUser.updateUser(sender, target);
+            this.bot.onNickChange(sender, target);
         } else if (command.equals(JOIN)) {
-            // Someone is joining a channel.
+            /* Someone is joining a channel. */
             final Channel channel = Channel.getChannel(target);
             this.bot.onJoin(channel, sender);
         } else if (command.equals(PART)) {
             final Channel channel = Channel.getChannel(target);
             this.bot.onPart(channel, sender);
-        } else if (command.equals(NICK)) {
-            // Somebody is changing their nick.
-            if (senderInfo.equals(this.bot.getNick())) {
-                // Update our nick if it was us that changed nick.
-                this.bot.setNick(target);
-            }
-            IrcUser.updateUser(sender, target);
-            this.bot.onNickChange(sender, target);
         } else if (command.equals(NOTICE)) {
-            // Someone is sending a notice.
+            /* Someone is sending a notice. */
             this.bot.onNotice(sender, target, StringUtils.substringAfter(line,
                     EMPTY + SPC + COLON));
         } else if (command.equals(QUIT)) {
-            // Someone has quit from the IRC server.
+            /* Someone has quit from the IRC server. */
             if (senderInfo.equals(this.bot.getNick())) {
                 this.bot.onDisconnect();
             } else {
@@ -181,12 +191,12 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                         + SPC + COLON));
             }
         } else if (command.equals(KICK)) {
-            // Somebody has been kicked from a channel.
+            /* Somebody has been kicked from a channel. */
             final String recipient = tokenizer.nextToken();
-            this.bot.onKick(target.toLowerCase(), sender, recipient,
+            this.bot.onKick(Channel.getChannel(target), sender, recipient,
                     StringUtils.substringAfter(line, EMPTY + SPC + COLON));
         } else if (command.equals(MODE)) {
-            // Somebody is changing the mode on a channel or user.
+            /* Somebody is changing the mode on a channel or user. */
             String mode = line.substring(line.indexOf(target, 2)
                     + target.length() + 1);
             if (mode.charAt(0) == COLON) {
@@ -194,17 +204,19 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
             }
             this.bot.processMode(target.toLowerCase(), sender, mode);
         } else if (command.equals(TOPIC)) {
-            // Someone is changing the topic.
+            /* Someone is changing the topic. */
             this.bot.onTopic(target.toLowerCase(), StringUtils.substringAfter(
                     line, EMPTY + SPC + COLON), senderInfo, System
                     .currentTimeMillis(), true);
         } else if (command.equals(INVITE)) {
-            // Somebody is inviting somebody else into a channel.
+            /* Somebody is inviting somebody else into a channel. */
             this.bot.onInvite(target.toLowerCase(), sender, StringUtils
                     .substringAfter(line, EMPTY + SPC + COLON));
         } else {
-            // If we reach this point, then we've found something that the
-            // PircBot doesn't currently deal with.
+            /*
+             * If we reach this point, then we've found something that the
+             * PircBot doesn't currently deal with.
+             */
             this.bot.onUnknown(line);
         }
     }
@@ -232,26 +244,26 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
     @Override
     public final void run() {
         try {
-            String line;
+            String line = null;
             while (isRunning()) {
-                line = null;
                 try {
                     line = this.reader.readLine();
                 } catch (final InterruptedIOException iioe) {
-                    // This will happen if we haven't received anything from the
-                    // server for a while.
-                    // So we shall send it a ping to check that we are still
-                    // connected.
+                    /*
+                     * This will happen if we haven't received anything from the
+                     * server for a while. So we shall send it a ping to check
+                     * that we are still connected.
+                     */
                     this.bot.send(PING
                             + SPC
                             + TimeUnit.SECONDS
                                     .convert(System.currentTimeMillis(),
                                             TimeUnit.MILLISECONDS));
-                    // Now we go back to listening for stuff from the server...
+                    /* Now we go back to listening for stuff from the server. */
                     continue;
                 }
                 if (line == null) {
-                    // The server must have disconnected us.
+                    /* The server must have disconnected us. */
                     setRunning(false);
                     break;
                 }
@@ -266,16 +278,19 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                         final String code = line.substring(firstSpace + 1,
                                 secondSpace);
                         if (code.equals("AUTH")) {
-                            Utils.log(getClass(), line);
+                            if (LOG.isInfoEnabled()) {
+                                LOG.info(line);
+                            }
                         } else if (code.equals("004")) {
                             this.logged = true;
-                            Utils.log(getClass(), "Logged");
+                            if (LOG.isInfoEnabled()) {
+                                LOG.info("Logged");
+                            }
                             this.bot.onConnect();
                             continue;
                         } else if (code.startsWith("5") || code.startsWith("4")) {
-                            Utils.logError(getClass(), new Exception(EMPTY
-                                    + '[' + code + "] Could not log in : "
-                                    + line));
+                            LOG.fatal(EMPTY + '[' + code
+                                    + "] Could not log in : " + line);
                             setRunning(false);
                             break;
                         } else if (Integer.parseInt(code) == ERR_NICKNAMEINUSE) {
@@ -285,17 +300,23 @@ public class InputProcessor extends MyRunnable implements IIrcConstants,
                         }
                     }
                 } catch (final Throwable t) {
-                    // ce catch encapsule les erreurs dues à l'implémentation de
-                    // PircBot sans le killer.
-                    Utils.logError(getClass(), t);
+                    /*
+                     * Ce catch encapsule les erreurs dues à l'implémentation de
+                     * PircBot sans le killer.
+                     */
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error(t, t);
+                    }
                     t.printStackTrace();
                 }
             }
         } catch (final IOException e) {
-            Utils.logError(getClass(), e);
+            LOG.fatal(e, e);
         }
-        // If we reach this point, then we must have disconnected.
-        Utils.log(getClass(), "Disconnected.");
+        /* If we reach this point, then we must have disconnected. */
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Disconnected.");
+        }
         this.logged = false;
         this.bot.onDisconnect();
     }
