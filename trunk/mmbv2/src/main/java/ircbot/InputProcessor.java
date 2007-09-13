@@ -19,32 +19,43 @@ import utils.AbstractRunnable;
  * A Thread which reads lines from the IRC server. It then passes these lines to the PircBot without changing them. This
  * running Thread also detects disconnection from the server and is thus used by the OutputThread to send lines to the
  * server.
+ * 
  * @author mauhiz
  */
 public class InputProcessor extends AbstractRunnable implements IIrcConstants, IIrcCommands, ICtcpCommands {
     /**
      * logger.
      */
-    private static final Logger  LOG = Logger.getLogger(InputProcessor.class);
+    static final Logger    LOG = Logger.getLogger(InputProcessor.class);
     /**
      * le nombre d'essais.
      */
-    private static int           tries;
+    private static int     tries;
+    static {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            /* Ce catch encapsule les erreurs dues à l'implémentation de PircBot sans le killer. */
+            @Override
+            public void uncaughtException(final Thread t, final Throwable e) {
+                LOG.error("Une implémentation a planté", e);
+            }
+        });
+    }
     /**
      * mon mastah.
      */
-    private final AbstractIrcBot bot;
+    private final IIrcBot  bot;
     /**
      * si je suis loggé.
      */
-    private boolean              logged;
+    private boolean        logged;
     /**
      * mon lecteur.
      */
-    private BufferedReader       reader;
+    private BufferedReader reader;
 
     /**
      * The InputThread reads lines from the IRC server and allows the PircBot to handle them.
+     * 
      * @param bot1
      *            le bot
      * @param socket
@@ -67,6 +78,7 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
      * the PircBot. This method is protected and only called by the InputThread for this instance.
      * <p>
      * This method may not be overridden!
+     * 
      * @param line
      *            The raw line of text from the server.
      */
@@ -92,9 +104,9 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                     int code;
                     try {
                         code = Integer.parseInt(token);
-                        final String response = line.substring(line.indexOf(token, senderInfo.length()) + 4, line
-                                .length());
-                        this.bot.processServerResponse(code, response);
+                        final String response =
+                                line.substring(line.indexOf(token, senderInfo.length()) + 4, line.length());
+                        ((AbstractIrcBot) this.bot).processServerResponse(code, response);
                         return;
                     } catch (final NumberFormatException nfe) {
                         code = -1;
@@ -136,7 +148,7 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                 } else {
                     tokenizer = new StrTokenizer(request);
                     if (tokenizer.getTokenArray().length >= 5 && tokenizer.nextToken().equals(E_DCC)) {
-                        if (!this.bot.getDccManager().process(sender, request)) {
+                        if (!((AbstractIrcBot) this.bot).getDccManager().process(sender, request)) {
                             this.bot.onUnknown(line);
                         }
                         return;
@@ -147,8 +159,8 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                 return;
             }
             if (Channel.isChannelName(target)) {
-                this.bot.onMessage(Channel.getChannel(target), sender, StringUtils.substringAfter(line, EMPTY + SPC +
-                        COLON));
+                this.bot.onMessage(Channel.getChannel(target), sender, StringUtils.substringAfter(line, EMPTY + SPC
+                        + COLON));
                 return;
             }
             this.bot.onPrivateMessage(sender, StringUtils.substringAfter(line, EMPTY + SPC + COLON));
@@ -180,8 +192,8 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
         } else if (command.equals(KICK)) {
             /* Somebody has been kicked from a channel. */
             final String recipient = tokenizer.nextToken();
-            this.bot.onKick(Channel.getChannel(target), sender, recipient, StringUtils.substringAfter(line, EMPTY +
-                    SPC + COLON));
+            this.bot.onKick(Channel.getChannel(target), sender, recipient, StringUtils.substringAfter(line, EMPTY + SPC
+                    + COLON));
         } else if (command.equals(MODE)) {
             /* Somebody is changing the mode on a channel or user. */
             String mode = line.substring(line.indexOf(target, 2) + target.length() + 1);
@@ -195,8 +207,8 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                     senderInfo, System.currentTimeMillis(), true);
         } else if (command.equals(INVITE)) {
             /* Somebody is inviting somebody else into a channel. */
-            this.bot.onInvite(target.toLowerCase(Locale.FRANCE), sender, StringUtils.substringAfter(line, EMPTY + SPC +
-                    COLON));
+            this.bot.onInvite(target.toLowerCase(Locale.FRANCE), sender, StringUtils.substringAfter(line, EMPTY + SPC
+                    + COLON));
         } else {
             /*
              * If we reach this point, then we've found something that the PircBot doesn't currently deal with.
@@ -208,6 +220,7 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
     /**
      * Returns true if this InputThread is connected to an IRC server. The result of this method should only act as a
      * rough guide, as the result may not be valid by the time you act upon it.
+     * 
      * @return True if still connected.
      */
     protected final boolean isLogged() {
@@ -233,8 +246,8 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                      * This will happen if we haven't received anything from the server for a while. So we shall send it
                      * a ping to check that we are still connected.
                      */
-                    this.bot.send(PING + SPC +
-                            TimeUnit.SECONDS.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS));
+                    ((AbstractIrcBot) this.bot).send(PING + SPC
+                            + TimeUnit.SECONDS.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS));
                     /* Now we go back to listening for stuff from the server. */
                     continue;
                 }
@@ -243,36 +256,31 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                     setRunning(false);
                     break;
                 }
-                try {
-                    handleLine(line);
-                    if (isLogged()) {
+                handleLine(line);
+                if (isLogged()) {
+                    continue;
+                }
+                final int firstSpace = line.indexOf(SPC);
+                final int secondSpace = line.indexOf(SPC, firstSpace + 1);
+                if (secondSpace >= 0) {
+                    final String code = line.substring(firstSpace + 1, secondSpace);
+                    if ("AUTH".equals(code)) {
+                        LOG.info(line);
+                    } else if ("004".equals(code)) {
+                        this.logged = true;
+                        LOG.info("Logged");
+                        this.bot.onConnect();
                         continue;
+                    } else if (code.charAt(0) == '5' || code.charAt(0) == '4') {
+                        LOG.fatal(new StrBuilder().append('[').append(code).append("] Could not log in : ")
+                                .append(line));
+                        setRunning(false);
+                        break;
+                    } else if (Integer.parseInt(code) == ERR_NICKNAMEINUSE) {
+                        ++tries;
+                        this.bot.setNick(this.bot.getMyName() + tries);
+                        ((AbstractIrcBot) this.bot).send(NICK + this.bot.getNick());
                     }
-                    final int firstSpace = line.indexOf(SPC);
-                    final int secondSpace = line.indexOf(SPC, firstSpace + 1);
-                    if (secondSpace >= 0) {
-                        final String code = line.substring(firstSpace + 1, secondSpace);
-                        if ("AUTH".equals(code)) {
-                            LOG.info(line);
-                        } else if ("004".equals(code)) {
-                            this.logged = true;
-                            LOG.info("Logged");
-                            this.bot.onConnect();
-                            continue;
-                        } else if (code.charAt(0) == '5' || code.charAt(0) == '4') {
-                            LOG.fatal(new StrBuilder().append('[').append(code).append("] Could not log in : ").append(
-                                    line));
-                            setRunning(false);
-                            break;
-                        } else if (Integer.parseInt(code) == ERR_NICKNAMEINUSE) {
-                            ++tries;
-                            this.bot.setNick(this.bot.getMyName() + tries);
-                            this.bot.send(NICK + this.bot.getNick());
-                        }
-                    }
-                } catch (final Exception any) {
-                    /* Ce catch encapsule les erreurs dues à l'implémentation de PircBot sans le killer. */
-                    LOG.error("Une implémentation a planté", any);
                 }
             }
         } catch (final IOException ioe) {

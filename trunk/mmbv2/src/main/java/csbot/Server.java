@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 /**
  * une sorte de gros bean. Les joueurs présents: Clé = steamId, Valeur = objet Player associé.
+ * 
  * @author mauhiz
  */
 public class Server {
@@ -70,7 +71,6 @@ public class Server {
         }
         return retour.toString();
     }
-
     /**
      * Ip et port du serveur.
      */
@@ -110,6 +110,7 @@ public class Server {
 
     /**
      * Constructeur.
+     * 
      * @param ipay1
      *            l'IP et port du serveur.
      */
@@ -156,7 +157,8 @@ public class Server {
     }
 
     /**
-     * affiche les détails du serveur. Voir <a href="http://developer.valvesoftware.com/wiki/Server_Queries#A2S_INFO"> VDW </a>
+     * affiche les détails du serveur. Voir <a href="http://developer.valvesoftware.com/wiki/Server_Queries#A2S_INFO">
+     * VDW </a>
      */
     public void getDetails() {
         final long start = System.nanoTime();
@@ -469,6 +471,7 @@ public class Server {
 
     /**
      * Fixe un password.
+     * 
      * @param pwd
      *            le password
      */
@@ -491,8 +494,8 @@ public class Server {
     @Override
     public String toString() {
         getDetails();
-        return getIp() + ":" + getPort() + " | " + this.name + " | " + this.ping + "ms (" + this.playerCount + "/" +
-                this.maxPlayers + ")";
+        return getIp() + ":" + getPort() + " | " + this.name + " | " + this.ping + "ms (" + this.playerCount + "/"
+                + this.maxPlayers + ")";
         /* TODO : ajouter playerCount/maxPlayers */
     }
 }

@@ -58,7 +58,9 @@ class Sender extends AbstractRunnable implements IIrcSpecialChars, IDccSubComman
      * @param output
      * @throws IOException
      */
-    protected void continueReading(final ByteBuffer readBuffer, final InputStream readFrom, final InputStream input,
+    protected void continueReading(final ByteBuffer readBuffer,
+            final InputStream readFrom,
+            final InputStream input,
             final OutputStream output) throws IOException {
         final int bytesRead = readFrom.read(readBuffer.array(), 0, readBuffer.capacity());
         if (bytesRead == -1) {
@@ -66,8 +68,12 @@ class Sender extends AbstractRunnable implements IIrcSpecialChars, IDccSubComman
         }
         IOUtils.write(readBuffer.array(), output);
         output.flush();
-        /* on ignore la réponse d'avancement. TODO On devrait vérifier que tout a été skippé. */
-        input.skip(Integer.SIZE / Byte.SIZE);
+        /* on ignore la réponse d'avancement. */
+        final long skipped = input.skip(Integer.SIZE / Byte.SIZE);
+        /* TODO On devrait vérifier que tout a été skippé. */
+        if (false) {
+            LOG.debug(Long.valueOf(skipped));
+        }
         this.dft.updateProgress(bytesRead);
         this.dft.delay();
         continueReading(readBuffer, readFrom, input, output);
@@ -91,8 +97,8 @@ class Sender extends AbstractRunnable implements IIrcSpecialChars, IDccSubComman
                 this.dft.getManager().add(this.dft);
             }
             /* Send the message to the user, telling them where to connect to in order to get the file. */
-            CtcpUtils.sendCtcpMsg(DCC_SEND + SPC + safeFilename + SPC + ipNum + SPC + this.dft.getPort() + SPC +
-                    this.dft.getFile().length(), this.dft.getUser().getNick(), ((AbstractIrcBot) this.dft.getBot())
+            CtcpUtils.sendCtcpMsg(DCC_SEND + SPC + safeFilename + SPC + ipNum + SPC + this.dft.getPort() + SPC
+                    + this.dft.getFile().length(), this.dft.getUser().getNick(), ((AbstractIrcBot) this.dft.getBot())
                     .getOutputThread());
             /* The client may now connect to us and download the file. */
             this.dft.setSocket(server.accept());

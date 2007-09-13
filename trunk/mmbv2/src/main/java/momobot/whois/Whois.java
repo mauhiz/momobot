@@ -73,6 +73,7 @@ public class Whois extends AbstractRunnable implements IIrcCommands {
 
     /**
      * whois silencieux.
+     * 
      * @param nick
      *            le nom
      */
@@ -82,6 +83,7 @@ public class Whois extends AbstractRunnable implements IIrcCommands {
 
     /**
      * Envoie une demande de whois.
+     * 
      * @param target1
      *            la cible
      * @param prive1
@@ -117,8 +119,8 @@ public class Whois extends AbstractRunnable implements IIrcCommands {
     public final void run() {
         /* le whois des bots de Qnet timeout */
         /* whois deja en cours */
-        if (this.target.equalsIgnoreCase("L") || this.target.equalsIgnoreCase("Q") ||
-                MomoBot.getBotInstance().isBeingWhoised(this.target)) {
+        if (this.target.equalsIgnoreCase("L") || this.target.equalsIgnoreCase("Q")
+                || MomoBot.getBotInstance().isBeingWhoised(this.target)) {
             return;
         }
         /* fréquence maximale de whois */

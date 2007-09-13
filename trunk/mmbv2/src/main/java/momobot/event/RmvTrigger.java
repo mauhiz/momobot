@@ -1,7 +1,7 @@
 package momobot.event;
 
-import ircbot.AbstractChannelEvent;
 import ircbot.Channel;
+import ircbot.IChannelEvent;
 import ircbot.IrcUser;
 import ircbot.trigger.AbstractTrigger;
 import ircbot.trigger.IPublicTrigger;
@@ -31,7 +31,7 @@ public class RmvTrigger extends AbstractTrigger implements IPublicTrigger {
             MomoBot.getBotInstance().sendMessage(channel, "Aucun gather ou pickup n'est lance.");
             return;
         }
-        final AbstractChannelEvent event = channel.getEvent();
+        final IChannelEvent event = channel.getEvent();
         if (event instanceof Gather) {
             MomoBot.getBotInstance().sendMessage(channel, ((Gather) event).remove(user));
         } else if (event instanceof Pickup) {

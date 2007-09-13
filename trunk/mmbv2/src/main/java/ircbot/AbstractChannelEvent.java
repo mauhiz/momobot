@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public abstract class AbstractChannelEvent {
+public abstract class AbstractChannelEvent implements IChannelEvent {
     /**
      * logger.
      */
@@ -28,14 +28,14 @@ public abstract class AbstractChannelEvent {
     }
 
     /**
-     * @return the channel
+     * @see ircbot.IChannelEvent#getChannel()
      */
     public Channel getChannel() {
         return this.channel;
     }
 
     /**
-     * @return un msg
+     * @see ircbot.IChannelEvent#stop()
      */
     public final String stop() {
         if (getChannel() != null) {

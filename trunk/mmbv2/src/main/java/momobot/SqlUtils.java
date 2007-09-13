@@ -119,8 +119,9 @@ public class SqlUtils {
      */
     public static Iterable < Dispo > getDispos(final String channel, final long date) throws SQLException {
         final Date datesql = new Date(date);
-        final ResultSet rs = doSqlQuery("SELECT `qauth`, `heure1`, `heure2` FROM `dispo` WHERE `channel` = '" +
-                channel + "' AND `date`= '" + datesql.toString() + "'");
+        final ResultSet rs =
+                doSqlQuery("SELECT `qauth`, `heure1`, `heure2` FROM `dispo` WHERE `channel` = '" + channel
+                        + "' AND `date`= '" + datesql.toString() + "'");
         final Collection < Dispo > dispos = new HashSet < Dispo >();
         try {
             while (rs.next()) {
@@ -265,8 +266,8 @@ public class SqlUtils {
      *             il peut se passer tout un tas de choses...
      */
     public static void reloadTriggers() throws SQLException {
-        final ResultSet rs = doSqlQuery("SELECT `param` FROM `profil` WHERE `nom` = '" + profil +
-                "' AND `paramName` = 'trigger'");
+        final ResultSet rs =
+                doSqlQuery("SELECT `param` FROM `profil` WHERE `nom` = '" + profil + "' AND `paramName` = 'trigger'");
         AbstractTrigger.clearTriggers();
         try {
             while (rs.next()) {
@@ -316,13 +317,16 @@ public class SqlUtils {
      * @throws SQLException
      *             en cas de galère.
      */
-    public static void updateDispo(final String channel, final String qauth, final long time, final byte heure1,
+    public static void updateDispo(final String channel,
+            final String qauth,
+            final long time,
+            final byte heure1,
             final byte heure2) throws SQLException {
         final String date = new java.sql.Date(time).toString();
-        doSqlUpdate("DELETE FROM `dispo` WHERE `channel` = '" + channel + "' AND `qauth` = '" + qauth +
-                "' AND `date` = '" + date + "'");
-        doSqlUpdate("INSERT INTO `dispo`(`channel`, `qauth`, `date`, `heure1`, `heure2`) VALUES('" + channel + "', '" +
-                qauth + "', '" + date + "', " + heure1 + ", " + heure2 + ")");
+        doSqlUpdate("DELETE FROM `dispo` WHERE `channel` = '" + channel + "' AND `qauth` = '" + qauth
+                + "' AND `date` = '" + date + "'");
+        doSqlUpdate("INSERT INTO `dispo`(`channel`, `qauth`, `date`, `heure1`, `heure2`) VALUES('" + channel + "', '"
+                + qauth + "', '" + date + "', " + heure1 + ", " + heure2 + ")");
     }
 
     /**

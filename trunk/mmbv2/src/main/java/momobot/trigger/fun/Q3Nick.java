@@ -11,7 +11,7 @@ import momobot.MomoBot;
  */
 public class Q3Nick extends AbstractTrigger implements IPublicTrigger {
     /**
-     * TODO cette méthode
+     * TODO cette méthode.
      * @param args
      * @return un nick q3
      */

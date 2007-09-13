@@ -16,7 +16,7 @@ import utils.DateUtils;
  */
 public class Gather extends AbstractChannelEvent {
     /**
-     * 
+     * séparateur entre l'affichage des différents membres du gather.
      */
     private static final String DISPLAY_SEPARATOR = " - ";
     /**
@@ -27,16 +27,16 @@ public class Gather extends AbstractChannelEvent {
      * La taille d'un gather.
      */
     private static final byte   SIZE              = 5;
-// /**
-// * Un serveur?
-// */
-// private Server serv;
+    // /**
+    // * Un serveur?
+    // */
+    // private Server serv;
     /**
      * le temps où je commence.
      */
     private final String        startTime;
     /**
-     * l'ensemble de joueurs.
+     * l'ensemble de joueurs. Ne sera jamais <code>null</code>
      */
     private final Team          team;
 
@@ -63,10 +63,13 @@ public class Gather extends AbstractChannelEvent {
     /**
      * @param element
      *            l'element
-     * @return rien de bien interessant
+     * @return le message d'ajout, jamais <code>null</code>.
      */
-    public final StrBuilder add(final IrcUser element) {
-        final StrBuilder retour = new StrBuilder(element.toString());
+    public final String add(final IrcUser element) {
+        if (element == null) {
+            throw new IllegalArgumentException("element must not be null");
+        }
+        final StrBuilder retour = new StrBuilder(String.valueOf(element));
         if (this.team.isFull()) {
             retour.insert(0, "Désolé ").append(", c'est complet");
         } else if (this.team.contains(element)) {
@@ -86,28 +89,29 @@ public class Gather extends AbstractChannelEvent {
             }
             retour.append("Reste ").append(this.team.remainingPlaces()).append(" places.");
         }
-        return retour;
+        return retour.toString();
     }
 
-// /**
-// * @return l'ip du serv
-// */
-// public final String getServ() {
-// if (null == this.serv) {
-// return "serv off :/";
-// }
-// return new StrBuilder("IP: ").append(this.serv.getIp()).append(':').append(this.serv.getPort()).append(
-// " pass: ").append(this.serv.getPass()).toString();
-// }
-// /*
-// * public void setServ(String ipay, String pass){ serv = NetUtils.findServ(ipay); if (null == serv) return; serv.pass = pass; }
-// */
-// /**
-// * @return si on a un serv
-// */
-// public final boolean haveServ() {
-// return this.serv != null;
-// }
+    // /**
+    // * @return l'ip du serv
+    // */
+    // public final String getServ() {
+    // if (null == this.serv) {
+    // return "serv off :/";
+    // }
+    // return new StrBuilder("IP: ").append(this.serv.getIp()).append(':').append(this.serv.getPort()).append(
+    // " pass: ").append(this.serv.getPass()).toString();
+    // }
+    // /*
+    // * public void setServ(String ipay, String pass){ serv = NetUtils.findServ(ipay); if (null == serv) return;
+    // serv.pass = pass; }
+    // */
+    // /**
+    // * @return si on a un serv
+    // */
+    // public final boolean haveServ() {
+    // return this.serv != null;
+    // }
     /**
      * @param element
      *            un type à virer
@@ -148,8 +152,8 @@ public class Gather extends AbstractChannelEvent {
      */
     @Override
     public final String toString() {
-        final StrBuilder temp = new StrBuilder(ColorsUtils.toColor("Gather " + this.team.size() + '/' +
-                this.team.getCapacity(), ColorsUtils.BROWN));
+        final StrBuilder temp = new StrBuilder(ColorsUtils.toColor("Gather " + this.team.size() + '/'
+                + this.team.getCapacity(), ColorsUtils.BROWN));
         temp.append(" (start: ");
         temp.append(ColorsUtils.toColor(this.startTime, ColorsUtils.GREEN));
         temp.append(") (tag: ");
