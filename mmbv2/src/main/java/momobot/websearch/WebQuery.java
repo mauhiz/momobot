@@ -171,12 +171,14 @@ public class WebQuery {
         } else if (this.type.equals(GOOGLE)) {
             this.resultSep = "<a href=";
             this.numResult = 2;
-            this.url = new HttpURL("www.google.fr", HttpURL.DEFAULT_PORT, "/search?hl=fr&ie=UTF-8&oe=UTF-8&num=" +
-                    this.numResult + "&q=" + this.query);
+            this.url =
+                    new HttpURL("www.google.fr", HttpURL.DEFAULT_PORT, "/search?hl=fr&ie=UTF-8&oe=UTF-8&num="
+                            + this.numResult + "&q=" + this.query);
         } else if (this.type.equals(YAHOO)) {
             this.resultSep = "<a class=yschttl  href=\"";
-            this.url = new HttpURL("fr.search.yahoo.com", HttpURL.DEFAULT_PORT, "/search?ie=UTF-8&num=" +
-                    this.numResult + "&p=" + this.query);
+            this.url =
+                    new HttpURL("fr.search.yahoo.com", HttpURL.DEFAULT_PORT, "/search?ie=UTF-8&num=" + this.numResult
+                            + "&p=" + this.query);
         }
     }
 }

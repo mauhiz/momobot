@@ -24,8 +24,9 @@ public class DateUtils {
     /**
      * les jours de la semaine. dimanche = {@link Calendar#MONDAY}
      */
-    private static final String[]  JOURS         = { "dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi",
-            "samedi",                           };
+    private static final String[]  JOURS         =
+                                                         { "dimanche", "lundi", "mardi", "mercredi", "jeudi",
+        "vendredi", "samedi",                           };
 
     /**
      * @param jour
@@ -50,8 +51,8 @@ public class DateUtils {
         final long unJour = MILLISECONDS.convert(1, DAYS);
         /* plus tard */
         /* update : le +7 pour eviter les resultats negatifs */
-        return new Date(jourNow.getTimeInMillis() +
-                (entierFutur + 1 - jourNow.get(Calendar.DAY_OF_WEEK) + DAYS_PER_WEEK) % DAYS_PER_WEEK * unJour);
+        return new Date(jourNow.getTimeInMillis()
+                + (entierFutur + 1 - jourNow.get(Calendar.DAY_OF_WEEK) + DAYS_PER_WEEK) % DAYS_PER_WEEK * unJour);
     }
 
     /**
@@ -69,17 +70,22 @@ public class DateUtils {
      * @return un timestamp
      */
     public static String getTimeStamp() {
-        synchronized (INSTANCE.myTime) {
-            return INSTANCE.myTime.format(new Date());
+        synchronized (INSTANCE.timeFormat) {
+            return INSTANCE.timeFormat.format(new Date());
         }
     }
-
     /**
      * mon format de date local.
      */
-    public final DateFormat  myDate = DateFormat.getDateInstance(MEDIUM, FRANCE);
+    private final DateFormat  dateFormat = DateFormat.getDateInstance(MEDIUM, FRANCE);
     /**
      * mon format d'heure local.
      */
-    private final DateFormat myTime = DateFormat.getTimeInstance(MEDIUM, FRANCE);
+    private final DateFormat timeFormat = DateFormat.getTimeInstance(MEDIUM, FRANCE);
+    /**
+     * @return the {@link #dateFormat}.
+     */
+    public DateFormat getDateFormat() {
+        return this.dateFormat;
+    }
 }

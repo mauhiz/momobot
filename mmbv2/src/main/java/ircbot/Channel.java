@@ -70,7 +70,7 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
     /**
      * liste des évènements enregistrés sur ce chan.
      */
-    private AbstractChannelEvent                  event;
+    private IChannelEvent                  event;
     /**
      * Si le channel est en mode +i.
      */
@@ -152,7 +152,7 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
     /**
      * @return this.event
      */
-    public final AbstractChannelEvent getEvent() {
+    public final IChannelEvent getEvent() {
         return this.event;
     }
 
@@ -265,7 +265,7 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
      * @param ace
      *            l'event
      */
-    public final void registerEvent(final AbstractChannelEvent ace) {
+    public final void registerEvent(final IChannelEvent ace) {
         this.event = ace;
     }
 

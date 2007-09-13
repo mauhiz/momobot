@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Tout ce qui reste du PircBot original, c'est le nom et une paire de méthodes. Owned.
+ * 
  * @author mauhiz
  */
 public abstract class AbstractIrcBot implements IIrcConstants, IIrcCommands, IIrcSpecialChars, ICtcpCommands,
@@ -78,7 +79,6 @@ public abstract class AbstractIrcBot implements IIrcConstants, IIrcCommands, IIr
         /* No ports could be used. */
         throw new IOException("No available port...");
     }
-
     /**
      * Me dit si je suis connecté.
      */
@@ -168,8 +168,8 @@ public abstract class AbstractIrcBot implements IIrcConstants, IIrcCommands, IIr
             socketServer.setSoTimeout(timeout);
             final int port = socketServer.getLocalPort();
             /* TODO : autoriser le réglage externe dans le cas d'un NAT. */
-            sendCtcpMsg(DCC_CHAT + SPC + "chat" + SPC + byteTabIpToLong(InetAddress.getLocalHost().getAddress()) + SPC +
-                    port, user.getNick(), this.outputThread);
+            sendCtcpMsg(DCC_CHAT + SPC + "chat" + SPC + byteTabIpToLong(InetAddress.getLocalHost().getAddress()) + SPC
+                    + port, user.getNick(), this.outputThread);
             /* The client may now connect to us to chat. */
             final Socket socket = socketServer.accept();
             /* Close the server socket now that we've finished with it. */
@@ -459,7 +459,10 @@ public abstract class AbstractIrcBot implements IIrcConstants, IIrcCommands, IIr
      * @see IIrcBot#onTopic(String, String, String, long, boolean)
      */
     @SuppressWarnings("unused")
-    public void onTopic(final String channel, final String topic, final String setBy, final long date,
+    public void onTopic(final String channel,
+            final String topic,
+            final String setBy,
+            final long date,
             final boolean changed) {
         Channel.getChannel(channel).setTopic(new Topic(topic, date, setBy));
     }
@@ -592,10 +595,12 @@ public abstract class AbstractIrcBot implements IIrcConstants, IIrcCommands, IIr
     }
 
     /**
-     * This method is called by the PircBot when a numeric response is received from the IRC server. We use this method to allow PircBot to process various responses from the
-     * server before then passing them on to the onServerResponse method.
+     * This method is called by the PircBot when a numeric response is received from the IRC server. We use this method
+     * to allow PircBot to process various responses from the server before then passing them on to the onServerResponse
+     * method.
      * <p>
      * Note that this method is private and should not appear in any of the javadoc generated documenation.
+     * 
      * @param code
      *            The three-digit numerical code for the response.
      * @param response
@@ -655,7 +660,8 @@ public abstract class AbstractIrcBot implements IIrcConstants, IIrcCommands, IIr
                 break;
             case RPL_ENDOFNAMES:
                 /*
-                 * This is the end of a NAMES list, so we know that we've got the full list of users in the channel that we just joined.
+                 * This is the end of a NAMES list, so we know that we've got the full list of users in the channel that
+                 * we just joined.
                  */
                 channel = response.substring(response.indexOf(SPC) + 1, response.indexOf(EMPTY + SPC + COLON));
                 onUserList(Channel.getChannel(channel), this.tempUsers.entrySet());

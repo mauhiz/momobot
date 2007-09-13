@@ -2,7 +2,6 @@ package momobot;
 
 import ircbot.AbstractIrcBot;
 import ircbot.Channel;
-import ircbot.IIrcBot;
 import ircbot.IrcUser;
 import ircbot.dcc.DccChat;
 import ircbot.dcc.DccFileTransfer;
@@ -100,7 +99,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onChannelInfo(String, int, String)
+     * @see ircbot.IIrcBot#onChannelInfo(String, int, String)
      */
     @Override
     public void onChannelInfo(final String channel, final int userCount, final String topic) {
@@ -118,7 +117,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onFileTransferFinished(DccFileTransfer, Exception)
+     * @see ircbot.IIrcBot#onFileTransferFinished(DccFileTransfer, Exception)
      */
     @Override
     public void onFileTransferFinished(final DccFileTransfer transfer, final Exception exception) {
@@ -126,7 +125,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onIncomingChatRequest(DccChat)
+     * @see ircbot.IIrcBot#onIncomingChatRequest(DccChat)
      */
     @Override
     public void onIncomingChatRequest(final DccChat chat) {
@@ -134,7 +133,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onIncomingFileTransfer(DccFileTransfer)
+     * @see ircbot.IIrcBot#onIncomingFileTransfer(DccFileTransfer)
      */
     @Override
     public void onIncomingFileTransfer(final DccFileTransfer transfer) {
@@ -142,7 +141,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onInvite(String, IrcUser, String)
+     * @see ircbot.IIrcBot#onInvite(String, IrcUser, String)
      */
     @Override
     public void onInvite(final String targetNick, final IrcUser user, final String channel) {
@@ -150,7 +149,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onJoin(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onJoin(Channel, IrcUser)
      * @param channel
      *            le channel
      * @param user
@@ -167,7 +166,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onMessage(Channel, IrcUser, String)
+     * @see ircbot.IIrcBot#onMessage(Channel, IrcUser, String)
      * @param channel
      *            le channel
      */
@@ -185,7 +184,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onMode(Channel, IrcUser, String)
+     * @see ircbot.IIrcBot#onMode(Channel, IrcUser, String)
      */
     @Override
     public void onMode(final Channel channel, final IrcUser user, final String mode) {
@@ -193,7 +192,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onNickChange(IrcUser, String)
+     * @see ircbot.IIrcBot#onNickChange(IrcUser, String)
      */
     @Override
     public void onNickChange(final IrcUser user, final String newNick) {
@@ -245,7 +244,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onRemoveChannelBan(Channel, IrcUser, String)
+     * @see ircbot.IIrcBot#onRemoveChannelBan(Channel, IrcUser, String)
      */
     @Override
     public void onRemoveChannelBan(final Channel channel, final IrcUser user, final String hostmask) {
@@ -253,7 +252,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onRemoveModerated(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onRemoveModerated(Channel, IrcUser)
      */
     @Override
     public void onRemoveModerated(final Channel channel, final IrcUser user) {
@@ -261,7 +260,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onRemoveNoExternalMessages(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onRemoveNoExternalMessages(Channel, IrcUser)
      */
     @Override
     public void onRemoveNoExternalMessages(final Channel channel, final IrcUser user) {
@@ -269,7 +268,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onRemovePrivate(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onRemovePrivate(Channel, IrcUser)
      */
     @Override
     public void onRemovePrivate(final Channel channel, final IrcUser user) {
@@ -277,7 +276,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onRemoveSecret(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onRemoveSecret(Channel, IrcUser)
      */
     @Override
     public void onRemoveSecret(final Channel channel, final IrcUser user) {
@@ -285,7 +284,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onServerResponse(int, java.lang.String)
+     * @see ircbot.IIrcBot#onServerResponse(int, java.lang.String)
      * @param code
      *            le code rfc
      * @param response
@@ -331,7 +330,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onSetChannelBan(Channel, IrcUser, String)
+     * @see ircbot.IIrcBot#onSetChannelBan(Channel, IrcUser, String)
      */
     @Override
     public void onSetChannelBan(final Channel channel, final IrcUser user, final String hostmask) {
@@ -339,7 +338,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onSetModerated(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onSetModerated(Channel, IrcUser)
      */
     @Override
     public void onSetModerated(final Channel channel, final IrcUser user) {
@@ -347,7 +346,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onSetNoExternalMessages(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onSetNoExternalMessages(Channel, IrcUser)
      */
     @Override
     public void onSetNoExternalMessages(final Channel channel, final IrcUser user) {
@@ -355,7 +354,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onSetPrivate(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onSetPrivate(Channel, IrcUser)
      */
     @Override
     public void onSetPrivate(final Channel channel, final IrcUser user) {
@@ -363,7 +362,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onSetSecret(Channel, IrcUser)
+     * @see ircbot.IIrcBot#onSetSecret(Channel, IrcUser)
      */
     @Override
     public void onSetSecret(final Channel channel, final IrcUser user) {
@@ -371,7 +370,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onUnknown(String)
+     * @see ircbot.IIrcBot#onUnknown(String)
      */
     @Override
     public void onUnknown(final String line) {
@@ -379,7 +378,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onUserList(Channel, Iterable)
+     * @see ircbot.IIrcBot#onUserList(Channel, Iterable)
      * @param channel
      *            le channel
      * @param users
@@ -400,7 +399,7 @@ public class MomoBot extends AbstractIrcBot {
     }
 
     /**
-     * @see IIrcBot#onUserMode(String, IrcUser, String)
+     * @see ircbot.IIrcBot#onUserMode(String, IrcUser, String)
      */
     @Override
     public final void onUserMode(final String targetNick, final IrcUser user, final String mode) {

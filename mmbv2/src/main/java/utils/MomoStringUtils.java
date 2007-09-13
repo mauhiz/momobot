@@ -39,8 +39,7 @@ public class MomoStringUtils {
      * @return la string sans les accents
      */
     public static String effaceAccents(final String work) {
-        return work.replace('ô', 'o').replace('î', 'i').replace('ï', 'i').replace('é', 'e').replace('è', 'e').replace(
-                'ê', 'e').replace('ë', 'e').replace('à', 'a').replace('â', 'a').replace('ä', 'a');
+        return work.replace('ô', 'o').replace('î', 'i').replace('ï', 'i').replace('é', 'e').replace('è', 'e').replace('ê', 'e').replace('ë', 'e').replace('à', 'a').replace('â', 'a').replace('ä', 'a').replace('ç', 'c');
     }
 
     /**

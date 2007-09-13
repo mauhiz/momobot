@@ -83,7 +83,7 @@ public class DispoTrigger extends AbstractTrigger implements IPublicTrigger {
             SqlUtils.updateDispo(channel.getNom(), ((QnetUser) user).getQnetAuth(), date.getTime(), heures[0],
                     heures[1]);
             MomoBot.getBotInstance().sendNotice(user,
-                    "dispo enregistrée pour le " + new DateUtils().myDate.format(date));
+                    "dispo enregistrée pour le " + new DateUtils().getDateFormat().format(date));
         } catch (final SQLException sqle) {
             MomoBot.getBotInstance().sendNotice(user,
                     "syntaxe : $dispo jour[lundi/mardi/...] 21h[oui/non/?] 22h30[oui/non/?]");

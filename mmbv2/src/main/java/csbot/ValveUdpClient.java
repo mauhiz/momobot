@@ -110,7 +110,7 @@ class ValveUdpClient extends DatagramSocketClient {
     }
 
     /**
-     * @throws UnsupportedOperationException
+     * @exception UnsupportedOperationException
      *             si j'ai pas de rcon.
      */
     public void initLogThread() {

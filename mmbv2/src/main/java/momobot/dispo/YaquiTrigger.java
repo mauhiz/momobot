@@ -42,7 +42,8 @@ public class YaquiTrigger extends AbstractTrigger implements IIrcSpecialChars, I
      * @param heurePala
      * @return ?
      */
-    private static StrBuilder appendDispos(final StrBuilder msg, final Collection < String > heureDispo,
+    private static StrBuilder appendDispos(final StrBuilder msg,
+            final Collection < String > heureDispo,
             final Collection < String > heurePala) {
         if (heureDispo.isEmpty()) {
             msg.append("personne ");
@@ -134,8 +135,8 @@ public class YaquiTrigger extends AbstractTrigger implements IIrcSpecialChars, I
             } catch (final IllegalArgumentException iae) {
                 MomoBot.getBotInstance().sendNotice(
                         user,
-                        "syntaxe : $" + getTriggerText() + " jour[lundi/mardi/...] ou $" + getTriggerText() +
-                                " semaine");
+                        "syntaxe : $" + getTriggerText() + " jour[lundi/mardi/...] ou $" + getTriggerText()
+                                + " semaine");
             }
         }
     }

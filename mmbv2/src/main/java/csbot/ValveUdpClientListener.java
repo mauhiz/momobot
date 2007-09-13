@@ -16,7 +16,14 @@ class ValveUdpClientListener extends AbstractRunnable {
     /**
      * logger.
      */
-    private static final Logger  LOG = Logger.getLogger(ValveUdpClientListener.class);
+    private static final Logger LOG = Logger.getLogger(ValveUdpClientListener.class);
+
+    /**
+     * @return un port au hasard, > 1024.
+     */
+    static int generateRandomPort() {
+        return RandomUtils.nextInt(5000) + 0x400;
+    }
     /**
      * my mastah.
      */
@@ -29,13 +36,20 @@ class ValveUdpClientListener extends AbstractRunnable {
     protected ValveUdpClientListener(final ValveUdpClient vuc1) {
         super();
         this.vuc = vuc1;
-        final int localPort = RandomUtils.nextInt(5000) + 0x400;
+        final int localPort = generateRandomPort();
         try {
             this.vuc.getChallenge();
             this.vuc.rconCmd("logaddress " + InetAddress.getLocalHost().getHostAddress() + ' ' + localPort);
         } catch (final IOException ioe) {
             LOG.error(ioe, ioe);
         }
+    }
+
+    /**
+     * @param receivePacket
+     */
+    private void processLine(final DatagramPacket receivePacket) {
+        this.vuc.processLine(new String(receivePacket.getData(), 0, receivePacket.getLength()));
     }
 
     /**
@@ -55,12 +69,5 @@ class ValveUdpClientListener extends AbstractRunnable {
             }
         }
         setRunning(false);
-    }
-
-    /**
-     * @param receivePacket
-     */
-    private void processLine(final DatagramPacket receivePacket) {
-        this.vuc.processLine(new String(receivePacket.getData(), 0, receivePacket.getLength()));
     }
 }

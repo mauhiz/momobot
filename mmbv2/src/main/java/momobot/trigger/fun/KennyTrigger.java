@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Transforme un texte en KennySpeak.
+ * 
  * @author mauhiz
  */
 public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
@@ -29,7 +30,8 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
      */
     private static final byte                      KENNY_LETTER_LEN = 3;
     /**
-     * The KENNYLETTERS in alphabetical order. Big Letters are the Same with the only difference That the First char is UpperCase
+     * The KENNYLETTERS in alphabetical order. Big Letters are the Same with the only difference That the First char is
+     * UpperCase
      */
     private static final Map < String, Character > KENNY_TO_NORMAL  = new TreeMap < String, Character >();
     /**
@@ -68,8 +70,8 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
      */
     private static void loadKenny() {
         try {
-            final List < ? > lignes = FileUtils.readLines(new File("resources" + File.separatorChar + "kenny_map.txt"),
-                    "ASCII");
+            final List < ? > lignes =
+                    FileUtils.readLines(new File("resources" + File.separatorChar + "kenny_map.txt"), "ASCII");
             if (!KENNY_TO_NORMAL.isEmpty()) {
                 KENNY_TO_NORMAL.clear();
             }
@@ -128,9 +130,10 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
         final StrBuilder result = new StrBuilder();
         int index = 0;
         while (index < toTranslate.length()) {
-            while (Character.toUpperCase(toTranslate.charAt(index)) != 'M' &&
-                    Character.toUpperCase(toTranslate.charAt(index)) != 'P' &&
-                    Character.toUpperCase(toTranslate.charAt(index)) != 'F') {
+            while (Character.toUpperCase(toTranslate.charAt(index)) != 'M'
+                    && Character.toUpperCase(toTranslate.charAt(index)) != 'P'
+                    && Character.toUpperCase(toTranslate.charAt(index)) != 'F')
+            {
                 result.append(toTranslate.charAt(index));
                 ++index;
                 if (toTranslate.length() == index) {
@@ -139,8 +142,8 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
             }
             try {
                 result
-                        .append(translateKennyLetterToNormalLetter(toTranslate.substring(index, index +
-                                KENNY_LETTER_LEN)));
+                        .append(translateKennyLetterToNormalLetter(toTranslate.substring(index, index
+                                + KENNY_LETTER_LEN)));
             } catch (final IllegalArgumentException iae) {
                 LOG.error(iae, iae);
             }

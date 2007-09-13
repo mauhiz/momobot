@@ -35,8 +35,8 @@ public class MassHlTrigger extends AbstractTrigger implements IPublicTrigger {
             if (nextIrcUser instanceof QnetUser && ((QnetUser) nextIrcUser).iAmQnetService()) {
                 /* no bots */
                 continue;
-            } else if (nextIrcUser.equals(user) ||
-                    nextIrcUser.getNick().equalsIgnoreCase(MomoBot.getBotInstance().getNick())) {
+            } else if (nextIrcUser.equals(user)
+                    || nextIrcUser.getNick().equalsIgnoreCase(MomoBot.getBotInstance().getNick())) {
                 /* no self */
                 continue;
             }
