@@ -22,7 +22,6 @@ public class WelcomeTrigger extends AbstractTrigger implements IJoinTrigger {
     /**
      * @see ircbot.trigger.IJoinTrigger#executeJoinTrigger(ircbot.Channel, ircbot.IrcUser)
      */
-    @Override
     public void executeJoinTrigger(final Channel channel, final IrcUser user) {
         if (MomoBot.AUTOJOIN.contains(channel.getNom().toLowerCase(Locale.US))) {
             MomoBot.getBotInstance().sendNotice(user, "Bienvenue sur " + channel);

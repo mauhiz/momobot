@@ -9,7 +9,6 @@ import momobot.MomoBot;
 /**
  * @author mauhiz
  */
-
 public class YahooTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @param trigger
@@ -22,7 +21,6 @@ public class YahooTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
         final WebQuery query = new WebQuery("yahoo", getArgs(message));

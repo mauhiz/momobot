@@ -42,9 +42,8 @@ public class YaquiTrigger extends AbstractTrigger implements IIrcSpecialChars, I
      * @param heurePala
      * @return ?
      */
-    private static StrBuilder appendDispos(final StrBuilder msg,
-            final Collection < String > heureDispo,
-            final Collection < String > heurePala) {
+    private static StrBuilder appendDispos(final StrBuilder msg, final Collection<String> heureDispo,
+            final Collection<String> heurePala) {
         if (heureDispo.isEmpty()) {
             msg.append("personne ");
         } else {
@@ -79,10 +78,10 @@ public class YaquiTrigger extends AbstractTrigger implements IIrcSpecialChars, I
      *            la date
      */
     private void doTrigger(final String channel, final Date date) {
-        final Collection < String > heure1Dispo = new LinkedList < String >();
-        final Collection < String > heure1Pala = new LinkedList < String >();
-        final Collection < String > heure2Dispo = new LinkedList < String >();
-        final Collection < String > heure2Pala = new LinkedList < String >();
+        final Collection<String> heure1Dispo = new LinkedList<String>();
+        final Collection<String> heure1Pala = new LinkedList<String>();
+        final Collection<String> heure2Dispo = new LinkedList<String>();
+        final Collection<String> heure2Pala = new LinkedList<String>();
         try {
             for (final Dispo dispo : SqlUtils.getDispos(channel, date.getTime())) {
                 if (dispo.getHeure1() == 1) {
@@ -110,11 +109,7 @@ public class YaquiTrigger extends AbstractTrigger implements IIrcSpecialChars, I
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(ircbot.IrcUser, ircbot.Channel, java.lang.String)
      */
-    @Override
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         final String msg = getArgs(message).toLowerCase(Locale.FRANCE);
         final Date date = new Date();
         if ("semaine".equals(msg)) {

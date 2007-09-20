@@ -21,11 +21,8 @@ public class JoinTrigger extends AbstractTrigger implements IPriveTrigger, IAdmi
     /**
      * @see ircbot.trigger.IPriveTrigger#executePrivateTrigger(IrcUser, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            MomoBot.getBotInstance().joinChannel(getArgs(message));
-        }
+        MomoBot.getBotInstance().joinChannel(getArgs(message));
     }
 }

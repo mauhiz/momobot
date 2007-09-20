@@ -18,9 +18,9 @@ public class BashTrigger extends AbstractTrigger implements IPublicTrigger {
 
     /**
      * ok. TODO http://www.bash.org/?random
+     * 
      * @see IPublicTrigger#executePublicTrigger(ircbot.IrcUser, ircbot.Channel, java.lang.String)
      */
-    @Override
     @SuppressWarnings("unused")
     public void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
     }

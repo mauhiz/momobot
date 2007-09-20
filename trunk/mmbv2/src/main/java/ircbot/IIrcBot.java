@@ -4,6 +4,7 @@ import ircbot.dcc.DccChat;
 import ircbot.dcc.DccFileTransfer;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Map.Entry;
 
 /**
@@ -14,6 +15,7 @@ public interface IIrcBot {
      * Bans a user from a channel. An example of a valid hostmask is "*!*compu@*.18hp.net". This may be used in
      * conjunction with the kick method to permanently remove a user from a channel. Successful use of this method may
      * require the bot to have operator status itself.
+     * 
      * @param channel
      *            The channel to ban the user from.
      * @param hostmask
@@ -24,6 +26,7 @@ public interface IIrcBot {
     /**
      * Attempt to change the current nick (nickname) of the bot when it is connected to an IRC server. After
      * confirmation of a successful nick change, the getNick method will return the new nick.
+     * 
      * @param newNick
      *            The new nick to use.
      */
@@ -32,6 +35,7 @@ public interface IIrcBot {
     /**
      * Attempt to connect to the specified IRC server using the supplied password. The onConnect method is called upon
      * success.
+     * 
      * @param server1
      *            le serveur
      */
@@ -47,6 +51,7 @@ public interface IIrcBot {
      * return.
      * <p>
      * This method may not be overridden.
+     * 
      * @since PircBot 0.9.8
      * @param user
      *            The nick of the user we are trying to establish a chat with.
@@ -67,6 +72,7 @@ public interface IIrcBot {
      * is returned.
      * <p>
      * This method may not be overridden.
+     * 
      * @since 0.9c
      * @param file
      *            The file to send.
@@ -82,6 +88,7 @@ public interface IIrcBot {
     /**
      * Removes operator privilidges from a user on a channel. Successful use of this method may require the bot to have
      * operator status itself.
+     * 
      * @param channel
      *            The channel we're deopping the user on.
      * @param nick
@@ -92,6 +99,7 @@ public interface IIrcBot {
     /**
      * Removes voice privilidges from a user on a channel. Successful use of this method may require the bot to have
      * operator status itself.
+     * 
      * @param channel
      *            The channel we're devoicing the user on.
      * @param nick
@@ -110,6 +118,7 @@ public interface IIrcBot {
      * <p>
      * The nick returned by this method is maintained only by the PircBot class and is guaranteed to be correct in the
      * context of the IRC server.
+     * 
      * @return The current nick of the bot.
      */
     String getNick();
@@ -117,12 +126,14 @@ public interface IIrcBot {
     /**
      * Returns whether or not the PircBot is currently connected to a server. The result of this method should only act
      * as a rough guide, as the result may not be valid by the time you act upon it.
+     * 
      * @return True if and only if the PircBot is currently connected to a server.
      */
     boolean isConnected();
 
     /**
      * Joins a channel.
+     * 
      * @param channel
      *            The name of the channel to join (eg "#cs").
      */
@@ -130,6 +141,7 @@ public interface IIrcBot {
 
     /**
      * Joins a channel with a key.
+     * 
      * @param channel
      *            The name of the channel to join (eg "#cs").
      * @param key
@@ -140,6 +152,7 @@ public interface IIrcBot {
     /**
      * Kicks a user from a channel. This method attempts to kick a user from a channel and may require the bot to have
      * operator status in the channel.
+     * 
      * @param channel
      *            The channel to kick the user from.
      * @param tempNick
@@ -150,6 +163,7 @@ public interface IIrcBot {
     /**
      * Kicks a user from a channel, giving a reason. This method attempts to kick a user from a channel and may require
      * the bot to have operator status in the channel.
+     * 
      * @param channel
      *            The channel to kick the user from.
      * @param user
@@ -163,6 +177,7 @@ public interface IIrcBot {
      * Issues a request for a list of all channels on the IRC server. When the PircBot receives information for each
      * channel, it will call the onChannelInfo method, which you will need to override if you want it to do anything
      * useful.
+     * 
      * @see #onChannelInfo(String,int,String) onChannelInfo
      */
     void listChannels();
@@ -175,6 +190,7 @@ public interface IIrcBot {
      * Some IRC servers support certain parameters for LIST requests. One example is a parameter of ">10" to list only
      * those channels that have more than 10 users in them. Whether these parameters are supported or not will depend on
      * the IRC server software.
+     * 
      * @param parameters
      *            The parameters to supply when requesting the list.
      * @see #onChannelInfo(String,int,String) onChannelInfo
@@ -187,6 +203,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param sender
      *            The nick of the user that sent the action.
      * @param target
@@ -205,6 +222,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param channel
      *            The name of the channel.
      * @param userCount
@@ -220,6 +238,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.6
      */
     void onConnect();
@@ -231,6 +250,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -248,6 +268,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -280,6 +301,7 @@ public interface IIrcBot {
      * <p>
      * Both incoming and outgoing file transfers are passed to this method. You can determine the type by calling the
      * isIncoming or isOutgoing methods on the DccFileTransfer object.
+     * 
      * @since PircBot 1.2.0
      * @param transfer
      *            The DccFileTransfer that has finished.
@@ -294,6 +316,7 @@ public interface IIrcBot {
      * <p>
      * This abstract implementation responds correctly, so if you override this method, be sure to either mimic its
      * functionality or to call super.onFinger(...);
+     * 
      * @param user
      *            le user
      * @param target
@@ -318,6 +341,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 1.2.0
      * @param chat
      *            A DccChat object that represents the incoming chat request.
@@ -345,6 +369,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param transfer
      *            The DcccFileTransfer that you may accept.
      * @see DccFileTransfer
@@ -356,6 +381,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param targetNick
      *            The nick of the user being invited - should be us!
      * @param user
@@ -370,6 +396,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param channel
      *            The channel which somebody joined.
      * @param user
@@ -382,6 +409,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param channel
      *            The channel from which the recipient was kicked.
      * @param user
@@ -398,6 +426,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param channel
      *            The channel to which the message was sent.
      * @param user
@@ -416,6 +445,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param channel
      *            The channel that the mode operation applies to.
      * @param user
@@ -430,6 +460,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param user
      *            le user
      * @param newNick
@@ -442,6 +473,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param user
      *            le user
      * @param target
@@ -458,6 +490,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -473,6 +506,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param channel
      *            The channel which somebody parted from.
      * @param user
@@ -485,6 +519,7 @@ public interface IIrcBot {
      * <p>
      * This abstract implementation responds correctly, so if you override this method, be sure to either mimic its
      * functionality or to call super.onPing(...);
+     * 
      * @param user
      *            le user
      * @param target
@@ -499,6 +534,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param user
      *            le user
      * @param message
@@ -512,6 +548,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param user
      *            le user
      * @param reason
@@ -526,6 +563,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -543,6 +581,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -560,6 +599,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -575,6 +615,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -590,6 +631,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -605,6 +647,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -620,6 +663,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -635,6 +679,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -650,6 +695,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -663,6 +709,7 @@ public interface IIrcBot {
      * <p>
      * This sends back a correct response, so if you override this method, be sure to either mimic its functionality or
      * to call super.onServerPing(response);
+     * 
      * @param response
      *            The response that should be given back in your PONG.
      */
@@ -685,6 +732,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param code
      *            The three-digit numerical code for the response.
      * @param response
@@ -702,6 +750,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -720,6 +769,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -737,6 +787,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -755,6 +806,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -771,6 +823,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -786,6 +839,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -801,6 +855,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -817,6 +872,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -833,6 +889,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -846,6 +903,7 @@ public interface IIrcBot {
      * <p>
      * This abstract implementation responds correctly, so if you override this method, be sure to either mimic its
      * functionality or to call super.onTime(...);
+     * 
      * @param target
      *            The target of the TIME request, be it our nick or a channel name.
      * @param user
@@ -859,6 +917,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param channel
      *            The channel that the topic belongs to.
      * @param topic
@@ -878,6 +937,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param line
      *            The raw line that was received from the server.
      */
@@ -895,18 +955,20 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @param channel
      *            The name of the channel.
      * @param users
      *            An array of User objects belonging to this channel.
      */
-    void onUserList(Channel channel, Iterable < Entry < String, String > > users);
+    void onUserList(Channel channel, Collection<Entry<String, String>> users);
 
     /**
      * Called when the mode of a user is set.
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 1.2.0
      * @param targetNick
      *            The nick that the mode operation applies to.
@@ -921,6 +983,7 @@ public interface IIrcBot {
      * This method is called whenever we receive a VERSION request. This abstract implementation responds with the
      * PircBot's _version string, so if you override this method, be sure to either mimic its functionality or to call
      * super.onVersion(...);
+     * 
      * @param user
      *            celui qui m'a versionné
      * @param target
@@ -935,6 +998,7 @@ public interface IIrcBot {
      * <p>
      * The implementation of this method in the PircBot abstract class performs no actions and may be overridden as
      * required.
+     * 
      * @since PircBot 0.9.5
      * @param channel
      *            The channel in which the mode change took place.
@@ -948,6 +1012,7 @@ public interface IIrcBot {
     /**
      * Grants operator privilidges to a user on a channel. Successful use of this method may require the bot to have
      * operator status itself.
+     * 
      * @param channel
      *            The channel we're opping the user on.
      * @param nick
@@ -957,6 +1022,7 @@ public interface IIrcBot {
 
     /**
      * Parts a channel.
+     * 
      * @param channel
      *            The name of the channel to leave.
      */
@@ -964,6 +1030,7 @@ public interface IIrcBot {
 
     /**
      * Parts a channel, giving a reason.
+     * 
      * @param channel
      *            The name of the channel to leave.
      * @param reason
@@ -976,6 +1043,7 @@ public interface IIrcBot {
      * method before finally calling the override-able onMode method.
      * <p>
      * Note that this method is private and is not intended to appear in the javadoc generated documentation.
+     * 
      * @param target
      *            The channel or nick that the mode operation applies to.
      * @param user
@@ -994,6 +1062,7 @@ public interface IIrcBot {
     /**
      * Quits from the IRC server with a reason. Providing we are actually connected to an IRC server, the onDisconnect()
      * method will be called as soon as the IRC server disconnects us.
+     * 
      * @param reason
      *            The reason for quitting the server.
      */
@@ -1003,12 +1072,14 @@ public interface IIrcBot {
      * Reconnects to the IRC server that we were previously connected to. If necessary, the appropriate port number and
      * password will be used. This method will throw an IrcException if we have never connected to an IRC server
      * previously.
+     * 
      * @since PircBot 0.9.9
      */
     void reconnect();
 
     /**
      * Sends an action to the channel or to a user.
+     * 
      * @param target
      *            The name of the channel or user nick to send to.
      * @param action
@@ -1020,6 +1091,7 @@ public interface IIrcBot {
     /**
      * Sends an invitation to join a channel. Some channels can be marked as "invite-only", so it may be useful to allow
      * a bot to invite people into it.
+     * 
      * @param nick1
      *            The nick of the user to invite
      * @param channel
@@ -1029,6 +1101,7 @@ public interface IIrcBot {
 
     /**
      * Sends a notice to the channel or to a user.
+     * 
      * @param target
      *            The name of the channel or user nick to send to.
      * @param notice
@@ -1038,6 +1111,7 @@ public interface IIrcBot {
 
     /**
      * Sets the interal finger message. This should be set before joining any servers.
+     * 
      * @param finger1
      *            The new finger message for the Bot.
      */
@@ -1045,6 +1119,7 @@ public interface IIrcBot {
 
     /**
      * Sets the internal login of the Bot. This should be set before joining any servers.
+     * 
      * @param login1
      *            The new login of the Bot.
      */
@@ -1055,6 +1130,7 @@ public interface IIrcBot {
      * operator status on the channel. For example, if the bot has operator status, we can grant operator status to
      * "Dave" on the #cs channel by calling setMode("#cs", "+o Dave"); An alternative way of doing this would be to use
      * the op method.
+     * 
      * @param channel
      *            The channel on which to perform the mode change.
      * @param mode
@@ -1072,6 +1148,7 @@ public interface IIrcBot {
     /**
      * Sets the internal nick of the bot. This is only to be called by the PircBot class in response to notification of
      * nick changes that apply to us.
+     * 
      * @param nick1
      *            The new nick.
      */
@@ -1080,6 +1157,7 @@ public interface IIrcBot {
     /**
      * Set the topic for a channel. This method attempts to set the topic of a channel. This may require the bot to have
      * operator status if the topic is under protection.
+     * 
      * @param channel
      *            The channel on which to perform the mode change.
      * @param topic
@@ -1108,6 +1186,7 @@ public interface IIrcBot {
      * <p>
      * If it is essential for you to use an ident server when connecting to an IRC server, then make sure that port 113
      * on your machine is visible to the IRC server so that it may contact the ident server.
+     * 
      * @since PircBot 0.9c
      */
     void startIdentServer();
@@ -1115,6 +1194,7 @@ public interface IIrcBot {
     /**
      * Unbans a user from a channel. An example of a valid hostmask is "*!*compu@*.18hp.net". Successful use of this
      * method may require the bot to have operator status itself.
+     * 
      * @param channel
      *            The channel to unban the user from.
      * @param hostmask
@@ -1125,6 +1205,7 @@ public interface IIrcBot {
     /**
      * Grants voice privilidges to a user on a channel. Successful use of this method may require the bot to have
      * operator status itself.
+     * 
      * @param channel
      *            The channel we're voicing the user on.
      * @param nick1

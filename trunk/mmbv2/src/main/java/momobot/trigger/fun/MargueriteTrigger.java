@@ -16,7 +16,7 @@ public class MargueriteTrigger extends AbstractTrigger implements IPublicTrigger
     /**
      * 
      */
-    private static final String[] MARGUERITE = { "un peu", "beaucoup", "passionément", "à la folie", "pas du tout", };
+    private static final String[] MARGUERITE = {"un peu", "beaucoup", "passionément", "à la folie", "pas du tout",};
 
     /**
      * @param trigger
@@ -29,12 +29,9 @@ public class MargueriteTrigger extends AbstractTrigger implements IPublicTrigger
      * @see IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
     @SuppressWarnings("unused")
-    @Override
     public void executePublicTrigger(final IrcUser from, final Channel channel, final String message) {
-        if (test(message)) {
-            final String nom = getArgs(message);
-            MomoBot.getBotInstance().sendMessage(channel, generateResponse(nom));
-        }
+        final String nom = getArgs(message);
+        MomoBot.getBotInstance().sendMessage(channel, generateResponse(nom));
     }
 
     /**

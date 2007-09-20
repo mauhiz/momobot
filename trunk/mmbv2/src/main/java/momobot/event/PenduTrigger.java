@@ -26,7 +26,7 @@ public class PenduTrigger extends AbstractTrigger implements IPublicTrigger {
      */
     @SuppressWarnings("unused")
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (test(message)) {
+        if (isCommandMsg(message)) {
             if (channel.hasRunningEvent()) {
                 MomoBot.getBotInstance().sendMessage(channel,
                         "Un " + channel.getEvent().getClass().getSimpleName() + " est déjà lancé sur " + channel);
@@ -43,5 +43,21 @@ public class PenduTrigger extends AbstractTrigger implements IPublicTrigger {
                 MomoBot.getBotInstance().sendMessage(channel, pendu.submitMot(message).toString());
             }
         }
+    }
+
+    /**
+     * @see ircbot.trigger.AbstractTrigger#isActivatedBy(java.lang.String)
+     */
+    @Override
+    public boolean isActivatedBy(final String msg) {
+        return true;
+    }
+
+    /**
+     * @param msg
+     * @return si il s'agit bien du trigger.
+     */
+    public boolean isCommandMsg(final String msg) {
+        return super.isActivatedBy(msg);
     }
 }

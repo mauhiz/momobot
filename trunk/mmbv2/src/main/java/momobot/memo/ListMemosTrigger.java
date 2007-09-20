@@ -21,11 +21,8 @@ public class ListMemosTrigger extends AbstractTrigger implements IPublicTrigger 
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (test(message)) {
-            MomoBot.getBotInstance().sendMessage(channel, DbMemoUtils.getMemos());
-        }
+        MomoBot.getBotInstance().sendMessage(channel, DbMemoUtils.getMemos());
     }
 }

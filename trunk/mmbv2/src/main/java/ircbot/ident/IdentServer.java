@@ -21,6 +21,7 @@ import utils.AbstractRunnable;
  * <p>
  * Most IRC servers attempt to contact the ident server on connecting hosts in order to determine the user's identity. A
  * few IRC servers will not allow you to connect unless this information is provided.
+ * 
  * @author mauhiz
  */
 public class IdentServer extends AbstractRunnable {
@@ -52,6 +53,7 @@ public class IdentServer extends AbstractRunnable {
      * <p>
      * The ident server will wait for up to 60 seconds before shutting down. Otherwise, it will shut down as soon as it
      * has responded to an ident request.
+     * 
      * @param login1
      *            The login that the ident server will respond with.
      */
@@ -70,11 +72,10 @@ public class IdentServer extends AbstractRunnable {
      * Waits for a client to connect to the ident server before making an appropriate response. Note that this method is
      * started by the class constructor.
      */
-    @Override
     public final void run() {
         setRunning(true);
         if (LOG.isInfoEnabled()) {
-            LOG.info("server running on port " + PORT + " for the next 60 seconds...");
+            LOG.info("server running on port " + Integer.toString(PORT) + " for the next 60 seconds...");
         }
         try {
             final Socket socket = this.ss.accept();

@@ -41,19 +41,18 @@ public class RegisterAutomate extends AbstractPersonalEvent {
     /**
      * @see Runnable#run()
      */
-    @Override
     public final void run() {
         setRunning(true);
         while (isRunning()) {
             pause(SLEEPTIME);
             switch (getEtat()) {
-                case ETAT1:
+                case ETAT1 :
                     this.whois = new Whois(getUser(), true, null);
                     this.whois.execute();
                     MomoBot.getBotInstance().sendMessage(getUser(), "Detection de ton auth Qnet...");
                     setEtat(ETAT.ETAT2);
                     break;
-                case ETAT2:
+                case ETAT2 :
                     if (this.whois.isRunning()) {
                         continue;
                     }
@@ -76,7 +75,7 @@ public class RegisterAutomate extends AbstractPersonalEvent {
                     MomoBot.getBotInstance().sendMessage(getUser(), "Quel est ton steamID?");
                     setEtat(ETAT.ETAT3);
                     break;
-                case ETAT3:
+                case ETAT3 :
                     if (StringUtils.isEmpty(this.steamid)) {
                         continue;
                     }
@@ -90,7 +89,7 @@ public class RegisterAutomate extends AbstractPersonalEvent {
                             SqlUtils.registerPlayer(this.steamid, ((QnetUser) getUser()).getQnetAuth()));
                     setRunning(false);
                     break;
-                default:
+                default :
                     break;
             }
         }

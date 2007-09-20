@@ -21,11 +21,10 @@ public class TagTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
         /* on test si un gather est lance sur le channel en question */
-        if (test(message) && channel.hasRunningEvent() && channel.getEvent() instanceof Gather) {
+        if (channel.hasRunningEvent() && channel.getEvent() instanceof Gather) {
             MomoBot.getBotInstance().sendMessage(channel, ((Gather) channel.getEvent()).setTag(getArgs(message)));
         }
     }

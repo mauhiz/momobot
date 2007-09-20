@@ -22,12 +22,8 @@ public class PartTrigger extends AbstractTrigger implements IPriveTrigger, IAdmi
     /**
      * @see ircbot.trigger.IPriveTrigger#executePrivateTrigger(ircbot.IrcUser, java.lang.String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            return;
-        }
         MomoBot.getBotInstance().partChannel(Channel.getChannel(getArgs(message)));
     }
 }

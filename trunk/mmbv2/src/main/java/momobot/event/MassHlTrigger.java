@@ -25,11 +25,7 @@ public class MassHlTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         final StrBuilder msg = new StrBuilder("nudges");
         for (final IrcUser nextIrcUser : channel.getUsers()) {
             if (nextIrcUser instanceof QnetUser && ((QnetUser) nextIrcUser).iAmQnetService()) {

@@ -1,10 +1,12 @@
 package ircbot.trigger;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
@@ -13,11 +15,11 @@ public abstract class AbstractTrigger implements ITrigger {
     /**
      * 
      */
-    private static boolean                       addedToSet;
+    private static final Logger        LOG      = Logger.getLogger(AbstractTrigger.class);
     /**
      * tous les triggers qui existent.
      */
-    private static final Set < AbstractTrigger > TRIGGERS = new HashSet < AbstractTrigger >();
+    private static final Set<ITrigger> TRIGGERS = new HashSet<ITrigger>();
 
     /**
      * efface tous les triggers.
@@ -29,10 +31,9 @@ public abstract class AbstractTrigger implements ITrigger {
     /**
      * @return un iterateur sur les triggers
      */
-    public static Iterable < AbstractTrigger > getTriggers() {
+    public static Collection<ITrigger> getTriggers() {
         return TRIGGERS;
     }
-
     /**
      * si le trigger est actif.
      */
@@ -43,17 +44,14 @@ public abstract class AbstractTrigger implements ITrigger {
     private final String triggerText;
 
     /**
+     * TODO n'ajouter que si il n'y a aucune instance dans le set.
+     * 
      * @param trigger
      *            le trigger
      */
     public AbstractTrigger(final String trigger) {
         this.triggerText = trigger;
-        if (!addedToSet) {
-            synchronized (TRIGGERS) {
-                TRIGGERS.add(this);
-            }
-            addedToSet = true;
-        }
+        TRIGGERS.add(this);
     }
 
     /**
@@ -80,20 +78,25 @@ public abstract class AbstractTrigger implements ITrigger {
     }
 
     /**
+     * Méthode overridable.
+     * 
+     * @param msg
+     * @return si le test est concluant.
+     */
+    public boolean isActivatedBy(final String msg) {
+        boolean activated = msg.toLowerCase(Locale.FRANCE).startsWith(getTriggerText());
+        if (activated) {
+            LOG.debug("Trigger " + getClass() + " activated");
+        }
+        return activated;
+    }
+
+    /**
      * @param actif1
      *            le actif à régler
      */
     protected final void setActif(final boolean actif1) {
         this.actif = actif1;
-    }
-
-    /**
-     * Méthode overridable.
-     * @param msg
-     * @return si le test est concluant.
-     */
-    public boolean test(final String msg) {
-        return msg.toLowerCase(Locale.FRANCE).startsWith(getTriggerText());
     }
 
     /**

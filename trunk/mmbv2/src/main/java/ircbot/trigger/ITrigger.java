@@ -14,5 +14,5 @@ public interface ITrigger {
      * @param msg
      * @return le résultat du test
      */
-    boolean test(final String msg);
+    boolean isActivatedBy(final String msg);
 }

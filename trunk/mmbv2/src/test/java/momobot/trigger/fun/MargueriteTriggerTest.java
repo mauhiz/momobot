@@ -1,5 +1,6 @@
 package momobot.trigger.fun;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 
 /**
@@ -7,12 +8,17 @@ import org.junit.Test;
  */
 public class MargueriteTriggerTest {
     /**
+     * 
+     */
+    private static final Logger LOG = Logger.getLogger(MargueriteTriggerTest.class);
+
+    /**
      * Test method for
      * {@link momobot.trigger.fun.MargueriteTrigger#executePublicTrigger(ircbot.IrcUser, ircbot.Channel, java.lang.String)}.
      */
     @Test
     public final void testExecutePublicTrigger() {
         final MargueriteTrigger mt = new MargueriteTrigger(null);
-        System.out.println(mt.generateResponse("Germaine"));
+        LOG.info(mt.generateResponse("Germaine"));
     }
 }

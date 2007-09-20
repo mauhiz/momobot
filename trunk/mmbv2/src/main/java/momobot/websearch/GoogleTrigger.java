@@ -21,12 +21,8 @@ public class GoogleTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         final WebQuery query = new WebQuery("google", getArgs(message));
         for (final String next : query.results()) {
             MomoBot.getBotInstance().sendNotice(user, next);

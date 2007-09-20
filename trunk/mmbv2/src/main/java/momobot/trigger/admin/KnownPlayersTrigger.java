@@ -25,13 +25,9 @@ public class KnownPlayersTrigger extends AbstractTrigger implements IPriveTrigge
     /**
      * @see ircbot.trigger.IPriveTrigger#executePrivateTrigger(ircbot.IrcUser, java.lang.String)
      */
-    @Override
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            return;
-        }
         MomoBot.getBotInstance().sendMessage(user, "Je connais " + SqlUtils.countPlayers() + " joueur(s).");
-        for (final Entry < String, String > item : SqlUtils.getPlayers()) {
+        for (final Entry<String, String> item : SqlUtils.getPlayers()) {
             MomoBot.getBotInstance().sendMessage(user, item.getValue() + " - " + item.getKey());
         }
     }

@@ -33,12 +33,8 @@ public class ReloadDBTrigger extends AbstractTrigger implements IPriveTrigger, I
     /**
      * @see ircbot.trigger.IPriveTrigger#executePrivateTrigger(IrcUser, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            return;
-        }
         try {
             DbMemoUtils.loadMemoDB();
             SqlUtils.loadPlayerDB();

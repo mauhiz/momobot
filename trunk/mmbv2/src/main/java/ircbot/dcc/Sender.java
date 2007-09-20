@@ -58,9 +58,7 @@ class Sender extends AbstractRunnable implements IIrcSpecialChars, IDccSubComman
      * @param output
      * @throws IOException
      */
-    protected void continueReading(final ByteBuffer readBuffer,
-            final InputStream readFrom,
-            final InputStream input,
+    protected void continueReading(final ByteBuffer readBuffer, final InputStream readFrom, final InputStream input,
             final OutputStream output) throws IOException {
         final int bytesRead = readFrom.read(readBuffer.array(), 0, readBuffer.capacity());
         if (bytesRead == -1) {
@@ -82,7 +80,6 @@ class Sender extends AbstractRunnable implements IIrcSpecialChars, IDccSubComman
     /**
      * @see AbstractRunnable#run()
      */
-    @Override
     public void run() {
         InputStream finput = null;
         try {

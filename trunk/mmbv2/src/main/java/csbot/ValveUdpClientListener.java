@@ -55,7 +55,6 @@ class ValveUdpClientListener extends AbstractRunnable {
     /**
      * @see utils.AbstractRunnable#run()
      */
-    @Override
     public void run() {
         final DatagramPacket receivePacket = this.vuc.createDatagramPacket();
         setRunning(true);

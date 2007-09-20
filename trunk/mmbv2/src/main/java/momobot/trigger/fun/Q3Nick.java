@@ -12,6 +12,7 @@ import momobot.MomoBot;
 public class Q3Nick extends AbstractTrigger implements IPublicTrigger {
     /**
      * TODO cette méthode.
+     * 
      * @param args
      * @return un nick q3
      */
@@ -29,11 +30,8 @@ public class Q3Nick extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(ircbot.IrcUser, ircbot.Channel, java.lang.String)
      */
-    @Override
     @SuppressWarnings("unused")
     public void executePublicTrigger(final IrcUser from, final Channel channel, final String message) {
-        if (test(message)) {
-            MomoBot.getBotInstance().sendMessage(channel, createq3nick(getArgs(message)));
-        }
+        MomoBot.getBotInstance().sendMessage(channel, createq3nick(getArgs(message)));
     }
 }

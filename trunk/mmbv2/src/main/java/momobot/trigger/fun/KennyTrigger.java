@@ -28,20 +28,20 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * longueur d'une kennylettre.
      */
-    private static final byte                      KENNY_LETTER_LEN = 3;
+    private static final byte                   KENNY_LETTER_LEN = 3;
     /**
      * The KENNYLETTERS in alphabetical order. Big Letters are the Same with the only difference That the First char is
      * UpperCase
      */
-    private static final Map < String, Character > KENNY_TO_NORMAL  = new TreeMap < String, Character >();
+    private static final Map<String, Character> KENNY_TO_NORMAL  = new TreeMap<String, Character>();
     /**
      * LOG.
      */
-    private static final Logger                    LOG              = Logger.getLogger(KennyTrigger.class);
+    private static final Logger                 LOG              = Logger.getLogger(KennyTrigger.class);
     /**
      * 
      */
-    private static final Map < Character, String > NORMAL_TO_KENNY  = new TreeMap < Character, String >();
+    private static final Map<Character, String> NORMAL_TO_KENNY  = new TreeMap<Character, String>();
 
     /**
      * @param toTest
@@ -49,6 +49,9 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
      * @return ...
      */
     private static boolean isKenny(final String toTest) {
+        if (toTest.length() % 3 != 0) {
+            return false;
+        }
         char ch;
         for (final char loopChar : toTest.toCharArray()) {
             if (Character.isLetter(loopChar)) {
@@ -70,8 +73,7 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
      */
     private static void loadKenny() {
         try {
-            final List < ? > lignes =
-                    FileUtils.readLines(new File("resources" + File.separatorChar + "kenny_map.txt"), "ASCII");
+            final List<String> lignes = FileUtils.readLines(new File("res/kenny_map.txt"));
             if (!KENNY_TO_NORMAL.isEmpty()) {
                 KENNY_TO_NORMAL.clear();
             }
@@ -80,9 +82,12 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
             }
             Character chara;
             String mpf;
-            for (final Object ligne : lignes) {
-                chara = Character.valueOf(((String) ligne).charAt(0));
-                mpf = ((String) ligne).substring(2);
+            for (final String ligne : lignes) {
+                if (ligne.length() < 2) {
+                    continue;
+                }
+                chara = Character.valueOf(ligne.charAt(0));
+                mpf = ligne.substring(2);
                 NORMAL_TO_KENNY.put(chara, mpf);
                 KENNY_TO_NORMAL.put(mpf, chara);
             }
@@ -132,8 +137,7 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
         while (index < toTranslate.length()) {
             while (Character.toUpperCase(toTranslate.charAt(index)) != 'M'
                     && Character.toUpperCase(toTranslate.charAt(index)) != 'P'
-                    && Character.toUpperCase(toTranslate.charAt(index)) != 'F')
-            {
+                    && Character.toUpperCase(toTranslate.charAt(index)) != 'F') {
                 result.append(toTranslate.charAt(index));
                 ++index;
                 if (toTranslate.length() == index) {
@@ -162,7 +166,7 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
             loadKenny();
         }
         final String retour = NORMAL_TO_KENNY.get(Character.valueOf(ch));
-        if (ch == Character.toUpperCase(ch)) {
+        if (Character.isUpperCase(ch)) {
             return StringUtils.capitalize(retour);
         }
         return retour;
@@ -197,11 +201,8 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (test(message)) {
-            MomoBot.getBotInstance().sendMessage(channel, translate(getArgs(message)).toString());
-        }
+        MomoBot.getBotInstance().sendMessage(channel, translate(getArgs(message)).toString());
     }
 }
