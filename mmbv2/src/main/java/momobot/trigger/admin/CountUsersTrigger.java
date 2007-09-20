@@ -21,10 +21,7 @@ public class CountUsersTrigger extends AbstractTrigger implements IAdminTrigger,
     /**
      * @see ircbot.trigger.IPriveTrigger#executePrivateTrigger(IrcUser, String)
      */
-    @Override
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (test(message)) {
-            MomoBot.getBotInstance().sendMessage(user, "Je connais " + IrcUser.countUsers() + " utilisateur(s).");
-        }
+        MomoBot.getBotInstance().sendMessage(user, "Je connais " + IrcUser.countUsers() + " utilisateur(s).");
     }
 }

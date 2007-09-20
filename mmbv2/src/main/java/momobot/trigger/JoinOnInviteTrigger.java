@@ -19,9 +19,9 @@ public class JoinOnInviteTrigger extends AbstractTrigger implements IInviteTrigg
 
     /**
      * On est sympa, on join tout.
+     * 
      * @see ircbot.trigger.IInviteTrigger#executeInviteTrigger(ircbot.Channel, ircbot.IrcUser)
      */
-    @Override
     public void executeInviteTrigger(final Channel toChannel, final IrcUser invitedBy) {
         MomoBot.getBotInstance().joinChannel(toChannel.toString());
         MomoBot.getBotInstance().sendNotice(invitedBy, "Allez, c'est bien parce que c'est toi.");

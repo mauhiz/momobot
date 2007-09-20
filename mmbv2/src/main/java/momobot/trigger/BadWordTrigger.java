@@ -21,7 +21,7 @@ public class BadWordTrigger extends AbstractTrigger implements IPublicTrigger, I
     /**
      * TODO utiliser SQL.
      */
-    private static final Set < String > BADWORDS = new TreeSet < String >();
+    private static final Set<String> BADWORDS = new TreeSet<String>();
     static {
         BADWORDS.add("caca");
         BADWORDS.add("prout");
@@ -36,11 +36,11 @@ public class BadWordTrigger extends AbstractTrigger implements IPublicTrigger, I
 
     /**
      * TODO mécanisme de sauvegarde.
+     * 
      * @see IPriveTrigger#executePrivateTrigger(IrcUser, String)
      */
-    @Override
     public void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message) || !user.isAdmin()) {
+        if (!user.isAdmin()) {
             return;
         }
         final String badword = getArgs(message);
@@ -55,7 +55,6 @@ public class BadWordTrigger extends AbstractTrigger implements IPublicTrigger, I
     /**
      * @see IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     public void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
         for (final String word : new StrTokenizer(getArgs(message)).getTokenArray()) {
             for (final String badword : BADWORDS) {

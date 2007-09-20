@@ -14,21 +14,22 @@ import utils.AbstractRunnable;
 
 /**
  * This class is used to process DCC events from the server.
+ * 
  * @author Paul James Mutton, <a href="http://www.jibble.org/">http://www.jibble.org/</a>
  */
 public class DccManager implements IDccSubCommands {
     /**
      * 
      */
-    private static final long              serialVersionUID = 1;
+    private static final long           serialVersionUID = 1;
     /**
      * mon bot.
      */
-    private final IIrcBot                  bot;
+    private final IIrcBot               bot;
     /**
      * 
      */
-    private final List < DccFileTransfer > transfers        = new LinkedList < DccFileTransfer >();
+    private final List<DccFileTransfer> transfers        = new LinkedList<DccFileTransfer>();
 
     /**
      * @param lebot
@@ -49,6 +50,7 @@ public class DccManager implements IDccSubCommands {
 
     /**
      * Processes a DCC request.
+     * 
      * @param user
      *            un user
      * @param request
@@ -143,7 +145,6 @@ class MiniThread extends AbstractRunnable {
     /**
      * @see utils.AbstractRunnable#run()
      */
-    @Override
     public void run() {
         this.bot.onIncomingChatRequest(this.chat);
     }

@@ -16,13 +16,13 @@ import org.apache.commons.lang.text.StrBuilder;
  */
 public class HelpTrigger extends AbstractTrigger implements IPublicTrigger, IPriveTrigger, INoticeTrigger {
     /**
-     * message.
-     */
-    private final StrBuilder    msg       = new StrBuilder();
-    /**
      * Commandes :.
      */
     private static final String COMMANDES = "Commandes :";
+    /**
+     * message.
+     */
+    private final StrBuilder    msg       = new StrBuilder();
 
     /**
      * @param trigger
@@ -33,13 +33,22 @@ public class HelpTrigger extends AbstractTrigger implements IPublicTrigger, IPri
     }
 
     /**
+     * @see ircbot.trigger.INoticeTrigger#executeNoticeTrigger(ircbot.IrcUser, java.lang.String)
+     */
+    public void executeNoticeTrigger(final IrcUser user, final String message) {
+        this.msg.clear().append(COMMANDES);
+        for (final ITrigger trig : AbstractTrigger.getTriggers()) {
+            if (trig instanceof INoticeTrigger) {
+                this.msg.append(trig).append(' ');
+            }
+        }
+        MomoBot.getBotInstance().sendMessage(user, this.msg.toString());
+    }
+
+    /**
      * @see ircbot.trigger.IPriveTrigger#executePrivateTrigger(IrcUser, String)
      */
-    @Override
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            return;
-        }
         this.msg.clear().append(COMMANDES);
         for (final ITrigger trig : AbstractTrigger.getTriggers()) {
             if (trig instanceof IPriveTrigger) {
@@ -52,12 +61,8 @@ public class HelpTrigger extends AbstractTrigger implements IPublicTrigger, IPri
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         this.msg.clear().append(COMMANDES);
         for (final ITrigger trig : AbstractTrigger.getTriggers()) {
             if (trig instanceof IPublicTrigger) {
@@ -65,22 +70,5 @@ public class HelpTrigger extends AbstractTrigger implements IPublicTrigger, IPri
             }
         }
         MomoBot.getBotInstance().sendNotice(user, this.msg.toString());
-    }
-
-    /**
-     * @see ircbot.trigger.INoticeTrigger#executeNoticeTrigger(ircbot.IrcUser, java.lang.String)
-     */
-    @Override
-    public void executeNoticeTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            return;
-        }
-        this.msg.clear().append(COMMANDES);
-        for (final ITrigger trig : AbstractTrigger.getTriggers()) {
-            if (trig instanceof INoticeTrigger) {
-                this.msg.append(trig).append(' ');
-            }
-        }
-        MomoBot.getBotInstance().sendMessage(user, this.msg.toString());
     }
 }

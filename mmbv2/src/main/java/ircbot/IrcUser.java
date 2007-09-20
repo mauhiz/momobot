@@ -9,17 +9,18 @@ import org.apache.log4j.Logger;
 /**
  * Les utilisateurs sont rangés dans une Map (nickLowerCase, object) permettant un accès rapide lorsqu'un évènement
  * associé à un utilisateur apparaît.
+ * 
  * @author mauhiz
  */
 public class IrcUser {
     /**
      * 
      */
-    private static final Logger                            LOG   = Logger.getLogger(IrcUser.class);
+    private static final Logger                         LOG   = Logger.getLogger(IrcUser.class);
     /**
      * tous les users que je connais (string = nick).
      */
-    private static final ConcurrentMap < String, IrcUser > USERS = new ConcurrentSkipListMap < String, IrcUser >();
+    private static final ConcurrentMap<String, IrcUser> USERS = new ConcurrentSkipListMap<String, IrcUser>();
 
     /**
      * @return le nombre de users connus
@@ -30,18 +31,20 @@ public class IrcUser {
 
     /**
      * renvoie null si la map ne contient pas nick.
+     * 
      * @param nick1
      *            le nick
      * @return l'User
      */
     public static IrcUser getUser(final String nick1) {
         final String nickLowerCase = nick1.toLowerCase(Locale.FRANCE);
-        LOG.debug("User " + nick1 + " requested");
+        LOG.debug("User '" + nick1 + "' requested");
         return USERS.get(nickLowerCase);
     }
 
     /**
      * factory d'users Renvoie l'user défini par ces 3 paramètres, et le crée s'il le faut.
+     * 
      * @param sourceNick
      *            le nick
      * @param sourceLogin
@@ -90,7 +93,6 @@ public class IrcUser {
     public static boolean userExists(final String nick1) {
         return USERS.containsKey(nick1.toLowerCase(Locale.FRANCE));
     }
-
     /**
      * Si je suis admin.
      */

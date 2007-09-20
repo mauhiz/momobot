@@ -21,12 +21,8 @@ public class StatusTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         if (!channel.hasRunningEvent()) {
             MomoBot.getBotInstance().sendMessage(channel, "Il se passe rien ici :x");
             return;

@@ -5,6 +5,7 @@ import ircbot.IrcUser;
 
 /**
  * TODO : le faire.
+ * 
  * @author mauhiz
  */
 public class AddservAutomate extends AbstractPersonalEvent {
@@ -20,15 +21,14 @@ public class AddservAutomate extends AbstractPersonalEvent {
     /**
      * @see java.lang.Runnable#run()
      */
-    @Override
     public final void run() {
         setRunning(true);
         while (isRunning()) {
             pause(SLEEPTIME);
             switch (getEtat()) {
-                case ETAT1:
+                case ETAT1 :
                     break;
-                default:
+                default :
                     break;
             }
         }

@@ -34,7 +34,6 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
     static {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             /* Ce catch encapsule les erreurs dues à l'implémentation de PircBot sans le killer. */
-            @Override
             public void uncaughtException(final Thread t, final Throwable e) {
                 LOG.error("Une implémentation a planté", e);
             }
@@ -83,6 +82,7 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
      *            The raw line of text from the server.
      */
     protected final void handleLine(final String line) {
+        LOG.debug("handleLine line = " + line);
         if (line.startsWith(PING)) {
             /* Respond to the ping and return immediately. */
             this.bot.onServerPing(line.substring(PING.length() + 1));
@@ -95,6 +95,7 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
         String target = null;
         if (senderInfo.charAt(0) == COLON) {
             senderInfo = senderInfo.substring(1);
+            LOG.debug("Sender Info = " + senderInfo);
             final HostMask hm = new HostMask(senderInfo);
             try {
                 sender = hm.createUser();
@@ -104,8 +105,9 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                     int code;
                     try {
                         code = Integer.parseInt(token);
-                        final String response =
-                                line.substring(line.indexOf(token, senderInfo.length()) + 4, line.length());
+                        final String response = line.substring(line.indexOf(token, senderInfo.length()) + 3, line
+                                .length());
+                        LOG.debug("response = " + response);
                         ((AbstractIrcBot) this.bot).processServerResponse(code, response);
                         return;
                     } catch (final NumberFormatException nfe) {
@@ -234,7 +236,6 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
      * stack trace to the standard output. It is probable that the PircBot may still be functioning normally after such
      * a problem, but the existance of any uncaught exceptions in your code is something you should really fix.
      */
-    @Override
     public final void run() {
         try {
             String line = null;
@@ -256,7 +257,11 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                     setRunning(false);
                     break;
                 }
-                handleLine(line);
+                try {
+                    handleLine(line);
+                } catch (final Exception e) {
+                    LOG.error(e, e);
+                }
                 if (isLogged()) {
                     continue;
                 }

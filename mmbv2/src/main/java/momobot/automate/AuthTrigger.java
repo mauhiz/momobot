@@ -20,11 +20,7 @@ public class AuthTrigger extends AbstractTrigger implements IPriveTrigger {
     /**
      * @see ircbot.trigger.IPriveTrigger#executePrivateTrigger(IrcUser, String)
      */
-    @Override
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            return;
-        }
         /* pour l'instant je hard code le pw. La sécu attendra ;x */
         if (getArgs(message).equals("boulz")) {
             user.setAdmin(true);

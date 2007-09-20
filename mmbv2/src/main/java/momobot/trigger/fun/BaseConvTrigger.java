@@ -37,11 +37,7 @@ public class BaseConvTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     public void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         final String args = getArgs(message);
         if (args.trim().isEmpty()) {
             showUsage(user);

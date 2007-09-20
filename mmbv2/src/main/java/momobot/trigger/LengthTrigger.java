@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * En voilà un trigger qu'il est useless.
+ * 
  * @author mauhiz
  */
 public class LengthTrigger extends AbstractTrigger implements IPublicTrigger {
@@ -23,12 +24,8 @@ public class LengthTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(ircbot.IrcUser, ircbot.Channel, java.lang.String)
      */
-    @Override
     @SuppressWarnings("unused")
     public void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         final String args = getArgs(message);
         if (null == args || StringUtils.isEmpty(args.trim())) {
             return;

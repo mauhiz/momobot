@@ -21,11 +21,7 @@ public class ActTrigger extends AbstractTrigger implements IAdminTrigger, IPrive
     /**
      * @see ircbot.trigger.IPriveTrigger#executePrivateTrigger(IrcUser, String)
      */
-    @Override
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            return;
-        }
         final String args = getArgs(message);
         final int index = args.indexOf(' ');
         if (index < 1) {

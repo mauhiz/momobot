@@ -88,8 +88,8 @@ public class WebQuery {
     /**
      * @return un iterateur sur les resultats
      */
-    public final List < String > results() {
-        final List < String > results = new ArrayList < String >(this.numResult);
+    public final List<String> results() {
+        final List<String> results = new ArrayList<String>(this.numResult);
         final GetMethod method = new GetMethod(this.url.toString());
         String page = null;
         try {
@@ -97,6 +97,8 @@ public class WebQuery {
             page = method.getResponseBodyAsString();
         } catch (final IOException ioe) {
             LOG.error(ioe, ioe);
+        } finally {
+            method.releaseConnection();
         }
         if (null == page || StringUtils.isBlank(page)) {
             return null;
@@ -120,7 +122,7 @@ public class WebQuery {
             }
         } else if (this.type.equals(YAHOO)) {
             page = page.substring(page.indexOf("<h2>RESULTATS WEB</h2>"));
-            forloop: for (short k = 0; k < this.numResult; ++k) {
+            forloop : for (short k = 0; k < this.numResult; ++k) {
                 while (!page.startsWith(HTTP) && !page.startsWith(FTP)) {
                     index = page.indexOf(this.resultSep);
                     if (index < 0) {
@@ -139,7 +141,7 @@ public class WebQuery {
                 page = page.substring(index);
             }
         } else if (this.type.equals(GOOGLE)) {
-            forloop: for (short k = 0; k < this.numResult; ++k) {
+            forloop : for (short k = 0; k < this.numResult; ++k) {
                 while (!page.startsWith(HTTP) && !page.startsWith(FTP)) {
                     index = page.indexOf(this.resultSep);
                     if (index == -1) {
@@ -171,14 +173,12 @@ public class WebQuery {
         } else if (this.type.equals(GOOGLE)) {
             this.resultSep = "<a href=";
             this.numResult = 2;
-            this.url =
-                    new HttpURL("www.google.fr", HttpURL.DEFAULT_PORT, "/search?hl=fr&ie=UTF-8&oe=UTF-8&num="
-                            + this.numResult + "&q=" + this.query);
+            this.url = new HttpURL("www.google.fr", HttpURL.DEFAULT_PORT, "/search?hl=fr&ie=UTF-8&oe=UTF-8&num="
+                    + this.numResult + "&q=" + this.query);
         } else if (this.type.equals(YAHOO)) {
             this.resultSep = "<a class=yschttl  href=\"";
-            this.url =
-                    new HttpURL("fr.search.yahoo.com", HttpURL.DEFAULT_PORT, "/search?ie=UTF-8&num=" + this.numResult
-                            + "&p=" + this.query);
+            this.url = new HttpURL("fr.search.yahoo.com", HttpURL.DEFAULT_PORT, "/search?ie=UTF-8&num="
+                    + this.numResult + "&p=" + this.query);
         }
     }
 }

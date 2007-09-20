@@ -81,7 +81,6 @@ class Receiver extends AbstractRunnable {
     /**
      * @see utils.AbstractRunnable#run()
      */
-    @Override
     public final void run() {
         OutputStream foutput = null;
         try {

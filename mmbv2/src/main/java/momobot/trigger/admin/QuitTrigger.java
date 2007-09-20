@@ -23,11 +23,7 @@ public class QuitTrigger extends AbstractTrigger implements IPriveTrigger, IAdmi
     /**
      * @see IPriveTrigger#executePrivateTrigger(IrcUser, String)
      */
-    @Override
     public final void executePrivateTrigger(final IrcUser user, final String message) {
-        if (!test(message)) {
-            return;
-        }
         final String args = getArgs(message);
         if (StringUtils.isEmpty(args)) {
             MomoBot.getBotInstance().quitServer("Requested by " + user);

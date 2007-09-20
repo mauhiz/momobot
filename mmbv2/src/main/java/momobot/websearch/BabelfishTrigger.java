@@ -46,9 +46,9 @@ public class BabelfishTrigger extends AbstractTrigger implements IPublicTrigger 
      */
     public static String result(final String langue1, final String langue2, final String toTranslate)
             throws IOException {
-        final NameValuePair[] data = { new NameValuePair("trtext", URLEncoder.encode(toTranslate, ENCODE)),
+        final NameValuePair[] data = {new NameValuePair("trtext", URLEncoder.encode(toTranslate, ENCODE)),
                 new NameValuePair("lp", URLEncoder.encode(langue1 + '_' + langue2, ENCODE)),
-                new NameValuePair("tt", "urltext"), new NameValuePair("intl", "tt"), new NameValuePair("doit", "done"), };
+                new NameValuePair("tt", "urltext"), new NameValuePair("intl", "tt"), new NameValuePair("doit", "done"),};
         POST.setRequestBody(data);
         new HttpClient().executeMethod(POST);
         String page = POST.getResponseBodyAsString();
@@ -75,12 +75,8 @@ public class BabelfishTrigger extends AbstractTrigger implements IPublicTrigger 
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(ircbot.IrcUser, ircbot.Channel, java.lang.String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         try {
             String msg = getArgs(message);
             final String lang1 = StringUtils.substringBefore(msg, " ");

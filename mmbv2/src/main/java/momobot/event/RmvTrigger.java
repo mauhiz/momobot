@@ -22,11 +22,7 @@ public class RmvTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         if (!channel.hasRunningEvent()) {
             MomoBot.getBotInstance().sendMessage(channel, "Aucun gather ou pickup n'est lance.");
             return;

@@ -23,12 +23,8 @@ public class MemoTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(ircbot.IrcUser, ircbot.Channel, java.lang.String)
      */
-    @Override
     @SuppressWarnings("unused")
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         final String msg = getArgs(message);
         if (StringUtils.isEmpty(msg)) {
             MomoBot.getBotInstance().sendMessage(channel,

@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Cette classe suit le design pattern Factory.
+ * 
  * @author mauhiz
  */
 @SuppressWarnings("unused")
@@ -34,15 +35,15 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * la liste des channels à autojoin.
      */
-    public static final Collection < String > AUTOJOIN = new TreeSet < String >();
+    public static final Collection<String> AUTOJOIN = new TreeSet<String>();
     /**
      * référence au bot.
      */
-    private static MomoBot                    instance;
+    private static MomoBot                 instance;
     /**
      * logger.
      */
-    private static final Logger               LOG      = Logger.getLogger(MomoBot.class);
+    private static final Logger            LOG      = Logger.getLogger(MomoBot.class);
 
     /**
      * @param channel
@@ -61,11 +62,10 @@ public class MomoBot extends AbstractIrcBot {
         }
         return instance;
     }
-
     /**
      * la liste des whois en cours.
      */
-    private final Map < String, Whois > whois = new ConcurrentHashMap < String, Whois >();
+    private final Map<String, Whois> whois = new ConcurrentHashMap<String, Whois>();
 
     /**
      * @param nick
@@ -91,7 +91,6 @@ public class MomoBot extends AbstractIrcBot {
      * @param action
      *            l'action
      */
-    @Override
     public final void onAction(final IrcUser user, final String target, final String action) {
         if (LOG.isInfoEnabled()) {
             LOG.info(user.getNick() + SPC + target + "%" + action);
@@ -101,7 +100,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onChannelInfo(String, int, String)
      */
-    @Override
     public void onChannelInfo(final String channel, final int userCount, final String topic) {
         // TODO Auto-generated method stub
     }
@@ -119,7 +117,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onFileTransferFinished(DccFileTransfer, Exception)
      */
-    @Override
     public void onFileTransferFinished(final DccFileTransfer transfer, final Exception exception) {
         // TODO Auto-generated method stub
     }
@@ -127,7 +124,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onIncomingChatRequest(DccChat)
      */
-    @Override
     public void onIncomingChatRequest(final DccChat chat) {
         // TODO Auto-generated method stub
     }
@@ -135,7 +131,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onIncomingFileTransfer(DccFileTransfer)
      */
-    @Override
     public void onIncomingFileTransfer(final DccFileTransfer transfer) {
         // TODO Auto-generated method stub
     }
@@ -143,7 +138,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onInvite(String, IrcUser, String)
      */
-    @Override
     public void onInvite(final String targetNick, final IrcUser user, final String channel) {
         // TODO Auto-generated method stub
     }
@@ -170,7 +164,6 @@ public class MomoBot extends AbstractIrcBot {
      * @param channel
      *            le channel
      */
-    @Override
     public final void onMessage(final Channel channel, final IrcUser user, final String message) {
         if (LOG.isInfoEnabled()) {
             LOG.info(user.getNick() + channel + ":" + message);
@@ -179,14 +172,15 @@ public class MomoBot extends AbstractIrcBot {
             if (!(trigger instanceof IPublicTrigger)) {
                 continue;
             }
-            ((IPublicTrigger) trigger).executePublicTrigger(user, channel, message);
+            if (trigger.isActivatedBy(message)) {
+                ((IPublicTrigger) trigger).executePublicTrigger(user, channel, message);
+            }
         }
     }
 
     /**
      * @see ircbot.IIrcBot#onMode(Channel, IrcUser, String)
      */
-    @Override
     public void onMode(final Channel channel, final IrcUser user, final String mode) {
         // TODO Auto-generated method stub
     }
@@ -194,7 +188,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onNickChange(IrcUser, String)
      */
-    @Override
     public void onNickChange(final IrcUser user, final String newNick) {
         // TODO Auto-generated method stub
     }
@@ -208,7 +201,6 @@ public class MomoBot extends AbstractIrcBot {
      * @param notice
      *            le message
      */
-    @Override
     public final void onNotice(final IrcUser user, final String target, final String notice) {
         if (null == user) {
             if (LOG.isInfoEnabled()) {
@@ -223,14 +215,15 @@ public class MomoBot extends AbstractIrcBot {
             if (!(trigger instanceof INoticeTrigger)) {
                 continue;
             }
-            ((INoticeTrigger) trigger).executeNoticeTrigger(user, notice);
+            if (trigger.isActivatedBy(notice)) {
+                ((INoticeTrigger) trigger).executeNoticeTrigger(user, notice);
+            }
         }
     }
 
     /**
      * @see AbstractIrcBot#onPrivateMessage(IrcUser, String)
      */
-    @Override
     public void onPrivateMessage(final IrcUser user, final String message) {
         if (LOG.isInfoEnabled()) {
             LOG.info(user + ":" + message);
@@ -239,14 +232,15 @@ public class MomoBot extends AbstractIrcBot {
             if (!(trigger instanceof IPriveTrigger)) {
                 continue;
             }
-            ((IPriveTrigger) trigger).executePrivateTrigger(user, message);
+            if (trigger.isActivatedBy(message)) {
+                ((IPriveTrigger) trigger).executePrivateTrigger(user, message);
+            }
         }
     }
 
     /**
      * @see ircbot.IIrcBot#onRemoveChannelBan(Channel, IrcUser, String)
      */
-    @Override
     public void onRemoveChannelBan(final Channel channel, final IrcUser user, final String hostmask) {
         // TODO Auto-generated method stub
     }
@@ -254,7 +248,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onRemoveModerated(Channel, IrcUser)
      */
-    @Override
     public void onRemoveModerated(final Channel channel, final IrcUser user) {
         // TODO Auto-generated method stub
     }
@@ -262,7 +255,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onRemoveNoExternalMessages(Channel, IrcUser)
      */
-    @Override
     public void onRemoveNoExternalMessages(final Channel channel, final IrcUser user) {
         // TODO Auto-generated method stub
     }
@@ -270,7 +262,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onRemovePrivate(Channel, IrcUser)
      */
-    @Override
     public void onRemovePrivate(final Channel channel, final IrcUser user) {
         // TODO Auto-generated method stub
     }
@@ -278,7 +269,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onRemoveSecret(Channel, IrcUser)
      */
-    @Override
     public void onRemoveSecret(final Channel channel, final IrcUser user) {
         // TODO Auto-generated method stub
     }
@@ -290,32 +280,31 @@ public class MomoBot extends AbstractIrcBot {
      * @param response
      *            le message du serveur
      */
-    @Override
     public void onServerResponse(final int code, final String response) {
         StrTokenizer st;
         String nick;
         Whois localWhois;
         switch (code) {
-            case RPL_WHOISUSER:
+            case RPL_WHOISUSER :
                 /* rien */
                 break;
-            case RPL_WHOISCHANNELS:
+            case RPL_WHOISCHANNELS :
                 /* osef */
                 break;
-            case RPL_WHOISSERVER:
+            case RPL_WHOISSERVER :
                 /* osef */
                 break;
-            case RPL_WHOISAUTH:
+            case RPL_WHOISAUTH :
                 st = new StrTokenizer(response, SPC);
                 st.nextToken();
                 nick = st.nextToken();
                 localWhois = this.whois.get(nick);
                 localWhois.setQnetAuth(st.nextToken());
                 break;
-            case RPL_WHOISIDLE:
+            case RPL_WHOISIDLE :
                 /* osef */
                 break;
-            case RPL_ENDOFWHOIS:
+            case RPL_ENDOFWHOIS :
                 st = new StrTokenizer(response, SPC);
                 st.nextToken();
                 nick = st.nextToken();
@@ -324,7 +313,7 @@ public class MomoBot extends AbstractIrcBot {
                 /* le thread va s'arreter tout seul tfacon */
                 this.whois.remove(nick);
                 break;
-            default:
+            default :
                 break;
         }
     }
@@ -332,7 +321,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onSetChannelBan(Channel, IrcUser, String)
      */
-    @Override
     public void onSetChannelBan(final Channel channel, final IrcUser user, final String hostmask) {
         // TODO Auto-generated method stub
     }
@@ -340,7 +328,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onSetModerated(Channel, IrcUser)
      */
-    @Override
     public void onSetModerated(final Channel channel, final IrcUser user) {
         // TODO Auto-generated method stub
     }
@@ -348,7 +335,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onSetNoExternalMessages(Channel, IrcUser)
      */
-    @Override
     public void onSetNoExternalMessages(final Channel channel, final IrcUser user) {
         // TODO Auto-generated method stub
     }
@@ -356,7 +342,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onSetPrivate(Channel, IrcUser)
      */
-    @Override
     public void onSetPrivate(final Channel channel, final IrcUser user) {
         // TODO Auto-generated method stub
     }
@@ -364,7 +349,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onSetSecret(Channel, IrcUser)
      */
-    @Override
     public void onSetSecret(final Channel channel, final IrcUser user) {
         // TODO Auto-generated method stub
     }
@@ -372,23 +356,26 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onUnknown(String)
      */
-    @Override
     public void onUnknown(final String line) {
         // TODO Auto-generated method stub
     }
 
     /**
-     * @see ircbot.IIrcBot#onUserList(Channel, Iterable)
+     * @see ircbot.IIrcBot#onUserList(Channel, Collection)
      * @param channel
      *            le channel
      * @param users
      *            les users
      */
-    @Override
-    public final void onUserList(final Channel channel, final Iterable < Entry < String, String >> users) {
-        for (final Entry < String, String > user : users) {
+    public final void onUserList(final Channel channel, final Collection<Entry<String, String>> users) {
+        LOG.debug("onUserList channel : " + channel);
+        for (final Entry<String, String> user : users) {
+            LOG.debug("onUserList user : " + user.getKey() + " | " + user.getValue());
             final IrcUser iu = IrcUser.getUser(user.getKey());
             if (null == channel) {
+                return;
+            } else if (iu == null) {
+                LOG.warn("onUserList : user is null");
                 return;
             }
             if (AUTOJOIN.contains(channel.getNom().toLowerCase(Locale.US))) {
@@ -401,7 +388,6 @@ public class MomoBot extends AbstractIrcBot {
     /**
      * @see ircbot.IIrcBot#onUserMode(String, IrcUser, String)
      */
-    @Override
     public final void onUserMode(final String targetNick, final IrcUser user, final String mode) {
         if (LOG.isDebugEnabled()) {
             LOG.debug(user + " sets mode " + targetNick + " " + mode);

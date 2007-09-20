@@ -23,27 +23,27 @@ public class OutputQueue extends AbstractRunnable implements IIrcSpecialChars {
     /**
      * logger.
      */
-    private static final Logger            LOG           = Logger.getLogger(OutputQueue.class);
+    private static final Logger         LOG           = Logger.getLogger(OutputQueue.class);
     /**
      * Longueur maximale d'un message sur IRC.
      */
-    private static final char              MAXLINELENGTH = 512;
+    private static final char           MAXLINELENGTH = 512;
     /**
      * Durée de la protection antiflood en millisecondes.
      */
-    private static final long              MESSAGEDELAY  = 1000;
+    private static final long           MESSAGEDELAY  = 1000;
     /**
      * Taille de la file d'attente.
      */
-    private static final char              QUEUE_SIZE    = 30;
+    private static final char           QUEUE_SIZE    = 30;
     /**
      * Permet d'écrire au serveur.
      */
-    private Writer                         bwriter;
+    private Writer                      bwriter;
     /**
      * La file d'attente elle-même.
      */
-    private final BlockingQueue < String > queue         = new LinkedBlockingQueue < String >(QUEUE_SIZE);
+    private final BlockingQueue<String> queue         = new LinkedBlockingQueue<String>(QUEUE_SIZE);
 
     /**
      * @param socket
@@ -62,6 +62,7 @@ public class OutputQueue extends AbstractRunnable implements IIrcSpecialChars {
 
     /**
      * Place un element en queue.
+     * 
      * @param string
      *            l'élément
      */
@@ -78,9 +79,9 @@ public class OutputQueue extends AbstractRunnable implements IIrcSpecialChars {
 
     /**
      * Crée une boucle d'attente.
+     * 
      * @see Runnable#run()
      */
-    @Override
     public final void run() {
         LOG.debug("started");
         String line;

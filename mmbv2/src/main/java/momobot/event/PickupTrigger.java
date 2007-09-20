@@ -21,11 +21,7 @@ public class PickupTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         if (channel.hasRunningEvent()) {
             MomoBot.getBotInstance().sendMessage(channel,
                     "Un " + channel.getEvent().getClass().getSimpleName() + " est déjà lancé sur " + channel);

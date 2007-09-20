@@ -21,10 +21,9 @@ public class StopTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     @SuppressWarnings("unused")
     public void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (test(message) && channel.hasRunningEvent()) {
+        if (channel.hasRunningEvent()) {
             MomoBot.getBotInstance().sendMessage(channel, channel.getEvent().stop());
         }
     }

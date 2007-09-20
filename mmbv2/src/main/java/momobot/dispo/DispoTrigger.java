@@ -39,11 +39,7 @@ public class DispoTrigger extends AbstractTrigger implements IPublicTrigger {
     /**
      * @see ircbot.trigger.IPublicTrigger#executePublicTrigger(ircbot.IrcUser, ircbot.Channel, java.lang.String)
      */
-    @Override
     public final void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
-        if (!test(message)) {
-            return;
-        }
         if (!(user instanceof QnetUser)) {
             LOG.error("user non Qnet");
             return;

@@ -115,7 +115,6 @@ public class Whois extends AbstractRunnable implements IIrcCommands {
     /**
      * Ce thread attend que momobot lui dise qu'il a fini le whois.
      */
-    @Override
     public final void run() {
         /* le whois des bots de Qnet timeout */
         /* whois deja en cours */

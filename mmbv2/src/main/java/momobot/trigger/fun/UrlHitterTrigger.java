@@ -18,9 +18,9 @@ public class UrlHitterTrigger extends AbstractTrigger implements IPublicTrigger 
 
     /**
      * TODO ajouter un système URL hitter.
+     * 
      * @see IPublicTrigger#executePublicTrigger(IrcUser, Channel, String)
      */
-    @Override
     public void executePublicTrigger(final IrcUser from, final Channel channel, final String message) {
     }
 }
