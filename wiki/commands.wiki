@@ -9,10 +9,10 @@ momoBot commands are sended throught the channel chat (in a simple IRC MSG). The
 
 Add your content here.  Format your content with:
   # Gamers commands
-    *$start : Initialize a gather. 4 others players have to add themselves to the party.
-    *$pickup: Initialize a picked : 9 others players are required to start game (5 versus 5).
-    *$add [a | b] : add the triggering user to the current game (into the team a or b), if there is one being organized.
-    *$rmv : remove the triggering user from the game.
+    *`$start` : Initialize a gather. 4 others players have to add themselves to the party.
+    *`$pickup`: Initialize a picked : 9 others players are required to start game (5 versus 5).
+    *`$add [a | b]` : add the triggering user to the current game (into the team a or b), if there is one being organized.
+    *`$rmv` : remove the triggering user from the game.
     *$status : Show informations about the current game.
     *$roll : Highlight a random player in the gathered team.
     *$reset : reset the current game
