@@ -1,13 +1,13 @@
-#summary One-sentence summary of this page.
+#summary MomoBot is an evolution of PircBot, rewritten with love and care, and bundled with some plugins.
 
 = Introduction =
 
-MomoBot is an evolution of PircBot, rewritten with love and care, and bundled with some plugins.
+The momobot is being tested on quakenet's network.
 
 
 = Details =
 
 Current features :
   * Can connect to any IRC server.
-  * Can join only one channel (?)
-  * Comes with a bunch of useful commands
+  * Can join only one channel (?).
+  * Comes with a bunch of useful [commands].
