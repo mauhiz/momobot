@@ -1,4 +1,5 @@
 #summary Commands included with the momobot.
+#labels Featured,Phase-Support
 
 = Introduction =
 
