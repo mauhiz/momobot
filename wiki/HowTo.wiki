@@ -1,0 +1,4 @@
+#summary Here are a few thing you may want to do:
+
+    * How to download and edit momobot's sources.
+    * How to run momobot. 
