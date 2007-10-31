@@ -1,0 +1,12 @@
+#summary How-To
+
+= Introduction =
+
+Here are a few thing you may want to do:
+
+
+= Details =
+
+  * How to download and edit momobot's sources.
+  * How to run momobot.
+  * 
