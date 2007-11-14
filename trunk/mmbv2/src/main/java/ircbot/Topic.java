@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 /**
  * Simple objet de stockage des informations relatives à un topic.
+ * 
  * @author mauhiz
  */
 public class Topic {
@@ -17,13 +18,13 @@ public class Topic {
      */
     private String         setBy;
     /**
-     * Contenu du topic.
-     */
-    private String         value;
-    /**
      * Indique si le topic est protégé contre les non-ops.
      */
     private boolean        topicProtected;
+    /**
+     * Contenu du topic.
+     */
+    private String         value;
 
     /**
      * @param topic1
@@ -56,7 +57,7 @@ public class Topic {
     /**
      * @return le topic
      */
-    public final String getTopic() {
+    public final String getValue() {
         return this.value;
     }
 
@@ -84,18 +85,18 @@ public class Topic {
     }
 
     /**
-     * @param topic1
-     *            le topic
-     */
-    public final void setTopic(final String topic1) {
-        this.value = topic1;
-    }
-
-    /**
      * @param topicProtected1
      *            The topicProtected to set.
      */
     public final void setTopicProtection(final boolean topicProtected1) {
         this.topicProtected = topicProtected1;
+    }
+
+    /**
+     * @param value1
+     *            le topic
+     */
+    public final void setValue(final String value1) {
+        this.value = value1;
     }
 }

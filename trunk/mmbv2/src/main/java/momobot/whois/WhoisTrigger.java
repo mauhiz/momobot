@@ -11,10 +11,17 @@ import java.util.Locale;
 
 import momobot.MomoBot;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author mauhiz
  */
 public class WhoisTrigger extends AbstractTrigger implements IPublicTrigger, IPriveTrigger, IJoinTrigger {
+    /**
+     * 
+     */
+    private static final Logger LOG = Logger.getLogger(WhoisTrigger.class);
+
     /**
      * @param trigger
      *            le trigger
@@ -29,7 +36,11 @@ public class WhoisTrigger extends AbstractTrigger implements IPublicTrigger, IPr
      * @see ircbot.trigger.IJoinTrigger#executeJoinTrigger(ircbot.Channel, ircbot.IrcUser)
      */
     public void executeJoinTrigger(final Channel channel, final IrcUser user) {
-        if (MomoBot.AUTOJOIN.contains(channel.getNom().toLowerCase(Locale.US))) {
+        if (channel == null) {
+            LOG.error("executeJoinTrigger : channel is null");
+        } else if (user == null) {
+            LOG.error("executeJoinTrigger : user is null");
+        } else if (MomoBot.AUTOJOIN.contains(channel.getNom().toLowerCase(Locale.US))) {
             new Whois(user).execute();
         }
     }

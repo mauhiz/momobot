@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import momobot.event.AddTrigger;
 import momobot.event.GatherTrigger;
 import momobot.event.MassHlTrigger;
+import momobot.event.PickupTrigger;
 import momobot.event.RmvTrigger;
 import momobot.event.RollTrigger;
 import momobot.event.StatusTrigger;
@@ -22,7 +23,13 @@ import momobot.trigger.admin.PartTrigger;
 import momobot.trigger.admin.QuitTrigger;
 import momobot.trigger.fun.KennyTrigger;
 import momobot.trigger.fun.MargueriteTrigger;
+import momobot.trigger.fun.Q3NickTrigger;
+import momobot.trigger.math.FractionContinueTrigger;
+import momobot.trigger.math.Md5Trigger;
+import momobot.trigger.math.Sha256Trigger;
+import momobot.trigger.math.Sha512Trigger;
 import momobot.websearch.GoogleTrigger;
+import momobot.whois.WhoisTrigger;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -63,18 +70,26 @@ public class Launcher {
         new HelpTrigger("$help");
         new ActTrigger("$act");
         new SayTrigger("$say");
+        new WhoisTrigger("$whois");
+        new QuitTrigger("$quit");
         /* fun */
         new KennyTrigger("$kenny");
         new GoogleTrigger("$google");
         new LengthTrigger("$len");
+        new FractionContinueTrigger("$fracont");
+        new Md5Trigger("$md5");
+        new Sha256Trigger("$sha256");
+        new Sha512Trigger("$sha512");
         new CountUsersTrigger("$count");
         new MargueriteTrigger("$love");
+        new Q3NickTrigger("$q3");
         /* memo */
         new MemoTrigger("$memo");
         new ListMemosTrigger("$listmemos");
         /* gather */
         new AddTrigger("$add");
         new GatherTrigger("$start");
+        new PickupTrigger("$pickup");
         new MassHlTrigger("$fessee");
         new StatusTrigger("$status");
         new RollTrigger("$roll");

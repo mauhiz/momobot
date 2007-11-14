@@ -1,29 +1,35 @@
 package ircbot;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
-public class Channel implements IIrcSpecialChars, Comparable < Channel > {
+public class Channel implements IIrcSpecialChars, Comparable<Channel> {
     /**
      * tous les channels ou je suis (string = nom).
      */
-    private static final ConcurrentMap < String, Channel > CHANNELS         = new ConcurrentSkipListMap < String, Channel >();
+    private static final ConcurrentMap<String, Channel> CHANNELS         = new ConcurrentSkipListMap<String, Channel>();
     /**
      * 
      */
-    private static final long                              serialVersionUID = 1;
+    private static final Logger                         LOG              = Logger.getLogger(Channel.class);
+    /**
+     * 
+     */
+    private static final long                           serialVersionUID = 1;
 
     /**
      * @return un itérateur sur tous les channels
      */
-    public static final Iterable < Channel > getAll() {
+    public static final Collection<Channel> getAll() {
         return CHANNELS.values();
     }
 
@@ -33,11 +39,16 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
      * @return le channel
      */
     public static final Channel getChannel(final String channel) {
+        LOG.debug("getChannel : " + channel);
         final String chanLowerCase = channel.toLowerCase(Locale.FRANCE);
         if (CHANNELS.containsKey(chanLowerCase)) {
+            LOG.debug("channel found.");
             return CHANNELS.get(chanLowerCase);
         }
-        return CHANNELS.put(channel, new Channel(channel));
+        LOG.debug("channel not found, adding");
+        Channel newChan = new Channel(channel);
+        CHANNELS.put(chanLowerCase, newChan);
+        return newChan;
     }
 
     /**
@@ -64,37 +75,36 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
      *            le channel
      */
     public static final void removeChannel(final String channel) {
-        CHANNELS.remove(channel);
+        CHANNELS.remove(channel.toLowerCase(Locale.FRANCE));
     }
-
     /**
      * liste des évènements enregistrés sur ce chan.
      */
-    private IChannelEvent                  event;
+    private IChannelEvent                      event;
     /**
      * Si le channel est en mode +i.
      */
-    private boolean                               inviteOnly;
+    private boolean                            inviteOnly;
     /**
      * la key du channel.
      */
-    private String                                key;
+    private String                             key;
     /**
      * la limite.
      */
-    private int                                   limit;
+    private int                                limit;
     /**
      * 
      */
-    private final ConcurrentMap < IrcUser, Mode > modes = new ConcurrentHashMap < IrcUser, Mode >();
+    private final ConcurrentMap<IrcUser, Mode> modes = new ConcurrentHashMap<IrcUser, Mode>();
     /**
      * le nom.
      */
-    private final String                          nom;
+    private final String                       nom;
     /**
      * le topic du channel.
      */
-    private Topic                                 topic;
+    private Topic                              topic;
 
     /**
      * @param nom1
@@ -103,6 +113,7 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
     public Channel(final String nom1) {
         super();
         this.nom = nom1;
+        LOG.debug("Channel created " + toString());
     }
 
     /**
@@ -120,8 +131,10 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
      *            le mode
      */
     public final void addUser(final IrcUser user, final String mode) {
+        LOG.debug("Willing to add user " + mode + " " + user + " to channel " + toString());
         if (!this.modes.containsKey(user)) {
             this.modes.put(user, new Mode(mode));
+            LOG.debug("User added");
         }
     }
 
@@ -139,7 +152,7 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @see Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(final Object other) {
@@ -187,7 +200,7 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
     /**
      * @return les users.
      */
-    public Iterable < IrcUser > getUsers() {
+    public Collection<IrcUser> getUsers() {
         return this.modes.keySet();
     }
 
@@ -214,7 +227,7 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * @see Object#hashCode()
      */
     @Override
     public int hashCode() {
@@ -331,7 +344,7 @@ public class Channel implements IIrcSpecialChars, Comparable < Channel > {
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * @see Object#toString()
      * @return le nom du channel
      */
     @Override

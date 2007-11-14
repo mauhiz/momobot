@@ -16,7 +16,7 @@ public class MargueriteTrigger extends AbstractTrigger implements IPublicTrigger
     /**
      * 
      */
-    private static final String[] MARGUERITE = {"un peu", "beaucoup", "passionément", "à la folie", "pas du tout",};
+    private static final String[] MARGUERITE = { "un peu", "beaucoup", "passionément", "à la folie", "pas du tout", };
 
     /**
      * @param trigger

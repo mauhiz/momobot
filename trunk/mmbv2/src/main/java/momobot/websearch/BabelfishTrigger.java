@@ -46,9 +46,12 @@ public class BabelfishTrigger extends AbstractTrigger implements IPublicTrigger 
      */
     public static String result(final String langue1, final String langue2, final String toTranslate)
             throws IOException {
-        final NameValuePair[] data = {new NameValuePair("trtext", URLEncoder.encode(toTranslate, ENCODE)),
-                new NameValuePair("lp", URLEncoder.encode(langue1 + '_' + langue2, ENCODE)),
-                new NameValuePair("tt", "urltext"), new NameValuePair("intl", "tt"), new NameValuePair("doit", "done"),};
+        final NameValuePair[] data = {
+        new NameValuePair("trtext", URLEncoder.encode(toTranslate, ENCODE)),
+        new NameValuePair("lp", URLEncoder.encode(langue1 + '_' + langue2, ENCODE)),
+        new NameValuePair("tt", "urltext"),
+        new NameValuePair("intl", "tt"),
+        new NameValuePair("doit", "done"), };
         POST.setRequestBody(data);
         new HttpClient().executeMethod(POST);
         String page = POST.getResponseBodyAsString();

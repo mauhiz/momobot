@@ -671,10 +671,14 @@ public abstract class AbstractIrcBot
                  * This is the end of a NAMES list, so we know that we've got the full list of users in the channel that
                  * we just joined.
                  */
-                LOG.debug("endofnames response = " + response);
+                LOG.debug("endofnames response=" + response);
                 channel = response.substring(response.indexOf(SPC) + 1, response.indexOf(EMPTY + SPC + COLON));
-                LOG.debug("endofnames channel = " + channel);
-                onUserList(Channel.getChannel(channel), this.tempUsers.entrySet());
+                LOG.debug("endofnames channel=" + channel);
+                if (channel.indexOf(SPC) > 0) {
+                    LOG.error("Reponse erronnee (channel=" + channel + ")");
+                } else {
+                    onUserList(Channel.getChannel(channel), this.tempUsers.entrySet());
+                }
                 this.tempUsers.clear();
                 break;
             default :

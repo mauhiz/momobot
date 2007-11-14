@@ -35,7 +35,7 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             /* Ce catch encapsule les erreurs dues à l'implémentation de PircBot sans le killer. */
             public void uncaughtException(final Thread t, final Throwable e) {
-                LOG.error("Une implémentation a planté", e);
+                LOG.error("Une implémentation a planté dans le thread " + t, e);
             }
         });
     }
@@ -108,7 +108,7 @@ public class InputProcessor extends AbstractRunnable implements IIrcConstants, I
                         final String response = line.substring(line.indexOf(token, senderInfo.length()) + 3, line
                                 .length());
                         LOG.debug("response = " + response);
-                        ((AbstractIrcBot) this.bot).processServerResponse(code, response);
+                        ((AbstractIrcBot) this.bot).processServerResponse(code, response.trim());
                         return;
                     } catch (final NumberFormatException nfe) {
                         code = -1;

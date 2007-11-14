@@ -23,5 +23,6 @@ public class BashTrigger extends AbstractTrigger implements IPublicTrigger {
      */
     @SuppressWarnings("unused")
     public void executePublicTrigger(final IrcUser user, final Channel channel, final String message) {
+        /* TODO */
     }
 }

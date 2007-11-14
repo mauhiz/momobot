@@ -29,27 +29,27 @@ public class SqlUtils {
     /**
      * logger.
      */
-    private static final Logger              LOG           = Logger.getLogger(SqlUtils.class);
+    private static final Logger                 LOG           = Logger.getLogger(SqlUtils.class);
     /**
      * mes maîtres.
      */
-    private static final Collection<String>  MASTERS       = new TreeSet<String>();
+    private static final Collection < String >  MASTERS       = new TreeSet < String >();
     /**
      * (steamid, qauth).
      */
-    private static final Map<String, String> PLAYERS       = new TreeMap<String, String>();
+    private static final Map < String, String > PLAYERS       = new TreeMap < String, String >();
     /**
      * nom du profil en cours.
      */
-    private static String                    profil;
+    private static String                       profil;
     /**
      * root package.
      */
-    private static final String              TRIG_CLS_ROOT = "momobot.";
+    private static final String                 TRIG_CLS_ROOT = "momobot.";
     /**
      * url du serveur mysql.
      */
-    private static final String              URL           = "jdbc:mysql://mysql.mauhiz.net/momobot";
+    private static final String                 URL           = "jdbc:mysql://mysql.mauhiz.net/momobot";
 
     /**
      * @param auth
@@ -117,11 +117,11 @@ public class SqlUtils {
      * @throws SQLException
      *             en cas d'erreur.
      */
-    public static Iterable<Dispo> getDispos(final String channel, final long date) throws SQLException {
+    public static Iterable < Dispo > getDispos(final String channel, final long date) throws SQLException {
         final Date datesql = new Date(date);
         final ResultSet rs = doSqlQuery("SELECT `qauth`, `heure1`, `heure2` FROM `dispo` WHERE `channel` = '" + channel
                 + "' AND `date`= '" + datesql.toString() + "'");
-        final Collection<Dispo> dispos = new HashSet<Dispo>();
+        final Collection < Dispo > dispos = new HashSet < Dispo >();
         try {
             while (rs.next()) {
                 final String qauth = rs.getString("qauth");
@@ -139,7 +139,7 @@ public class SqlUtils {
     /**
      * @return les players
      */
-    public static Iterable<Entry<String, String>> getPlayers() {
+    public static Iterable < Entry < String, String >> getPlayers() {
         return PLAYERS.entrySet();
     }
 
@@ -180,8 +180,8 @@ public class SqlUtils {
                         final int index = param.indexOf(' ');
                         final String className = TRIG_CLS_ROOT + param.substring(0, index);
                         final String triggerName = param.substring(index + 1);
-                        final Class<?> toLoad = Class.forName(className);
-                        final Constructor<?> constructor = toLoad.getConstructor(String.class);
+                        final Class < ? > toLoad = Class.forName(className);
+                        final Constructor < ? > constructor = toLoad.getConstructor(String.class);
                         constructor.newInstance(triggerName);
                     } else if ("identserver".equals(paramName)) {
                         if (param.charAt(0) == '1') {
@@ -274,8 +274,8 @@ public class SqlUtils {
                 final int spc = param.indexOf(' ');
                 final String className = TRIG_CLS_ROOT + param.substring(0, spc);
                 final String triggerName = param.substring(spc + 1);
-                final Class<?> toLoad = Class.forName(className);
-                final Constructor<?> constructor = toLoad.getConstructor(String.class);
+                final Class < ? > toLoad = Class.forName(className);
+                final Constructor < ? > constructor = toLoad.getConstructor(String.class);
                 constructor.newInstance(triggerName);
             }
         } catch (final NoSuchMethodException nsme) {
