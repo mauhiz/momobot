@@ -23,7 +23,7 @@ public class FractionContinueTrigger extends AbstractTrigger implements IPublicT
     /**
      * 
      */
-    static final int            LIMIT = 10;
+    static final int    LIMIT = 10;
     /**
      * 
      */
@@ -36,7 +36,7 @@ public class FractionContinueTrigger extends AbstractTrigger implements IPublicT
      * @return une fraction continue de type [a0; a1, a2, ...]
      */
     static String computeFractionContinue(final double nombre) {
-        final List < Integer > fraction = new LinkedList < Integer >();
+        final List<Integer> fraction = new LinkedList<Integer>();
         int floor;
         double work = nombre;
         // LOG.debug("limit = " + LIMIT);
@@ -67,10 +67,11 @@ public class FractionContinueTrigger extends AbstractTrigger implements IPublicT
 
     /**
      * @param fraction
+     * @param exactMatch
      * @return l'affichage de la fraction continue;
      */
-    static String displayFraction(final List < Integer > fraction, final boolean exactMatch) {
-        final List < Integer > safeCopy = new ArrayList < Integer >(fraction.size());
+    static String displayFraction(final List<Integer> fraction, final boolean exactMatch) {
+        final List<Integer> safeCopy = new ArrayList<Integer>(fraction.size());
         safeCopy.addAll(fraction);
         final StrBuilder retour = new StrBuilder("[");
         if (safeCopy.isEmpty()) {

@@ -27,6 +27,7 @@ public class ActivateTrigger extends AbstractTrigger implements IAdminTrigger, I
     }
 
     /**
+     * @param from
      * @param className
      */
     private void dispClassError(final IrcUser from, final String className) {

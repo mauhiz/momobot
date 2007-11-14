@@ -151,6 +151,10 @@ public class MomoBot extends AbstractIrcBot {
      */
     @Override
     public final void onJoin(final Channel channel, final IrcUser user) {
+        if (channel == null) {
+            LOG.error("onJoin : channel is null!");
+            return;
+        }
         for (final ITrigger trigger : AbstractTrigger.getTriggers()) {
             if (!(trigger instanceof IJoinTrigger)) {
                 continue;

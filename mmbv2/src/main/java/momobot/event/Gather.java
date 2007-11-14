@@ -78,16 +78,16 @@ public class Gather extends AbstractChannelEvent {
             this.team.add(element);
             retour.append(" ajouté au gather. ");
             switch (this.team.remainingPlaces()) {
-                case 0:
-                    retour.append("C'est complet!");
+                case 0 :
+                    retour.append("C'est complet! Ready to rock 'n $roll");
                     break;
-                case 1:
+                case 1 :
                     retour.append("Reste une seule place!");
                     break;
-                default:
+                default :
+                    retour.append("Reste ").append(this.team.remainingPlaces()).append(" places.");
                     break;
             }
-            retour.append("Reste ").append(this.team.remainingPlaces()).append(" places.");
         }
         return retour.toString();
     }
