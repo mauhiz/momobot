@@ -22,7 +22,7 @@ public class Q3NickTrigger extends AbstractTrigger implements IPublicTrigger {
      */
     private static String computeQ3ColorCode(final String colorCode) {
         final String q3Code;
-        if (colorCode == ColorsUtils.BLACK) {
+        if (ColorsUtils.BLACK.equals(colorCode)) {
             q3Code = "0";
         } else {
             return "";

@@ -29,7 +29,7 @@ public class AddTrigger extends AbstractTrigger implements IPublicTrigger {
         }
         final IChannelEvent event = channel.getEvent();
         if (event instanceof Gather) {
-            MomoBot.getBotInstance().sendMessage(channel, ((Gather) event).add(user).toString());
+            MomoBot.getBotInstance().sendMessage(channel, ((Gather) event).add(user));
         } else if (event instanceof Pickup) {
             MomoBot.getBotInstance().sendMessage(channel, ((Pickup) event).add(user, getArgs(message)));
         }
