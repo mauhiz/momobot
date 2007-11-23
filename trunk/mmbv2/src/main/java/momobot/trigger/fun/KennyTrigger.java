@@ -65,7 +65,7 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
     }
 
     /**
-     * La map kenny est formé ainsi...
+     * La map kenny est formée ainsi...
      * 
      * <pre>
      * a mpf\r\n
@@ -73,7 +73,7 @@ public class KennyTrigger extends AbstractTrigger implements IPublicTrigger {
      */
     private static void loadKenny() {
         try {
-            final List<String> lignes = FileUtils.readLines(new File("res/kenny_map.txt"));
+            final List<String> lignes = FileUtils.readLines(new File("res/kenny_map.txt"), "ISO-8859-1");
             if (!KENNY_TO_NORMAL.isEmpty()) {
                 KENNY_TO_NORMAL.clear();
             }
