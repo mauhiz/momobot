@@ -33,30 +33,24 @@ import org.apache.log4j.Logger;
  * 
  * @author mauhiz
  */
-public abstract class AbstractIrcBot
-        implements
-            IIrcConstants,
-            IIrcCommands,
-            IIrcSpecialChars,
-            ICtcpCommands,
-            IDccSubCommands,
-            IIrcBot {
+public abstract class AbstractIrcBot implements IIrcConstants, IIrcCommands, IIrcSpecialChars, ICtcpCommands,
+        IDccSubCommands, IIrcBot {
     /**
      * le nom.
      */
-    private static final String        DEFAULT_NAME = "PircBot";
+    private static final String           DEFAULT_NAME = "PircBot";
     /**
      * logger.
      */
-    private static final Logger        LOG          = Logger.getLogger(AbstractIrcBot.class);
+    private static final Logger           LOG          = Logger.getLogger(AbstractIrcBot.class);
     /**
      * Les ports pour le DCC. Osef complètement, il est pas prévu que le bot fasse des xdcc pour l'instant
      */
-    public static final Set<Character> PORTS        = new TreeSet<Character>();
+    public static final Set < Character > PORTS        = new TreeSet < Character >();
     /**
      * ce que je réponds sur un CTCP version.
      */
-    private static final String        VERSION      = "momoBot";
+    private static final String           VERSION      = "momoBot";
     static {
         PORTS.add(Character.valueOf((char) 1025));
         PORTS.add(Character.valueOf((char) 1026));
@@ -68,7 +62,7 @@ public abstract class AbstractIrcBot
      * @return un serverSocket
      * @throws IOException
      */
-    public static ServerSocket tryToBind(final Set<Character> ports) throws IOException {
+    public static ServerSocket tryToBind(final Set < Character > ports) throws IOException {
         if (ports.isEmpty()) {
             /* Use any free port. */
             return new ServerSocket(0);
@@ -88,43 +82,43 @@ public abstract class AbstractIrcBot
     /**
      * Me dit si je suis connecté.
      */
-    private boolean                   connected;
+    private boolean                      connected;
     /**
      * Un manager to rule them all.
      */
-    private final DccManager          dccManager = new DccManager(this);
+    private final DccManager             dccManager = new DccManager(this);
     /**
      * Mon doigt.
      */
-    private String                    finger     = "You ought to be arrested for fingering a bot!";
+    private String                       finger     = "You ought to be arrested for fingering a bot!";
     /**
      * le login.
      */
-    private String                    myLogin    = DEFAULT_NAME;
+    private String                       myLogin    = DEFAULT_NAME;
     /**
      * Mon nom, celui que je veux avoir comme nick.
      */
-    private String                    myName     = DEFAULT_NAME;
+    private String                       myName     = DEFAULT_NAME;
     /**
      * le nick que le bot a conscience d'avoir. Il peut parfois différer de son nick réel en cas de désynchro.
      */
-    private String                    myNick;
+    private String                       myNick;
     /**
      * Mon thread qui me débarasse de ce que je dois dire.
      */
-    private OutputQueue               outputThread;
+    private OutputQueue                  outputThread;
     /**
      * Mon serveur IRC où je vais me connecter.
      */
-    private IrcServerBean             server;
+    private IrcServerBean                server;
     /**
      * une poubelle avec un topic temporaire dedans. Il faudrait que je trouve plus élégant.
      */
-    private String                    tempTopic;
+    private String                       tempTopic;
     /**
      * une poubelle avec plein d'users.
      */
-    private final Map<String, String> tempUsers  = new ConcurrentHashMap<String, String>();
+    private final Map < String, String > tempUsers  = new ConcurrentHashMap < String, String >();
 
     /**
      * @see IIrcBot#ban(java.lang.String, java.lang.String)
@@ -465,7 +459,10 @@ public abstract class AbstractIrcBot
      * @see IIrcBot#onTopic(String, String, String, long, boolean)
      */
     @SuppressWarnings("unused")
-    public void onTopic(final String channel, final String topic, final String setBy, final long date,
+    public void onTopic(final String channel,
+            final String topic,
+            final String setBy,
+            final long date,
             final boolean changed) {
         Channel.getChannel(channel).setTopic(new Topic(topic, date, setBy));
     }
@@ -616,7 +613,7 @@ public abstract class AbstractIrcBot
         String channel;
         int colon;
         switch (code) {
-            case RPL_LIST :
+            case RPL_LIST:
                 /* This is a bit of information about a channel. */
                 firstSpace = response.indexOf(SPC);
                 secondSpace = response.indexOf(SPC, firstSpace + 1);
@@ -627,16 +624,17 @@ public abstract class AbstractIrcBot
                 final String topic = response.substring(colon + 1);
                 onChannelInfo(channel, userCount, topic);
                 break;
-            case RPL_TOPIC :
+            case RPL_TOPIC:
                 /* This is topic information about a channel we've just joined. */
                 firstSpace = response.indexOf(SPC);
                 secondSpace = response.indexOf(SPC, firstSpace + 1);
                 colon = response.indexOf(COLON);
                 /* TODO wtf à quoi sert ce substring ? */
-                response.substring(firstSpace + 1, secondSpace);
+                String wtf = response.substring(firstSpace + 1, secondSpace);
+                LOG.info("wtf = " + wtf);
                 this.tempTopic = response.substring(colon + 1);
                 break;
-            case RPL_TOPICINFO :
+            case RPL_TOPICINFO:
                 final StrTokenizer tokenizer = new StrTokenizer(response);
                 tokenizer.nextToken();
                 channel = tokenizer.nextToken();
@@ -645,7 +643,7 @@ public abstract class AbstractIrcBot
                 onTopic(channel, this.tempTopic, setBy, date, false);
                 this.tempTopic = null;
                 break;
-            case RPL_NAMREPLY :
+            case RPL_NAMREPLY:
                 /* This is a list of nicks in a channel that we've just joined. */
                 LOG.debug("namreply response = " + response);
                 final int channelEndIndex = response.indexOf(EMPTY + SPC + COLON);
@@ -666,7 +664,7 @@ public abstract class AbstractIrcBot
                     this.tempUsers.put(tempNick.substring(prefix.length()), prefix.toString());
                 }
                 break;
-            case RPL_ENDOFNAMES :
+            case RPL_ENDOFNAMES:
                 /*
                  * This is the end of a NAMES list, so we know that we've got the full list of users in the channel that
                  * we just joined.
@@ -681,7 +679,7 @@ public abstract class AbstractIrcBot
                 }
                 this.tempUsers.clear();
                 break;
-            default :
+            default:
                 if (LOG.isInfoEnabled()) {
                     LOG.info(new StrBuilder().append('[').append(code).append(']').append(response));
                 }

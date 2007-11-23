@@ -69,7 +69,7 @@ class Sender extends AbstractRunnable implements IIrcSpecialChars, IDccSubComman
         /* on ignore la réponse d'avancement. */
         final long skipped = input.skip(Integer.SIZE / Byte.SIZE);
         /* TODO On devrait vérifier que tout a été skippé. */
-        if (false) {
+        if (LOG.isDebugEnabled()) {
             LOG.debug(Long.valueOf(skipped));
         }
         this.dft.updateProgress(bytesRead);

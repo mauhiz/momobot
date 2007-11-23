@@ -23,27 +23,27 @@ public class OutputQueue extends AbstractRunnable implements IIrcSpecialChars {
     /**
      * logger.
      */
-    private static final Logger         LOG           = Logger.getLogger(OutputQueue.class);
+    private static final Logger            LOG           = Logger.getLogger(OutputQueue.class);
     /**
      * Longueur maximale d'un message sur IRC.
      */
-    private static final char           MAXLINELENGTH = 512;
+    private static final char              MAXLINELENGTH = 512;
     /**
      * Durée de la protection antiflood en millisecondes.
      */
-    private static final long           MESSAGEDELAY  = 1000;
+    private static final long              MESSAGEDELAY  = 1000;
     /**
      * Taille de la file d'attente.
      */
-    private static final char           QUEUE_SIZE    = 30;
+    private static final char              QUEUE_SIZE    = 30;
     /**
      * Permet d'écrire au serveur.
      */
-    private Writer                      bwriter;
+    private Writer                         bwriter;
     /**
      * La file d'attente elle-même.
      */
-    private final BlockingQueue<String> queue         = new LinkedBlockingQueue<String>(QUEUE_SIZE);
+    private final BlockingQueue < String > queue         = new LinkedBlockingQueue < String >(QUEUE_SIZE);
 
     /**
      * @param socket
@@ -70,7 +70,11 @@ public class OutputQueue extends AbstractRunnable implements IIrcSpecialChars {
         try {
             synchronized (this.queue) {
                 /* TODO on fait quoi de cette valeur de retour */
-                this.queue.offer(StringUtils.left(string, MAXLINELENGTH - 2) + CR + LF, 1, TimeUnit.SECONDS);
+                boolean offered =
+                        this.queue.offer(StringUtils.left(string, MAXLINELENGTH - 2) + CR + LF, 1, TimeUnit.SECONDS);
+                if (!offered) {
+                    LOG.warn("buffer is full, line was rejected: " + string);
+                }
             }
         } catch (final InterruptedException ie) {
             LOG.fatal(ie, ie);

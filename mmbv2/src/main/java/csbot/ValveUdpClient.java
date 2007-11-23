@@ -41,8 +41,9 @@ class ValveUdpClient extends DatagramSocketClient {
     /**
      * moins 1.
      */
-    protected static final String  MOINS_UN         = new String(ByteBuffer.allocate(Integer.SIZE / Byte.SIZE).putInt(
-                                                            -1).array());
+    protected static final String  MOINS_UN         =
+                                                            new String(ByteBuffer.allocate(Integer.SIZE / Byte.SIZE)
+                                                                    .putInt(-1).array());
     /**
      * 
      */
@@ -110,8 +111,6 @@ class ValveUdpClient extends DatagramSocketClient {
     }
 
     /**
-     * @exception UnsupportedOperationException
-     *             si j'ai pas de rcon.
      */
     public void initLogThread() {
         if (StringUtils.isEmpty(this.rcon)) {
@@ -252,8 +251,8 @@ class ValveUdpClient extends DatagramSocketClient {
                 builder.append("rcon ").append(this.challenge).append(' ').append('"').append(this.rcon).append('"')
                         .append(' ').append(cmd);
                 this.sendBuf = ByteBuffer.wrap(builder.toString().getBytes());
-                final DatagramPacket sendPacket = new DatagramPacket(this.sendBuf.array(), this.sendBuf.capacity(),
-                        this.server.getIpay());
+                final DatagramPacket sendPacket =
+                        new DatagramPacket(this.sendBuf.array(), this.sendBuf.capacity(), this.server.getIpay());
                 this._socket_.send(sendPacket);
             } catch (final IOException ioe) {
                 LOG.error(ioe, ioe);
@@ -273,8 +272,8 @@ class ValveUdpClient extends DatagramSocketClient {
             this._socket_ = new DefaultDatagramSocketFactory().createDatagramSocket();
         }
         this.sendBuf = ByteBuffer.wrap((MOINS_UN + cmd + '\n').getBytes());
-        final DatagramPacket sendPacket = new DatagramPacket(this.sendBuf.array(), this.sendBuf.capacity(), this.server
-                .getIpay());
+        final DatagramPacket sendPacket =
+                new DatagramPacket(this.sendBuf.array(), this.sendBuf.capacity(), this.server.getIpay());
         final DatagramPacket recPacket = createDatagramPacket();
         this._socket_.send(sendPacket);
         this._socket_.receive(recPacket);
