@@ -8,7 +8,7 @@ momoBot commands are sended throught the channel chat (in a simple IRC MSG). The
 
 = Details =
 
-Add your content here.  Format your content with:
+Here are the documented momobot's command :
   # Gamers commands
     *$start : Initialize a gather. 4 others players have to add themselves to the party.
     *$pickup: Initialize a picked : 9 others players are required to start game (5 versus 5).
