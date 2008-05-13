@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
  */
 public class ActivateTrigger extends AbstractTrigger implements IAdminTrigger, IPriveTrigger {
     /**
-     * 
+     *
      */
     private static final Logger LOG = Logger.getLogger(ActivateTrigger.class);
 
@@ -41,41 +41,40 @@ public class ActivateTrigger extends AbstractTrigger implements IAdminTrigger, I
         final String[] args = StringUtils.split(message, " ");
         if (args == null || args.length < 3) {
             MomoBot.getBotInstance().sendMessage(from,
-                    "this trigger needs at least two parameters : class name and trigger name");
-        } else {
+                "this trigger needs at least two parameters : class name and trigger name");
+        }
+        else {
             String className = args[1];
             LOG.info("Toggle class = " + className);
             if (!className.endsWith("Trigger")) {
                 dispClassError(from, className);
-            } else {
+            }
+            else {
                 try {
-                    Class trigClass = Class.forName(className);
-                    Constructor cons = trigClass.getConstructor(String.class);
+                    Class<?> trigClass = Class.forName(className);
+                    Constructor<?> cons = trigClass.getConstructor(String.class);
                     for (int i = 2; i < args.length; ++i) {
                         LOG.info("Toggle text = " + args[i]);
                         try {
                             cons.newInstance(args[i]);
-                        } catch (InstantiationException e) {
-                            if (LOG.isWarnEnabled()) {
-                                LOG.warn(e, e);
-                            }
-                        } catch (IllegalAccessException e) {
-                            if (LOG.isWarnEnabled()) {
-                                LOG.warn(e, e);
-                            }
-                        } catch (InvocationTargetException e) {
-                            if (LOG.isWarnEnabled()) {
-                                LOG.warn(e, e);
-                            }
+                        }
+                        catch (InstantiationException e) {
+                            LOG.warn(e, e);
+                        }
+                        catch (IllegalAccessException e) {
+                            LOG.warn(e, e);
+                        }
+                        catch (InvocationTargetException e) {
+                            LOG.warn(e, e);
                         }
                     }
-                } catch (ClassNotFoundException cnfe) {
+                }
+                catch (ClassNotFoundException cnfe) {
                     LOG.warn(cnfe, cnfe);
                     dispClassError(from, className);
-                } catch (NoSuchMethodException e) {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn(e, e);
-                    }
+                }
+                catch (NoSuchMethodException e) {
+                    LOG.warn(e, e);
                 }
             }
         }
