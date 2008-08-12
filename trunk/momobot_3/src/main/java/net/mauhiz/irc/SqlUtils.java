@@ -35,14 +35,6 @@ public class SqlUtils {
      */
     private static final Map<String, String> PLAYERS = new TreeMap<String, String>();
     /**
-     * nom du profil en cours.
-     */
-    private static String profil;
-    /**
-     * root package.
-     */
-    private static final String TRIG_CLS_ROOT = "momobot.";
-    /**
      * url du serveur mysql.
      */
     private static final String URL = "jdbc:mysql://mysql.mauhiz.net/momobot";
