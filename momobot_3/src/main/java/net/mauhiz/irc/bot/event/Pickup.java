@@ -7,6 +7,7 @@ import java.util.Locale;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
 
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.text.StrBuilder;
 
 /**
@@ -144,7 +145,48 @@ public class Pickup extends ChannelEvent {
      */
     public String shake() {
         /* TODO shaking */
-        return toString();
+        List<IrcUser> listeUser = new ArrayList<IrcUser>();
+        
+        // On Ajoute les user dans la liste
+        for (final Team team : teams) {
+            for (final IrcUser clt : team) {
+                listeUser.add(clt);
+            }
+        }
+        
+        // RandomUtils.nextInt(team.size())
+        int NombrePermutation = RandomUtils.nextInt(listeUser.size());
+        
+        // On fait N permutation
+        for (int index = 0; index < listeUser.size(); index++) {
+            
+            IrcUser userTmp = listeUser.get(index);
+            listeUser.remove(index);
+            
+            int NombreIndexPermutation = RandomUtils.nextInt(listeUser.size()) - 1;
+            if (NombreIndexPermutation < 0) {
+                NombreIndexPermutation = 0;
+            }
+            
+            listeUser.add(NombreIndexPermutation, userTmp);
+            
+        }
+        
+        // On re-remplit les teams
+        for (final Team team : teams) {
+            team.clear();
+        }
+        int IndexTeam = 0;
+        while (listeUser.size() != 0) {
+            if (IndexTeam > NB_TEAMS - 1) {
+                IndexTeam = 0;
+            }
+            teams.get(IndexTeam).add(listeUser.get(0));
+            listeUser.remove(0);
+            IndexTeam++;
+        }
+        
+        return "Shake Réussi!";
     }
     
     /**
