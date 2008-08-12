@@ -53,8 +53,7 @@ public class IrcControl implements IIrcControl {
     }
     
     /**
-     * @see net.mauhiz.irc.base.IIrcControl#decodeIrcRawMsg(java.lang.String,
-     *      net.mauhiz.irc.base.IIrcIO)
+     * @see net.mauhiz.irc.base.IIrcControl#decodeIrcRawMsg(java.lang.String, net.mauhiz.irc.base.IIrcIO)
      */
     public void decodeIrcRawMsg(final String raw, final IIrcIO io) {
         IrcServer server = (IrcServer) ioMap.getKey(io);
