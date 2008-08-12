@@ -149,9 +149,7 @@ public class Pickup extends ChannelEvent {
         
         // On Ajoute les user dans la liste
         for (final Team team : teams) {
-            for (final IrcUser clt : team) {
-                listeUser.add(clt);
-            }
+            listeUser.addAll(team);
         }
         
         // RandomUtils.nextInt(team.size())
@@ -180,7 +178,7 @@ public class Pickup extends ChannelEvent {
             team.clear();
         }
         int IndexTeam = 0;
-        while (listeUser.size() != 0) {
+        while (!listeUser.isEmpty()) {
             if (IndexTeam > NB_TEAMS - 1) {
                 IndexTeam = 0;
             }
