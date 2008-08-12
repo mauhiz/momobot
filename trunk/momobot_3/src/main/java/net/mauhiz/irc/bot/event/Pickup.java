@@ -175,11 +175,11 @@ public class Pickup extends ChannelEvent {
             team.clear();
         }
         int IndexTeam = 0;
-        while (!listeUser.isEmpty()) {
+        for (int i = 0; i < listeUser.size(); i++) {
             if (IndexTeam > NB_TEAMS - 1) {
                 IndexTeam = 0;
             }
-            teams.get(IndexTeam).add(listeUser.remove(0));
+            teams.get(IndexTeam).add(listeUser.get(i));
             IndexTeam++;
         }
         
