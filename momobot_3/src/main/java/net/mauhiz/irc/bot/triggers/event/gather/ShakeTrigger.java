@@ -10,13 +10,15 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 /**
- * @author mauhiz
+ * @author Topper
  */
 public class ShakeTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+    
     /**
      * @param trigger
      *            le trigger
      */
+    
     public ShakeTrigger(final String trigger) {
         super(trigger);
     }
@@ -31,9 +33,12 @@ public class ShakeTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         ChannelEvent evt = ChannelEvent.CHANNEL_EVENTS.get(chan);
         String reply;
         if (evt == null) {
-            reply = "Aucun pickup n'est lance.";
+            reply = "Aucun gather n'est lance.";
         } else {
             if (evt instanceof Pickup) {
+                Privmsg annonce = Privmsg.buildAnswer(im, "Je 'Shake'");
+                control.sendMsg(annonce);
+                /* On shake */
                 reply = ((Pickup) evt).shake();
             } else {
                 return;
