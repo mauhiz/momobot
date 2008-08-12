@@ -155,10 +155,13 @@ public class Pickup extends ChannelEvent {
         }
         
         // RandomUtils.nextInt(team.size())
-        int NombrePermutation = RandomUtils.nextInt(listeUser.size());
+        int NombrePermutation = RandomUtils.nextInt(listeUser.size()) - 1;
+        if (NombrePermutation < 0) {
+            NombrePermutation = 0;
+        }
         
         // On fait N permutation
-        for (int index = 0; index < listeUser.size(); index++) {
+        for (int index = 0; index < NombrePermutation; index++) {
             
             IrcUser userTmp = listeUser.get(index);
             listeUser.remove(index);
