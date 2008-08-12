@@ -8,7 +8,6 @@ import java.util.Locale;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.text.StrBuilder;
 
 /**
@@ -145,42 +144,25 @@ public class Pickup extends ChannelEvent {
      * @return un $status
      */
     public String shake() {
-        /* TODO shaking */
-        List<IrcUser> listeUser = new ArrayList<IrcUser>();
+        List<IrcUser> listeUser = new ArrayList<IrcUser>(NB_TEAMS * SIZE);
         
-        // On Ajoute les user dans la liste
-        for (final Team team : teams) {
-            listeUser.addAll(team);
+        synchronized (teams) {
+            
+            // On Ajoute les user dans la liste
+            for (final Team team : teams) {
+                listeUser.addAll(team);
+                team.clear();
+            }
+            
+            Collections.shuffle(listeUser);
+            
+            // On re-remplit les teams
+            int indexTeam = 0;
+            for (IrcUser next : listeUser) {
+                teams.get(indexTeam).add(next);
+                indexTeam = ++indexTeam % NB_TEAMS;
+            }
         }
-        
-        // RandomUtils.nextInt(team.size())
-        int NombrePermutation = RandomUtils.nextInt(listeUser.size());
-        
-        // On fait N permutation
-        for (int index = 0; index < NombrePermutation + 1; index++) {
-            
-            IrcUser userTmp = listeUser.get(index);
-            listeUser.remove(index);
-            
-            int NombreIndexPermutation = RandomUtils.nextInt(listeUser.size()) + 1;
-            
-            listeUser.add(NombreIndexPermutation, userTmp);
-            
-        }
-        
-        Collections.shuffle(listeUser); // Je cheat ;)
-        
-        // On re-remplit les teams
-        for (final Team team : teams) {
-            team.clear();
-        }
-        int IndexTeam = 0;
-        for (IrcUser next : listeUser) {
-            
-            teams.get(IndexTeam).add(next);
-            IndexTeam = ++IndexTeam % NB_TEAMS;
-        }
-        
         return "Shake Réussi!";
     }
     
