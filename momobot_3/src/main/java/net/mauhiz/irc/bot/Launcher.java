@@ -8,6 +8,7 @@ import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.bot.triggers.ITrigger;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
@@ -61,9 +62,12 @@ public class Launcher {
     
     /**
      * @param args
-     * @throws Exception
+     * @throws ConfigurationException
      */
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws ConfigurationException {
+        if (ArrayUtils.isEmpty(args)) {
+            throw new IllegalArgumentException("Please specify profile names to be loaded");
+        }
         HierarchicalConfiguration config = new XMLConfiguration("momobot.xml");
         Launcher launcher = new Launcher(config);
         for (String arg : args) {
