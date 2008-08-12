@@ -23,10 +23,9 @@ public class IrcInput implements IIrcInput {
     }
     
     /**
-     * @param connection
-     * @throws IOException
+     * @see net.mauhiz.irc.base.IIrcInput#connect(java.net.Socket)
      */
-    void connect(final Socket connection) throws IOException {
+    public void connect(final Socket connection) throws IOException {
         reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
     }
     
@@ -35,7 +34,7 @@ public class IrcInput implements IIrcInput {
      */
     public void run() {
         if (reader == null) {
-            throw new IllegalStateException("user connect() first");
+            throw new IllegalStateException("use connect() first");
         }
         while (true) {
             try {
