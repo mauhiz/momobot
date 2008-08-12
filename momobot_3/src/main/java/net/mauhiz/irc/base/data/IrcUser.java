@@ -4,8 +4,8 @@ package net.mauhiz.irc.base.data;
  * @author mauhiz
  */
 public class IrcUser {
-    Mask hostmask;
-    UserProperties props = new UserProperties();
+    private Mask hostmask;
+    private UserProperties props = new UserProperties();
     
     public IrcUser(final Mask hostmask1) {
         hostmask = hostmask1;
@@ -17,5 +17,13 @@ public class IrcUser {
     
     public String getNick() {
         return hostmask.nick;
+    }
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return getNick();
     }
 }
