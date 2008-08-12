@@ -32,6 +32,17 @@ public class Team extends ArrayList<IrcUser> {
     }
     
     /**
+     * @see java.util.ArrayList#add(java.lang.Object)
+     */
+    @Override
+    public boolean add(final IrcUser e) {
+        if (isFull()) {
+            throw new IllegalStateException("Team is full!");
+        }
+        return super.add(e);
+    }
+    
+    /**
      * @return {@link #capacity}.
      */
     public int getCapacity() {
