@@ -1,6 +1,8 @@
 package net.mauhiz.irc.bot;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashSet;
 
 import net.mauhiz.irc.base.ITriggerManager;
 import net.mauhiz.irc.base.IrcControl;
@@ -24,6 +26,9 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class MmbTriggerManager implements ITriggerManager {
+    /**
+     * logger
+     */
     private static final Logger LOG = Logger.getLogger(MmbTriggerManager.class);
     TriggerKeeper myKeeper = new TriggerKeeper();
     /**
@@ -63,7 +68,8 @@ public class MmbTriggerManager implements ITriggerManager {
             return;
         }
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
-        for (ITrigger trigger : myKeeper.getTriggers()) {
+        Collection<ITrigger> triggers = new HashSet<ITrigger>(myKeeper.getTriggers());
+        for (ITrigger trigger : triggers) {
             if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
                 IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
                 Privmsg priv = (Privmsg) msg;
