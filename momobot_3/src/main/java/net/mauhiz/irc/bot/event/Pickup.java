@@ -7,6 +7,7 @@ import java.util.Locale;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.text.StrBuilder;
 
 /**
@@ -58,15 +59,14 @@ public class Pickup extends ChannelEvent {
                     /* element n'a pas choisi de team en particulier */
                     for (final Team tryTeam : teams) {
                         /*
-                         * on essaye de le mettre dans la première équipe qu'on
-                         * trouve
+                         * on essaye de le mettre dans la première équipe qu'on trouve
                          */
                         if (tryTeam.add(element)) {
                             return element + " ajouté a la team " + tryTeam + '.';
                         }
                     }
                     /* on ne doit pas arriver là */
-                    throw new AssertionError("J'ai pas réussi à ajouter " + element + " au gather.");
+                    throw new IllegalStateException("J'ai pas réussi à ajouter " + element + " au gather.");
                 }
                 /* pas de problème, il a choisi, on l'ajoute */
                 assignedTeam.add(element);
@@ -141,7 +141,14 @@ public class Pickup extends ChannelEvent {
     }
     
     /**
-     * @return un msg
+     * @return msg
+     */
+    public String shake() {
+        throw new NotImplementedException();
+    }
+    
+    /**
+     * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
     @Override
     public final String toString() {
