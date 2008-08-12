@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.event;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -153,25 +154,21 @@ public class Pickup extends ChannelEvent {
         }
         
         // RandomUtils.nextInt(team.size())
-        int NombrePermutation = RandomUtils.nextInt(listeUser.size()) - 1;
-        if (NombrePermutation < 0) {
-            NombrePermutation = 0;
-        }
+        int NombrePermutation = RandomUtils.nextInt(listeUser.size());
         
         // On fait N permutation
-        for (int index = 0; index < NombrePermutation; index++) {
+        for (int index = 0; index < NombrePermutation + 1; index++) {
             
             IrcUser userTmp = listeUser.get(index);
             listeUser.remove(index);
             
-            int NombreIndexPermutation = RandomUtils.nextInt(listeUser.size()) - 1;
-            if (NombreIndexPermutation < 0) {
-                NombreIndexPermutation = 0;
-            }
+            int NombreIndexPermutation = RandomUtils.nextInt(listeUser.size()) + 1;
             
             listeUser.add(NombreIndexPermutation, userTmp);
             
         }
+        
+        Collections.shuffle(listeUser); // Je cheat ;)
         
         // On re-remplit les teams
         for (final Team team : teams) {
@@ -182,8 +179,7 @@ public class Pickup extends ChannelEvent {
             if (IndexTeam > NB_TEAMS - 1) {
                 IndexTeam = 0;
             }
-            teams.get(IndexTeam).add(listeUser.get(0));
-            listeUser.remove(0);
+            teams.get(IndexTeam).add(listeUser.remove(0));
             IndexTeam++;
         }
         
