@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<momobot>
+	<server alias="Quakenet" uri="irc://irc.quakenet.org:6667/">
+		<user class="net.mauhiz.irc.base.data.qnet.QnetUser" />
+		<chanprops class="net.mauhiz.irc.base.data.qnet.QnetChannelProperties" />
+	</server>
+
+	<profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
+		<autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">
+			<join>#tsi.fr</join>
+			<join>#cos_squad</join>
+		</autoconnect>
+		<loadtriggerpack prefix="$" bundle="admin" />
+		<loadtriggerpack prefix="$" bundle="base" />
+		<loadtriggerpack prefix="$" bundle="event" />
+		<loadtriggerpack prefix="$" bundle="gather" />
+	</profil>
+	
+	<profil name="local" nick="momobot3" login="mmb" fullName="MMB v3">
+		<autoconnect server="Quakenet" fullName="MMB v3 - Localhost">
+			<join>#test</join>
+		</autoconnect>
+		<loadtriggerpack prefix="$" bundle="admin" />
+		<loadtriggerpack prefix="$" bundle="base" />
+	</profil>
+
+	<triggerpack bundle="base" package="net.mauhiz.irc.bot.triggers.base">
+		<trigger class="MassHlTrigger">
+			<command>fessee</command>
+			<command>masshl</command>
+		</trigger>
+		<trigger class="HelpTrigger">
+			<command>help</command>
+			<command>aide</command>
+		</trigger>
+		<trigger class="JoinOnInviteTrigger" />
+		<trigger class="JoinTrigger">
+			<command>join</command>
+			<command>go</command>
+		</trigger>
+		<trigger class="WelcomeTrigger" />
+	</triggerpack>
+	
+	<triggerpack bundle="admin" package="net.mauhiz.irc.bot.triggers.admin">
+		<trigger class="ActivateTrigger">
+			<command>activate</command>
+		</trigger>
+		<trigger class="QuitTrigger">
+			<command>quit</command>
+		</trigger>
+		<trigger class="SayTrigger">
+			<command>say</command>
+		</trigger>
+		<trigger class="PartTrigger">
+			<command>part</command>
+			<command>leave</command>
+		</trigger>
+	</triggerpack>
+	
+	<triggerpack bundle="event" package="net.mauhiz.irc.bot.triggers.event">
+		<trigger class="StopTrigger">
+			<command>reset</command>
+			<command>stop</command>
+		</trigger>
+		<trigger class="StatusTrigger">
+			<command>status</command>
+		</trigger>
+	</triggerpack>
+	
+	<triggerpack bundle="gather" package="net.mauhiz.irc.bot.triggers.event.gather">
+		<trigger class="GatherTrigger">
+			<command>start</command>
+			<command>gather</command>
+		</trigger>
+		<trigger class="AddTrigger">
+			<command>add</command>
+		</trigger>
+		<trigger class="RmvTrigger">
+			<command>rmv</command>
+			<command>remove</command>
+		</trigger>
+		<trigger class="RollTrigger">
+			<command>roll</command>
+			<command>cagoule</command>
+		</trigger>
+		<trigger class="TagTrigger">
+			<command>tag</command>
+		</trigger>
+		<trigger class="PickupTrigger">
+			<command>pickup</command>
+			<command>pick</command>
+		</trigger>
+	</triggerpack>
+	
+	<triggerpack bundle="pendu" package="net.mauhiz.irc.bot.triggers.event.pendu">
+		<trigger class="PenduTrigger">
+			<command>pendu</command>
+		</trigger>
+	</triggerpack>
+</momobot>
