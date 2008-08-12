@@ -86,6 +86,9 @@
 		<trigger class="TagTrigger">
 			<command>tag</command>
 		</trigger>
+		<trigger class="ShakeTrigger">
+			<command>shake</command>
+		</trigger>
 		<trigger class="PickupTrigger">
 			<command>pickup</command>
 			<command>pick</command>
