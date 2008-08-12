@@ -4,6 +4,8 @@ import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.bot.event.Pickup;
 
+import org.junit.Test;
+
 /**
  * @author Topper
  * 
@@ -13,6 +15,7 @@ public class ShakeTest {
     /**
      * exemple de test
      */
+    @Test
     public void testShake() {
         Channel chan = new Channel("#tsi.fr");
         Pickup p = new Pickup(chan);
