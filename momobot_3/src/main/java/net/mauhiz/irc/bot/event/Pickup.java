@@ -7,7 +7,6 @@ import java.util.Locale;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.text.StrBuilder;
 
 /**
@@ -141,10 +140,11 @@ public class Pickup extends ChannelEvent {
     }
     
     /**
-     * @return msg
+     * @return un $status
      */
     public String shake() {
-        throw new NotImplementedException();
+        /* TODO shaking */
+        return toString();
     }
     
     /**
