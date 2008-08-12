@@ -1,6 +1,5 @@
 package net.mauhiz.irc.bot;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +28,7 @@ public class TriggerKeeper {
     /**
      * @return un iterateur sur les triggers
      */
-    public Collection<ITrigger> getTriggers() {
+    public Set<ITrigger> getTriggers() {
         return triggers;
     }
 }
