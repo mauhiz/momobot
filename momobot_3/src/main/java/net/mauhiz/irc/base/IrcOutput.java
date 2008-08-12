@@ -13,49 +13,63 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class IrcOutput implements IIrcOutput {
+    /**
+     * antiflood en ms
+     */
+    private static final long DELAY = 100;
+    private static final Logger LOG = Logger.getLogger(IrcOutput.class);
     private static final int MAX_SIZE = 50;
-    BlockingQueue < String > queue    = new LinkedBlockingQueue < String >(MAX_SIZE);
-    PrintWriter              writer;
-
+    private final BlockingQueue<String> queue = new LinkedBlockingQueue<String>(MAX_SIZE);
+    private PrintWriter writer;
+    
+    /**
+     * @param socket
+     * @throws IOException
+     */
     IrcOutput(final Socket socket) throws IOException {
         connect(socket.getOutputStream());
     }
-
+    
+    /**
+     * @param outStream
+     */
     void connect(final OutputStream outStream) {
-        this.writer = new PrintWriter(outStream);
+        writer = new PrintWriter(outStream);
     }
-
+    
     /**
      * @see net.mauhiz.irc.base.IIrcOutput#isReady()
      */
     public boolean isReady() {
-        return this.queue.size() > MAX_SIZE;
+        return queue.size() > MAX_SIZE;
     }
-
+    
     /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
         while (true) {
             try {
-                String toWrite = this.queue.take();
-                Logger.getLogger(IrcOutput.class).info(">> " + toWrite);
-                this.writer.println(toWrite);
-                this.writer.flush();
+                String toWrite = queue.take();
+                Thread.sleep(DELAY);
+                LOG.info(">> " + toWrite);
+                writer.println(toWrite);
+                writer.flush();
             } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
+                Thread.currentThread().interrupt();
+                break;
             }
         }
     }
-
+    
     /**
      * @see net.mauhiz.irc.base.IIrcOutput#sendRawMsg(java.lang.String)
      */
     public void sendRawMsg(final String raw) {
         try {
-            this.queue.put(raw);
+            queue.put(raw);
         } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
+            Thread.currentThread().interrupt();
         }
     }
 }
