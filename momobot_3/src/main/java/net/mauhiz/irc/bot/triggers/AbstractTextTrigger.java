@@ -57,7 +57,11 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
      * @see net.mauhiz.irc.bot.triggers.ITextTrigger#isActivatedBy(java.lang.String)
      */
     public boolean isActivatedBy(final String msg) {
-        boolean activated = msg.toLowerCase(Locale.FRANCE).startsWith(triggerText);
+        if (msg == null) {
+            return false;
+        }
+        String lcMsg = msg.toLowerCase(Locale.FRANCE);
+        boolean activated = lcMsg.equals(triggerText) || lcMsg.startsWith(triggerText + " ");
         if (activated) {
             LOG.debug("Trigger " + getClass().getSimpleName() + " activated");
         }
