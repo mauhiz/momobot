@@ -6,7 +6,6 @@ import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
-import net.mauhiz.irc.bot.event.SeekWar;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
@@ -40,11 +39,10 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                 reply = "Aucun gather n'est lance.";
             } else {
                 if (evt instanceof Gather) {
-                    if (((SeekWar) evt).isSeekInProgress()) {
+                    if (((Gather) evt).getSeek().isSeekInProgress()) {
                         reply = "Seek déja en cour.";
                     } else {
-                        reply = new SeekWar(chan, im.getMessage().split(" ")).toString();
-                        
+                        reply = ((Gather) evt).getSeek().start(im.getMessage());
                     }
                 }
             }
@@ -54,15 +52,15 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         } else {
             if (evt instanceof Gather) {
                 
-                final SeekWar seekwar = (SeekWar) evt;
-                if (seekwar.isSeekInProgress()) {
+                final Gather gather = (Gather) evt;
+                if (gather.getSeek().isSeekInProgress()) {
                     String tmp = im.getTo();
                     boolean msgChannel = true;
                     if (im.getTo().isEmpty() || im.getTo() == "momobot3") {
                         tmp = im.getFrom();
                         msgChannel = false;
                     }
-                    reply = seekwar.submitSeekMessage(im.getMessage(), msgChannel, im.getTo());
+                    reply = gather.getSeek().submitSeekMessage(im.getMessage(), msgChannel, im.getTo());
                     
                 }
                 

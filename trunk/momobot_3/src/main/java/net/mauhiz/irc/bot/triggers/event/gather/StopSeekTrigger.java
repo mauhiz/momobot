@@ -5,7 +5,7 @@ import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
-import net.mauhiz.irc.bot.event.SeekWar;
+import net.mauhiz.irc.bot.event.Gather;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
@@ -33,9 +33,9 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         if (evt == null) {
             reply = "Aucun gather n'est lance.";
         } else {
-            if (evt instanceof SeekWar) {
-                if (((SeekWar) evt).isSeekInProgress()) {
-                    reply = ((SeekWar) evt).stopSeek();
+            if (evt instanceof Gather) {
+                if (((Gather) evt).getSeek().isSeekInProgress()) {
+                    reply = ((Gather) evt).getSeek().stopSeek();
                     
                 } else {
                     reply = "Le seek n'est pas lance.";

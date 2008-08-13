@@ -27,6 +27,11 @@ public class Gather extends ChannelEvent {
      * La taille d'un gather.
      */
     private static final byte SIZE = 5;
+    /**
+     * @param channel1
+     *            le channel
+     */
+    private final SeekWar seekWar = new SeekWar();
     // /**
     // * Un serveur?
     // */
@@ -39,11 +44,11 @@ public class Gather extends ChannelEvent {
      * l'ensemble de joueurs. Ne sera jamais <code>null</code>
      */
     private final Team team;
-    
     /**
+     * 
      * @param channel1
-     *            le channel
      */
+    
     public Gather(final Channel channel1) {
         this(channel1, "eule^");
     }
@@ -96,6 +101,14 @@ public class Gather extends ChannelEvent {
      * @return un message
      */
     
+    public final SeekWar getSeek() {
+        return seekWar;
+    }
+    
+    /**
+     * @return le seekWar
+     */
+    
     // /**
     // * @return l'ip du serv
     // */
@@ -139,7 +152,6 @@ public class Gather extends ChannelEvent {
         }
         return "Plouf, plouf, ce sera " + team.get(RandomUtils.nextInt(team.size())) + " qui ira seek!";
     }
-    
     /**
      * @param string
      *            le nouveau tag
@@ -152,6 +164,7 @@ public class Gather extends ChannelEvent {
         }
         return "Nouveau tag : " + team;
     }
+    
     /**
      * @return un message
      */
@@ -173,9 +186,4 @@ public class Gather extends ChannelEvent {
         }
         return temp.substring(0, temp.length() - DISPLAY_SEPARATOR.length());
     }
-    
-     /**
-     * @return un message
-     */
-    
 }
