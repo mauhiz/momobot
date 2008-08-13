@@ -23,7 +23,7 @@ public class Join extends IrcMessage {
      * @param chan1
      */
     public Join(final String from1, final IrcServer ircServer, final String chan1) {
-        this(null, ircServer, chan1, null);
+        this(from1, ircServer, chan1, null);
     }
     
     /**
