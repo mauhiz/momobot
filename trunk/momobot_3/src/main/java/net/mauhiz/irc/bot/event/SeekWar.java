@@ -1,5 +1,6 @@
 package net.mauhiz.irc.bot.event;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
@@ -69,13 +70,12 @@ public class SeekWar {
      * @param commandSeek
      * @return String
      */
-    public String start(final String cmdSeek) {
+    public String start(final String[] commandSeek) {
         sw1.start();
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Lancement d'un seek = " + cmdSeek);
+            LOG.debug("Lancement d'un seek = " + StringUtils.join(commandSeek));
         }
-        String[] commandSeek = cmdSeek.split(" ");
         // On CFG le seek avec les param
         if (commandSeek.length == 0) {
             // Seek sans parametre
