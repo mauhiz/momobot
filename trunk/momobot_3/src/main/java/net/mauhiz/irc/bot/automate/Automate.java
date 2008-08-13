@@ -27,6 +27,9 @@ public abstract class Automate extends AbstractRunnable {
      * le temps d'attente dans un thread.
      */
     protected static final long SLEEPTIME = 1000;
+    /**
+     * indique que l automate est demarre.
+     */
     protected static final int STARTED = 1;
     private final IrcControl control;
     /**
