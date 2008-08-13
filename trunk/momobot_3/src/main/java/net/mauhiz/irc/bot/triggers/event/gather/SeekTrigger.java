@@ -36,7 +36,7 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         String reply = "";
         if (isCommandMsg(im.getMessage())) {
             
-            if (evt == null) { // ou != a testé
+            if (evt == null) {
                 reply = "Aucun gather n'est lance.";
             } else {
                 if (evt instanceof Gather) {
@@ -51,29 +51,31 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             
             // Privmsg resp = Privmsg.buildAnswer(im, reply);
             // control.sendMsg(resp);
-        }
-        if (evt instanceof Gather) {
-            final SeekWar seekwar = (SeekWar) evt;
-            if (seekwar.isSeekInProgress()) {
-                String tmp = im.getTo();
-                boolean msgChannel = true;
-                if (im.getTo().isEmpty() || im.getTo() == "MMB v3") {
-                    tmp = im.getFrom();
-                    msgChannel = false;
-                }
-                reply = seekwar.submitSeekMessage(im.getMessage(), msgChannel, im.getTo());
+        } else {
+            if (evt instanceof Gather) {
                 
+                final SeekWar seekwar = (SeekWar) evt;
+                if (seekwar.isSeekInProgress()) {
+                    String tmp = im.getTo();
+                    boolean msgChannel = true;
+                    if (im.getTo().isEmpty() || im.getTo() == "momobot3") {
+                        tmp = im.getFrom();
+                        msgChannel = false;
+                    }
+                    reply = seekwar.submitSeekMessage(im.getMessage(), msgChannel, im.getTo());
+                    
+                }
+                
+                if (im.getMessage().length() == 1) {
+                    // reply = gather.submitLettre(im.getMessage().toLowerCase(Locale.FRANCE).charAt(0)).toString();
+                } else {
+                    // reply = pendu.submitMot(im.getMessage()).toString();
+                }
+                // Privmsg resp = Privmsg.buildAnswer(im, respMsg);
+                // control.sendMsg(resp);
             }
-            
-            if (im.getMessage().length() == 1) {
-                // reply = gather.submitLettre(im.getMessage().toLowerCase(Locale.FRANCE).charAt(0)).toString();
-            } else {
-                // reply = pendu.submitMot(im.getMessage()).toString();
-            }
-            // Privmsg resp = Privmsg.buildAnswer(im, respMsg);
-            // control.sendMsg(resp);
         }
-        if (reply.isEmpty()) {
+        if (!reply.isEmpty()) {
             Privmsg resp = Privmsg.buildAnswer(im, reply);
             control.sendMsg(resp);
         }
@@ -87,7 +89,6 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
          * } else { return; } } Privmsg msg = Privmsg.buildAnswer(im, reply); control.sendMsg(msg);
          **/
     }
-    
     /**
      * @see net.mauhiz.irc.bot.triggers.AbstractTextTrigger#isActivatedBy(java.lang.String)
      */
