@@ -17,12 +17,15 @@ class ValveUdpClientListener extends AbstractRunnable {
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(ValveUdpClientListener.class);
-    
     /**
-     * @return un port au hasard, > 1024.
+     * port mini
+     */
+    private static final int MIN_PORT = 1024;
+    /**
+     * @return un port au hasard, > {@link #MIN_PORT}.
      */
     static int generateRandomPort() {
-        return RandomUtils.nextInt(5000) + 0x400;
+        return MIN_PORT + RandomUtils.nextInt(5000);
     }
     /**
      * my mastah.
@@ -53,7 +56,7 @@ class ValveUdpClientListener extends AbstractRunnable {
     }
     
     /**
-     * @see utils.AbstractRunnable#run()
+     * @see java.lang.Runnable#run()
      */
     public void run() {
         final DatagramPacket receivePacket = vuc.createDatagramPacket();
