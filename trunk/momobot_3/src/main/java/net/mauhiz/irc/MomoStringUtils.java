@@ -21,6 +21,23 @@ public class MomoStringUtils {
     }
     
     /**
+     * @param seekmsg
+     * @param nbPlayer
+     * @param server
+     * @param level
+     *            de seek, %P, %P = Nombre de joueur, %S = server, %L = level
+     * @return la chaine randomisee
+     */
+    public static String genereSeekMessage(final String seekmsg, final int nbPlayer, final String server,
+            final String level) {
+        String str;
+        str = seekmsg;
+        str = str.replace("%P", nbPlayer + "");
+        str = str.replace("%S", server);
+        str = str.replace("%L", level);
+        return str;
+    }
+    /**
      * méthode pour le wquizz.
      * 
      * @param work
@@ -53,7 +70,6 @@ public class MomoStringUtils {
         temp = StringUtils.removeStart(temp, "dans ");
         return StringUtils.removeEnd(temp, "?");
     }
-    
     /**
      * @param seq
      *            une chaine à shaker
@@ -70,4 +86,5 @@ public class MomoStringUtils {
         }
         return output;
     }
+    
 }

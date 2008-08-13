@@ -92,6 +92,10 @@ public class Gather extends ChannelEvent {
         return retour.toString();
     }
     
+    /**
+     * @return un message
+     */
+    
     // /**
     // * @return l'ip du serv
     // */
@@ -138,25 +142,6 @@ public class Gather extends ChannelEvent {
     
     /**
      * @param string
-     *            1) les param de seek :: optionel on/off (serv cs ON ou off) optionel LVL optionel : msg (%P = nbPerso,
-     *            %S = Serv, %L = Level)
-     * 
-     *            2) on "IP PASS" OU off
-     * 
-     * @return un msg
-     */
-    public final String seek(final String string) {
-        
-        // On CFG le seek avec les param
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Lancement d'un seek = " + string);
-        }
-        return "SEEEEK";
-    }
-    
-    /**
-     * @param string
      *            le nouveau tag
      * @return un msg
      */
@@ -167,10 +152,10 @@ public class Gather extends ChannelEvent {
         }
         return "Nouveau tag : " + team;
     }
-    
     /**
      * @return un message
      */
+    
     @Override
     public final String toString() {
         final StrBuilder temp = new StrBuilder(ColorUtils.toColor("Gather " + team.size() + '/' + team.getCapacity(),
@@ -189,7 +174,8 @@ public class Gather extends ChannelEvent {
         return temp.substring(0, temp.length() - DISPLAY_SEPARATOR.length());
     }
     
-    /**
+     /**
      * @return un message
      */
+    
 }
