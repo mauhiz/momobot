@@ -8,6 +8,7 @@ import net.mauhiz.irc.DateUtils;
 import net.mauhiz.irc.SqlUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.data.qnet.QnetUser;
 import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.model.WhoisRequest;
@@ -42,9 +43,9 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        IrcUser user = Users.get(cme.getServer()).findUser(cme.getFrom());
+        IrcUser user = Users.get(cme.getServer()).findUser(new Mask(cme.getFrom()), false);
         if (!(user instanceof QnetUser)) {
-            LOG.error("user non Qnet");
+            LOG.error("user non Qnet: " + user);
             return;
         }
         final QnetUser quser = (QnetUser) user;
@@ -56,8 +57,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
                 Thread.yield();
             }
             /*
-             * TODO : bug a la con de merde, il detecte pas le whois tout de
-             * suite :/
+             * TODO : bug a la con de merde, il detecte pas le whois tout de suite :/
              */
             if (StringUtils.isEmpty(quser.getAuth())) {
                 Notice notice = Notice.buildPrivateAnswer(cme,
