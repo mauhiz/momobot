@@ -63,7 +63,7 @@ public class Part extends IrcMessage {
         }
         sb.append(chan);
         if (reason != null) {
-            sb.append(' ');
+            sb.append(" :");
             sb.append(reason);
         }
         return sb.toString();
