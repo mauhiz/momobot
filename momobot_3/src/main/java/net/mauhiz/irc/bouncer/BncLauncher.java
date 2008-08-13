@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.mauhiz.irc.base.IrcControl;
+import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.data.IrcServer;
 
 import org.apache.log4j.Logger;
@@ -19,22 +20,15 @@ import org.apache.log4j.Logger;
 /**
  * @author viper
  */
-public class BncLauncher {
+public class BncLauncher implements IrcSpecialChars {
     static final List<Account> ACCOUNTS = new ArrayList<Account>();
-    /**
-     * Bold text.
-     */
-    static char BOLD = '\u0002';
     static long globalStartTime;
     static final String LOCAL_NICK = "root";
     static final Logger LOG = Logger.getLogger(BncLauncher.class);
     static final String METHOD = "NOTICE AUTH :";
     static final int MY_PORT = 6667;
     static final IrcServer QNET;
-    /**
-     * Underlined text.
-     */
-    static char UNDERLINE = '\u001f';
+    
     static {
         try {
             QNET = new IrcServer("irc://uk.quakenet.org:6667/");
