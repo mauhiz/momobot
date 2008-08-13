@@ -1,8 +1,6 @@
 package net.mauhiz.irc.bot;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashSet;
 
 import net.mauhiz.irc.base.ITriggerManager;
 import net.mauhiz.irc.base.IrcControl;
@@ -68,27 +66,32 @@ public class MmbTriggerManager implements ITriggerManager {
             return;
         }
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
-        Collection<ITrigger> triggers = new HashSet<ITrigger>(myKeeper.getTriggers());
-        for (ITrigger trigger : triggers) {
-            if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
-                IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
-                Privmsg priv = (Privmsg) msg;
-                if (trig.isActivatedBy(priv.getMessage())) {
-                    trig.doTrigger(priv, control);
+        try {
+            synchronized (myKeeper) {
+                for (ITrigger trigger : myKeeper.getTriggers()) {
+                    if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
+                        IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
+                        Privmsg priv = (Privmsg) msg;
+                        if (trig.isActivatedBy(priv.getMessage())) {
+                            trig.doTrigger(priv, control);
+                        }
+                    } else if (msg instanceof Notice && trigger instanceof INoticeTrigger) {
+                        INoticeTrigger trig = (INoticeTrigger) trigger;
+                        Notice notic = (Notice) msg;
+                        if (trig.isActivatedBy(notic.getMessage())) {
+                            trig.doTrigger(notic, control);
+                        }
+                    } else if (msg instanceof Join && trigger instanceof IJoinTrigger) {
+                        ((IJoinTrigger) trigger).doTrigger((Join) msg, control);
+                    } else if (msg instanceof Part && trigger instanceof IPartTrigger) {
+                        ((IPartTrigger) trigger).doTrigger((Part) msg, control);
+                    } else if (msg instanceof Invite && trigger instanceof IInviteTrigger) {
+                        ((IInviteTrigger) trigger).doTrigger((Invite) msg, control);
+                    }
                 }
-            } else if (msg instanceof Notice && trigger instanceof INoticeTrigger) {
-                INoticeTrigger trig = (INoticeTrigger) trigger;
-                Notice notic = (Notice) msg;
-                if (trig.isActivatedBy(notic.getMessage())) {
-                    trig.doTrigger(notic, control);
-                }
-            } else if (msg instanceof Join && trigger instanceof IJoinTrigger) {
-                ((IJoinTrigger) trigger).doTrigger((Join) msg, control);
-            } else if (msg instanceof Part && trigger instanceof IPartTrigger) {
-                ((IPartTrigger) trigger).doTrigger((Part) msg, control);
-            } else if (msg instanceof Invite && trigger instanceof IInviteTrigger) {
-                ((IInviteTrigger) trigger).doTrigger((Invite) msg, control);
             }
+        } catch (RuntimeException unexpected) {
+            LOG.error(unexpected, unexpected);
         }
     }
 }
