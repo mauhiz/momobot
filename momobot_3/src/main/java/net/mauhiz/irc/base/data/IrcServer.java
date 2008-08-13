@@ -133,7 +133,7 @@ public class IrcServer implements Comparable<IrcServer> {
      * @return le nombre d'users
      */
     public int countUsers() {
-        return Users.get(this).countUsers();
+        return Users.get(this).size();
     }
     
     /**
