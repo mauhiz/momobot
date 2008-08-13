@@ -59,7 +59,6 @@ public class SeekWar {
         levelSeek = "Midd";
         messageSeek = "seek %Pv%P - %S - %L pm ";
     }
-    
     /**
      * @return String
      */
@@ -67,7 +66,46 @@ public class SeekWar {
         return seekInProgress;
     }
     /**
+     * @param cmd
+     *            String[] non normalise
+     * @return un message
+     */
+    
+    public String[] Split(final String[] cmd) {
+        String[] cmdNormalise = new String[0];
+        String tmpStg = "";
+        
+        boolean Inquote = false;
+        for (String element : cmd) {
+            
+            if (element.charAt(0) == '\"' || element.charAt(element.length() - 1) == '\"') {
+                Inquote = !Inquote;
+            }
+            
+            if (tmpStg.isEmpty()) {
+                tmpStg = element;
+            } else {
+                tmpStg += " " + element;
+            }
+            if (!Inquote) {
+                
+                String[] tmp = new String[cmdNormalise.length + 1];
+                for (int i = 0; i < cmdNormalise.length; i++) {
+                    tmp[i] = cmdNormalise[i];
+                }
+                tmp[cmdNormalise.length] = tmpStg;
+                cmdNormalise = tmp;
+                tmpStg = "";
+            }
+            
+        }
+        
+        return cmdNormalise;
+    }
+    
+    /**
      * @param commandSeek
+     *            1) RIEN 2) ON IPPASS LVL 3) OFF LVL 4) ON IPPASS LVL MSGSEEK 5) OFF LVL MSGSEEK
      * @return String
      */
     public String start(final String[] commandSeek) {
@@ -76,49 +114,89 @@ public class SeekWar {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Lancement d'un seek = " + StringUtils.join(commandSeek));
         }
+        
+        String[] cmdSeek = Split(commandSeek);
+        
         // On CFG le seek avec les param
-        if (commandSeek.length == 0) {
-            // Seek sans parametre
-            seekInProgress = true;
-            return "Seek Par Defaut.";
-            
-        } else if (commandSeek.length == 2 && commandSeek[0].toLowerCase() == "on") {
-            
-            seekInProgress = true;
-            ippass = commandSeek[1].replace("''", "");
-            servSeek = "on";
-            return "Seek : serv = " + servSeek + " ippass = " + ippass;
-            
-        } else if (commandSeek.length == 4 && commandSeek[0].toLowerCase() == "on") {
-            
-            seekInProgress = true;
-            servSeek = "on";
-            ippass = commandSeek[1].replace("''", ""); // On supprime les ""
-            levelSeek = commandSeek[2];
-            messageSeek = commandSeek[3].replace("''", ""); // On supprime les ""
-            return "Seek : serv = " + servSeek + " ippass = " + ippass + " lvl = " + levelSeek + " seekMSG = "
-                    + messageSeek;
-            
-        } else if (commandSeek.length == 1 && commandSeek[0].toLowerCase() == "off") {
-            
-            seekInProgress = true;
-            servSeek = "off";
-            return "Seek : serv = " + servSeek;
-            
-        } else if (commandSeek.length == 3 && commandSeek[0].toLowerCase() == "off") {
-            
-            seekInProgress = true;
-            servSeek = "off";
-            levelSeek = commandSeek[1];
-            messageSeek = commandSeek[2].replace("''", "");
-            return "Seek : serv = " + servSeek + " lvl = " + levelSeek + " seekMSG = " + messageSeek;
-            
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Seek mal paramétré par l'utilisateur :: " + commandSeek);
+        switch (cmdSeek.length) {
+            case 0 : {
+                // Seek sans parametre
+                seekInProgress = true;
+                return "Seek Par Defaut.";
             }
-            sw1.stop();
-            return "Paramètre(s) Incorrect";
+                
+            case 1 : {
+                if (cmdSeek[0].toLowerCase().compareTo("on") == 0 || cmdSeek[0].toLowerCase().compareTo("off") == 0) {
+                    seekInProgress = true;
+                    servSeek = cmdSeek[0];
+                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek;
+                } else {
+                    sw1.stop();
+                    sw1.reset();
+                    return "Paramètre(s) Incorrect";
+                }
+            }
+                
+            case 2 : {
+                if (cmdSeek[0].toLowerCase().compareTo("on") == 0) {
+                    seekInProgress = true;
+                    servSeek = cmdSeek[0];
+                    ippass = cmdSeek[1];
+                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek;
+                } else if (cmdSeek[0].toLowerCase().compareTo("off") == 0) {
+                    seekInProgress = true;
+                    servSeek = cmdSeek[0];
+                    levelSeek = cmdSeek[1];
+                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek;
+                } else {
+                    sw1.stop();
+                    sw1.reset();
+                    return "Paramètre(s) Incorrect";
+                }
+            }
+                
+            case 3 : {
+                if (cmdSeek[0].toLowerCase().compareTo("on") == 0) {
+                    seekInProgress = true;
+                    servSeek = cmdSeek[0];
+                    ippass = cmdSeek[1];
+                    levelSeek = cmdSeek[2];
+                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek;
+                } else if (cmdSeek[0].toLowerCase().compareTo("off") == 0) {
+                    seekInProgress = true;
+                    servSeek = cmdSeek[0];
+                    levelSeek = cmdSeek[1];
+                    messageSeek = cmdSeek[2];
+                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek
+                            + " MSGSeek = " + messageSeek;
+                } else {
+                    sw1.stop();
+                    sw1.reset();
+                    return "Paramètre(s) Incorrect";
+                }
+            }
+                
+            case 4 : {
+                if (cmdSeek[0].toLowerCase().compareTo("on") == 0) {
+                    seekInProgress = true;
+                    servSeek = cmdSeek[0];
+                    ippass = cmdSeek[1];
+                    levelSeek = cmdSeek[2];
+                    messageSeek = cmdSeek[3];
+                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek
+                            + " MSGSeek = " + messageSeek;
+                } else {
+                    sw1.stop();
+                    sw1.reset();
+                    return "Paramètre(s) Incorrect";
+                }
+            }
+                
+            default : {
+                sw1.stop();
+                sw1.reset();
+                return "Paramètre(s) Incorrect";
+            }
         }
         
     }
@@ -129,6 +207,7 @@ public class SeekWar {
     public final String stopSeek() {
         seekInProgress = false;
         sw1.stop();
+        sw1.reset();
         return "Le seek est arrete.";
     }
     /**
@@ -143,6 +222,7 @@ public class SeekWar {
         
         return "";
     }
+    
     /**
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
@@ -152,9 +232,5 @@ public class SeekWar {
         
         return "";
     }
-    
-    /**
-     * @return un message
-     */
     
 }
