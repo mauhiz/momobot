@@ -28,7 +28,7 @@ public class RollTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
-        ChannelEvent evt = ChannelEvent.CHANNEL_EVENTS.get(chan);
+        ChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {
             reply = "Aucun gather n'est lance.";

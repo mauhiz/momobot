@@ -34,7 +34,7 @@ public class AddTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         IrcServer server = im.getServer();
         Channel chan = Channels.get(server).getChannel(im.getTo());
-        ChannelEvent event = ChannelEvent.CHANNEL_EVENTS.get(chan);
+        ChannelEvent event = chan.getEvt();
         if (event == null) {
             Privmsg msg = Privmsg.buildAnswer(im, "Aucun gather ou pickup n'est lance.");
             control.sendMsg(msg);

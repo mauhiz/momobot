@@ -29,7 +29,7 @@ public class TagTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         /* on test si un gather est lance sur le channel en question */
         Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
-        ChannelEvent evt = ChannelEvent.CHANNEL_EVENTS.get(chan);
+        ChannelEvent evt = chan.getEvt();
         if (evt instanceof Gather) {
             Privmsg msg = Privmsg.buildAnswer(im, ((Gather) evt).setTag(getArgs(im.getMessage())));
             control.sendMsg(msg);

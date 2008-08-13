@@ -44,11 +44,11 @@ public class Gather extends ChannelEvent {
      * l'ensemble de joueurs. Ne sera jamais <code>null</code>
      */
     private final Team team;
-    /**
-     * 
-     * @param channel1
-     */
     
+    /**
+     * @param channel1
+     *            le channel
+     */
     public Gather(final Channel channel1) {
         this(channel1, "eule^");
     }
@@ -98,16 +98,11 @@ public class Gather extends ChannelEvent {
     }
     
     /**
-     * @return un message
+     * @return le seekWar
      */
-    
     public final SeekWar getSeek() {
         return seekWar;
     }
-    
-    /**
-     * @return le seekWar
-     */
     
     // /**
     // * @return l'ip du serv
@@ -152,6 +147,7 @@ public class Gather extends ChannelEvent {
         }
         return "Plouf, plouf, ce sera " + team.get(RandomUtils.nextInt(team.size())) + " qui ira seek!";
     }
+    
     /**
      * @param string
      *            le nouveau tag
@@ -168,7 +164,6 @@ public class Gather extends ChannelEvent {
     /**
      * @return un message
      */
-    
     @Override
     public final String toString() {
         final StrBuilder temp = new StrBuilder(ColorUtils.toColor("Gather " + team.size() + '/' + team.getCapacity(),
