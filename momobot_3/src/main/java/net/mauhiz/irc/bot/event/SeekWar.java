@@ -69,13 +69,13 @@ public class SeekWar {
      * @param commandSeek
      * @return String
      */
-    public String start(final String[] commandSeek) {
+    public String start(final String cmdSeek) {
         sw1.start();
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Lancement d'un seek = " + commandSeek);
+            LOG.debug("Lancement d'un seek = " + cmdSeek);
         }
-        
+        String[] commandSeek = cmdSeek.split(" ");
         // On CFG le seek avec les param
         if (commandSeek.length == 0) {
             // Seek sans parametre
