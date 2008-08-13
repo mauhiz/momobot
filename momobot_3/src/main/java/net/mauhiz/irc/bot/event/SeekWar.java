@@ -78,26 +78,40 @@ public class SeekWar extends ChannelEvent {
         // On CFG le seek avec les param
         if (commandSeek.length == 0) {
             // Seek sans parametre
+            str = "Seek Par Defaut.";
+            seekInProgress = true;
+            return;
             
         } else if (commandSeek.length == 2 && commandSeek[0].toLowerCase() == "on") {
             
+            seekInProgress = true;
             ippass = commandSeek[1].replace("''", "");
             servSeek = "on";
+            str = "Seek : serv = " + servSeek + " ippass = " + ippass;
             
         } else if (commandSeek.length == 4 && commandSeek[0].toLowerCase() == "on") {
             
+            seekInProgress = true;
             servSeek = "on";
             ippass = commandSeek[1].replace("''", ""); // On supprime les ""
             levelSeek = commandSeek[2];
             messageSeek = commandSeek[3].replace("''", ""); // On supprime les ""
+            str = "Seek : serv = " + servSeek + " ippass = " + ippass + " lvl = " + levelSeek + " seekMSG = "
+                    + messageSeek;
             
         } else if (commandSeek.length == 1 && commandSeek[0].toLowerCase() == "off") {
+            
+            seekInProgress = true;
             servSeek = "off";
+            str = "Seek : serv = " + servSeek;
             
         } else if (commandSeek.length == 3 && commandSeek[0].toLowerCase() == "off") {
+            
+            seekInProgress = true;
             servSeek = "off";
             levelSeek = commandSeek[1];
             messageSeek = commandSeek[2].replace("''", "");
+            str = "Seek : serv = " + servSeek + " lvl = " + levelSeek + " seekMSG = " + messageSeek;
             
         } else {
             if (LOG.isDebugEnabled()) {
@@ -106,7 +120,7 @@ public class SeekWar extends ChannelEvent {
             str = "Paramètre(s) Incorrect";
         }
         
-        str = "SEEEEK";
+        toString();
     }
     /**
      * @return String
@@ -140,6 +154,7 @@ public class SeekWar extends ChannelEvent {
     @Override
     public String toString() {
         // TODO Auto-generated method stub
+        
         return str;
     }
     
