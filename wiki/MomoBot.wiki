@@ -44,4 +44,4 @@ Current features :
 -
 
 = Installation =
-Read the [installation] page for instructions.
+Read the [installation] page for instructions in order to install the software on your favorite OS.
