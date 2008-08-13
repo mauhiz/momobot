@@ -28,6 +28,9 @@ public class MmbTriggerManager implements ITriggerManager {
      * logger
      */
     private static final Logger LOG = Logger.getLogger(MmbTriggerManager.class);
+    /**
+     * keeper of the seven keys
+     */
     TriggerKeeper myKeeper = new TriggerKeeper();
     /**
      * @param triggerClass
