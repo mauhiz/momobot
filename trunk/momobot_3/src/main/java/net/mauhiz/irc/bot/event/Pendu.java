@@ -35,7 +35,7 @@ public class Pendu extends ChannelEvent {
     static {
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("dico.txt");
         try {
-            final List<String> lignes = IOUtils.readLines(is, "ASCII");
+            final List<String> lignes = IOUtils.readLines(is, "ISO-8859-15");
             DICO.addAll(lignes);
         } catch (final IOException ioe) {
             throw new ExceptionInInitializerError(ioe);
