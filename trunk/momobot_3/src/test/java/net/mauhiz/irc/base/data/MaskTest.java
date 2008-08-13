@@ -8,13 +8,13 @@ import org.junit.Test;
  */
 public class MaskTest {
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.Mask#buildMask()}.
+     * Test method for {@link net.mauhiz.irc.base.data.Mask#Mask(String)}.
      */
     @Test
-    public void testBuildMask() {
+    public void testMask() {
         Mask m = new Mask("~truite!poisson@mauhiz.net");
-        Assert.assertEquals("~truite", m.nick);
-        Assert.assertEquals("poisson", m.user);
-        Assert.assertEquals("mauhiz.net", m.host);
+        Assert.assertEquals("~truite", m.getNick());
+        Assert.assertEquals("poisson", m.getUser());
+        Assert.assertEquals("mauhiz.net", m.getHost());
     }
 }
