@@ -40,7 +40,7 @@ public class AddTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
             control.sendMsg(msg);
             return;
         }
-        IrcUser user = Users.get(server).findUser(new Mask(im.getFrom()), false);
+        IrcUser user = Users.get(server).findUser(new Mask(im.getFrom()), true);
         if (event instanceof Gather) {
             Privmsg msg = Privmsg.buildAnswer(im, ((Gather) event).add(user).toString());
             control.sendMsg(msg);
