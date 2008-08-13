@@ -4,6 +4,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -39,7 +40,7 @@ public class AddTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
             control.sendMsg(msg);
             return;
         }
-        IrcUser user = Users.get(server).findUser(im.getFrom());
+        IrcUser user = Users.get(server).findUser(new Mask(im.getFrom()), false);
         if (event instanceof Gather) {
             Privmsg msg = Privmsg.buildAnswer(im, ((Gather) event).add(user).toString());
             control.sendMsg(msg);
