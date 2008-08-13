@@ -1,14 +1,16 @@
 package net.mauhiz.irc.bot.event;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.data.Channel;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.text.StrBuilder;
@@ -31,19 +33,20 @@ public class Pendu extends ChannelEvent {
      */
     private static final char UNDERSCORE = '_';
     static {
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("dico.txt");
         try {
-            DICO.addAll(FileUtils.readLines(new File("resources" + File.separatorChar + "dico.txt"), "ASCII"));
+            final List<String> lignes = IOUtils.readLines(is, "ASCII");
+            DICO.addAll(lignes);
         } catch (final IOException ioe) {
-            LOG.error(ioe, ioe);
+            throw new ExceptionInInitializerError(ioe);
         }
     }
-    
     /**
      * @param len
      *            la longueur du mot
      * @return le nombre de vies
      */
-    private static byte calibre(final int len) {
+    private static int calibre(final int len) {
         switch (len) {
             case 0 :
                 throw new IllegalArgumentException();
@@ -80,6 +83,11 @@ public class Pendu extends ChannelEvent {
         }
         return mot;
     }
+    
+    /**
+     * lettres deja proposees.
+     */
+    private final Set<Character> alreadyTried = new TreeSet<Character>();
     /**
      * le mot en cours de devinage (négatif).
      */
@@ -99,7 +107,7 @@ public class Pendu extends ChannelEvent {
     /**
      * le nombre de vies.
      */
-    private byte vies;
+    private int vies;
     
     /**
      * @param channel1
@@ -148,7 +156,7 @@ public class Pendu extends ChannelEvent {
      */
     public final StrBuilder submitLettre(final char toSubmit) {
         final StrBuilder penduMsg = new StrBuilder();
-        if (!Character.isLetter(toSubmit)) {
+        if (!Character.isLetter(toSubmit) || !alreadyTried.add(Character.valueOf(toSubmit))) {
             return penduMsg;
         }
         penduMsg.append("La lettre ").append(toSubmit).append(" est ");
@@ -212,7 +220,6 @@ public class Pendu extends ChannelEvent {
     }
     
     /**
-     * @return un msg
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
     @Override
