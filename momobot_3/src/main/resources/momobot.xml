@@ -14,6 +14,7 @@
 		<loadtriggerpack prefix="$" bundle="base" />
 		<loadtriggerpack prefix="$" bundle="event" />
 		<loadtriggerpack prefix="$" bundle="gather" />
+		<loadtriggerpack prefix="$" bundle="pendu" />
 	</profil>
 	
 	<profil name="local" nick="momobot3" login="mmb" fullName="MMB v3">
