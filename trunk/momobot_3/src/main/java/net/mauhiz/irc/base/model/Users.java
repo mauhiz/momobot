@@ -3,18 +3,21 @@ package net.mauhiz.irc.base.model;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 
 import org.apache.commons.lang.NullArgumentException;
 
 /**
  * @author mauhiz
  */
-public class Users {
+public class Users extends HashSet<IrcUser> {
+    /**
+     * serial.
+     */
+    private static final long serialVersionUID = 1L;
     static Map<IrcServer, Users> serverMap = new HashMap<IrcServer, Users>();
     
     /**
@@ -29,91 +32,65 @@ public class Users {
         }
         return servUsers;
     }
-    
-    Map<Channel, Set<IrcUser>> userMap = new HashMap<Channel, Set<IrcUser>>();
-    
     /**
      * private ctor
      */
     private Users() {
         super();
     }
+    
     /**
-     * @return user count
+     * @param mask
+     * @param addIfNotFound
+     * @return IrcUser
      */
-    public int countUsers() {
-        Set<IrcUser> allUsers = new HashSet<IrcUser>();
-        for (Set<IrcUser> users : userMap.values()) {
-            allUsers.addAll(users);
+    public IrcUser findUser(final Mask mask, final boolean addIfNotFound) {
+        if (mask == null) {
+            throw new NullArgumentException("mask");
         }
-        return allUsers.size();
+        for (IrcUser user : this) {
+            if (mask.equals(user.getHostmask())) {
+                return user;
+            }
+        }
+        if (addIfNotFound) {
+            IrcUser newUser = new IrcUser(mask);
+            add(newUser);
+            return newUser;
+        }
+        return null;
     }
     
     /**
      * @param nick
+     * @param addIfNotFound
      * @return user
      */
-    public IrcUser findUser(final String nick) {
+    public IrcUser findUser(final String nick, final boolean addIfNotFound) {
         if (nick == null) {
             throw new NullArgumentException("nick");
         }
-        for (Set<IrcUser> users : userMap.values()) {
-            for (IrcUser user : users) {
-                if (nick.equals(user.getNick())) {
-                    return user;
-                }
+        for (IrcUser user : this) {
+            if (nick.equals(user.getNick())) {
+                return user;
             }
+        }
+        if (addIfNotFound) {
+            IrcUser newUser = new IrcUser(nick);
+            add(newUser);
+            return newUser;
         }
         return null;
     }
     
     /**
      * @param smith
-     * @return
-     */
-    public Set<Channel> getChannels(final IrcUser smith) {
-        Set<Channel> channels = new HashSet<Channel>();
-        for (Map.Entry<Channel, Set<IrcUser>> entry : userMap.entrySet()) {
-            if (entry.getValue().contains(smith)) {
-                channels.add(entry.getKey());
-            }
-        }
-        return channels;
-    }
-    
-    /**
-     * @param channel
-     * @return
-     */
-    public Set<IrcUser> getUsers(final Channel channel) {
-        Set<IrcUser> chanUsers = userMap.get(channel);
-        if (chanUsers == null) {
-            chanUsers = new HashSet<IrcUser>();
-            userMap.put(channel, chanUsers);
-        }
-        return chanUsers;
-    }
-    
-    /**
-     * @param smith
-     * @return
+     * @return whether user is known
      */
     public boolean isKnown(final IrcUser smith) {
-        for (Set<IrcUser> users : userMap.values()) {
-            if (users.contains(smith)) {
-                return true;
-            }
+        if (contains(smith)) {
+            return true;
         }
         return false;
-    }
-    
-    /**
-     * @param channel
-     * @param toPut
-     * @return
-     */
-    public boolean put(final Channel channel, final IrcUser toPut) {
-        Set<IrcUser> chanUsers = getUsers(channel);
-        return chanUsers.add(toPut);
     }
 }
