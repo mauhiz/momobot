@@ -38,17 +38,18 @@ public class WhoisRequest extends AbstractRunnable {
      */
     private static final long TIMEOUT = TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS);
     private final IIrcControl control;
+    private boolean purgatory;
     private String reportTo;
     /**
      * resultat
      */
     private WhoisResult result;
     private final IrcServer server;
+    
     /**
      * fait attendre la reponse.
      */
     private boolean success;
-    
     private final StopWatch sw = new StopWatch();
     /**
      * ma cible.
@@ -91,8 +92,12 @@ public class WhoisRequest extends AbstractRunnable {
             return;
         }
         
-        IrcUser user = Users.get(server).findUser(target);
-        
+        IrcUser user = Users.get(server).findUser(target, false);
+        if (user == null) {
+            /* user inconnu */
+            user = new IrcUser(target);
+            purgatory = true;
+        }
         /* fréquence maximale de whois */
         WhoisRequest oldWr = allWhois.get(user);
         if (oldWr != null) {
@@ -144,7 +149,9 @@ public class WhoisRequest extends AbstractRunnable {
         String respMsg;
         if (boo) {
             respMsg = result.result[0];
-            
+            if (purgatory) {
+                Users.get(server).findUser(target, true);
+            }
         } else {
             respMsg = "Could not whois " + target;
             // le user s'est déconnecté on dirait.

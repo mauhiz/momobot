@@ -1,15 +1,16 @@
 package net.mauhiz.irc.base.model;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -17,11 +18,18 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class Channels implements IrcSpecialChars {
+public class Channels extends ConcurrentSkipListMap<String, Channel> implements IrcSpecialChars {
     /**
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(Channel.class);
+    /**
+     * serial
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * map ircServer > channels
+     */
     static Map<IrcServer, Channels> serverMap = new HashMap<IrcServer, Channels>();
     /**
      * @param server
@@ -48,10 +56,6 @@ public class Channels implements IrcSpecialChars {
         }
         return toTest.charAt(0) == CHAN_DEFAULT || toTest.charAt(0) == CHAN_LOCAL;
     }
-    /**
-     * tous les channels ou je suis (string = nom).
-     */
-    private final ConcurrentMap<String, Channel> channels = new ConcurrentSkipListMap<String, Channel>();
     
     /**
      * private ctor.
@@ -61,10 +65,14 @@ public class Channels implements IrcSpecialChars {
     }
     
     /**
-     * @return un itérateur sur tous les channels
+     * @param chanName
+     * @return un nouveau Channel
      */
-    public final Collection<Channel> getAll() {
-        return channels.values();
+    public Channel buildChannel(final String chanName) {
+        String realChanName = StringUtils.lowerCase(chanName);
+        Channel newChan = new Channel(realChanName);
+        put(realChanName, newChan);
+        return newChan;
     }
     
     /**
@@ -75,21 +83,26 @@ public class Channels implements IrcSpecialChars {
     public final Channel getChannel(final String channel) {
         // LOG.debug("getChannel : " + channel);
         final String chanLowerCase = channel.toLowerCase(Locale.FRANCE);
-        if (channels.containsKey(chanLowerCase)) {
+        if (containsKey(chanLowerCase)) {
             LOG.debug("channel '" + chanLowerCase + "' found.");
-            return channels.get(chanLowerCase);
+            return get(chanLowerCase);
         }
         LOG.debug("channel '" + chanLowerCase + "' not found, adding");
-        Channel newChan = new Channel(channel);
-        channels.put(chanLowerCase, newChan);
-        return newChan;
+        return buildChannel(chanLowerCase);
     }
     
     /**
-     * retire tous les channels.
+     * @param smith
+     * @return channels for user
      */
-    public final void removeAll() {
-        channels.clear();
+    public Set<Channel> getChannels(final IrcUser smith) {
+        Set<Channel> chans = new HashSet<Channel>();
+        for (Channel chan : values()) {
+            if (chan.contains(smith)) {
+                chans.add(chan);
+            }
+        }
+        return chans;
     }
     
     /**
@@ -97,6 +110,6 @@ public class Channels implements IrcSpecialChars {
      *            le channel
      */
     public final void removeChannel(final String channel) {
-        channels.remove(channel.toLowerCase(Locale.FRANCE));
+        remove(channel.toLowerCase(Locale.FRANCE));
     }
 }
