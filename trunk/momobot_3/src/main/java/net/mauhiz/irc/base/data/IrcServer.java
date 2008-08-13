@@ -12,6 +12,7 @@ import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Mode;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.Notice;
+import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Ping;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Quit;
@@ -100,6 +101,10 @@ public class IrcServer implements Comparable<IrcServer> {
                 return new Mode(from, to, this, msg);
             } else if (JOIN.equals(cmd)) {
                 return new Join(from, this, msg);
+            } else if (PART.equals(cmd)) {
+                String reason = StringUtils.substringAfter(msg, " :");
+                msg = StringUtils.substringAfter(msg, " :");
+                return new Part(this, from, to, msg, reason);
             } else if (PRIVMSG.equals(cmd)) {
                 return new Privmsg(from, to, this, msg);
             } else if (QUIT.equals(cmd)) {
