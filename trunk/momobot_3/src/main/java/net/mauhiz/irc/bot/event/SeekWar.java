@@ -117,6 +117,7 @@ public class SeekWar {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Seek mal paramétré par l'utilisateur :: " + commandSeek);
             }
+            sw1.stop();
             return "Paramètre(s) Incorrect";
         }
         
