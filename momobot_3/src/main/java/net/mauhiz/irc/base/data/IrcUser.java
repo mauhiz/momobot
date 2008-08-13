@@ -5,7 +5,7 @@ package net.mauhiz.irc.base.data;
  */
 public class IrcUser {
     private final Mask hostmask;
-    private UserProperties props = new UserProperties();
+    private final UserProperties props = new UserProperties();
     
     /**
      * @param hostmask1
@@ -32,7 +32,7 @@ public class IrcUser {
      * @return user nick
      */
     public String getNick() {
-        return hostmask.nick;
+        return hostmask.getNick();
     }
     
     /**
