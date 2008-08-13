@@ -37,8 +37,8 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         if (evt != null) {
             respMsg = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + cme.getTo();
         } else {
-            respMsg = "Gather lancé par " + cme.getFrom();
-            IrcUser user = Users.get(server).findUser(new Mask(cme.getFrom()), false);
+            IrcUser user = Users.get(server).findUser(new Mask(cme.getFrom()), true);
+            respMsg = "Gather lancé par " + user;
             new Gather(chan).add(user);
         }
         Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
