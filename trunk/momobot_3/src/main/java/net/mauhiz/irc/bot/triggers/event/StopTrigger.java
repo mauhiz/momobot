@@ -27,9 +27,9 @@ public class StopTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
-        ChannelEvent evt = ChannelEvent.CHANNEL_EVENTS.get(chan);
+        ChannelEvent evt = chan.getEvt();
         if (evt != null) {
-            Privmsg msg = Privmsg.buildAnswer(im, evt.stop());
+            Privmsg msg = Privmsg.buildAnswer(im, chan.stopEvent());
             control.sendMsg(msg);
         }
     }

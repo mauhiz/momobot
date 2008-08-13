@@ -30,7 +30,7 @@ public class PenduTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
         Channel chan = Channels.get(cme.getServer()).getChannel(cme.getTo());
-        ChannelEvent evt = ChannelEvent.CHANNEL_EVENTS.get(chan);
+        ChannelEvent evt = chan.getEvt();
         if (isCommandMsg(cme.getMessage())) {
             String respMsg;
             if (evt != null) {

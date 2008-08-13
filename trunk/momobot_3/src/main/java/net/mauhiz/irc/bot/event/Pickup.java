@@ -3,7 +3,6 @@ package net.mauhiz.irc.bot.event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
@@ -51,7 +50,7 @@ public class Pickup extends ChannelEvent {
             return "C'est complet!";
         }
         synchronized (teams) {
-            final Team assignedTeam = assignTeam(choix.toLowerCase(Locale.FRANCE));
+            final Team assignedTeam = assignTeam(choix);
             final Team currentTeam = getTeam(element);
             if (null == currentTeam) {
                 /* element n'est pas encore présent */
@@ -89,10 +88,13 @@ public class Pickup extends ChannelEvent {
      * @return le numero de la team dans laquelle il est autoassign
      */
     public final Team assignTeam(final String choix) {
+        if (choix == null) {
+            return null;
+        }
         synchronized (teams) {
             for (final Team team : teams) {
                 /* le equals est null-safe dans ce sens */
-                if (team.toString().equals(choix) && !team.isFull()) {
+                if (team.toString().equalsIgnoreCase(choix) && !team.isFull()) {
                     return team;
                 }
             }
