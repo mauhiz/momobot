@@ -38,7 +38,8 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         } else {
             if (evt instanceof Gather) {
                 // reply = ((Gather) evt).roll();
-                reply = "Je 'Seek'";
+                
+                reply = "Je 'Seek'" + ((Gather) evt).seek(im.getMessage());
                 
             } else {
                 return;

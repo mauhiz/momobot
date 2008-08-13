@@ -138,6 +138,25 @@ public class Gather extends ChannelEvent {
     
     /**
      * @param string
+     *            1) les param de seek :: optionel on/off (serv cs ON ou off) optionel LVL optionel : msg (%P = nbPerso,
+     *            %S = Serv, %L = Level)
+     * 
+     *            2) on "IP PASS" OU off
+     * 
+     * @return un msg
+     */
+    public final String seek(final String string) {
+        
+        // On CFG le seek avec les param
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Lancement d'un seek = " + string);
+        }
+        return "SEEEEK";
+    }
+    
+    /**
+     * @param string
      *            le nouveau tag
      * @return un msg
      */
@@ -169,4 +188,8 @@ public class Gather extends ChannelEvent {
         }
         return temp.substring(0, temp.length() - DISPLAY_SEPARATOR.length());
     }
+    
+    /**
+     * @return un message
+     */
 }
