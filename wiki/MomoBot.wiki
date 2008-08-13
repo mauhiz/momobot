@@ -42,3 +42,6 @@ Current features :
 
 - friendly nickserv with regexp registration. ex: mauhiz(\[[a-z]+\])?
 -
+
+= Installation =
+Read the [installation] page for instructions.
