@@ -93,8 +93,10 @@
 			<command>pickup</command>
 			<command>pick</command>
 		</trigger>
-		<trigger class="SeekTrigger" message="seek %Pv%P - %S - %L pm " level="mid" serv="ON" channel="#cos_squad;#-duck-;#-hp-">
+		<trigger class="SeekTrigger" message="seek %Pv%P - %S - %L pm " level="mid" serv="ON" channel="#cos_squad;#-duck-;#-hp-" ippass="127.0.0.1:27015 pass:dtc">
 			<command>seek</command></trigger>
+		<trigger class="StopSeekTrigger">
+			<command>stopseek</command></trigger>
 	</triggerpack>
 	
 	<triggerpack bundle="pendu" package="net.mauhiz.irc.bot.triggers.event.pendu">
