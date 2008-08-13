@@ -1,16 +1,12 @@
 package net.mauhiz.irc.bot.triggers.math;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrBuilder;
-import org.apache.log4j.Logger;
 
 /**
  * Calcule un md5.
@@ -18,10 +14,6 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class Md5Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    /**
-     * 
-     */
-    static final Logger LOG = Logger.getLogger(Md5Trigger.class);
     
     /**
      * @param b
@@ -35,20 +27,6 @@ public class Md5Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
             return "0" + out;
         }
         return out;
-    }
-    
-    /**
-     * @param input
-     * @return le md5
-     * @throws NoSuchAlgorithmException
-     */
-    static String computeMd5(final byte[] input) throws NoSuchAlgorithmException {
-        byte[] output = MessageDigest.getInstance("MD5").digest(input);
-        StrBuilder sb = new StrBuilder();
-        for (byte b : output) {
-            sb.append(byteToString(b));
-        }
-        return sb.toString();
     }
     
     /**
@@ -71,11 +49,7 @@ public class Md5Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
         if (StringUtils.isEmpty(args)) {
             resp = "md5 de quoi ?";
         } else {
-            try {
-                resp = "md5 de " + args + ": " + computeMd5(args.getBytes());
-            } catch (final NoSuchAlgorithmException nsae) {
-                resp = "J'ai pas de md5. Sry.";
-            }
+            resp = "md5 de " + args + ": " + DigestUtils.md5Hex(args);
         }
         Privmsg msg = Privmsg.buildAnswer(cme, resp);
         control.sendMsg(msg);
