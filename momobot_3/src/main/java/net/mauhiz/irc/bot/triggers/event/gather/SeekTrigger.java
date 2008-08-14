@@ -10,7 +10,7 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
 import net.mauhiz.irc.bot.event.SeekWar;
-import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
+import net.mauhiz.irc.bot.triggers.AbstractGourmandTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
  * @author Topper
  */
 
-public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrigger {
     /**
      * logger.
      */
@@ -133,21 +133,4 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
          * control.sendMsg(msg);
          */
     }
-    
-    /**
-     * @see net.mauhiz.irc.bot.triggers.AbstractTextTrigger#isActivatedBy(java.lang.String)
-     */
-    @Override
-    public boolean isActivatedBy(final String msg) {
-        return true;
-    }
-    
-    /**
-     * @param msg
-     * @return si il s'agit bien du trigger.
-     */
-    public boolean isCommandMsg(final String msg) {
-        return super.isActivatedBy(msg);
-    }
-    
 }
