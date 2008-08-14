@@ -4,7 +4,10 @@ import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
@@ -51,7 +54,8 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                 if (((Gather) evt).getSeek().isSeekInProgress()) {
                     reply = "Seek déja en cours.";
                 } else {
-                    reply = ((Gather) evt).getSeek().start(StringUtils.split(getArgs(im.getMessage())));
+                    reply = ((Gather) evt).getSeek()
+                            .start(StringUtils.split(getArgs(im.getMessage())), chan.toString());
                     if (((Gather) evt).getSeek().isSeekInProgress()) {
                         String[] channelSeek = SeekWar.SEEK_CHANS;
                         
@@ -63,8 +67,8 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                         // ON ENVOIE LES MSG DE SEEK
                         
                         for (String element : channelSeek) {
-                            Privmsg im1 = new Privmsg("momobot3", element, im.getServer(), im.getMessage());
-                            Privmsg resp = Privmsg.buildAnswer(im1, ((Gather) evt).getSeek().getMessageForSeeking());
+                            Privmsg resp = new Privmsg(null, element, im.getServer(), ((Gather) evt).getSeek()
+                                    .getMessageForSeeking());
                             control.sendMsg(resp);
                         }
                         
@@ -80,6 +84,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
             // if (evt instanceof Gather) {
             if (evt1 instanceof Gather) {
                 final Gather gather = (Gather) evt1;
+                IrcUser kikoolol = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), true);
                 if (gather.getSeek().isSeekInProgress()) {
                     if (!gather.getSeek().isTimeOut()) {
                         // TJS en vie
@@ -87,21 +92,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                             LOG.debug("MSG entrant : " + im.getMessage() + " to : " + im.getTo() + " from : "
                                     + im.getFrom());
                         }
-                        
                         List<Privmsg> replies = gather.getSeek().submitSeekMessage(im);
-                        /**
-                         * switch (replies.size()) { case 3 : for (int i = 0; i < 2; i++) { if
-                         * (!replies.get(i).isEmpty()) { Privmsg resp = Privmsg.buildPrivateAnswer(im, replies.get(i));
-                         * control.sendMsg(resp); } } Privmsg resp = new Privmsg(null, "#tsi.fr", im.getServer(),
-                         * replies.get(2)); control.sendMsg(resp); break;
-                         * 
-                         * default : for (String reply2 : replies) { if (!reply2.isEmpty()) { Privmsg resp2 =
-                         * Privmsg.buildPrivateAnswer(im, reply2); control.sendMsg(resp2); }
-                         * 
-                         * } break;
-                         * 
-                         * }
-                         **/
                         for (Privmsg element : replies) {
                             
                             control.sendMsg(element);
@@ -117,14 +108,13 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                         // LEAVE LES CHANNELS
                         StopSeekTrigger.leaveSeekChans(control, im.getServer());
                     }
+                    // Si c'est le winner du seek, je transmet le msg PV
+                } else if (gather.getSeek().getSeekWinner().equals(kikoolol.getNick()) && im.getTo().equals("mom0")) {
+                    Privmsg reply = new Privmsg(null, gather.getSeek().getChannel(), im.getServer(), kikoolol.getNick()
+                            + " : " + im.getMessage());
+                    control.sendMsg(reply);
                 }
             }
         }
-        /*
-         * String reply; if (evt == null) { reply = "Aucun gather n'est lance."; } else { if (evt instanceof Gather) {
-         * if (((Gather) evt).isSeekInProgress()) { reply = "Seek déja en cour."; } else { reply = ((Gather)
-         * evt).seek(im.getMessage().split(" ")); } } else { return; } } Privmsg msg = Privmsg.buildAnswer(im, reply);
-         * control.sendMsg(msg);
-         */
     }
 }
