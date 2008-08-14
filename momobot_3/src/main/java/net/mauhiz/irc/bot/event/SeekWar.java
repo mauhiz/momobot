@@ -24,7 +24,7 @@ public class SeekWar {
     /**
      * liste des channels de seek
      */
-    public static final String[] SEEK_CHANS = {"#-hp-", "#-duck-", "#clanwar.fr"};
+    public static final String[] SEEK_CHANS = {"#clanwar.fr"};
     /**
      * black list pour un msg pv
      */
@@ -183,7 +183,7 @@ public class SeekWar {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
-                    return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
+                    return "Seek - Info : serv = " + seekServ + " level = " + seekLevel;
                 } else {
                     sw.stop();
                     sw.reset();
@@ -259,8 +259,9 @@ public class SeekWar {
         
         if ((stg.toLowerCase().contains(gather.getNumberPlayers() + "vs" + gather.getNumberPlayers())
                 || stg.toLowerCase().contains(gather.getNumberPlayers() + "v" + gather.getNumberPlayers())
-                || stg.toLowerCase().contains(gather.getNumberPlayers() + "o" + gather.getNumberPlayers()) || stg
-                .toLowerCase().contains(gather.getNumberPlayers() + "on" + gather.getNumberPlayers()))
+                || stg.toLowerCase().contains(gather.getNumberPlayers() + "o" + gather.getNumberPlayers())
+                || stg.toLowerCase().contains(gather.getNumberPlayers() + "on" + gather.getNumberPlayers()) || stg
+                .toLowerCase().contains(gather.getNumberPlayers() + "x" + gather.getNumberPlayers()))
                 && stg.toLowerCase().contains(seekServ1) && stg.toLowerCase().contains(seekLevel.toLowerCase())) {
             return true;
         }
