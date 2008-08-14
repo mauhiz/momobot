@@ -1,5 +1,9 @@
 package net.mauhiz.irc.bot.event;
 
+import java.util.ArrayList;
+
+import net.mauhiz.irc.base.data.IrcUser;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
@@ -13,11 +17,19 @@ public class SeekWar {
     /**
      * liste des channels de seek
      */
-    private static final String channels = "#cos_squad;#-duck-;#-hp-";
+    public static final String channels = "#cos_squad;#-duck-;#-hp-";
     /**
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(SeekWar.class);
+    /**
+     * black list pour un msg pv
+     */
+    private String[] blackList = {"www", "http", "://", ".com", ".fr", ".eu", ".info"};
+    /**
+     * 
+     */
+    private String[] greenList = {"ok", "go", "k"};
     /**
      * IpPass du srv
      */
@@ -35,29 +47,31 @@ public class SeekWar {
      */
     private boolean seekInProgress;
     /**
+     * Temps de time out
+     */
+    private long seekTimeOut;
+    /**
      * si le gather a un serv de jeu ou pass
      */
     private String servSeek;
     /**
-     * String
-     */
-    private String str = "";
-    /**
      * le temps où je commence.
      */
-    private final StopWatch sw1 = new StopWatch();
-    
+    private final StopWatch sw = new StopWatch();
     /**
-     * @param channel1
+     * Liste des users qui ont pv le bot
+     */
+    private ArrayList<IrcUser> userpv;
+    /**
      * 
      */
-    
     public SeekWar() {
         seekInProgress = false;
         servSeek = "ON";
         ippass = "127.0.0.1:27015 pass:dtc";
         levelSeek = "Midd";
         messageSeek = "seek %Pv%P - %S - %L pm ";
+        seekTimeOut = 7 * 60 * 1000; // 7min
     }
     /**
      * @return String
@@ -66,12 +80,23 @@ public class SeekWar {
         return seekInProgress;
     }
     /**
+     * @return false = TJS en vie true = DEAD!
+     */
+    public final boolean isTimeOut() {
+        if (sw.getStartTime() < seekTimeOut) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
      * @param cmd
      *            String[] non normalise
      * @return un message
      */
     
-    public String[] Split(final String[] cmd) {
+    public String[] split(final String[] cmd) {
         String[] cmdNormalise = new String[0];
         String tmpStg = "";
         
@@ -109,19 +134,20 @@ public class SeekWar {
      * @return String
      */
     public String start(final String[] commandSeek) {
-        sw1.start();
+        sw.start();
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Lancement d'un seek = " + StringUtils.join(commandSeek));
         }
         
-        String[] cmdSeek = Split(commandSeek);
+        String[] cmdSeek = split(commandSeek);
         
         // On CFG le seek avec les param
         switch (cmdSeek.length) {
             case 0 : {
                 // Seek sans parametre
                 seekInProgress = true;
+                startedSeek();
                 return "Seek Par Defaut.";
             }
                 
@@ -129,10 +155,11 @@ public class SeekWar {
                 if (cmdSeek[0].toLowerCase().compareTo("on") == 0 || cmdSeek[0].toLowerCase().compareTo("off") == 0) {
                     seekInProgress = true;
                     servSeek = cmdSeek[0];
+                    startedSeek();
                     return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek;
                 } else {
-                    sw1.stop();
-                    sw1.reset();
+                    sw.stop();
+                    sw.reset();
                     return "Paramètre(s) Incorrect";
                 }
             }
@@ -142,6 +169,7 @@ public class SeekWar {
                     seekInProgress = true;
                     servSeek = cmdSeek[0];
                     ippass = cmdSeek[1];
+                    startedSeek();
                     return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek;
                 } else if (cmdSeek[0].toLowerCase().compareTo("off") == 0) {
                     seekInProgress = true;
@@ -149,8 +177,8 @@ public class SeekWar {
                     levelSeek = cmdSeek[1];
                     return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek;
                 } else {
-                    sw1.stop();
-                    sw1.reset();
+                    sw.stop();
+                    sw.reset();
                     return "Paramètre(s) Incorrect";
                 }
             }
@@ -161,17 +189,19 @@ public class SeekWar {
                     servSeek = cmdSeek[0];
                     ippass = cmdSeek[1];
                     levelSeek = cmdSeek[2];
+                    startedSeek();
                     return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek;
                 } else if (cmdSeek[0].toLowerCase().compareTo("off") == 0) {
                     seekInProgress = true;
                     servSeek = cmdSeek[0];
                     levelSeek = cmdSeek[1];
                     messageSeek = cmdSeek[2];
+                    startedSeek();
                     return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek
                             + " MSGSeek = " + messageSeek;
                 } else {
-                    sw1.stop();
-                    sw1.reset();
+                    sw.stop();
+                    sw.reset();
                     return "Paramètre(s) Incorrect";
                 }
             }
@@ -183,42 +213,96 @@ public class SeekWar {
                     ippass = cmdSeek[1];
                     levelSeek = cmdSeek[2];
                     messageSeek = cmdSeek[3];
+                    startedSeek();
                     return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + levelSeek
                             + " MSGSeek = " + messageSeek;
                 } else {
-                    sw1.stop();
-                    sw1.reset();
+                    sw.stop();
+                    sw.reset();
                     return "Paramètre(s) Incorrect";
                 }
             }
                 
             default : {
-                sw1.stop();
-                sw1.reset();
+                sw.stop();
+                sw.reset();
                 return "Paramètre(s) Incorrect";
             }
         }
+    }
+    private final void startedSeek() {
+        // On join les channels de seek
+        
+        // On envoie le msg de seek 2x
         
     }
     /**
-     * @return seekInProgress (TRUE si le seek est déja en cour FALSE autrement)
+     * @return une String
      */
-    
     public final String stopSeek() {
         seekInProgress = false;
-        sw1.stop();
-        sw1.reset();
+        sw.stop();
+        sw.reset();
         return "Le seek est arrete.";
+    }
+    
+    /**
+     * @param msg
+     * @return true si le bot pense que le PV est ok
+     */
+    private final boolean submitPVMessage(final String msg) {
+        
+        for (String element : blackList) {
+            if (msg.toUpperCase().contains(element)) {
+                return false;
+            }
+        }
+        for (String element : greenList) {
+            if (msg.toUpperCase().contains(element)) {
+                return true;
+            }
+        }
+        return false;
     }
     /**
      * @param msg
-     * @param msgChannel
-     *            True si le msg est un channel, False autrement
-     * @param provenace
+     * @param provenance
      * @return String
      */
     
-    public final String submitSeekMessage(final String msg, final boolean msgChannel, final String provenace) {
+    public final String submitSeekMessage(final String msg, final String provenance) {
+        // Traitement des messages entrant
+        if (provenance.compareTo("momobot3") == 0) {
+            // C'est un msg PV
+            if (servSeek.toUpperCase().compareTo("on") == 0) {
+                
+                if (userpv.contains(provenance)) {
+                    // Le bot a déja été PV par ce type
+                    if (submitPVMessage(msg)) {
+                        // OK le bot valide le pv
+                        
+                    } else {
+                        // REFOULE
+                        return "";
+                    }
+                    
+                } else {
+                    // Le bot est PV pour la premiere fois >> On lui demande si il est RDY
+                    // userpv.add(provenance);
+                    return "rdy?";
+                }
+                
+            } else if (servSeek.toUpperCase().compareTo("off") == 0) {
+                
+            } else {
+                // ERREUR INCONNU
+                return "";
+            }
+            
+        } else {
+            // C'est un msg d'un Channel
+            
+        }
         
         return "";
     }

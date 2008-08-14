@@ -36,6 +36,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             if (evt instanceof Gather) {
                 if (((Gather) evt).getSeek().isSeekInProgress()) {
                     reply = ((Gather) evt).getSeek().stopSeek();
+                    // ON LEAVE LES CHANNELS DE SEEK
                     
                 } else {
                     reply = "Le seek n'est pas lance.";
