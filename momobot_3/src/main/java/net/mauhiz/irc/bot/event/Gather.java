@@ -31,7 +31,7 @@ public class Gather extends ChannelEvent {
      * @param channel1
      *            le channel
      */
-    private final SeekWar seekWar = new SeekWar();
+    private final SeekWar seekWar = new SeekWar(this);
     // /**
     // * Un serveur?
     // */
