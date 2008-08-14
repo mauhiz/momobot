@@ -6,7 +6,6 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.msg.Join;
-import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
@@ -122,11 +121,7 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                         Privmsg resp = Privmsg.buildAnswer(im, gather.getSeek().stopSeek());
                         control.sendMsg(resp);
                         // LEAVE LES CHANNELS
-                        String[] channelSeek = SeekWar.SEEK_CHANS;
-                        for (String element : channelSeek) {
-                            Part leave = new Part(im.getServer(), element, "");
-                            control.sendMsg(leave);
-                        }
+                        StopSeekTrigger.leaveSeekChans(control, im.getServer());
                     }
                 }
             }

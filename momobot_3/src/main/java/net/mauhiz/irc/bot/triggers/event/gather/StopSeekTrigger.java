@@ -2,6 +2,7 @@ package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -16,13 +17,26 @@ import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
  */
 public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
+     * ON LEAVE LES CHANNELS DE SEEK
+     * 
+     * @param control
+     * @param server
+     */
+    static void leaveSeekChans(final IIrcControl control, final IrcServer server) {
+        String[] channelSeek = SeekWar.SEEK_CHANS;
+        for (String element : channelSeek) {
+            Part leave = new Part(server, element, null);
+            control.sendMsg(leave);
+        }
+    }
+    
+    /**
      * @param trigger
      *            le trigger
      */
     public StopSeekTrigger(final String trigger) {
         super(trigger);
     }
-    
     /**
      * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
@@ -38,13 +52,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             if (evt instanceof Gather) {
                 if (((Gather) evt).getSeek().isSeekInProgress()) {
                     reply = ((Gather) evt).getSeek().stopSeek();
-                    // ON LEAVE LES CHANNELS DE SEEK
-                    String[] channelSeek = SeekWar.SEEK_CHANS;
-                    for (String element : channelSeek) {
-                        Part leave = new Part(im.getServer(), element, "");
-                        control.sendMsg(leave);
-                    }
-                    
+                    leaveSeekChans(control, im.getServer());
                 } else {
                     reply = "Le seek n'est pas lance.";
                 }
