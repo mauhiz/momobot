@@ -39,7 +39,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 if (((Gather) evt).getSeek().isSeekInProgress()) {
                     reply = ((Gather) evt).getSeek().stopSeek();
                     // ON LEAVE LES CHANNELS DE SEEK
-                    String[] channelSeek = SeekWar.channels.split(";");
+                    String[] channelSeek = SeekWar.SEEK_CHANS;
                     for (String element : channelSeek) {
                         Part leave = new Part(im.getServer(), element, "");
                         control.sendMsg(leave);
