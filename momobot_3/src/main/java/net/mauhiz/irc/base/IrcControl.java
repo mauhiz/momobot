@@ -19,7 +19,7 @@ import net.mauhiz.irc.base.msg.Pong;
 import net.mauhiz.irc.base.msg.ServerMsg;
 
 import org.apache.commons.collections.BidiMap;
-import org.apache.commons.collections.bidimap.TreeBidiMap;
+import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.log4j.Logger;
 
 /**
@@ -30,7 +30,7 @@ public class IrcControl implements IIrcControl, NumericReplies {
     /**
      * key = {@link IrcServer}, value = {@link IIrcIO}.
      */
-    BidiMap ioMap = new TreeBidiMap();
+    BidiMap ioMap = new DualHashBidiMap();
     ITriggerManager manager;
     
     /**
