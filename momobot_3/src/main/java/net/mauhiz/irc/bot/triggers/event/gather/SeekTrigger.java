@@ -5,6 +5,7 @@ import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.msg.IrcMessage;
 import net.mauhiz.irc.base.msg.Join;
+import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
@@ -52,14 +53,20 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                         reply = ((Gather) evt).getSeek().start(StringUtils.split(getArgs(im.getMessage())));
                         if (((Gather) evt).getSeek().isSeekInProgress()) {
                             String[] channelSeek = SeekWar.channels.split(";");
+                            
                             for (String element : channelSeek) {
                                 Join go = new Join(im.getServer(), element);
+                                control.sendMsg(go);
                             }
                             
                             // ON ENVOI LES MSG DE SEEK
                             
-                            Privmsg resp = Privmsg.buildAnswer(im, ((Gather) evt).getSeek().getMessageForSeeking());
-                            control.sendMsg(resp);
+                            for (String element : channelSeek) {
+                                Privmsg im1 = new Privmsg("momobot1", element, im.getServer(), im.getMessage());
+                                Privmsg resp = Privmsg
+                                        .buildAnswer(im1, ((Gather) evt).getSeek().getMessageForSeeking());
+                                control.sendMsg(resp);
+                            }
                             
                         }
                     }
@@ -119,6 +126,12 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                         }
                         reply = gather.getSeek().stopSeek();
                         // LEAVE LES CHANNELS
+                        String[] channelSeek = SeekWar.channels.split(";");
+                        for (String element : channelSeek) {
+                            Part leave = new Part(im.getServer(), element, "");
+                            control.sendMsg(leave);
+                        }
+                        
                     }
                     
                 }
