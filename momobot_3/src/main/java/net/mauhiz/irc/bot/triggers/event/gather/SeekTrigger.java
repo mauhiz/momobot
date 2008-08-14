@@ -3,7 +3,6 @@ package net.mauhiz.irc.bot.triggers.event.gather;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.msg.IrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -32,6 +31,7 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     public SeekTrigger(final String trigger) {
         super(trigger);
     }
+    
     /**
      * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
@@ -40,40 +40,35 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
-        String reply = "";
         if (isCommandMsg(im.getMessage())) {
             
             if (evt == null) {
-                reply = "Aucun gather n'est lance.";
-            } else {
-                if (evt instanceof Gather) {
+                Privmsg resp = Privmsg.buildAnswer(im, "Aucun gather n'est lance.");
+                control.sendMsg(resp);
+            } else if (evt instanceof Gather) {
+                String reply;
+                if (((Gather) evt).getSeek().isSeekInProgress()) {
+                    reply = "Seek déja en cours.";
+                } else {
+                    reply = ((Gather) evt).getSeek().start(StringUtils.split(getArgs(im.getMessage())));
                     if (((Gather) evt).getSeek().isSeekInProgress()) {
-                        reply = "Seek déja en cour.";
-                    } else {
-                        reply = ((Gather) evt).getSeek().start(StringUtils.split(getArgs(im.getMessage())));
-                        if (((Gather) evt).getSeek().isSeekInProgress()) {
-                            String[] channelSeek = SeekWar.channels.split(";");
-                            
-                            for (String element : channelSeek) {
-                                Join go = new Join(im.getServer(), element);
-                                control.sendMsg(go);
-                            }
-                            
-                            // ON ENVOI LES MSG DE SEEK
-                            
-                            for (String element : channelSeek) {
-                                Privmsg im1 = new Privmsg("momobot1", element, im.getServer(), im.getMessage());
-                                Privmsg resp = Privmsg
-                                        .buildAnswer(im1, ((Gather) evt).getSeek().getMessageForSeeking());
-                                control.sendMsg(resp);
-                            }
-                            
+                        String[] channelSeek = SeekWar.SEEK_CHANS;
+                        
+                        for (String element : channelSeek) {
+                            Join go = new Join(im.getServer(), element);
+                            control.sendMsg(go);
                         }
+                        
+                        // ON ENVOIE LES MSG DE SEEK
+                        
+                        for (String element : channelSeek) {
+                            Privmsg im1 = new Privmsg("momobot1", element, im.getServer(), im.getMessage());
+                            Privmsg resp = Privmsg.buildAnswer(im1, ((Gather) evt).getSeek().getMessageForSeeking());
+                            control.sendMsg(resp);
+                        }
+                        
                     }
                 }
-            }
-            
-            if (!reply.isEmpty()) {
                 Privmsg resp = Privmsg.buildAnswer(im, reply);
                 control.sendMsg(resp);
             }
@@ -88,35 +83,33 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                     if (!gather.getSeek().isTimeOut()) {
                         // TJS en vie
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("MSG entrent : " + im.getMessage() + " to : " + im.getTo() + " from : "
+                            LOG.debug("MSG entrant : " + im.getMessage() + " to : " + im.getTo() + " from : "
                                     + im.getFrom());
                         }
-                        String[] replys;
-                        replys = gather.getSeek().submitSeekMessage(im.getMessage(), im.getTo(), im.getFrom());
-                        switch (replys.length) {
-                            case 3 : {
+                        String[] replies = gather.getSeek()
+                                .submitSeekMessage(im.getMessage(), im.getTo(), im.getFrom());
+                        switch (replies.length) {
+                            case 3 :
                                 for (int i = 0; i < 2; i++) {
-                                    if (!replys[i].isEmpty()) {
-                                        Privmsg resp = Privmsg.buildPrivateAnswer(im, replys[i]);
+                                    if (!replies[i].isEmpty()) {
+                                        Privmsg resp = Privmsg.buildPrivateAnswer(im, replies[i]);
                                         control.sendMsg(resp);
                                     }
                                 }
-                                IrcMessage ircmsg = new IrcMessage(im.getTo(), "#tsi.fr", im.getServer());
-                                Privmsg resp = Privmsg.buildAnswer(ircmsg, replys[2]);
+                                Privmsg resp = new Privmsg(null, "#tsi.fr", im.getServer(), replies[2]);
                                 control.sendMsg(resp);
                                 break;
-                            }
-                                
-                            default : {
-                                for (String reply2 : replys) {
+                            
+                            default :
+                                for (String reply2 : replies) {
                                     if (!reply2.isEmpty()) {
-                                        Privmsg resp = Privmsg.buildPrivateAnswer(im, reply2);
-                                        control.sendMsg(resp);
+                                        Privmsg resp2 = Privmsg.buildPrivateAnswer(im, reply2);
+                                        control.sendMsg(resp2);
                                     }
                                     
                                 }
                                 break;
-                            }
+                            
                         }
                         
                     } else {
@@ -124,31 +117,26 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Seek-Time-Out atteint.");
                         }
-                        reply = gather.getSeek().stopSeek();
+                        Privmsg resp = Privmsg.buildAnswer(im, gather.getSeek().stopSeek());
+                        control.sendMsg(resp);
                         // LEAVE LES CHANNELS
-                        String[] channelSeek = SeekWar.channels.split(";");
+                        String[] channelSeek = SeekWar.SEEK_CHANS;
                         for (String element : channelSeek) {
                             Part leave = new Part(im.getServer(), element, "");
                             control.sendMsg(leave);
                         }
-                        
                     }
-                    
                 }
-                
-            }
-            if (!reply.isEmpty()) {
-                Privmsg resp = Privmsg.buildAnswer(im, reply);
-                control.sendMsg(resp);
             }
         }
-        /**
+        /*
          * String reply; if (evt == null) { reply = "Aucun gather n'est lance."; } else { if (evt instanceof Gather) {
          * if (((Gather) evt).isSeekInProgress()) { reply = "Seek déja en cour."; } else { reply = ((Gather)
          * evt).seek(im.getMessage().split(" ")); } } else { return; } } Privmsg msg = Privmsg.buildAnswer(im, reply);
          * control.sendMsg(msg);
          */
     }
+    
     /**
      * @see net.mauhiz.irc.bot.triggers.AbstractTextTrigger#isActivatedBy(java.lang.String)
      */
@@ -156,6 +144,7 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     public boolean isActivatedBy(final String msg) {
         return true;
     }
+    
     /**
      * @param msg
      * @return si il s'agit bien du trigger.
