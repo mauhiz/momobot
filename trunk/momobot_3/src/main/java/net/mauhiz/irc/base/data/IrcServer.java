@@ -19,14 +19,13 @@ import net.mauhiz.irc.base.msg.Quit;
 import net.mauhiz.irc.base.msg.ServerMsg;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
-public class IrcServer implements Comparable<IrcServer> {
+public class IrcServer {
     static final Pattern CMD = Pattern.compile("([\\S^:]+) (.*)");
     static final Pattern FROM = Pattern.compile(":([\\S^:]+) (.*)");
     static final String JOIN = "JOIN";
@@ -128,13 +127,6 @@ public class IrcServer implements Comparable<IrcServer> {
     }
     
     /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(final IrcServer o) {
-        return CompareToBuilder.reflectionCompare(this, o);
-    }
-    
-    /**
      * @return le nombre d'users
      */
     public int countUsers() {
@@ -142,7 +134,7 @@ public class IrcServer implements Comparable<IrcServer> {
     }
     
     /**
-     * @return
+     * @return {@link #hostPort}
      */
     public InetSocketAddress getAddress() {
         return hostPort;
