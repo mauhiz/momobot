@@ -4,7 +4,10 @@ import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
@@ -87,8 +90,9 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                             LOG.debug("MSG entrant : " + im.getMessage() + " to : " + im.getTo() + " from : "
                                     + im.getFrom());
                         }
-                        List<String> replies = gather.getSeek().submitSeekMessage(im.getMessage(), im.getTo(),
-                                im.getFrom());
+                        IrcUser kikoolol = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), true);
+                        List<String> replies = gather.getSeek()
+                                .submitSeekMessage(im.getMessage(), im.getTo(), kikoolol);
                         switch (replies.size()) {
                             case 3 :
                                 for (int i = 0; i < 2; i++) {

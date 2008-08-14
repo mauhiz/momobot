@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.base.data.IrcUser;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
@@ -288,14 +289,15 @@ public class SeekWar {
     
     /**
      * @param msg
-     * @param destination //
+     * @param destination
      *            momobot3 ou #channel
-     * @param provenance //
+     * @param from
      *            nick de l'user qui a parler
      * @return String
      */
     
-    public final List<String> submitSeekMessage(final String msg, final String destination, final String provenance) {
+    public final List<String> submitSeekMessage(final String msg, final String destination, final IrcUser from) {
+        String provenance = from.getNick();
         List<String> resultStg = new ArrayList<String>(3);
         // Traitement des messages entrant
         if ("momobot3".equals(destination)) {
