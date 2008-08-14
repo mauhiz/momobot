@@ -27,10 +27,7 @@ public class Gather extends ChannelEvent {
      * La taille d'un gather.
      */
     private static final byte SIZE = 5;
-    /**
-     * @param channel1
-     *            le channel
-     */
+    
     private final SeekWar seekWar = new SeekWar(this);
     // /**
     // * Un serveur?
@@ -139,6 +136,9 @@ public class Gather extends ChannelEvent {
      * @return un message
      */
     public final String remove(final IrcUser element) {
+        if (element == null) {
+            return "";
+        }
         if (team.remove(element)) {
             return element + " a été retiré du gather.";
         }
