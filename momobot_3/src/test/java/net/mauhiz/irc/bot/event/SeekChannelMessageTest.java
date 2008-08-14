@@ -3,6 +3,7 @@ package net.mauhiz.irc.bot.event;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -21,8 +22,6 @@ public class SeekChannelMessageTest {
         SeekWar seekwar = new SeekWar(gather);
         IrcUser user1 = new IrcUser("a");
         gather.add(user1);
-        if (seekwar.submitChannelMessage("1vs1 off midd")) {
-            System.out.println("ok");
-        }
+        Assert.assertEquals(seekwar.submitChannelMessage("1vs1 off mid"), true);
     }
 }
