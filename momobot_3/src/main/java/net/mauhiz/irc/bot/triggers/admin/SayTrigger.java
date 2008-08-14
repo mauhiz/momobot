@@ -29,7 +29,7 @@ public class SayTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
         if (index < 1) {
             Privmsg msg = Privmsg.buildAnswer(pme, "pas assez de paramètres.");
             control.sendMsg(msg);
-            msg = Privmsg.buildAnswer(pme, "syntaxe $" + this + " target msg");
+            msg = Privmsg.buildAnswer(pme, "syntaxe " + this + " target msg");
             control.sendMsg(msg);
         } else {
             /* TODO say cross-server ? */
