@@ -98,6 +98,13 @@ public class Gather extends ChannelEvent {
     }
     
     /**
+     * @return le nombre de joueur dans la team
+     */
+    public final int getNumberPlayers() {
+        return team.size();
+    }
+    
+    /**
      * @return le seekWar
      */
     public final SeekWar getSeek() {
