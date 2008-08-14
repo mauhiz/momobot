@@ -1,5 +1,7 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
+import java.util.List;
+
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.model.Channels;
@@ -86,17 +88,17 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                             LOG.debug("MSG entrant : " + im.getMessage() + " to : " + im.getTo() + " from : "
                                     + im.getFrom());
                         }
-                        String[] replies = gather.getSeek()
-                                .submitSeekMessage(im.getMessage(), im.getTo(), im.getFrom());
-                        switch (replies.length) {
+                        List<String> replies = gather.getSeek().submitSeekMessage(im.getMessage(), im.getTo(),
+                                im.getFrom());
+                        switch (replies.size()) {
                             case 3 :
                                 for (int i = 0; i < 2; i++) {
-                                    if (!replies[i].isEmpty()) {
-                                        Privmsg resp = Privmsg.buildPrivateAnswer(im, replies[i]);
+                                    if (!replies.get(i).isEmpty()) {
+                                        Privmsg resp = Privmsg.buildPrivateAnswer(im, replies.get(i));
                                         control.sendMsg(resp);
                                     }
                                 }
-                                Privmsg resp = new Privmsg(null, "#tsi.fr", im.getServer(), replies[2]);
+                                Privmsg resp = new Privmsg(null, "#tsi.fr", im.getServer(), replies.get(2));
                                 control.sendMsg(resp);
                                 break;
                             
