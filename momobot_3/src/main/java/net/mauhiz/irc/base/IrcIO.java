@@ -6,13 +6,12 @@ import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.User;
 
-import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.net.SocketClient;
 
 /**
  * @author mauhiz
  */
-public class IrcIO extends SocketClient implements IIrcIO, Comparable<IrcIO> {
+public class IrcIO extends SocketClient implements IIrcIO {
     /**
      * @author mauhiz
      */
@@ -28,13 +27,6 @@ public class IrcIO extends SocketClient implements IIrcIO, Comparable<IrcIO> {
      */
     public IrcIO(final IrcControl ircControl) {
         control = ircControl;
-    }
-    
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(final IrcIO o) {
-        return CompareToBuilder.reflectionCompare(this, o);
     }
     
     /**
@@ -82,6 +74,9 @@ public class IrcIO extends SocketClient implements IIrcIO, Comparable<IrcIO> {
         output.sendRawMsg(msg);
     }
     
+    /**
+     * @see net.mauhiz.irc.base.IIrcIO#setStatus(net.mauhiz.irc.base.IrcIO.Status)
+     */
     public void setStatus(final Status status1) {
         status = status1;
     }
