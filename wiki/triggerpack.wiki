@@ -1,0 +1,13 @@
+#summary A trigger pack is a package of commands for momobot
+
+= Introduction =
+
+Triggers are dynamically load, so using only required triggered packs may optimize your bot and avoid unwanted commands to exist.
+
+
+= List of triggerpacks =
+  * admin
+  * base
+  * event
+  * gather
+  * pendu
