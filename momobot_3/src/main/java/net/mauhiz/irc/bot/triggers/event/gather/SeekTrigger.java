@@ -1,5 +1,6 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
+import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.model.Channels;
@@ -57,6 +58,11 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                             
                             // ON ENVOI LES MSG DE SEEK
                             
+                            Privmsg resp = Privmsg.buildAnswer(im, MomoStringUtils.genereSeekMessage(((Gather) evt)
+                                    .getSeek().getSeekMessage(), ((Gather) evt).getNumberPlayers(), ((Gather) evt)
+                                    .getSeek().getSeekServ(), ((Gather) evt).getSeek().getSeekLevel()));
+                            control.sendMsg(resp);
+                            
                         }
                     }
                 }
@@ -67,13 +73,34 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                 control.sendMsg(resp);
             }
         } else {
-            if (evt instanceof Gather) {
-                
+            // if (evt instanceof Gather) {
+            {
                 final Gather gather = (Gather) evt;
                 if (gather.getSeek().isSeekInProgress()) {
                     if (!gather.getSeek().isTimeOut()) {
                         // TJS en vie
-                        reply = gather.getSeek().submitSeekMessage(im.getMessage(), im.getTo());
+                        String[] replys;
+                        replys = gather.getSeek().submitSeekMessage(im.getMessage(), im.getTo());
+                        switch (replys.length) {
+                            default : {
+                                for (String reply2 : replys) {
+                                    Privmsg resp = Privmsg.buildPrivateAnswer(im, reply2);
+                                    control.sendMsg(resp);
+                                    break;
+                                }
+                                
+                            }
+                            case 3 : {
+                                for (int i = 0; i < 2; i++) {
+                                    Privmsg resp = Privmsg.buildPrivateAnswer(im, replys[i]);
+                                    control.sendMsg(resp);
+                                }
+                                Privmsg resp = Privmsg.buildAnswer(im, replys[2]);
+                                control.sendMsg(resp);
+                                break;
+                            }
+                        }
+                        
                     } else {
                         // !! Time out !!
                         if (LOG.isDebugEnabled()) {
