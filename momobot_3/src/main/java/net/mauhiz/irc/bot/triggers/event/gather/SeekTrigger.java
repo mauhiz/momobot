@@ -66,7 +66,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                         // ON ENVOIE LES MSG DE SEEK
                         
                         for (String element : channelSeek) {
-                            Privmsg im1 = new Privmsg("momobot1", element, im.getServer(), im.getMessage());
+                            Privmsg im1 = new Privmsg("momobot3", element, im.getServer(), im.getMessage());
                             Privmsg resp = Privmsg.buildAnswer(im1, ((Gather) evt).getSeek().getMessageForSeeking());
                             control.sendMsg(resp);
                         }
