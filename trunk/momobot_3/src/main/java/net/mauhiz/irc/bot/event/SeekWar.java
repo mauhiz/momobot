@@ -34,13 +34,17 @@ public class SeekWar {
      */
     private String[] blackList = {"www", "http", "://", ".com", ".fr", ".eu", ".info"};
     /**
+     * channel sur lequel le seek a ete lance
+     */
+    private String channel = "";
+    /**
      * gather
      */
     private Gather gather;
     /**
      * 
      */
-    private String[] greenList = {"ok", "oui", "go", "k", "ip", "pass", "yes", "lvl", "level", "yep"};
+    private String[] greenList = {"ok", "oui", "go", "k", "ip", "pass", "yes", "lvl", "level", "yep", "moi"};
     /**
      * IpPass du srv
      */
@@ -90,11 +94,21 @@ public class SeekWar {
         userpv.clear();
     }
     
+    public final String getChannel() {
+        return channel;
+    }
+    
     /**
      * @return
      */
     public final String getMessageForSeeking() {
         return MomoStringUtils.genereSeekMessage(seekMessage, gather.getNumberPlayers(), seekServ, seekLevel);
+    }
+    public final String getSeekWinner() {
+        if (userpv.isEmpty()) {
+            return "";
+        }
+        return userpv.get(0);
     }
     
     /**
@@ -103,6 +117,7 @@ public class SeekWar {
     public boolean isSeekInProgress() {
         return seekInProgress;
     }
+    
     /**
      * @return false = TJS en vie true = DEAD!
      */
@@ -144,15 +159,14 @@ public class SeekWar {
         }
         return cmdNormalise;
     }
-    
     /**
      * @param commandSeek
      *            1) RIEN 2) ON IPPASS LVL 3) OFF LVL 4) ON IPPASS LVL MSGSEEK 5) OFF LVL MSGSEEK
      * @return String
      */
-    public String start(final String[] commandSeek) {
+    public String start(final String[] commandSeek, final String chan) {
         sw.start();
-        
+        channel = chan;
         if (LOG.isDebugEnabled()) {
             LOG.debug("Lancement d'un seek = " + StringUtils.join(commandSeek));
         }
@@ -234,7 +248,6 @@ public class SeekWar {
                 
         }
     }
-    
     /**
      * @return une String
      */
@@ -245,6 +258,7 @@ public class SeekWar {
         sw.reset();
         return "Le seek est arrete.";
     }
+    
     /**
      * @param stg
      *            Message qui vient du channel de seek
@@ -281,6 +295,7 @@ public class SeekWar {
         }
         return false;
     }
+    
     /**
      * @param msg
      * @return true si le bot pense que le PV est ok
@@ -341,13 +356,13 @@ public class SeekWar {
                         resultPrivmsg.add(msg1);
                         Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "GOGOGO");
                         resultPrivmsg.add(msg2);
-                        Privmsg privMsgChannelSeek = new Privmsg("#tsi.fr", im.getTo(), im.getServer(), im.getMessage());
-                        Privmsg msg3 = Privmsg.buildAnswer(privMsgChannelSeek, provenance + " a mordu! GOGOGO o//");
+                        Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance + " a mordu! GOGOGO o//");
                         resultPrivmsg.add(msg3);
-                        // seekInProgress = false;
-                        // userpv.clear();
-                        // sw.stop();
-                        // sw.reset();
+                        seekInProgress = false;
+                        userpv.clear();
+                        userpv.add(provenance);
+                        sw.stop();
+                        sw.reset();
                         return resultPrivmsg;
                     }
                     // REFOULE
@@ -367,8 +382,7 @@ public class SeekWar {
             } else if (seekServ.toLowerCase().compareTo("off") == 0) {
                 // Le bot a déja été PV par ce bonhomme
                 if (userpv.contains(provenance)) {
-                    Privmsg privMsgChannelSeek = new Privmsg("#tsi.fr", im.getTo(), im.getServer(), im.getMessage());
-                    Privmsg msg1 = Privmsg.buildAnswer(privMsgChannelSeek, provenance + " :" + msg);
+                    Privmsg msg1 = new Privmsg(null, channel, im.getServer(), provenance + " :" + msg);
                     resultPrivmsg.add(msg1);
                     return resultPrivmsg;
                 }
@@ -382,8 +396,7 @@ public class SeekWar {
                     resultPrivmsg.add(msg1);
                     Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "GO");
                     resultPrivmsg.add(msg2);
-                    Privmsg privMsgChannelSeek = new Privmsg("#tsi.fr", im.getTo(), im.getServer(), im.getMessage());
-                    Privmsg msg3 = Privmsg.buildAnswer(privMsgChannelSeek, provenance + " :" + msg);
+                    Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance + " :" + msg);
                     resultPrivmsg.add(msg3);
                     return resultPrivmsg;
                     
@@ -404,6 +417,7 @@ public class SeekWar {
                 resultPrivmsg.add(msg1);
                 // seekInProgress = false;
                 // userpv.clear();
+                // userpv.add(provenance);
                 // sw.stop();
                 // sw.reset();
                 return resultPrivmsg;
@@ -419,5 +433,10 @@ public class SeekWar {
         }
         
         return resultPrivmsg;
+    }
+    
+    public final String tg() {
+        userpv.clear();
+        return "Ok je la ferme.";
     }
 }
