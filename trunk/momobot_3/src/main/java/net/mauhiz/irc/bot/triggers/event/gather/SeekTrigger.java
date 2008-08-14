@@ -1,6 +1,5 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
-import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.model.Channels;
@@ -59,9 +58,7 @@ public class SeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
                             
                             // ON ENVOI LES MSG DE SEEK
                             
-                            Privmsg resp = Privmsg.buildAnswer(im, MomoStringUtils.genereSeekMessage(((Gather) evt)
-                                    .getSeek().getSeekMessage(), ((Gather) evt).getNumberPlayers(), ((Gather) evt)
-                                    .getSeek().getSeekServ(), ((Gather) evt).getSeek().getSeekLevel()));
+                            Privmsg resp = Privmsg.buildAnswer(im, ((Gather) evt).getSeek().getMessageForSeeking());
                             control.sendMsg(resp);
                             
                         }

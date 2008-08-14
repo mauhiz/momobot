@@ -1,20 +1,24 @@
 package net.mauhiz.irc.bot.event;
 
+import net.mauhiz.irc.base.data.Channel;
+
 import org.junit.Test;
 
 /**
  * @author Topper
  * 
  */
-public class SlitTest {
+public class SplitTest {
     
     /**
      * exemple de test
      */
     @Test
     public void testSplit() {
+        Channel chan = new Channel("#tsi.fr");
+        Gather gather = new Gather(chan);
         String[] str = {"ON", "\"127.06576.467:27015", "FAST", "ET", "BAN", "mdp:dtcdtc\""};
-        SeekWar seekwar = new SeekWar();
+        SeekWar seekwar = new SeekWar(gather);
         String[] strout = seekwar.split(str);
         System.out.println("0:" + strout[0]);
         System.out.println("1:" + strout[1]);
@@ -29,5 +33,6 @@ public class SlitTest {
         System.out.println("3:" + strout[3]);
         
         System.out.println(seekwar.start(str1));
+        
     }
 }
