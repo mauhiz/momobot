@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.event;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import net.mauhiz.irc.MomoStringUtils;
 
@@ -15,13 +16,13 @@ import org.apache.log4j.Logger;
 public class SeekWar {
     
     /**
-     * liste des channels de seek
-     */
-    public static final String channels = "#-hp-;#-duck-";
-    /**
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(SeekWar.class);
+    /**
+     * liste des channels de seek
+     */
+    public static final String[] SEEK_CHANS = {"#-hp-", "#-duck-"};
     /**
      * black list pour un msg pv
      */
@@ -68,8 +69,8 @@ public class SeekWar {
     private ArrayList<String> userpv = new ArrayList<String>();
     /**
      * 
-     * @param gath
-     *            = gather qui est propriétaire de SeekWar()
+     * @param gath =
+     *            gather qui est propriétaire de SeekWar()
      */
     public SeekWar(final Gather gath) {
         seekInProgress = false;
@@ -78,9 +79,14 @@ public class SeekWar {
         seekLevel = "mid";
         seekMessage = "seek %Pv%P - %S - %L pm ";
         gather = gath;
-        seekTimeOut = 7 * 60 * 10000; // 7min
+        // 7 min
+        seekTimeOut = TimeUnit.MILLISECONDS.convert(7, TimeUnit.MINUTES);
         userpv.clear();
     }
+    
+    /**
+     * @return
+     */
     public final String getMessageForSeeking() {
         return MomoStringUtils.genereSeekMessage(seekMessage, gather.getNumberPlayers(), seekServ, seekLevel);
     }
@@ -108,7 +114,7 @@ public class SeekWar {
      * @param element
      * @return
      */
-    private final String[] rajouteElement(final String[] tbl, final String element) {
+    private String[] rajouteElement(final String[] tbl, final String element) {
         String[] resultTbl = new String[tbl.length + 1];
         for (int i = 0; i < tbl.length; i++) {
             resultTbl[i] = tbl[i];
@@ -128,12 +134,12 @@ public class SeekWar {
         String[] cmdNormalise = new String[0];
         String tmpStg = "";
         
-        boolean Inquote = false;
+        boolean inquote = false;
         for (String element : cmd) {
             
             if (element.charAt(0) == '\"' || element.charAt(element.length() - 1) == '\"') {
                 if (!(element.charAt(0) == '\"' && element.charAt(element.length() - 1) == '\"')) {
-                    Inquote = !Inquote;
+                    inquote = !inquote;
                 }
             }
             
@@ -142,7 +148,7 @@ public class SeekWar {
             } else {
                 tmpStg += " " + element;
             }
-            if (!Inquote) {
+            if (!inquote) {
                 
                 String[] tmp = new String[cmdNormalise.length + 1];
                 for (int i = 0; i < cmdNormalise.length; i++) {
@@ -173,25 +179,22 @@ public class SeekWar {
         
         // On CFG le seek avec les param
         switch (cmdSeek.length) {
-            case 0 : {
+            case 0 :
                 // Seek sans parametre
                 seekInProgress = true;
                 return "Seek Par Defaut.";
-            }
                 
-            case 1 : {
+            case 1 :
                 if (cmdSeek[0].toLowerCase().compareTo("on") == 0 || cmdSeek[0].toLowerCase().compareTo("off") == 0) {
                     seekInProgress = true;
                     seekServ = cmdSeek[0];
                     return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
-                } else {
-                    sw.stop();
-                    sw.reset();
-                    return "Paramètre(s) Incorrect";
                 }
-            }
+                sw.stop();
+                sw.reset();
+                return "Paramètre(s) Incorrect";
                 
-            case 2 : {
+            case 2 :
                 if (cmdSeek[0].toLowerCase().compareTo("on") == 0) {
                     seekInProgress = true;
                     seekServ = cmdSeek[0];
@@ -207,9 +210,8 @@ public class SeekWar {
                     sw.reset();
                     return "Paramètre(s) Incorrect";
                 }
-            }
                 
-            case 3 : {
+            case 3 :
                 if (cmdSeek[0].toLowerCase().compareTo("on") == 0) {
                     seekInProgress = true;
                     seekServ = cmdSeek[0];
@@ -228,9 +230,8 @@ public class SeekWar {
                     sw.reset();
                     return "Paramètre(s) Incorrect";
                 }
-            }
                 
-            case 4 : {
+            case 4 :
                 if (cmdSeek[0].toLowerCase().compareTo("on") == 0) {
                     seekInProgress = true;
                     seekServ = cmdSeek[0];
@@ -239,18 +240,16 @@ public class SeekWar {
                     seekMessage = cmdSeek[3];
                     return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel
                             + " MSGSeek = " + seekMessage;
-                } else {
-                    sw.stop();
-                    sw.reset();
-                    return "Paramètre(s) Incorrect";
                 }
-            }
-                
-            default : {
                 sw.stop();
                 sw.reset();
                 return "Paramètre(s) Incorrect";
-            }
+                
+            default :
+                sw.stop();
+                sw.reset();
+                return "Paramètre(s) Incorrect";
+                
         }
     }
     
@@ -266,7 +265,7 @@ public class SeekWar {
     }
     /**
      * @param stg
-     *            = Message qui vient du channel de seek
+     *            Message qui vient du channel de seek
      * @return
      * 
      */
@@ -292,7 +291,7 @@ public class SeekWar {
      * @param msg
      * @return true si le bot pense que le PV est ok
      */
-    private final boolean submitPVMessage(final String msg) {
+    private boolean submitPVMessage(final String msg) {
         
         // RAJOUTE UNE DETECTION D'UNE IP&PASS
         
@@ -311,19 +310,19 @@ public class SeekWar {
     
     /**
      * @param msg
-     * @param destination
-     *            // momobot3 ou #channel
-     * @param provenance
-     *            // nick de l'user qui a parler
+     * @param destination //
+     *            momobot3 ou #channel
+     * @param provenance //
+     *            nick de l'user qui a parler
      * @return String
      */
     
     public final String[] submitSeekMessage(final String msg, final String destination, final String provenance) {
         String[] resultStg = new String[0];
         // Traitement des messages entrant
-        if (destination.compareTo("momobot3") == 0) {
+        if ("momobot3".equals(destination)) {
             // C'est un msg PV
-            if (seekServ.toLowerCase().compareTo("on") == 0) {
+            if ("on".equals(seekServ.toLowerCase())) {
                 
                 if (userpv.contains(provenance)) {
                     // Le bot a déja été PV par ce type
@@ -379,33 +378,23 @@ public class SeekWar {
         }
         // C'est un msg d'un Channel
         if (submitChannelMessage(msg)) {
-            {
-                if (userpv.contains(provenance)) {
-                    // Cas chelou :O ??!??!!??
-                    resultStg = rajouteElement(resultStg, "go?");
-                    // seekInProgress = false;
-                    // userpv.clear();
-                    // sw.stop();
-                    // sw.reset();
-                    return resultStg;
-                }
-                // On pv le mec pr lui dire rdy?
-                resultStg = rajouteElement(resultStg, "rdy?");
-                userpv.add(provenance);
+            
+            if (userpv.contains(provenance)) {
+                // Cas chelou :O ??!??!!??
+                resultStg = rajouteElement(resultStg, "go?");
+                // seekInProgress = false;
+                // userpv.clear();
+                // sw.stop();
+                // sw.reset();
                 return resultStg;
             }
+            // On pv le mec pr lui dire rdy?
+            resultStg = rajouteElement(resultStg, "rdy?");
+            userpv.add(provenance);
+            return resultStg;
+            
         }
         
         return resultStg;
     }
-    /**
-     * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
-     */
-    @Override
-    public String toString() {
-        // TODO Auto-generated method stub
-        
-        return "";
-    }
-    
 }
