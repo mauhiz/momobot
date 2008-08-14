@@ -3,9 +3,11 @@ package net.mauhiz.irc.bot.triggers.event.gather;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
+import net.mauhiz.irc.bot.event.SeekWar;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
@@ -37,6 +39,11 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 if (((Gather) evt).getSeek().isSeekInProgress()) {
                     reply = ((Gather) evt).getSeek().stopSeek();
                     // ON LEAVE LES CHANNELS DE SEEK
+                    String[] channelSeek = SeekWar.channels.split(";");
+                    for (String element : channelSeek) {
+                        Part leave = new Part(im.getServer(), element, "");
+                        control.sendMsg(leave);
+                    }
                     
                 } else {
                     reply = "Le seek n'est pas lance.";

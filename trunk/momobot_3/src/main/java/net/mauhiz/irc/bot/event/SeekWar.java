@@ -17,7 +17,7 @@ public class SeekWar {
     /**
      * liste des channels de seek
      */
-    public static final String channels = "#cos_squad;#-duck-;#-hp-";
+    public static final String channels = "#-hp-;#-duck-";
     /**
      * logger.
      */
@@ -74,8 +74,8 @@ public class SeekWar {
     public SeekWar(final Gather gath) {
         seekInProgress = false;
         seekServ = "ON";
-        ippass = "127.0.0.1:27015 pass:dtc";
-        seekLevel = "Midd";
+        ippass = "87.98.196.75:27019 Gotserv.com: pw:gruik";
+        seekLevel = "mid";
         seekMessage = "seek %Pv%P - %S - %L pm ";
         gather = gath;
         seekTimeOut = 7 * 60 * 10000; // 7min
