@@ -5,7 +5,7 @@
 		<chanprops class="net.mauhiz.irc.base.data.qnet.QnetChannelProperties" />
 	</server>
 
-	<profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
+	<profil name="default" nick="mom0" login="mmb" fullName="MMB v3">
 		<autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">
 			<join>#tsi.fr</join>
 			<join>#cos_squad</join>
@@ -94,10 +94,12 @@
 			<command>pickup</command>
 			<command>pick</command>
 		</trigger>
-		<trigger class="SeekTrigger" message="seek %Pv%P - %S - %L pm " level="mid" serv="ON" channel="#cos_squad;#-duck-;#-hp-" ippass="127.0.0.1:27015 pass:dtc">
+		<trigger class="SeekTrigger" message="seek %Pv%P - %S - %L pm " level="mid" serv="ON" ippass="127.0.0.1:27015 pass:dtc" channels="#cos_squad;#-duck-;#-hp-">
 			<command>seek</command></trigger>
 		<trigger class="StopSeekTrigger">
 			<command>stopseek</command></trigger>
+		<trigger class="TgSeekTrigger">
+			<command>tg</command></trigger>
 	</triggerpack>
 	
 	<triggerpack bundle="pendu" package="net.mauhiz.irc.bot.triggers.event.pendu">
