@@ -4,10 +4,7 @@ import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
-import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
@@ -90,31 +87,24 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                             LOG.debug("MSG entrant : " + im.getMessage() + " to : " + im.getTo() + " from : "
                                     + im.getFrom());
                         }
-                        IrcUser kikoolol = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), true);
-                        List<String> replies = gather.getSeek()
-                                .submitSeekMessage(im.getMessage(), im.getTo(), kikoolol);
-                        switch (replies.size()) {
-                            case 3 :
-                                for (int i = 0; i < 2; i++) {
-                                    if (!replies.get(i).isEmpty()) {
-                                        Privmsg resp = Privmsg.buildPrivateAnswer(im, replies.get(i));
-                                        control.sendMsg(resp);
-                                    }
-                                }
-                                Privmsg resp = new Privmsg(null, "#tsi.fr", im.getServer(), replies.get(2));
-                                control.sendMsg(resp);
-                                break;
+                        
+                        List<Privmsg> replies = gather.getSeek().submitSeekMessage(im);
+                        /**
+                         * switch (replies.size()) { case 3 : for (int i = 0; i < 2; i++) { if
+                         * (!replies.get(i).isEmpty()) { Privmsg resp = Privmsg.buildPrivateAnswer(im, replies.get(i));
+                         * control.sendMsg(resp); } } Privmsg resp = new Privmsg(null, "#tsi.fr", im.getServer(),
+                         * replies.get(2)); control.sendMsg(resp); break;
+                         * 
+                         * default : for (String reply2 : replies) { if (!reply2.isEmpty()) { Privmsg resp2 =
+                         * Privmsg.buildPrivateAnswer(im, reply2); control.sendMsg(resp2); }
+                         * 
+                         * } break;
+                         * 
+                         * }
+                         **/
+                        for (Privmsg element : replies) {
                             
-                            default :
-                                for (String reply2 : replies) {
-                                    if (!reply2.isEmpty()) {
-                                        Privmsg resp2 = Privmsg.buildPrivateAnswer(im, reply2);
-                                        control.sendMsg(resp2);
-                                    }
-                                    
-                                }
-                                break;
-                            
+                            control.sendMsg(element);
                         }
                         
                     } else {

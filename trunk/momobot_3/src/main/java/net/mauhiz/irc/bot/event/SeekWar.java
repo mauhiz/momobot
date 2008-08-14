@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.model.Users;
+import net.mauhiz.irc.base.msg.Privmsg;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
@@ -307,9 +311,13 @@ public class SeekWar {
      * @return String
      */
     
-    public final List<String> submitSeekMessage(final String msg, final String destination, final IrcUser from) {
-        String provenance = from.getNick();
-        List<String> resultStg = new ArrayList<String>(3);
+    public final List<Privmsg> submitSeekMessage(final Privmsg im) {
+        IrcServer server1 = im.getServer();
+        IrcUser kikoolol = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), true);
+        String provenance = kikoolol.getNick();
+        String destination = im.getTo();
+        String msg = im.getMessage();
+        List<Privmsg> resultPrivmsg = new ArrayList<Privmsg>(3);
         // Traitement des messages entrant
         if ("mom0".equals(destination)) {
             // C'est un msg PV
@@ -323,38 +331,46 @@ public class SeekWar {
                         // + GOGOGO
                         if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
                             
-                            resultStg.add(seekLevel);
-                            resultStg.add("go?");
+                            Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
+                            resultPrivmsg.add(msg1);
+                            Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go?");
+                            resultPrivmsg.add(msg2);
                             
                         }
-                        resultStg.add(ippass);
-                        resultStg.add("GOGOGO");
-                        resultStg.add(provenance + " a mordu! GOGOGO o//");
-                        seekInProgress = false;
-                        userpv.clear();
-                        sw.stop();
-                        sw.reset();
-                        return resultStg;
+                        Privmsg msg1 = Privmsg.buildPrivateAnswer(im, ippass);
+                        resultPrivmsg.add(msg1);
+                        Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "GOGOGO");
+                        resultPrivmsg.add(msg2);
+                        Privmsg privMsgChannelSeek = new Privmsg("#tsi.fr", im.getTo(), im.getServer(), im.getMessage());
+                        Privmsg msg3 = Privmsg.buildAnswer(privMsgChannelSeek, provenance + " a mordu! GOGOGO o//");
+                        resultPrivmsg.add(msg3);
+                        // seekInProgress = false;
+                        // userpv.clear();
+                        // sw.stop();
+                        // sw.reset();
+                        return resultPrivmsg;
                     }
                     // REFOULE
-                    return resultStg;
+                    return resultPrivmsg;
                     
                 }
                 // Le bot est PV pour la premiere fois >>
                 // On le slap
                 // Ensuite On lui demande si il est RDY
                 userpv.add(provenance);
-                resultStg.add(provenance);
-                resultStg.add("rdy?");
-                return resultStg;
+                Privmsg msg1 = Privmsg.buildPrivateAnswer(im, provenance);
+                resultPrivmsg.add(msg1);
+                Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "rdy?");
+                resultPrivmsg.add(msg2);
+                return resultPrivmsg;
                 
             } else if (seekServ.toLowerCase().compareTo("off") == 0) {
                 // Le bot a déja été PV par ce bonhomme
                 if (userpv.contains(provenance)) {
-                    resultStg.add("");
-                    resultStg.add("");
-                    resultStg.add(provenance + " :" + msg);
-                    return resultStg;
+                    Privmsg privMsgChannelSeek = new Privmsg("#tsi.fr", im.getTo(), im.getServer(), im.getMessage());
+                    Privmsg msg1 = Privmsg.buildAnswer(privMsgChannelSeek, provenance + " :" + msg);
+                    resultPrivmsg.add(msg1);
+                    return resultPrivmsg;
                 }
                 // Le bot est PV pour la premiere fois
                 if (submitPVMessage(msg)) {
@@ -362,16 +378,20 @@ public class SeekWar {
                     // On PV le bonhomme ok > GO
                     // On affiche le msg (çad l'ip & pass) ds le channel de seek
                     userpv.add(provenance);
-                    resultStg.add("ok");
-                    resultStg.add("GO");
-                    resultStg.add(provenance + " : " + msg);
-                    return resultStg;
+                    Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "ok");
+                    resultPrivmsg.add(msg1);
+                    Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "GO");
+                    resultPrivmsg.add(msg2);
+                    Privmsg privMsgChannelSeek = new Privmsg("#tsi.fr", im.getTo(), im.getServer(), im.getMessage());
+                    Privmsg msg3 = Privmsg.buildAnswer(privMsgChannelSeek, provenance + " :" + msg);
+                    resultPrivmsg.add(msg3);
+                    return resultPrivmsg;
                     
                 }
-                return resultStg;
+                return resultPrivmsg;
             } else {
                 // ERREUR INCONNU
-                return resultStg;
+                return resultPrivmsg;
             }
             
         }
@@ -380,22 +400,24 @@ public class SeekWar {
             
             if (userpv.contains(provenance)) {
                 // Cas chelou :O ??!??!!??
-                resultStg.add("go?");
+                Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "go?");
+                resultPrivmsg.add(msg1);
                 // seekInProgress = false;
                 // userpv.clear();
                 // sw.stop();
                 // sw.reset();
-                return resultStg;
+                return resultPrivmsg;
             }
             // On pv le mec pr lui dire rdy?
-            resultStg.add("rdy?");
+            Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "rdy?");
+            resultPrivmsg.add(msg1);
             if (seekLevel.toLowerCase().equals("off")) {
                 userpv.add("ip&pass?");
             }
-            return resultStg;
+            return resultPrivmsg;
             
         }
         
-        return resultStg;
+        return resultPrivmsg;
     }
 }
