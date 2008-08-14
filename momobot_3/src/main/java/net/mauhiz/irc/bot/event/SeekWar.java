@@ -59,7 +59,7 @@ public class SeekWar {
     /**
      * Liste des users qui ont pv le bot
      */
-    private ArrayList<String> userpv;
+    private ArrayList<String> userpv = new ArrayList<String>();
     /**
      * 
      */
@@ -70,6 +70,7 @@ public class SeekWar {
         seekLevel = "Midd";
         messageSeek = "seek %Pv%P - %S - %L pm ";
         seekTimeOut = 7 * 60 * 10000; // 7min
+        userpv.clear();
     }
     /**
      * 
@@ -100,7 +101,8 @@ public class SeekWar {
      * @return false = TJS en vie true = DEAD!
      */
     public final boolean isTimeOut() {
-        if (sw.getStartTime() < seekTimeOut) {
+        System.out.println("Time seek : " + sw.getTime());
+        if (sw.getTime() < seekTimeOut) {
             return false;
         }
         return true;
@@ -120,6 +122,7 @@ public class SeekWar {
         }
         resultTbl[tbl.length] = element;
         return resultTbl;
+        
     }
     /**
      * @param cmd
@@ -184,7 +187,7 @@ public class SeekWar {
                 if (cmdSeek[0].toLowerCase().compareTo("on") == 0 || cmdSeek[0].toLowerCase().compareTo("off") == 0) {
                     seekInProgress = true;
                     servSeek = cmdSeek[0];
-                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel;
+                    return "Seek - Info : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel;
                 } else {
                     sw.stop();
                     sw.reset();
@@ -202,7 +205,7 @@ public class SeekWar {
                     seekInProgress = true;
                     servSeek = cmdSeek[0];
                     seekLevel = cmdSeek[1];
-                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel;
+                    return "Seek - Info : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel;
                 } else {
                     sw.stop();
                     sw.reset();
@@ -216,13 +219,13 @@ public class SeekWar {
                     servSeek = cmdSeek[0];
                     ippass = cmdSeek[1];
                     seekLevel = cmdSeek[2];
-                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel;
+                    return "Seek - Info : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel;
                 } else if (cmdSeek[0].toLowerCase().compareTo("off") == 0) {
                     seekInProgress = true;
                     servSeek = cmdSeek[0];
                     seekLevel = cmdSeek[1];
                     messageSeek = cmdSeek[2];
-                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel
+                    return "Seek - Info : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel
                             + " MSGSeek = " + messageSeek;
                 } else {
                     sw.stop();
@@ -238,7 +241,7 @@ public class SeekWar {
                     ippass = cmdSeek[1];
                     seekLevel = cmdSeek[2];
                     messageSeek = cmdSeek[3];
-                    return "Seek : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel
+                    return "Seek - Info : serv = " + servSeek + " ippass = " + ippass + " level = " + seekLevel
                             + " MSGSeek = " + messageSeek;
                 } else {
                     sw.stop();
@@ -260,6 +263,7 @@ public class SeekWar {
      */
     public final String stopSeek() {
         seekInProgress = false;
+        userpv.clear();
         sw.stop();
         sw.reset();
         return "Le seek est arrete.";
@@ -274,12 +278,12 @@ public class SeekWar {
         // RAJOUTE UNE DETECTION D'UNE IP&PASS
         
         for (String element : blackList) {
-            if (msg.toUpperCase().contains(element)) {
+            if (msg.toLowerCase().contains(element)) {
                 return false;
             }
         }
         for (String element : greenList) {
-            if (msg.toUpperCase().contains(element)) {
+            if (msg.toLowerCase().contains(element)) {
                 return true;
             }
         }
@@ -288,16 +292,19 @@ public class SeekWar {
     
     /**
      * @param msg
+     * @param destination
+     *            // momobot3 ou #channel
      * @param provenance
+     *            // nick de l'user qui a parler
      * @return String
      */
     
-    public final String[] submitSeekMessage(final String msg, final String provenance) {
-        String[] resultStg = {""};
+    public final String[] submitSeekMessage(final String msg, final String destination, final String provenance) {
+        String[] resultStg = new String[0];
         // Traitement des messages entrant
-        if (provenance.compareTo("momobot3") == 0) {
+        if (destination.compareTo("momobot3") == 0) {
             // C'est un msg PV
-            if (servSeek.toUpperCase().compareTo("on") == 0) {
+            if (servSeek.toLowerCase().compareTo("on") == 0) {
                 
                 if (userpv.contains(provenance)) {
                     // Le bot a déja été PV par ce type
@@ -305,10 +312,14 @@ public class SeekWar {
                         // OK le bot valide le pv <=> SEEK REUSSI
                         // On lui file ip pass
                         // + GOGOGO
-                        seekInProgress = false;
                         resultStg = rajouteElement(resultStg, ippass);
                         resultStg = rajouteElement(resultStg, "GOGOGO");
-                        return rajouteElement(resultStg, provenance + " a mordu! GOGOGO o//");
+                        resultStg = rajouteElement(resultStg, provenance + " a mordu! GOGOGO o//");
+                        seekInProgress = false;
+                        userpv.clear();
+                        sw.stop();
+                        sw.reset();
+                        return resultStg;
                     }
                     // REFOULE
                     return resultStg;
@@ -321,12 +332,13 @@ public class SeekWar {
                 resultStg = rajouteElement(resultStg, provenance);
                 return rajouteElement(resultStg, "rdy?");
                 
-            } else if (servSeek.toUpperCase().compareTo("off") == 0) {
+            } else if (servSeek.toLowerCase().compareTo("off") == 0) {
                 // Le bot a déja été PV par ce bonhomme
                 if (userpv.contains(provenance)) {
                     resultStg = rajouteElement(resultStg, "");
                     resultStg = rajouteElement(resultStg, "");
-                    return rajouteElement(resultStg, provenance + " : " + msg);
+                    resultStg = rajouteElement(resultStg, msg);
+                    return resultStg;
                 }
                 // Le bot est PV pour la premiere fois
                 if (submitPVMessage(msg)) {
@@ -352,7 +364,6 @@ public class SeekWar {
         
         return resultStg;
     }
-    
     /**
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
