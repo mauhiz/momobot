@@ -16,3 +16,6 @@ momo irc client
 == Under Windows ==
 
 == Under Linux ==
+
+
+Now you might want to customize the way you run the bot by creating your own [profile]
