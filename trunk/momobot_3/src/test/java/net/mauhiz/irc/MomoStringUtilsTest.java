@@ -9,7 +9,7 @@ import org.junit.Test;
 public class MomoStringUtilsTest {
     
     /**
-     * Test for {@link MomoStringUtils#genereSeekMessage(String, int , string , string)}
+     * Test for {@link MomoStringUtils#genereSeekMessage(String, int, String, String)}
      * 
      */
     @Test
