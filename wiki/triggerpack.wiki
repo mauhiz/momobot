@@ -6,8 +6,8 @@ Triggers are dynamically load, so using only required triggered packs may optimi
 
 
 = List of triggerpacks =
-  * admin
-  * base
-  * event
-  * gather
-  * pendu
+  * *admin* : contains commands to control the behavior of the bot
+  * *base* : contains basic useful commands 
+  * *event* : wtf ?
+  * *gather* : should contain everything you need to start a gather
+  * *pendu* : contains commands to play a game of _pendu_
