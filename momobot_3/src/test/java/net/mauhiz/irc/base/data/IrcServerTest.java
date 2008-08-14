@@ -4,6 +4,7 @@ import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Mode;
 import net.mauhiz.irc.base.msg.Notice;
+import net.mauhiz.irc.base.msg.NumericReplies;
 import net.mauhiz.irc.base.msg.ServerMsg;
 
 import org.junit.Assert;
@@ -82,7 +83,7 @@ public class IrcServerTest {
         Assert.assertTrue(msg instanceof ServerMsg);
         ServerMsg smsg = (ServerMsg) msg;
         Assert.assertEquals("= #truite :@HP|Angie", smsg.getMsg());
-        Assert.assertEquals(353, smsg.getCode());
+        Assert.assertEquals(NumericReplies.RPL_NAMREPLY, smsg.getCode());
     }
     
     /**
@@ -95,6 +96,6 @@ public class IrcServerTest {
         Assert.assertTrue(msg instanceof ServerMsg);
         ServerMsg smsg = (ServerMsg) msg;
         Assert.assertEquals("#truite :End of /NAMES list.", smsg.getMsg());
-        Assert.assertEquals(366, smsg.getCode());
+        Assert.assertEquals(NumericReplies.RPL_ENDOFNAMES, smsg.getCode());
     }
 }
