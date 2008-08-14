@@ -36,7 +36,7 @@ public class SeekWar {
     /**
      * 
      */
-    private String[] greenList = {"ok", "oui", "go", "k", "ip", "pass", "yes"};
+    private String[] greenList = {"ok", "oui", "go", "k", "ip", "pass", "yes", "lvl", "level", "yep"};
     /**
      * IpPass du srv
      */
@@ -163,8 +163,7 @@ public class SeekWar {
                 return "Seek Par Defaut.";
                 
             case 1 :
-                if (cmdSeek.get(0).toLowerCase().compareTo("on") == 0
-                        || cmdSeek.get(0).toLowerCase().compareTo("off") == 0) {
+                if (cmdSeek.get(0).toLowerCase().equals("on") || cmdSeek.get(0).toLowerCase().equals("off")) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
@@ -174,12 +173,12 @@ public class SeekWar {
                 return "Paramètre(s) Incorrect";
                 
             case 2 :
-                if (cmdSeek.get(0).toLowerCase().compareTo("on") == 0) {
+                if (cmdSeek.get(0).toLowerCase().equals("on")) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
                     return "Seek : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
-                } else if (cmdSeek.get(0).toLowerCase().compareTo("off") == 0) {
+                } else if (cmdSeek.get(0).toLowerCase().equals("off")) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
@@ -191,13 +190,13 @@ public class SeekWar {
                 }
                 
             case 3 :
-                if (cmdSeek.get(0).toLowerCase().compareTo("on") == 0) {
+                if (cmdSeek.get(0).toLowerCase().equals("on")) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
                     seekLevel = cmdSeek.get(2);
                     return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
-                } else if (cmdSeek.get(0).toLowerCase().compareTo("off") == 0) {
+                } else if (cmdSeek.get(0).toLowerCase().equals("off")) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
@@ -211,7 +210,7 @@ public class SeekWar {
                 }
                 
             case 4 :
-                if (cmdSeek.get(0).toLowerCase().compareTo("on") == 0) {
+                if (cmdSeek.get(0).toLowerCase().equals("on")) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
@@ -251,18 +250,29 @@ public class SeekWar {
     public final boolean submitChannelMessage(final String stg) {
         // On doit inverser le seek ex:Si je seek srv ON,le msg de match doit être serv off.
         String seekServ1 = "";
-        if (seekServ.toLowerCase().compareTo("on") == 0) {
+        if (seekServ.toLowerCase().equals("on")) {
             seekServ1 = "off";
-        } else if (seekServ.toLowerCase().compareTo("off") == 0) {
+        } else if (seekServ.toLowerCase().equals("off")) {
             seekServ1 = "on";
         }
         
-        if ((stg.toLowerCase().contains(gather.getNumberPlayers() + "vs" + gather.getNumberPlayers())
-                || stg.toLowerCase().contains(gather.getNumberPlayers() + "v" + gather.getNumberPlayers())
-                || stg.toLowerCase().contains(gather.getNumberPlayers() + "o" + gather.getNumberPlayers())
-                || stg.toLowerCase().contains(gather.getNumberPlayers() + "on" + gather.getNumberPlayers()) || stg
-                .toLowerCase().contains(gather.getNumberPlayers() + "x" + gather.getNumberPlayers()))
-                && stg.toLowerCase().contains(seekServ1) && stg.toLowerCase().contains(seekLevel.toLowerCase())) {
+        String[] separateur = {"vs", "v", "on", "o", "x"};
+        ArrayList<String> listMatch = new ArrayList<String>();
+        int player = gather.getNumberPlayers();
+        for (String element : separateur) {
+            listMatch.add(player + element + player);
+            listMatch.add(player + " " + element + " " + player);
+        }
+        boolean numbermatch = false;
+        for (String element : listMatch) {
+            if (stg.toLowerCase().contains(element)) {
+                numbermatch = true;
+                break;
+            }
+            
+        }
+        
+        if (numbermatch && stg.toLowerCase().contains(seekServ1) && stg.toLowerCase().contains(seekLevel.toLowerCase())) {
             return true;
         }
         return false;
@@ -301,7 +311,7 @@ public class SeekWar {
         String provenance = from.getNick();
         List<String> resultStg = new ArrayList<String>(3);
         // Traitement des messages entrant
-        if ("momobot3".equals(destination)) {
+        if ("mom0".equals(destination)) {
             // C'est un msg PV
             if ("on".equals(seekServ.toLowerCase())) {
                 
@@ -311,6 +321,12 @@ public class SeekWar {
                         // OK le bot valide le pv <=> SEEK REUSSI
                         // On lui file ip pass
                         // + GOGOGO
+                        if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
+                            
+                            resultStg.add(seekLevel);
+                            resultStg.add("go?");
+                            
+                        }
                         resultStg.add(ippass);
                         resultStg.add("GOGOGO");
                         resultStg.add(provenance + " a mordu! GOGOGO o//");
@@ -373,7 +389,9 @@ public class SeekWar {
             }
             // On pv le mec pr lui dire rdy?
             resultStg.add("rdy?");
-            userpv.add(provenance);
+            if (seekLevel.toLowerCase().equals("off")) {
+                userpv.add("ip&pass?");
+            }
             return resultStg;
             
         }
