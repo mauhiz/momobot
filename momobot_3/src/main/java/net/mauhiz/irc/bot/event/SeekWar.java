@@ -24,7 +24,7 @@ public class SeekWar {
     /**
      * liste des channels de seek
      */
-    public static final String[] SEEK_CHANS = {"#-hp-", "#-duck-"};
+    public static final String[] SEEK_CHANS = {"#-hp-", "#-duck-", "#clanwar.fr"};
     /**
      * black list pour un msg pv
      */
@@ -71,8 +71,8 @@ public class SeekWar {
     private final List<String> userpv = new ArrayList<String>();
     /**
      * 
-     * @param gath =
-     *            gather qui est propriétaire de SeekWar()
+     * @param gath
+     *            = gather qui est propriétaire de SeekWar()
      */
     public SeekWar(final Gather gath) {
         seekInProgress = false;
