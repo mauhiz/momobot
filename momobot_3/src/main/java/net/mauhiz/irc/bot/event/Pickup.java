@@ -134,6 +134,9 @@ public class Pickup extends ChannelEvent {
      * @return un msg
      */
     public final String remove(final IrcUser element) {
+        if (element == null) {
+            return "";
+        }
         final Team findTeam = getTeam(element);
         if (null == findTeam) {
             return element + ": tu n'étais pas inscrit.";
