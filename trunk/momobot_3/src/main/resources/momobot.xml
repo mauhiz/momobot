@@ -35,15 +35,15 @@
 			<command>aide</command>
 		</trigger>
 		<trigger class="JoinOnInviteTrigger" />
-		<trigger class="JoinTrigger">
-			<command>join</command>
-			<command>go</command>
-		</trigger>
+		
 		<trigger class="WelcomeTrigger" />
 	</triggerpack>
 	
 	<triggerpack bundle="admin" package="net.mauhiz.irc.bot.triggers.admin">
-		<trigger class="ActivateTrigger">
+		<trigger class="JoinTrigger">
+			<command>join</command>
+			<command>go</command>
+		</trigger><trigger class="ActivateTrigger">
 			<command>activate</command>
 		</trigger>
 		<trigger class="QuitTrigger">
