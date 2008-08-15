@@ -18,9 +18,9 @@ public class IrcIO extends SocketClient implements IIrcIO {
     enum Status {
         CONNECTED, CONNECTING, DISCONNECTED;
     }
-    IIrcControl control;
-    IIrcOutput output;
-    Status status = Status.DISCONNECTED;
+    private IIrcControl control;
+    private IIrcOutput output;
+    private Status status = Status.DISCONNECTED;
     
     /**
      * @param ircControl
@@ -37,9 +37,9 @@ public class IrcIO extends SocketClient implements IIrcIO {
         super.connect(server.getAddress().getAddress(), server.getAddress().getPort());
         IrcInput input = new IrcInput(this);
         input.connect(super._socket_);
-        new Thread(input).start();
+        new Thread(input, "Input Thread").start();
         output = new IrcOutput(super._socket_);
-        new Thread(output).start();
+        new Thread(output, "Output Thread").start();
         output.sendRawMsg(new Nick(server).toString());
         output.sendRawMsg(new User(server).toString());
     }
@@ -48,8 +48,13 @@ public class IrcIO extends SocketClient implements IIrcIO {
      * @see org.apache.commons.net.SocketClient#disconnect()
      */
     @Override
-    public void disconnect() throws IOException {
-        super.disconnect();
+    public void disconnect() {
+        try {
+            super.disconnect();
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+        output.setRunning(false);
         status = Status.DISCONNECTED;
     }
     

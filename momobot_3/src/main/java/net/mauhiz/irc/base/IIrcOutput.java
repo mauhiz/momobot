@@ -5,6 +5,8 @@ package net.mauhiz.irc.base;
  */
 public interface IIrcOutput extends Runnable {
     boolean isReady();
-
+    
     void sendRawMsg(String raw);
+    
+    void setRunning(boolean b);
 }

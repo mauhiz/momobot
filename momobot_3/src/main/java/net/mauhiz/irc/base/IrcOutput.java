@@ -20,6 +20,8 @@ public class IrcOutput implements IIrcOutput {
     private static final Logger LOG = Logger.getLogger(IrcOutput.class);
     private static final int MAX_SIZE = 50;
     private final BlockingQueue<String> queue = new LinkedBlockingQueue<String>(MAX_SIZE);
+    boolean running;
+    
     private PrintWriter writer;
     
     /**
@@ -43,19 +45,24 @@ public class IrcOutput implements IIrcOutput {
     public boolean isReady() {
         return queue.size() > MAX_SIZE;
     }
-    
     /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        while (true) {
+        running = true;
+        while (running) {
             try {
-                String toWrite = queue.take();
+                String toWrite = queue.poll();
                 Thread.sleep(DELAY);
-                LOG.info(">> " + toWrite);
+                if (toWrite == null) {
+                    continue;
+                }
+                LOG.debug(">> " + toWrite);
                 writer.println(toWrite);
                 writer.flush();
             } catch (InterruptedException e) {
+                LOG.error(e);
+                running = false;
                 Thread.currentThread().interrupt();
                 break;
             }
@@ -66,10 +73,22 @@ public class IrcOutput implements IIrcOutput {
      * @see net.mauhiz.irc.base.IIrcOutput#sendRawMsg(java.lang.String)
      */
     public void sendRawMsg(final String raw) {
+        if (raw == null) {
+            return;
+        }
         try {
             queue.put(raw);
         } catch (InterruptedException e) {
+            running = false;
             Thread.currentThread().interrupt();
         }
+    }
+    
+    /**
+     * @see net.mauhiz.irc.base.IIrcOutput#setRunning(boolean)
+     */
+    @Override
+    public void setRunning(final boolean run) {
+        running = run;
     }
 }

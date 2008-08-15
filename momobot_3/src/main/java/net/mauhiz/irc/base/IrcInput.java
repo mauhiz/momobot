@@ -39,7 +39,7 @@ public class IrcInput implements IIrcInput {
         while (true) {
             try {
                 String next = reader.readLine();
-                LOG.info("<< " + next);
+                LOG.debug("<< " + next);
                 if (next == null) {
                     LOG.warn("disconnected");
                     break;
@@ -49,10 +49,6 @@ public class IrcInput implements IIrcInput {
                 break;
             }
         }
-        try {
-            io.disconnect();
-        } catch (IOException e) {
-            LOG.error(e, e);
-        }
+        io.disconnect();
     }
 }

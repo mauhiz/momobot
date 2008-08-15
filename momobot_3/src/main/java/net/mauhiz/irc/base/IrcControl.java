@@ -16,6 +16,7 @@ import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.NumericReplies;
 import net.mauhiz.irc.base.msg.Ping;
 import net.mauhiz.irc.base.msg.Pong;
+import net.mauhiz.irc.base.msg.Quit;
 import net.mauhiz.irc.base.msg.ServerMsg;
 
 import org.apache.commons.collections.BidiMap;
@@ -26,11 +27,14 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class IrcControl implements IIrcControl, NumericReplies {
+    /**
+     * logger.
+     */
     private static final Logger LOG = Logger.getLogger(IrcControl.class);
     /**
      * key = {@link IrcServer}, value = {@link IIrcIO}.
      */
-    BidiMap ioMap = new DualHashBidiMap();
+    private BidiMap ioMap = new DualHashBidiMap();
     ITriggerManager manager;
     
     /**
@@ -70,7 +74,9 @@ public class IrcControl implements IIrcControl, NumericReplies {
             throw new IllegalStateException("io had no associated server");
         }
         IIrcMessage msg = server.buildFromRaw(raw);
-        if (msg instanceof Ping) {
+        if (msg == null) {
+            return;
+        } else if (msg instanceof Ping) {
             sendMsg(new Pong(server, ((Ping) msg).getPingId()));
         } else if (msg instanceof ServerMsg) {
             processServerMsg((ServerMsg) msg);
@@ -78,6 +84,7 @@ public class IrcControl implements IIrcControl, NumericReplies {
             Join join = (Join) msg;
             Channel joined = Channels.get(server).getChannel(join.getChan());
             IrcUser joiner = Users.get(server).findUser(new Mask(join.getFrom()), true);
+            joined.add(joiner);
         } else if (msg instanceof Notice && io.getStatus() == Status.CONNECTING) {
             Notice notice = (Notice) msg;
             if (notice.getFrom() != null) {
@@ -92,7 +99,7 @@ public class IrcControl implements IIrcControl, NumericReplies {
     /**
      * @see net.mauhiz.irc.base.IIrcControl#exit()
      */
-    public void exit() throws IOException {
+    public void exit() {
         Collection<IIrcIO> ios = ioMap.values();
         for (IIrcIO io : ios) {
             io.disconnect();
@@ -111,7 +118,27 @@ public class IrcControl implements IIrcControl, NumericReplies {
      */
     private void processServerMsg(final ServerMsg smsg) {
         switch (smsg.getCode()) {
+            case RPL_MOTD :
+                LOG.info("Motd LINE : " + smsg.getMsg());
+                break;
+            case RPL_NAMREPLY :
+                /* TODO process names */
+                LOG.debug("Names Reply : " + smsg.getMsg());
+                break;
             case RPL_ENDOFNAMES :
+                LOG.debug("End of Names Reply");
+                break;
+            case RPL_LUSEROP :
+                LOG.info("list of operators: " + smsg.getMsg());
+                break;
+            case ERR_NOTEXTTOSEND :
+                LOG.warn("Server told me that I tried to send an empty msg");
+                break;
+            case RPL_ENDOFMOTD :
+                LOG.debug("End of MOTD");
+                break;
+            case RPL_LUSERUNKNOWN :
+                LOG.info("list of unknown users: " + smsg.getMsg());
                 break;
             default :
                 LOG.warn("Unhandled server reply : " + smsg);
@@ -125,5 +152,10 @@ public class IrcControl implements IIrcControl, NumericReplies {
         IrcServer server = msg.getServer();
         IIrcIO io = (IIrcIO) ioMap.get(server);
         io.sendMsg(msg.toString());
+        if (msg instanceof Quit) {
+            io.disconnect();
+            ioMap.remove(server);
+        }
+        
     }
 }
