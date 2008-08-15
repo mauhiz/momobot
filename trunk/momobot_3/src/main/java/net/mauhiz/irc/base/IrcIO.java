@@ -49,10 +49,12 @@ public class IrcIO extends SocketClient implements IIrcIO {
      */
     @Override
     public void disconnect() {
-        try {
-            super.disconnect();
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+        if (isConnected()) {
+            try {
+                super.disconnect();
+            } catch (IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
         }
         output.setRunning(false);
         status = Status.DISCONNECTED;
