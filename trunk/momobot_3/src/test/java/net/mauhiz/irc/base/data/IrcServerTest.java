@@ -2,6 +2,7 @@ package net.mauhiz.irc.base.data;
 
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
+import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Mode;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.NumericReplies;
@@ -97,5 +98,19 @@ public class IrcServerTest {
         ServerMsg smsg = (ServerMsg) msg;
         Assert.assertEquals("#truite :End of /NAMES list.", smsg.getMsg());
         Assert.assertEquals(NumericReplies.RPL_ENDOFNAMES, smsg.getCode());
+    }
+    
+    /**
+     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#buildFromRaw(java.lang.String)}.
+     */
+    @Test
+    public void testKick() {
+        String test = ":mauhiz!~mauhiz@86.255.97-84.rev.gaoland.net KICK #truite momobot3 :go away";
+        IIrcMessage msg = server.buildFromRaw(test);
+        Assert.assertTrue(msg instanceof Kick);
+        Kick kick = (Kick) msg;
+        Assert.assertEquals("#truite", kick.getChan());
+        Assert.assertEquals("momobot3", kick.getTarget());
+        Assert.assertEquals("go away", kick.getReason());
     }
 }
