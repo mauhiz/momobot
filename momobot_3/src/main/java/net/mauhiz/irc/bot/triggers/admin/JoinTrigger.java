@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.triggers.base;
+package net.mauhiz.irc.bot.triggers.admin;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Join;
