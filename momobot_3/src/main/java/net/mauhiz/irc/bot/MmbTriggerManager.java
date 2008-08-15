@@ -71,7 +71,7 @@ public class MmbTriggerManager implements ITriggerManager {
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
         try {
             synchronized (myKeeper) {
-                for (ITrigger trigger : myKeeper.getTriggers()) {
+                for (ITrigger trigger : myKeeper) {
                     if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
                         IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
                         Privmsg priv = (Privmsg) msg;

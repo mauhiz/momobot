@@ -1,34 +1,37 @@
 package net.mauhiz.irc.bot;
 
 import java.util.HashSet;
-import java.util.Set;
 
+import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.ITrigger;
 
 /**
  * @author mauhiz
  */
-public class TriggerKeeper {
-    private final Set<ITrigger> triggers = new HashSet<ITrigger>();
+public class TriggerKeeper extends HashSet<ITrigger> {
+    /**
+     * serial.
+     */
+    private static final long serialVersionUID = 1L;
     
     /**
-     * @param trigger
+     * @see java.util.HashSet#add(java.lang.Object)
      */
-    public void add(final ITrigger trigger) {
-        triggers.add(trigger);
-    }
-    
-    /**
-     * efface tous les triggers.
-     */
-    public void clearTriggers() {
-        triggers.clear();
-    }
-    
-    /**
-     * @return un iterateur sur les triggers
-     */
-    public Set<ITrigger> getTriggers() {
-        return triggers;
+    @Override
+    public boolean add(final ITrigger e) {
+        if (e == null) {
+            return false;
+        }
+        if (!(e instanceof AbstractTextTrigger)) {
+            /* seuls les triggers text peuvent avoir plusieurs instances */
+            Class<? extends ITrigger> wannaEnter = e.getClass();
+            for (ITrigger every : this) {
+                if (wannaEnter.equals(every.getClass())) {
+                    /* refused */
+                    return false;
+                }
+            }
+        }
+        return super.add(e);
     }
 }
