@@ -14,7 +14,7 @@ public class Channel extends HashSet<IrcUser> {
      */
     private static final long serialVersionUID = 1L;
     private ChannelEvent evt;
-    String nom;
+    private String nom;
     
     Character prefix;
     
@@ -24,14 +24,13 @@ public class Channel extends HashSet<IrcUser> {
      * @param chanName
      */
     public Channel(final String chanName) {
-        if (Character.isLetterOrDigit(chanName.charAt(0))) {
-            nom = chanName;
-        } else {
-            prefix = Character.valueOf(chanName.charAt(0));
-            nom = chanName.substring(1);
-        }
+        prefix = Character.valueOf(chanName.charAt(0));
+        nom = chanName.substring(1);
     }
     
+    /**
+     * @return {@link #evt}
+     */
     public ChannelEvent getEvt() {
         return evt;
     }
