@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
+import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Mode;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.Notice;
@@ -102,14 +103,18 @@ public class IrcServer {
                 return new Join(from, this, msg);
             } else if (PART.equals(cmd)) {
                 String reason = StringUtils.substringAfter(msg, " :");
-                msg = StringUtils.substringAfter(msg, " :");
+                msg = StringUtils.substringBefore(msg, " :");
                 return new Part(this, from, to, msg, reason);
             } else if (PRIVMSG.equals(cmd)) {
                 return new Privmsg(from, to, this, msg);
             } else if (QUIT.equals(cmd)) {
                 return new Quit(from, to, this, msg);
             } else if (NICK.equals(cmd)) {
-                return new Nick(this, work);
+                return new Nick(this, msg);
+            } else if (KICK.equals(cmd)) {
+                String reason = StringUtils.substringAfter(msg, " :");
+                msg = StringUtils.substringBefore(msg, " :");
+                return new Kick(this, from, null, to, msg, reason);
             }
         }
         // TODO ERROR :Closing Link: by underworld2.no.quakenet.org (Registration Timeout)

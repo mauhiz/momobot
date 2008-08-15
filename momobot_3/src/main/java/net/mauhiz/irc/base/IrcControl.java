@@ -12,6 +12,7 @@ import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
+import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.NumericReplies;
 import net.mauhiz.irc.base.msg.Ping;
@@ -85,6 +86,11 @@ public class IrcControl implements IIrcControl, NumericReplies {
             Channel joined = Channels.get(server).getChannel(join.getChan());
             IrcUser joiner = Users.get(server).findUser(new Mask(join.getFrom()), true);
             joined.add(joiner);
+        } else if (msg instanceof Kick) {
+            Kick kick = (Kick) msg;
+            Channel from = Channels.get(server).getChannel(kick.getChan());
+            IrcUser kicked = Users.get(server).findUser(kick.getTarget(), true);
+            from.remove(kicked);
         } else if (msg instanceof Notice && io.getStatus() == Status.CONNECTING) {
             Notice notice = (Notice) msg;
             if (notice.getFrom() != null) {
