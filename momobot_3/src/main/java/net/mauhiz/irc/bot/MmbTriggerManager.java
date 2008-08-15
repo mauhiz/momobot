@@ -31,15 +31,16 @@ public class MmbTriggerManager implements ITriggerManager {
     /**
      * keeper of the seven keys
      */
-    TriggerKeeper myKeeper = new TriggerKeeper();
+    private final TriggerKeeper myKeeper = new TriggerKeeper();
     /**
      * @param triggerClass
      * @param params
+     * @return whether trigger was added
      */
-    public void addTrigger(final Class<ITrigger> triggerClass, final Object... params) {
+    public boolean addTrigger(final Class<ITrigger> triggerClass, final Object... params) {
         try {
             ITrigger trigger = (ITrigger) ConstructorUtils.invokeConstructor(triggerClass, params);
-            myKeeper.add(trigger);
+            return myKeeper.add(trigger);
         } catch (InstantiationException e) {
             LOG.warn(e, e);
         } catch (IllegalAccessException e) {
@@ -49,6 +50,7 @@ public class MmbTriggerManager implements ITriggerManager {
         } catch (NoSuchMethodException e) {
             LOG.warn(e, e);
         }
+        return false;
     }
     
     /**
@@ -96,5 +98,23 @@ public class MmbTriggerManager implements ITriggerManager {
         } catch (RuntimeException unexpected) {
             LOG.error(unexpected, unexpected);
         }
+    }
+    
+    /**
+     * @param className
+     * @param texts
+     * @return success
+     */
+    public boolean removeTrigger(final String className, final String[] texts) {
+        try {
+            Class<?> toRemove = Class.forName(className);
+            if (ITrigger.class.isAssignableFrom(toRemove)) {
+                return myKeeper.remove((Class<? extends ITrigger>) toRemove, texts);
+            }
+        } catch (ClassNotFoundException e) {
+            LOG.warn(e);
+        }
+        return false;
+        
     }
 }
