@@ -43,8 +43,12 @@
 		<trigger class="JoinTrigger">
 			<command>join</command>
 			<command>go</command>
-		</trigger><trigger class="ActivateTrigger">
+		</trigger>
+		<trigger class="ActivateTrigger">
 			<command>activate</command>
+		</trigger>
+		<trigger class="DeActivateTrigger">
+			<command>deactivate</command>
 		</trigger>
 		<trigger class="QuitTrigger">
 			<command>quit</command>
