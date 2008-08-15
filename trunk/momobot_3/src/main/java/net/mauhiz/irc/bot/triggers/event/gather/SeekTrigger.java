@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
  */
 
 /**
- * MEMO: de chose a revoir: 1) chargé les valeurs avec le xml 2) détecté une adresse IP + Port pour un msg PV 3) sur le
+ * MEMO: de chose a revoir: 1) charger les valeurs avec le xml 2) détecté une adresse IP + Port pour un msg PV 3) sur le
  * lister tout les gathers en cour et executer l'action correspondant
  * 
  */
