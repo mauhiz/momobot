@@ -1,5 +1,7 @@
 package net.mauhiz.irc.bot.event;
 
+import java.util.List;
+
 import net.mauhiz.irc.base.data.Channel;
 
 import org.junit.Assert;
@@ -20,13 +22,15 @@ public class SplitTest {
         Gather gather = new Gather(chan);
         String[] str = {"ON", "\"127.06576.467:27015", "FAST", "ET", "BAN", "mdp:dtcdtc\""};
         SeekWar seekwar = new SeekWar(gather);
-        String[] strout = seekwar.split(str);
+        List<String> split = seekwar.split(str);
+        String[] strout = split.toArray(new String[split.size()]);
         Assert.assertEquals(strout[0], "ON");
         Assert.assertEquals(strout[1], "\"127.06576.467:27015 FAST ET BAN mdp:dtcdtc\"");
         
         String[] str1 = {"On", "\"127.06576.467:27015", "fast", "et", "ban", "mdp:dtcdtc\"", "mid", "\"seek", "%Pv%P",
                 "-", "%S", "-", "%L", "pm\""};
-        strout = seekwar.split(str1);
+        split = seekwar.split(str1);
+        strout = split.toArray(new String[split.size()]);
         Assert.assertEquals(strout[0], "On");
         Assert.assertEquals(strout[1], "\"127.06576.467:27015 fast et ban mdp:dtcdtc\"");
         Assert.assertEquals(strout[2], "mid");
