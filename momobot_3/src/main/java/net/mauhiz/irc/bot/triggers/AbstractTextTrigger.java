@@ -11,13 +11,9 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractTextTrigger implements ITextTrigger {
     /**
-     * 
+     * logger.
      */
     private static final Logger LOG = Logger.getLogger(AbstractTextTrigger.class);
-    /**
-     * si le trigger est actif.
-     */
-    private boolean actif;
     /**
      * le texte du trigger.
      */
@@ -56,7 +52,14 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     /**
      * @see net.mauhiz.irc.bot.triggers.ITextTrigger#getTriggerHelp()
      */
-    public final String getTriggerHelp() {
+    public String getTriggerHelp() {
+        return "Usage: " + triggerText;
+    }
+    
+    /**
+     * @return {@link #triggerText}
+     */
+    public String getTriggerText() {
         return triggerText;
     }
     
@@ -66,13 +69,6 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getClass()).append(triggerText).toHashCode();
-    }
-    
-    /**
-     * @return le actif
-     */
-    protected final boolean isActif() {
-        return actif;
     }
     
     /**
@@ -88,14 +84,6 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
             LOG.debug("Trigger " + getClass().getSimpleName() + " activated");
         }
         return activated;
-    }
-    
-    /**
-     * @param actif1
-     *            le actif à régler
-     */
-    protected final void setActif(final boolean actif1) {
-        actif = actif1;
     }
     
     /**
