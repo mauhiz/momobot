@@ -4,8 +4,7 @@
 		<user class="net.mauhiz.irc.base.data.qnet.QnetUser" />
 		<chanprops class="net.mauhiz.irc.base.data.qnet.QnetChannelProperties" />
 	</server>
-	   <server alias="Localhost" uri="irc://localhost:6667/">
-    </server>
+	<server alias="Localhost" uri="irc://localhost:6667/" />
 	<profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
 		<autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">
 			<join>#tsi.fr</join>
