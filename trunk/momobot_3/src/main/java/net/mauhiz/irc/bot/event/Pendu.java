@@ -156,8 +156,10 @@ public class Pendu extends ChannelEvent {
      */
     public final StrBuilder submitLettre(final char toSubmit) {
         final StrBuilder penduMsg = new StrBuilder();
-        if (!Character.isLetter(toSubmit) || !alreadyTried.add(Character.valueOf(toSubmit))) {
+        if (!Character.isLetter(toSubmit)) {
             return penduMsg;
+        } else if (!alreadyTried.add(Character.valueOf(toSubmit))) {
+            penduMsg.append("La lettre ").append(toSubmit).append(" a déjà été essayée");
         }
         penduMsg.append("La lettre ").append(toSubmit).append(" est ");
         if (findLetter(toSubmit)) {
@@ -165,7 +167,8 @@ public class Pendu extends ChannelEvent {
             if (devinage.toString().equals(solutionPure)) {
                 /* arrêter le pendu */
                 stop();
-                penduMsg.append("Bravo! Vous avez trouvé le mot ").append(solutionPure).append('.');
+                penduMsg.append("Bravo! Vous avez trouvé le mot ").append(solutionPure).append(". Il vous restait ")
+                        .append(vies).append('.');
             } else {
                 penduMsg.append("-> ").append(devinage);
             }
@@ -186,7 +189,6 @@ public class Pendu extends ChannelEvent {
         }
         return penduMsg;
     }
-    
     /**
      * @param test
      *            le mot à tester
