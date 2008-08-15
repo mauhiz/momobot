@@ -6,6 +6,7 @@ import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.qnet.QnetUser;
 import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
@@ -39,6 +40,10 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
         IrcServer server = cme.getServer();
         Channel chan = Channels.get(server).getChannel(cme.getTo());
+        if (chan == null) {
+            /* msg pv */
+            return;
+        }
         if (chan.isEmpty()) {
             LOG.error("no user on channel " + cme.getTo());
             return;
@@ -46,12 +51,17 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         
         LOG.debug("MassHlTrigger : " + chan + " has " + chan.size() + " users");
         final StrBuilder msg = new StrBuilder("nudges");
+        IrcUser from = Users.get(server).findUser(cme.getFrom(), true);
         for (final IrcUser nextIrcUser : chan) {
             if (nextIrcUser instanceof QnetUser && ((QnetUser) nextIrcUser).isService()) {
                 /* no bots */
                 LOG.debug("skipping bot : " + nextIrcUser);
                 continue;
-            } else if (nextIrcUser.equals(cme.getFrom()) || nextIrcUser.getNick().equalsIgnoreCase(server.getMyNick())) {
+            } else if (nextIrcUser.equals(from)) {
+                /* no caller */
+                LOG.debug("skipping caller : " + nextIrcUser);
+                continue;
+            } else if (nextIrcUser.getNick().equalsIgnoreCase(server.getMyNick())) {
                 /* no self */
                 LOG.debug("skipping myself : " + nextIrcUser);
                 continue;
