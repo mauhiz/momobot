@@ -22,7 +22,7 @@ public class Channels extends ConcurrentSkipListMap<String, Channel> implements 
     /**
      * logger.
      */
-    private static final Logger LOG = Logger.getLogger(Channel.class);
+    private static final Logger LOG = Logger.getLogger(Channels.class);
     /**
      * serial
      */
@@ -50,7 +50,6 @@ public class Channels extends ConcurrentSkipListMap<String, Channel> implements 
      * @return si le nom est un channel ou nom
      */
     public static final boolean isChannelName(final String toTest) {
-        
         if (StringUtils.isEmpty(toTest) || StringUtils.indexOfAny(toTest, Z_NOTCHSTRING) > 0) {
             return false;
         }
@@ -65,17 +64,6 @@ public class Channels extends ConcurrentSkipListMap<String, Channel> implements 
     }
     
     /**
-     * @param chanName
-     * @return un nouveau Channel
-     */
-    public Channel buildChannel(final String chanName) {
-        String realChanName = StringUtils.lowerCase(chanName);
-        Channel newChan = new Channel(realChanName);
-        put(realChanName, newChan);
-        return newChan;
-    }
-    
-    /**
      * @param channel
      *            le nom du channel
      * @return le channel
@@ -83,12 +71,17 @@ public class Channels extends ConcurrentSkipListMap<String, Channel> implements 
     public final Channel getChannel(final String channel) {
         // LOG.debug("getChannel : " + channel);
         final String chanLowerCase = channel.toLowerCase(Locale.FRANCE);
-        if (containsKey(chanLowerCase)) {
+        Channel found = get(chanLowerCase);
+        if (found != null) {
             LOG.debug("channel '" + chanLowerCase + "' found.");
-            return get(chanLowerCase);
+        } else if (isChannelName(chanLowerCase)) {
+            LOG.debug("channel '" + chanLowerCase + "' not found, adding");
+            found = new Channel(chanLowerCase);
+            put(chanLowerCase, found);
+        } else {
+            LOG.debug("'" + chanLowerCase + "' : not a channel name");
         }
-        LOG.debug("channel '" + chanLowerCase + "' not found, adding");
-        return buildChannel(chanLowerCase);
+        return found;
     }
     
     /**
