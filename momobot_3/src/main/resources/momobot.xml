@@ -4,11 +4,11 @@
 		<user class="net.mauhiz.irc.base.data.qnet.QnetUser" />
 		<chanprops class="net.mauhiz.irc.base.data.qnet.QnetChannelProperties" />
 	</server>
-
-	<profil name="default" nick="mom0" login="mmb" fullName="MMB v3">
+	   <server alias="Localhost" uri="irc://localhost:6667/">
+    </server>
+	<profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
 		<autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">
 			<join>#tsi.fr</join>
-			<join>#cos_squad</join>
 		</autoconnect>
 		<loadtriggerpack prefix="$" bundle="admin" />
 		<loadtriggerpack prefix="$" bundle="base" />
@@ -16,15 +16,21 @@
 		<loadtriggerpack prefix="$" bundle="gather" />
 		<loadtriggerpack prefix="$" bundle="pendu" />
 	</profil>
-	
+	<profil name="seekbot" nick="mom0" login="mom0" fullName="Pv moi si t'es mon ami">
+		<autoconnect server="Quakenet">
+			<join>#tsi.fr</join>
+		</autoconnect>
+		<loadtriggerpack prefix="$" bundle="admin" />
+		<loadtriggerpack prefix="$" bundle="event" />
+		<loadtriggerpack prefix="$" bundle="gather" />
+	</profil>
 	<profil name="local" nick="momobot3" login="mmb" fullName="MMB v3">
-		<autoconnect server="Quakenet" fullName="MMB v3 - Localhost">
+		<autoconnect server="Localhost" fullName="MMB v3 - Localhost">
 			<join>#test</join>
 		</autoconnect>
 		<loadtriggerpack prefix="$" bundle="admin" />
 		<loadtriggerpack prefix="$" bundle="base" />
 	</profil>
-
 	<triggerpack bundle="base" package="net.mauhiz.irc.bot.triggers.base">
 		<trigger class="MassHlTrigger">
 			<command>fessee</command>
@@ -35,10 +41,8 @@
 			<command>aide</command>
 		</trigger>
 		<trigger class="JoinOnInviteTrigger" />
-		
 		<trigger class="WelcomeTrigger" />
 	</triggerpack>
-	
 	<triggerpack bundle="admin" package="net.mauhiz.irc.bot.triggers.admin">
 		<trigger class="JoinTrigger">
 			<command>join</command>
@@ -61,7 +65,6 @@
 			<command>leave</command>
 		</trigger>
 	</triggerpack>
-	
 	<triggerpack bundle="event" package="net.mauhiz.irc.bot.triggers.event">
 		<trigger class="StopTrigger">
 			<command>reset</command>
@@ -71,7 +74,6 @@
 			<command>status</command>
 		</trigger>
 	</triggerpack>
-	
 	<triggerpack bundle="gather" package="net.mauhiz.irc.bot.triggers.event.gather">
 		<trigger class="GatherTrigger">
 			<command>start</command>
@@ -98,14 +100,16 @@
 			<command>pickup</command>
 			<command>pick</command>
 		</trigger>
-		<trigger class="SeekTrigger" message="seek %Pv%P - %S - %L pm " level="mid" serv="ON" ippass="127.0.0.1:27015 pass:dtc" channels="#cos_squad;#-duck-;#-hp-">
-			<command>seek</command></trigger>
+		<trigger class="SeekTrigger">
+			<command>seek</command>
+		</trigger>
 		<trigger class="StopSeekTrigger">
-			<command>stopseek</command></trigger>
+			<command>stopseek</command>
+		</trigger>
 		<trigger class="TgSeekTrigger">
-			<command>tg</command></trigger>
+			<command>tg</command>
+		</trigger>
 	</triggerpack>
-	
 	<triggerpack bundle="pendu" package="net.mauhiz.irc.bot.triggers.event.pendu">
 		<trigger class="PenduTrigger">
 			<command>pendu</command>
