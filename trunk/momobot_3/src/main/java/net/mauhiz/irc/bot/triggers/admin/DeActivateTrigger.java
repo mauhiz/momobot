@@ -43,21 +43,16 @@ public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrig
             control.sendMsg(retour2);
         } else {
             String className = args[0];
-            LOG.info("Toggle trigger class = " + className);
+            LOG.info("Deactivating trigger class: " + className);
             MmbTriggerManager manager = (MmbTriggerManager) ((IrcControl) control).getManager();
-            boolean success;
+            
             if (args.length == 1) {
                 /* remove inconditionnel */
-                success = manager.removeTrigger(className, null);
+                manager.removeTrigger(className, null);
             } else {
                 /* remove de certains triggertext seulement */
                 String[] texts = Arrays.copyOfRange(args, 1, args.length);
-                success = manager.removeTrigger(className, texts);
-            }
-            
-            if (!success) {
-                Privmsg retour = Privmsg.buildPrivateAnswer(pme, "Could not load trigger " + className);
-                control.sendMsg(retour);
+                manager.removeTrigger(className, texts);
             }
         }
     }
