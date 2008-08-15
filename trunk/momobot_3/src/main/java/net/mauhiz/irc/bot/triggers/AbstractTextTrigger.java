@@ -3,6 +3,7 @@ package net.mauhiz.irc.bot.triggers;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -31,6 +32,19 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     }
     
     /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof AbstractTextTrigger)) {
+            return false;
+        }
+        return getClass().equals(obj.getClass()) && triggerText.equals(((AbstractTextTrigger) obj).triggerText);
+    }
+    
+    /**
      * @param message
      *            le message
      * @return les params du msg
@@ -44,6 +58,14 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
      */
     public final String getTriggerHelp() {
         return triggerText;
+    }
+    
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getClass()).append(triggerText).toHashCode();
     }
     
     /**
