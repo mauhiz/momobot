@@ -46,12 +46,8 @@ public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigge
         } else {
             String className = args[0];
             LOG.info("Activate trigger class = " + className);
-            boolean success = Launcher.loadTrigClass(className, "", ((MmbTriggerManager) ((IrcControl) control)
-                    .getManager()), Arrays.copyOfRange(args, 1, args.length));
-            if (!success) {
-                Privmsg retour = Privmsg.buildPrivateAnswer(pme, "Could not load trigger " + className);
-                control.sendMsg(retour);
-            }
+            Launcher.loadTrigClass(className, "", ((MmbTriggerManager) ((IrcControl) control).getManager()), Arrays
+                    .copyOfRange(args, 1, args.length));
         }
     }
 }
