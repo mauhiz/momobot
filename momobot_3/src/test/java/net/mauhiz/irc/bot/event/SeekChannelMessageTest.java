@@ -22,6 +22,6 @@ public class SeekChannelMessageTest {
         SeekWar seekwar = new SeekWar(gather);
         IrcUser user1 = new IrcUser("a");
         gather.add(user1);
-        Assert.assertEquals(seekwar.submitChannelMessage("1vs1 off mid"), true);
+        Assert.assertTrue(seekwar.submitChannelMessage("1vs1 off mid"));
     }
 }
