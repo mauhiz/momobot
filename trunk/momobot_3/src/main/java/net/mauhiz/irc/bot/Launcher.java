@@ -30,38 +30,32 @@ public class Launcher {
      * @param prefix
      * @param mtm
      * @param trigTexts
-     * @return success
      */
-    public static boolean loadTrigClass(final String trigClassFull, final String prefix, final MmbTriggerManager mtm,
+    public static void loadTrigClass(final String trigClassFull, final String prefix, final MmbTriggerManager mtm,
             final String[] trigTexts) {
         Class<ITrigger> trigClass;
         try {
             Class<?> wannabe = Class.forName(trigClassFull);
             if (!ITrigger.class.isAssignableFrom(wannabe)) {
                 LOG.warn("Not a trigger: " + wannabe.getName());
-                return false;
+                return;
             }
             trigClass = (Class<ITrigger>) wannabe;
         } catch (ClassNotFoundException e) {
             LOG.warn(e);
-            return false;
+            return;
         }
         
         if (ArrayUtils.isEmpty(trigTexts)) {
             LOG.debug("loading trigger: " + trigClass.getSimpleName());
-            return mtm.addTrigger(trigClass, (Object[]) null);
+            mtm.addTrigger(trigClass, (Object[]) null);
+        } else {
+            for (String trigText : trigTexts) {
+                String fullTrigText = prefix + trigText;
+                mtm.addTrigger(trigClass, fullTrigText);
+                LOG.debug("loading trigger with command '" + fullTrigText + "': " + trigClass.getSimpleName());
+            }
         }
-        /*
-         * il suffit d'un seul txt ok pour prouver que la classe est loadable. Si on a d autres txt pas bons, c est
-         * qu'on tente de charger 2x le meme txt.
-         */
-        boolean atLeastOneOk = false;
-        for (String trigText : trigTexts) {
-            String fullTrigText = prefix + trigText;
-            atLeastOneOk |= mtm.addTrigger(trigClass, fullTrigText);
-            LOG.debug("loading trigger with command '" + fullTrigText + "': " + trigClass.getSimpleName());
-        }
-        return atLeastOneOk;
     }
     
     /**
