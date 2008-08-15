@@ -43,12 +43,12 @@ public class UsersTest {
      */
     @Test
     public void testMultiChan() {
-        Channel chan = Channels.get(qnet).buildChannel("#tsi.Fr");
+        Channel chan = Channels.get(qnet).getChannel("#tsi.Fr");
         IrcUser peon = Users.get(qnet).findUser("Truite", true);
         IrcUser peon2 = Users.get(qnet).findUser("Gruiiik", true);
         chan.add(peon);
         chan.add(peon2);
-        Channel chan2 = Channels.get(qnet).buildChannel("#-duCk-");
+        Channel chan2 = Channels.get(qnet).getChannel("#-duCk-");
         chan2.add(peon2);
         Assert.assertEquals(2, Channels.get(qnet).getChannels(peon2).size());
         Assert.assertEquals(2, Users.get(qnet).size());
@@ -59,7 +59,9 @@ public class UsersTest {
      */
     @Test
     public void testSingleChan() {
-        Channel chan = Channels.get(qnet).buildChannel("#tsi.Fr");
+        Channel chan = Channels.get(qnet).getChannel("#tsi.Fr");
+        Channel chan2 = Channels.get(qnet).getChannel("#tsi.fr");
+        Assert.assertTrue(chan == chan2);
         IrcUser peon = Users.get(qnet).findUser("Truite", true);
         IrcUser peon2 = Users.get(qnet).findUser("Gruiiik", true);
         chan.add(peon);
