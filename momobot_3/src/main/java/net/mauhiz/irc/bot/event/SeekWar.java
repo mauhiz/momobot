@@ -70,6 +70,10 @@ public class SeekWar {
      */
     private long seekTimeOut;
     /**
+     * si on a splité
+     */
+    private boolean splited = false;
+    /**
      * le temps où je commence.
      */
     private final StopWatch sw = new StopWatch();
@@ -90,7 +94,7 @@ public class SeekWar {
         seekMessage = "seek %Pv%P - %S - %L pm ";
         gather = gath;
         // 7 min
-        seekTimeOut = TimeUnit.MILLISECONDS.convert(7, TimeUnit.MINUTES);
+        seekTimeOut = TimeUnit.MILLISECONDS.convert(8, TimeUnit.MINUTES);
         userpv.clear();
     }
     
@@ -333,6 +337,28 @@ public class SeekWar {
         String destination = im.getTo();
         String msg = im.getMessage();
         List<Privmsg> resultPrivmsg = new ArrayList<Privmsg>(3);
+        
+        // On test si il faut renvoié le msg de seek au channel
+        
+        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)) {
+            if (splited) {
+                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)) {
+                    sw.split();
+                    seekMessage = "." + seekMessage + ".";
+                    for (String element : SEEK_CHANS) {
+                        Privmsg msg1 = new Privmsg(null, element, im.getServer(), getMessageForSeeking());
+                        resultPrivmsg.add(msg1);
+                    }
+                }
+            } else {
+                sw.split();
+                splited = true;
+                seekMessage = "." + seekMessage + ".";
+                Privmsg msg3 = new Privmsg(null, channel, im.getServer(), getMessageForSeeking());
+                resultPrivmsg.add(msg3);
+            }
+        }
+        
         // Traitement des messages entrant
         if ("mom0".equals(destination)) {
             // C'est un msg PV
@@ -434,7 +460,6 @@ public class SeekWar {
         
         return resultPrivmsg;
     }
-    
     public final String tg() {
         userpv.clear();
         return "Ok je la ferme.";
