@@ -48,16 +48,20 @@ public class Launcher {
         }
         
         if (ArrayUtils.isEmpty(trigTexts)) {
-            mtm.addTrigger(trigClass, (Object[]) null);
             LOG.debug("loading trigger: " + trigClass.getSimpleName());
-        } else {
-            for (String trigText : trigTexts) {
-                String fullTrigText = prefix + trigText;
-                mtm.addTrigger(trigClass, fullTrigText);
-                LOG.debug("loading trigger with command '" + fullTrigText + "': " + trigClass.getSimpleName());
-            }
+            return mtm.addTrigger(trigClass, (Object[]) null);
         }
-        return true;
+        /*
+         * il suffit d'un seul txt ok pour prouver que la classe est loadable. Si on a d autres txt pas bons, c est
+         * qu'on tente de charger 2x le meme txt.
+         */
+        boolean atLeastOneOk = false;
+        for (String trigText : trigTexts) {
+            String fullTrigText = prefix + trigText;
+            atLeastOneOk |= mtm.addTrigger(trigClass, fullTrigText);
+            LOG.debug("loading trigger with command '" + fullTrigText + "': " + trigClass.getSimpleName());
+        }
+        return atLeastOneOk;
     }
     
     /**
