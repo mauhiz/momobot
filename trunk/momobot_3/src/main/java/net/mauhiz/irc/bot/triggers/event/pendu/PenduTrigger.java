@@ -30,6 +30,10 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
         Channel chan = Channels.get(cme.getServer()).getChannel(cme.getTo());
+        if (chan == null) {
+            /* c est un msg prive */
+            return;
+        }
         ChannelEvent evt = chan.getEvt();
         if (isCommandMsg(cme.getMessage())) {
             String respMsg;
@@ -51,6 +55,9 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
             }
             Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
             control.sendMsg(resp);
+            if (!pendu.isRunning()) {
+                chan.setEvent(null);
+            }
         }
     }
 }
