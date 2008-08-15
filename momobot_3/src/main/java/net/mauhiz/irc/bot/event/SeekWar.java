@@ -93,7 +93,7 @@ public class SeekWar {
         seekLevel = "mid";
         seekMessage = "seek %Pv%P - %S - %L pm ";
         gather = gath;
-        // 7 min
+        // 8 min
         seekTimeOut = TimeUnit.MILLISECONDS.convert(8, TimeUnit.MINUTES);
         userpv.clear();
     }
