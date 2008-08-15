@@ -3,6 +3,8 @@ package net.mauhiz.irc.base.msg;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.model.Channels;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author mauhiz
  */
@@ -54,6 +56,9 @@ public class Notice extends IrcMessage {
      */
     @Override
     public String toString() {
+        if (StringUtils.isEmpty(message)) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder();
         if (super.from != null) {
             sb.append(':');
