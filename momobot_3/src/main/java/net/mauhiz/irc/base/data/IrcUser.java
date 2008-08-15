@@ -22,6 +22,19 @@ public class IrcUser {
     }
     
     /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof IrcUser)) {
+            return false;
+        }
+        return hostmask.equals(((IrcUser) obj).hostmask);
+    }
+    
+    /**
      * @return {@link #hostmask}
      */
     public Mask getHostmask() {
@@ -33,6 +46,14 @@ public class IrcUser {
      */
     public String getNick() {
         return hostmask.getNick();
+    }
+    
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return hostmask.hashCode();
     }
     
     /**
