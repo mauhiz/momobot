@@ -114,4 +114,9 @@
 			<command>pendu</command>
 		</trigger>
 	</triggerpack>
+	<triggerpack bundle="fun" package="net.mauhiz.irc.bot.triggers.fun">
+		<trigger class="KennyTrigger">
+			<command>kenny</command>
+		</trigger>
+	</triggerpack>
 </momobot>
