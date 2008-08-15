@@ -46,7 +46,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
             initKeeper(control);
         }
         msg.clear().append(COMMANDES);
-        for (final ITrigger trig : keeper.getTriggers()) {
+        for (final ITrigger trig : keeper) {
             if (trig instanceof INoticeTrigger) {
                 msg.append(trig).append(' ');
             }
@@ -66,7 +66,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
             initKeeper(control);
         }
         msg.clear().append(COMMANDES);
-        for (final ITrigger trig : keeper.getTriggers()) {
+        for (final ITrigger trig : keeper) {
             if (trig instanceof IPrivmsgTrigger) {
                 msg.append(trig).append(' ');
             }
@@ -75,6 +75,9 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         control.sendMsg(resp);
     }
     
+    /**
+     * @param control
+     */
     private void initKeeper(final IIrcControl control) {
         IrcControl realControl = (IrcControl) control;
         MmbTriggerManager manager = (MmbTriggerManager) realControl.getManager();
