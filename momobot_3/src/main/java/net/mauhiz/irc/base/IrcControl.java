@@ -89,6 +89,7 @@ public class IrcControl implements IIrcControl, NumericReplies {
             Notice notice = (Notice) msg;
             if (notice.getFrom() != null) {
                 io.setStatus(Status.CONNECTED);
+                LOG.info("connected to " + msg.getServer());
             }
             /* dont let it be processed */
             return;
@@ -118,18 +119,43 @@ public class IrcControl implements IIrcControl, NumericReplies {
      */
     private void processServerMsg(final ServerMsg smsg) {
         switch (smsg.getCode()) {
+            case RPL_UMODEIS :
+                /* TODO process my user mode */
+                LOG.debug("my mode: " + smsg.getMsg());
+                break;
+            case RPL_TOPIC :
+                LOG.debug("topic: " + smsg.getMsg());
+                /* TODO process topic */
+                break;
+            case RPL_TOPICINFO :
+                LOG.debug("topic info: " + smsg.getMsg());
+                /* TODO process topic info */
+                break;
+            case RPL_LUSERCLIENT :
+                LOG.info("number of clients: " + smsg.getMsg());
+                break;
+            case RPL_LUSERCHANNELS :
+                LOG.info("number of channels: " + smsg.getMsg());
+                break;
+            case RPL_LUSERME :
+                LOG.info("server userme: " + smsg.getMsg());
+                break;
             case RPL_MOTD :
-                LOG.info("Motd LINE : " + smsg.getMsg());
+                /* TODO store MOTD?? */
+                LOG.info("Motd LINE: " + smsg.getMsg());
                 break;
             case RPL_NAMREPLY :
                 /* TODO process names */
-                LOG.debug("Names Reply : " + smsg.getMsg());
+                LOG.debug("Names Reply: " + smsg.getMsg());
                 break;
             case RPL_ENDOFNAMES :
                 LOG.debug("End of Names Reply");
                 break;
             case RPL_LUSEROP :
                 LOG.info("list of operators: " + smsg.getMsg());
+                break;
+            case RPL_MOTDSTART :
+                LOG.debug("Start of MOTD: " + smsg.getMsg());
                 break;
             case ERR_NOTEXTTOSEND :
                 LOG.warn("Server told me that I tried to send an empty msg");
