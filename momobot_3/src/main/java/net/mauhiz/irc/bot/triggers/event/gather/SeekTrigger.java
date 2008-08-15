@@ -48,10 +48,13 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
-        ChannelEvent evt = chan.getEvt();
         if (isCommandMsg(im.getMessage())) {
-            
+            Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
+            if (chan == null) {
+                /* msg prive */
+                return;
+            }
+            ChannelEvent evt = chan.getEvt();
             if (evt == null) {
                 Privmsg resp = Privmsg.buildAnswer(im, "Aucun gather n'est lance.");
                 control.sendMsg(resp);
@@ -84,7 +87,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                 control.sendMsg(resp);
             }
         } else {
-            
+            /* FIXME vilain hardcode */
             Channel chan1 = Channels.get(im.getServer()).getChannel("#tsi.fr");
             ChannelEvent evt1 = chan1.getEvt();
             // if (evt instanceof Gather) {
