@@ -1,7 +1,7 @@
 package net.mauhiz.irc.bot.triggers.fun;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -12,7 +12,7 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrBuilder;
 import org.apache.log4j.Logger;
@@ -28,8 +28,8 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     private static final byte KENNY_LETTER_LEN = 3;
     /**
-     * The KENNYLETTERS in alphabetical order. Big Letters are the Same with the
-     * only difference That the First char is UpperCase
+     * The KENNYLETTERS in alphabetical order. Big Letters are the Same with the only difference That the First char is
+     * UpperCase
      */
     private static final Map<String, Character> KENNY_TO_NORMAL = new TreeMap<String, Character>();
     /**
@@ -71,7 +71,8 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     private static void loadKenny() {
         try {
-            final List<String> lignes = FileUtils.readLines(new File("res/kenny_map.txt"), "ISO-8859-1");
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("kenny_map.txt");
+            final List<String> lignes = IOUtils.readLines(is, "ISO-8859-1");
             if (!KENNY_TO_NORMAL.isEmpty()) {
                 KENNY_TO_NORMAL.clear();
             }
