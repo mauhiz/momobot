@@ -13,10 +13,10 @@ public class BashTriggerTest {
      */
     @Test
     public final void testGetNextFrQuote() {
-        String[] lignes = BashTrigger.getNextFrQuote();
-        for (String ligne : lignes) {
-            System.out.println(ligne);
-        }
+        /* String[] lignes = */BashTrigger.getNextFrQuote();
+        // for (String ligne : lignes) {
+        // System.out.println(ligne);
+        // }
     }
     
     /**
