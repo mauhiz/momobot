@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd>
     <useProjectRuleSet>false</useProjectRuleSet>
+    <ruleSetFile>.ruleset</ruleSetFile>
     <rules>
         <rule>
             <name>AbstractClassWithoutAbstractMethod</name>
+            <ruleset>Design Rules</ruleset>
+        </rule>
+        <rule>
+            <name>AbstractClassWithoutAnyMethod</name>
             <ruleset>Design Rules</ruleset>
         </rule>
         <rule>
@@ -107,6 +112,10 @@
             <ruleset>Optimization Rules</ruleset>
         </rule>
         <rule>
+            <name>AvoidMultipleUnaryOperators</name>
+            <ruleset>Basic Rules</ruleset>
+        </rule>
+        <rule>
             <name>AvoidPrintStackTrace</name>
             <ruleset>Java Logging Rules</ruleset>
         </rule>
@@ -121,6 +130,10 @@
         <rule>
             <name>AvoidRethrowingException</name>
             <ruleset>Strict Exception Rules</ruleset>
+        </rule>
+        <rule>
+            <name>AvoidStringBufferField</name>
+            <ruleset>String and StringBuffer Rules</ruleset>
         </rule>
         <rule>
             <name>AvoidSynchronizedAtMethodLevel</name>
@@ -215,10 +228,6 @@
             <ruleset>Type Resolution Rules</ruleset>
         </rule>
         <rule>
-            <name>CloneMethodMustImplementCloneable</name>
-            <ruleset>Clone Implementation Rules</ruleset>
-        </rule>
-        <rule>
             <name>CloneThrowsCloneNotSupportedException</name>
             <ruleset>Clone Implementation Rules</ruleset>
         </rule>
@@ -267,11 +276,19 @@
             <ruleset>Controversial Rules</ruleset>
         </rule>
         <rule>
+            <name>DoNotCallGarbageCollectionExplicitly</name>
+            <ruleset>Controversial Rules</ruleset>
+        </rule>
+        <rule>
             <name>DoNotCallSystemExit</name>
             <ruleset>J2EE Rules</ruleset>
         </rule>
         <rule>
             <name>DoNotExtendJavaLangError</name>
+            <ruleset>Strict Exception Rules</ruleset>
+        </rule>
+        <rule>
+            <name>DoNotThrowExceptionInFinally</name>
             <ruleset>Strict Exception Rules</ruleset>
         </rule>
         <rule>
@@ -435,6 +452,10 @@
             <ruleset>Migration Rules</ruleset>
         </rule>
         <rule>
+            <name>JumbledIncrementer</name>
+            <ruleset>Basic Rules</ruleset>
+        </rule>
+        <rule>
             <name>JUnit4SuitesShouldUseSuiteAnnotation</name>
             <ruleset>Migration Rules</ruleset>
         </rule>
@@ -471,10 +492,6 @@
             <ruleset>Migration Rules</ruleset>
         </rule>
         <rule>
-            <name>JumbledIncrementer</name>
-            <ruleset>Basic Rules</ruleset>
-        </rule>
-        <rule>
             <name>LocalHomeNamingConvention</name>
             <ruleset>J2EE Rules</ruleset>
         </rule>
@@ -501,10 +518,6 @@
         <rule>
             <name>LooseCoupling</name>
             <ruleset>Type Resolution Rules</ruleset>
-        </rule>
-        <rule>
-            <name>LooseCoupling</name>
-            <ruleset>Coupling Rules</ruleset>
         </rule>
         <rule>
             <name>MDBAndSessionBeanNamingConvention</name>
@@ -551,10 +564,6 @@
             <ruleset>Java Logging Rules</ruleset>
         </rule>
         <rule>
-            <name>NPathComplexity</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
             <name>NcssConstructorCount</name>
             <ruleset>Code Size Rules</ruleset>
         </rule>
@@ -567,10 +576,6 @@
             <ruleset>Code Size Rules</ruleset>
         </rule>
         <rule>
-            <name>NoPackage</name>
-            <ruleset>Naming Rules</ruleset>
-        </rule>
-        <rule>
             <name>NonCaseLabelInSwitchStatement</name>
             <ruleset>Design Rules</ruleset>
         </rule>
@@ -581,6 +586,14 @@
         <rule>
             <name>NonThreadSafeSingleton</name>
             <ruleset>Design Rules</ruleset>
+        </rule>
+        <rule>
+            <name>NoPackage</name>
+            <ruleset>Naming Rules</ruleset>
+        </rule>
+        <rule>
+            <name>NPathComplexity</name>
+            <ruleset>Code Size Rules</ruleset>
         </rule>
         <rule>
             <name>NullAssignment</name>
@@ -639,6 +652,10 @@
             <ruleset>Migration Rules</ruleset>
         </rule>
         <rule>
+            <name>ReturnEmptyArrayRatherThanNull</name>
+            <ruleset>Design Rules</ruleset>
+        </rule>
+        <rule>
             <name>ReturnFromFinallyBlock</name>
             <ruleset>Basic Rules</ruleset>
         </rule>
@@ -657,10 +674,6 @@
         <rule>
             <name>SignatureDeclareThrowsException</name>
             <ruleset>Type Resolution Rules</ruleset>
-        </rule>
-        <rule>
-            <name>SignatureDeclareThrowsException</name>
-            <ruleset>Strict Exception Rules</ruleset>
         </rule>
         <rule>
             <name>SimpleDateFormatNeedsLocale</name>
@@ -739,7 +752,15 @@
             <ruleset>JUnit Rules</ruleset>
         </rule>
         <rule>
+            <name>TooFewBranchesForASwitchStatement</name>
+            <ruleset>Design Rules</ruleset>
+        </rule>
+        <rule>
             <name>TooManyFields</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
+            <name>TooManyMethods</name>
             <ruleset>Code Size Rules</ruleset>
         </rule>
         <rule>
@@ -807,10 +828,6 @@
             <ruleset>Type Resolution Rules</ruleset>
         </rule>
         <rule>
-            <name>UnusedImports</name>
-            <ruleset>Import Statement Rules</ruleset>
-        </rule>
-        <rule>
             <name>UnusedLocalVariable</name>
             <ruleset>Unused Code Rules</ruleset>
         </rule>
@@ -867,6 +884,18 @@
             <ruleset>String and StringBuffer Rules</ruleset>
         </rule>
         <rule>
+            <name>UselessOperationOnImmutable</name>
+            <ruleset>Basic Rules</ruleset>
+        </rule>
+        <rule>
+            <name>UselessOverridingMethod</name>
+            <ruleset>Basic Rules</ruleset>
+        </rule>
+        <rule>
+            <name>UselessStringValueOf</name>
+            <ruleset>String and StringBuffer Rules</ruleset>
+        </rule>
+        <rule>
             <name>UseLocaleWithCaseConversions</name>
             <ruleset>Design Rules</ruleset>
         </rule>
@@ -888,18 +917,6 @@
         </rule>
         <rule>
             <name>UseStringBufferLength</name>
-            <ruleset>String and StringBuffer Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UselessOperationOnImmutable</name>
-            <ruleset>Basic Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UselessOverridingMethod</name>
-            <ruleset>Basic Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UselessStringValueOf</name>
             <ruleset>String and StringBuffer Rules</ruleset>
         </rule>
         <rule>
