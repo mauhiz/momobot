@@ -35,7 +35,7 @@ public class IrcOutput implements IIrcOutput {
     /**
      * @param outStream
      */
-    void connect(final OutputStream outStream) {
+    final void connect(final OutputStream outStream) {
         writer = new PrintWriter(outStream);
     }
     
