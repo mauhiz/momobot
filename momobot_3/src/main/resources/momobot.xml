@@ -14,6 +14,8 @@
 		<loadtriggerpack prefix="$" bundle="event" />
 		<loadtriggerpack prefix="$" bundle="gather" />
 		<loadtriggerpack prefix="$" bundle="pendu" />
+		<loadtriggerpack prefix="$" bundle="websearch" />
+		<loadtriggerpack prefix="$" bundle="fun" />
 	</profil>
 	<profil name="seekbot" nick="mom0" login="mom0" fullName="Pv moi si t'es mon ami">
 		<autoconnect server="Quakenet">
@@ -119,4 +121,9 @@
 			<command>kenny</command>
 		</trigger>
 	</triggerpack>
+	<triggerpack bundle="websearch" package="net.mauhiz.irc.bot.triggers.websearch">
+        <trigger class="BashTrigger">
+            <command>bash</command>
+        </trigger>
+    </triggerpack>
 </momobot>
