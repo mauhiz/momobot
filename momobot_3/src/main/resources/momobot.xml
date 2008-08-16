@@ -120,6 +120,9 @@
 		<trigger class="KennyTrigger">
 			<command>kenny</command>
 		</trigger>
+		<trigger class="RouletteTrigger">
+			<command>roulette</command>
+		</trigger>
 	</triggerpack>
 	<triggerpack bundle="websearch" package="net.mauhiz.irc.bot.triggers.websearch">
 		<trigger class="BashTrigger">
