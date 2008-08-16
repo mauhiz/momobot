@@ -32,7 +32,7 @@ public class MomoStringUtils {
             final String level) {
         String str;
         str = seekmsg;
-        str = str.replace("%P", nbPlayer + "");
+        str = str.replace("%P", String.valueOf(nbPlayer));
         str = str.replace("%S", server);
         str = str.replace("%L", level);
         return str;
