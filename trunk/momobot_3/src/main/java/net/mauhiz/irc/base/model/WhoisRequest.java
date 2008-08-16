@@ -92,7 +92,7 @@ public class WhoisRequest extends AbstractRunnable {
             return;
         }
         
-        IrcUser user = Users.get(server).findUser(target, false);
+        IrcUser user = Users.getInstance(server).findUser(target, false);
         if (user == null) {
             /* user inconnu */
             user = new IrcUser(target);
@@ -147,7 +147,7 @@ public class WhoisRequest extends AbstractRunnable {
         if (boo) {
             respMsg = result.result[0];
             if (purgatory) {
-                Users.get(server).findUser(target, true);
+                Users.getInstance(server).findUser(target, true);
             }
         } else {
             respMsg = "Could not whois " + target;

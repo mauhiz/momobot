@@ -31,13 +31,13 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
         IrcServer server = cme.getServer();
-        Channel chan = Channels.get(server).getChannel(cme.getTo());
+        Channel chan = Channels.getInstance(server).get(cme.getTo());
         ChannelEvent evt = chan.getEvt();
         String respMsg;
         if (evt != null) {
             respMsg = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + cme.getTo();
         } else {
-            IrcUser user = Users.get(server).findUser(new Mask(cme.getFrom()), true);
+            IrcUser user = Users.getInstance(server).findUser(new Mask(cme.getFrom()), true);
             respMsg = "Gather lancé par " + user;
             new Gather(chan).add(user);
         }

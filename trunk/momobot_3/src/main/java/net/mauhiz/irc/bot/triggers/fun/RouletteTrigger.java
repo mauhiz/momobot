@@ -30,7 +30,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        String from = im.getFrom();
+        String from = im.getTo();
         Channel wannabe = Channels.getInstance(im.getServer()).get(from);
         if (wannabe == null) {
             /* look args to determine channels */

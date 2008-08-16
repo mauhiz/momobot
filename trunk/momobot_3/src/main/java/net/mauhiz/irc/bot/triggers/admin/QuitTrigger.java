@@ -34,7 +34,7 @@ public class QuitTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         /* TODO quit cross servers */
         Quit quit;
         if (StringUtils.isEmpty(args)) {
-            IrcUser from = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), true);
+            IrcUser from = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
             quit = new Quit(im.getServer(), "Requested by " + from);
         } else {
             quit = new Quit(im.getServer(), args);

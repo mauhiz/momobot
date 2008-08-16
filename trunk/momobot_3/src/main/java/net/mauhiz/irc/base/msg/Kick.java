@@ -67,7 +67,7 @@ public class Kick extends IrcMessage {
         sb.append(' ');
         sb.append(target);
         if (reason != null) {
-            sb.append(' ');
+            sb.append(" :");
             sb.append(reason);
         }
         return sb.toString();

@@ -49,7 +49,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         if (isCommandMsg(im.getMessage())) {
-            Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
+            Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
             if (chan == null) {
                 /* msg prive */
                 return;
@@ -88,12 +88,12 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
             }
         } else {
             /* FIXME vilain hardcode */
-            Channel chan1 = Channels.get(im.getServer()).getChannel("#tsi.fr");
+            Channel chan1 = Channels.getInstance(im.getServer()).get("#tsi.fr");
             ChannelEvent evt1 = chan1.getEvt();
             // if (evt instanceof Gather) {
             if (evt1 instanceof Gather) {
                 final Gather gather = (Gather) evt1;
-                IrcUser kikoolol = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), true);
+                IrcUser kikoolol = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
                 if (gather.getSeek().isSeekInProgress()) {
                     if (!gather.getSeek().isTimeOut()) {
                         // TJS en vie

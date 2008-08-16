@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author mauhiz
  */
-public abstract class ChannelProperties {
+public class ChannelProperties {
     List<Mask> bans;
     boolean inviteOnly;
     String key;

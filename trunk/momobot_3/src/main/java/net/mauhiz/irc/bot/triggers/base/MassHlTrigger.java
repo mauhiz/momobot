@@ -39,7 +39,7 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
         IrcServer server = cme.getServer();
-        Channel chan = Channels.get(server).getChannel(cme.getTo());
+        Channel chan = Channels.getInstance(server).get(cme.getTo());
         if (chan == null) {
             /* msg pv */
             return;
@@ -50,8 +50,8 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         }
         
         LOG.debug("MassHlTrigger : " + chan + " has " + chan.size() + " users");
-        final StrBuilder msg = new StrBuilder("nudges");
-        IrcUser from = Users.get(server).findUser(cme.getFrom(), true);
+        final StrBuilder msg = new StrBuilder("Hey! ");
+        IrcUser from = Users.getInstance(server).findUser(cme.getFrom(), true);
         for (final IrcUser nextIrcUser : chan) {
             if (nextIrcUser instanceof QnetUser && ((QnetUser) nextIrcUser).isService()) {
                 /* no bots */
@@ -69,8 +69,8 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             LOG.debug("appending : " + nextIrcUser);
             msg.append(' ').append(nextIrcUser);
         }
-        
-        // MomoBot.getBotInstance().sendAction(chan, msg.toString());
+        Privmsg pmsg = Privmsg.buildAnswer(cme, msg.toString());
+        control.sendMsg(pmsg);
         /* FIXME action */
     }
 }

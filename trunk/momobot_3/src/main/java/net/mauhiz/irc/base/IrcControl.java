@@ -22,6 +22,7 @@ import net.mauhiz.irc.base.msg.ServerMsg;
 
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -83,13 +84,13 @@ public class IrcControl implements IIrcControl, NumericReplies {
             processServerMsg((ServerMsg) msg);
         } else if (msg instanceof Join) {
             Join join = (Join) msg;
-            Channel joined = Channels.get(server).getChannel(join.getChan());
-            IrcUser joiner = Users.get(server).findUser(new Mask(join.getFrom()), true);
+            Channel joined = Channels.getInstance(server).get(join.getChan());
+            IrcUser joiner = Users.getInstance(server).findUser(new Mask(join.getFrom()), true);
             joined.add(joiner);
         } else if (msg instanceof Kick) {
             Kick kick = (Kick) msg;
-            Channel from = Channels.get(server).getChannel(kick.getChan());
-            IrcUser kicked = Users.get(server).findUser(kick.getTarget(), true);
+            Channel from = Channels.getInstance(server).get(kick.getChan());
+            IrcUser kicked = Users.getInstance(server).findUser(kick.getTarget(), true);
             from.remove(kicked);
         } else if (msg instanceof Notice && io.getStatus() == Status.CONNECTING) {
             Notice notice = (Notice) msg;
@@ -152,7 +153,23 @@ public class IrcControl implements IIrcControl, NumericReplies {
                 break;
             case RPL_NAMREPLY :
                 /* TODO process names */
-                LOG.debug("Names Reply: " + smsg.getMsg());
+                String names = smsg.getMsg();
+                int sep = names.indexOf(" :");
+                String chanName = names.substring(2, sep);
+                String[] prefixedNames = StringUtils.split(names.substring(sep + 2));
+                Channel chan = Channels.getInstance(smsg.getServer()).get(chanName);
+                if (chan == null) {
+                    return;
+                }
+                for (String prefixedName : prefixedNames) {
+                    char prefix = prefixedName.charAt(0);
+                    if (prefix == '+' || prefix == '@' || prefix == '%') {
+                        prefixedName = prefixedName.substring(1);
+                    }
+                    IrcUser next = Users.getInstance(smsg.getServer()).findUser(prefixedName, true);
+                    chan.add(next);
+                }
+                LOG.info("Names Reply on " + chan + ": " + StringUtils.join(prefixedNames, ' '));
                 break;
             case RPL_ENDOFNAMES :
                 LOG.debug("End of Names Reply");
@@ -171,6 +188,9 @@ public class IrcControl implements IIrcControl, NumericReplies {
                 break;
             case RPL_LUSERUNKNOWN :
                 LOG.info("list of unknown users: " + smsg.getMsg());
+                break;
+            case ERR_QNETSERVICEIMMUNE :
+                LOG.warn("I cannot do harm to a service! " + smsg.getMsg());
                 break;
             default :
                 LOG.warn("Unhandled server reply : " + smsg);

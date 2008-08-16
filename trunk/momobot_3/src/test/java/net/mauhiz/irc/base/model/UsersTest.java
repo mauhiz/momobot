@@ -26,7 +26,7 @@ public class UsersTest {
      */
     @Before
     public void setUp() throws Exception {
-        Users.get(qnet);
+        Users.getInstance(qnet);
     }
     
     /**
@@ -34,15 +34,15 @@ public class UsersTest {
      */
     @Test
     public void testMultiChan() {
-        Channel chan = Channels.get(qnet).getChannel("#tsi.Fr");
-        IrcUser peon = Users.get(qnet).findUser("Truite", true);
-        IrcUser peon2 = Users.get(qnet).findUser("Gruiiik", true);
+        Channel chan = Channels.getInstance(qnet).get("#tsi.Fr");
+        IrcUser peon = Users.getInstance(qnet).findUser("Truite", true);
+        IrcUser peon2 = Users.getInstance(qnet).findUser("Gruiiik", true);
         chan.add(peon);
         chan.add(peon2);
-        Channel chan2 = Channels.get(qnet).getChannel("#-duCk-");
+        Channel chan2 = Channels.getInstance(qnet).get("#-duCk-");
         chan2.add(peon2);
-        Assert.assertEquals(2, Channels.get(qnet).getChannels(peon2).size());
-        Assert.assertEquals(2, Users.get(qnet).size());
+        Assert.assertEquals(2, Channels.getInstance(qnet).getChannels(peon2).size());
+        Assert.assertEquals(2, Users.getInstance(qnet).size());
     }
     
     /**
@@ -50,15 +50,15 @@ public class UsersTest {
      */
     @Test
     public void testSingleChan() {
-        Channel chan = Channels.get(qnet).getChannel("#tsi.Fr");
-        Channel chan2 = Channels.get(qnet).getChannel("#tsi.fr");
+        Channel chan = Channels.getInstance(qnet).get("#tsi.Fr");
+        Channel chan2 = Channels.getInstance(qnet).get("#tsi.fr");
         Assert.assertTrue(chan == chan2);
-        IrcUser peon = Users.get(qnet).findUser("Truite", true);
-        IrcUser peon2 = Users.get(qnet).findUser("Gruiiik", true);
+        IrcUser peon = Users.getInstance(qnet).findUser("Truite", true);
+        IrcUser peon2 = Users.getInstance(qnet).findUser("Gruiiik", true);
         chan.add(peon);
         chan.add(peon2);
-        Assert.assertTrue(Users.get(qnet).isKnown(peon));
-        Assert.assertTrue(Users.get(qnet).isKnown(peon2));
+        Assert.assertTrue(Users.getInstance(qnet).isKnown(peon));
+        Assert.assertTrue(Users.getInstance(qnet).isKnown(peon2));
         Assert.assertEquals(2, chan.size());
     }
 }

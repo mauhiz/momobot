@@ -30,13 +30,13 @@ public class PickupTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
+        Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String resp;
         if (evt != null) {
             resp = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + chan;
         } else {
-            IrcUser user = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), true);
+            IrcUser user = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
             new Pickup(chan).add(user, null);
             
             resp = "Pickup lancé par " + user;

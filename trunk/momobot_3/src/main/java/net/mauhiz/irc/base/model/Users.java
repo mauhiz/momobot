@@ -24,7 +24,7 @@ public final class Users extends HashSet<IrcUser> {
      * @param server
      * @return users
      */
-    public static Users get(final IrcServer server) {
+    public static Users getInstance(final IrcServer server) {
         Users servUsers = serverMap.get(server);
         if (servUsers == null) {
             servUsers = new Users();
