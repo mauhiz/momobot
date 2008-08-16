@@ -13,10 +13,12 @@ import org.apache.commons.lang.math.RandomUtils;
 /**
  * Un trigger pour lancer les dés !
  * 
- * @author mauhiz
+ * @author abby
  */
 public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
+     * Constructeur
+     * 
      * @param trigger
      */
     public RollTheDiceTrigger(final String trigger) {
