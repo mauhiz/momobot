@@ -51,6 +51,11 @@ public class SeekWar {
      */
     private String ippass;
     /**
+     * Liste d'ordre croissante des lvl
+     */
+    private String[] lvl = {"low-", "low", "low+", "low++", "noob", "mid-", "middle", "mid", "mid+", "mid++", "pgm",
+            "skilled", "high", "roxor"};
+    /**
      * True si le seek est en cour ; false sinon
      */
     private boolean seekInProgress;
@@ -79,6 +84,10 @@ public class SeekWar {
      */
     private final StopWatch sw = new StopWatch();
     /**
+     * 
+     */
+    private boolean sWarmingMe = false;
+    /**
      * Liste des users qui ont pv le bot
      */
     private final List<String> userpv = new ArrayList<String>();
@@ -100,15 +109,22 @@ public class SeekWar {
         userpv.clear();
     }
     
+    /**
+     * @return String = channel qui a lancé le seek ~ #tsi.fr
+     */
     public final String getChannel() {
         return channel;
     }
     /**
-     * @return
+     * @return String = Message de seek complété
      */
     public final String getMessageForSeeking() {
         return MomoStringUtils.genereSeekMessage(seekMessage, gather.getNumberPlayers(), seekServ, seekLevel);
     }
+    
+    /**
+     * @return String = qui a gagner le seek
+     */
     
     public final String getSeekWinner() {
         if (userpv.isEmpty()) {
@@ -340,9 +356,9 @@ public class SeekWar {
         
         // On test si il faut renvoié le msg de seek au channel
         
-        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)) {
+        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarmingMe) {
             if (splited) {
-                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)) {
+                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarmingMe) {
                     sw.split();
                     seekMessage = "." + seekMessage + ".";
                     for (String element : SEEK_CHANS) {
@@ -354,14 +370,25 @@ public class SeekWar {
                 sw.split();
                 splited = true;
                 seekMessage = "." + seekMessage + ".";
-                Privmsg msg3 = new Privmsg(null, channel, im.getServer(), getMessageForSeeking());
-                resultPrivmsg.add(msg3);
+                for (String element : SEEK_CHANS) {
+                    Privmsg msg1 = new Privmsg(null, element, im.getServer(), getMessageForSeeking());
+                    resultPrivmsg.add(msg1);
+                }
             }
         }
         
         // Traitement des messages entrant
         if ("mom0".equals(destination)) {
             // C'est un msg PV
+            
+            // Si c'est "S" on se calme!
+            if (provenance.toLowerCase().equals("S")) {
+                sWarmingMe = true;
+                Privmsg msg1 = new Privmsg(null, channel, im.getServer(), "S vient me faire ch**r. J'y vais calmos");
+                resultPrivmsg.add(msg1);
+            }
+            
+            // On continue de traiter le message PV
             if ("on".equals(seekServ.toLowerCase())) {
                 
                 if (userpv.contains(provenance)) {
