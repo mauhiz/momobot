@@ -1,9 +1,4 @@
-/**
- * 
- */
 package net.mauhiz.irc.base.model;
-
-import java.net.URISyntaxException;
 
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcServer;
@@ -19,11 +14,7 @@ import org.junit.Test;
 public class UsersTest {
     static IrcServer qnet;
     static {
-        try {
-            qnet = new IrcServer("irc://uk.quakenet.org:6667/");
-        } catch (URISyntaxException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+        qnet = new IrcServer("irc://uk.quakenet.org:6667/");
         qnet.setMyLogin("mmb");
         qnet.setMyFullName("momobot le 3eme");
         qnet.setAlias("Quakenet");
