@@ -12,7 +12,7 @@ import org.apache.commons.lang.text.StrBuilder;
 /**
  * @author mauhiz
  */
-public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigger, IrcSpecialChars {
     /**
      * TODO finir la methode.
      * 
@@ -35,27 +35,27 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     private static String createq3nick(final String args) {
         final StrBuilder q3nick = new StrBuilder();
-        String colorCode = "";
+        final StrBuilder colorCode = new StrBuilder();
         int inColor = 0;
-        for (int i = 0; i < args.length(); ++i) {
-            if (args.charAt(i) == IrcSpecialChars.COLOR) {
+        for (char c : args.toCharArray()) {
+            if (c == COLOR) {
                 inColor = 1;
                 continue;
             } else if (inColor == 1) {
-                if (Character.isDigit(args.charAt(i))) {
-                    colorCode = "" + args.charAt(i);
+                colorCode.clear();
+                if (Character.isDigit(c)) {
+                    colorCode.append(c);
                     ++inColor;
                 } else {
                     inColor = 0;
-                    colorCode = "";
                 }
             } else if (inColor == 2) {
-                if (Character.isDigit(args.charAt(i))) {
-                    colorCode = colorCode + args.charAt(i);
+                if (Character.isDigit(c)) {
+                    colorCode.append(c);
                 }
-                q3nick.append(computeQ3ColorCode(colorCode));
+                q3nick.append(computeQ3ColorCode(colorCode.toString()));
             } else {
-                q3nick.append(args.charAt(i));
+                q3nick.append(c);
             }
         }
         return q3nick.toString();
@@ -74,7 +74,7 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        Privmsg msg = Privmsg.buildAnswer(im, createq3nick(getArgs(im.getMessage())));
+        final Privmsg msg = Privmsg.buildAnswer(im, createq3nick(getArgs(im.getMessage())));
         control.sendMsg(msg);
     }
 }
