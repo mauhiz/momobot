@@ -100,13 +100,10 @@ public class WhoisRequest extends AbstractRunnable {
         }
         /* fréquence maximale de whois */
         WhoisRequest oldWr = allWhois.get(user);
-        if (oldWr != null) {
-            /* whois en cours */
-            if (oldWr.sw.getTime() < TIMEOUT) {
-                return;
-            }
+        /* whois en cours */
+        if (oldWr != null && oldWr.sw.getTime() < TIMEOUT) {
+            return;
             /* echec du whois precedent */
-
         }
         
         sw.start();
