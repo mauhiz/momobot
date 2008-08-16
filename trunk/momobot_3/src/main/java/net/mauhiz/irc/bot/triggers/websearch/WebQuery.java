@@ -122,7 +122,7 @@ public class WebQuery {
             }
         } else if (type.equals(YAHOO)) {
             page = page.substring(page.indexOf("<h2>RESULTATS WEB</h2>"));
-            forloop : for (short k = 0; k < numResult; ++k) {
+            forloop : for (int k = 0; k < numResult; ++k) {
                 while (!page.startsWith(HTTP) && !page.startsWith(FTP)) {
                     index = page.indexOf(resultSep);
                     if (index < 0) {
@@ -141,23 +141,26 @@ public class WebQuery {
                 page = page.substring(index);
             }
         } else if (type.equals(GOOGLE)) {
-            forloop : for (short k = 0; k < numResult; ++k) {
-                while (!page.startsWith(HTTP) && !page.startsWith(FTP)) {
-                    index = page.indexOf(resultSep);
-                    if (index == -1) {
-                        break forloop;
+            int start = page.indexOf("<h2 class=hd>Résultats de recherche</h2>");
+            if (start >= 0) {
+                page = page.substring(start);
+                forloop : for (int k = 0; k < numResult; ++k) {
+                    while (true) {
+                        index = page.indexOf(resultSep);
+                        if (index == -1) {
+                            break forloop;
+                        }
+                        page = page.substring(index + len);
+                        if (page.startsWith(HTTP) || page.startsWith(FTP)) {
+                            break;
+                        }
                     }
-                    page = page.substring(index + len);
-                }
-                index = page.indexOf('>');
-                work = page.substring(0, index);
-                if (work.endsWith(" class=fl")) {
-                    /* Ce résultat est pas bon, faudra en prendre un autre */
-                    ++numResult;
-                } else {
+                    index = page.indexOf("\" ");
+                    work = page.substring(0, index);
+                    /* TODO virer les liens de traduction */
                     results.add(work);
+                    page = page.substring(index);
                 }
-                page = page.substring(index);
             }
         }
         return results;
@@ -169,16 +172,16 @@ public class WebQuery {
     private void setUrl() throws URIException {
         if (type.equals(GAMETIGER)) {
             resultSep = "/search?address=";
-            url = new HttpURL("gametiger.net", HttpURL.DEFAULT_PORT, "/search?game=cstrike&player=" + query);
+            url = new HttpURL("gametiger.net", HttpURL.DEFAULT_PORT, "/search", "game=cstrike&player=" + query);
         } else if (type.equals(GOOGLE)) {
-            resultSep = "<a href=";
+            resultSep = "<a href=\"";
             numResult = 2;
-            url = new HttpURL("www.google.fr", HttpURL.DEFAULT_PORT, "/search?hl=fr&ie=UTF-8&oe=UTF-8&num=" + numResult
-                    + "&q=" + query);
+            url = new HttpURL("www.google.fr", HttpURL.DEFAULT_PORT, "/search", "hl=fr&ie=UTF-8&oe=UTF-8&num="
+                    + numResult + "&q=" + query);
         } else if (type.equals(YAHOO)) {
             resultSep = "<a class=yschttl  href=\"";
-            url = new HttpURL("fr.search.yahoo.com", HttpURL.DEFAULT_PORT, "/search?ie=UTF-8&num=" + numResult + "&p="
-                    + query);
+            url = new HttpURL("fr.search.yahoo.com", HttpURL.DEFAULT_PORT, "/search", "ie=UTF-8&num=" + numResult
+                    + "&p=" + query);
         }
     }
 }
