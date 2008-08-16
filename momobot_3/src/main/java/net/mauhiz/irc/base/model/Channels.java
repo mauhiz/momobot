@@ -35,7 +35,7 @@ public final class Channels extends ConcurrentSkipListMap<String, Channel> imple
      * @param server
      * @return users
      */
-    public static Channels get(final IrcServer server) {
+    public static Channels getInstance(final IrcServer server) {
         Channels servChannels = serverMap.get(server);
         if (servChannels == null) {
             servChannels = new Channels();
@@ -64,20 +64,30 @@ public final class Channels extends ConcurrentSkipListMap<String, Channel> imple
     }
     
     /**
+     * @see java.util.concurrent.ConcurrentSkipListMap#get(java.lang.Object)
+     */
+    @Override
+    public Channel get(final Object key) {
+        if (key instanceof String) {
+            return get((String) key);
+        }
+        return null;
+    }
+    
+    /**
      * @param channel
      *            le nom du channel
      * @return le channel
      */
-    public Channel getChannel(final String channel) {
-        // LOG.debug("getChannel : " + channel);
+    public Channel get(final String channel) {
         final String chanLowerCase = channel.toLowerCase(Locale.FRANCE);
-        Channel found = get(chanLowerCase);
+        Channel found = super.get(chanLowerCase);
         if (found != null) {
             LOG.debug("channel '" + chanLowerCase + "' found.");
         } else if (isChannelName(chanLowerCase)) {
             LOG.debug("channel '" + chanLowerCase + "' not found, adding");
             found = new Channel(chanLowerCase);
-            put(chanLowerCase, found);
+            super.put(chanLowerCase, found);
         } else {
             LOG.debug("'" + chanLowerCase + "' : not a channel name");
         }

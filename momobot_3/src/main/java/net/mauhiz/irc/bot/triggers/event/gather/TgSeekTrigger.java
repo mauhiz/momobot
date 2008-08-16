@@ -26,7 +26,7 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
+        Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {

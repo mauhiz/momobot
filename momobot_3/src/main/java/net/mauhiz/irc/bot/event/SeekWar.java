@@ -182,6 +182,7 @@ public class SeekWar {
     /**
      * @param commandSeek
      *            1) RIEN 2) ON IPPASS LVL 3) OFF LVL 4) ON IPPASS LVL MSGSEEK 5) OFF LVL MSGSEEK
+     * @param chan
      * @return String
      */
     public String start(final String[] commandSeek, final String chan) {
@@ -288,11 +289,13 @@ public class SeekWar {
      */
     public final boolean submitChannelMessage(final String stg) {
         // On doit inverser le seek ex:Si je seek srv ON,le msg de match doit être serv off.
-        String seekServ1 = "";
+        String seekServ1;
         if ("on".equalsIgnoreCase(seekServ)) {
             seekServ1 = "off";
         } else if ("off".equalsIgnoreCase(seekServ)) {
             seekServ1 = "on";
+        } else {
+            seekServ1 = "";
         }
         
         ArrayList<String> listMatch = new ArrayList<String>();
@@ -309,8 +312,7 @@ public class SeekWar {
             }
             
         }
-        
-        if (numbermatch && stg.toLowerCase().contains(seekServ1) && stg.toLowerCase().contains(seekLevel.toLowerCase())) {
+        if (numbermatch && stg.toLowerCase().contains(seekServ1) && StringUtils.containsIgnoreCase(stg, seekLevel)) {
             return true;
         }
         return false;
@@ -323,14 +325,14 @@ public class SeekWar {
     private boolean submitPVMessage(final String msg) {
         
         // RAJOUTE UNE DETECTION D'UNE IP&PASS
-        
+        String lowerMsg = msg.toLowerCase();
         for (String element : blackList) {
-            if (msg.toLowerCase().contains(element)) {
+            if (lowerMsg.contains(element)) {
                 return false;
             }
         }
         for (String element : greenList) {
-            if (msg.toLowerCase().contains(element)) {
+            if (lowerMsg.contains(element)) {
                 return true;
             }
         }
@@ -338,17 +340,13 @@ public class SeekWar {
     }
     
     /**
-     * @param msg
-     * @param destination
-     *            momobot3 ou #channel
-     * @param from
-     *            nick de l'user qui a parler
+     * @param im
      * @return String
      */
     
     public final List<Privmsg> submitSeekMessage(final Privmsg im) {
         IrcServer server1 = im.getServer();
-        IrcUser kikoolol = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), true);
+        IrcUser kikoolol = Users.getInstance(server1).findUser(new Mask(im.getFrom()), true);
         String provenance = kikoolol.getNick();
         String destination = im.getTo();
         String msg = im.getMessage();
@@ -487,6 +485,9 @@ public class SeekWar {
         
         return resultPrivmsg;
     }
+    /**
+     * @return un msg
+     */
     public final String tg() {
         userpv.clear();
         return "Ok je la ferme.";

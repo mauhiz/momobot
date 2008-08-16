@@ -43,7 +43,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        IrcUser user = Users.get(cme.getServer()).findUser(new Mask(cme.getFrom()), false);
+        IrcUser user = Users.getInstance(cme.getServer()).findUser(new Mask(cme.getFrom()), false);
         if (!(user instanceof QnetUser)) {
             LOG.error("user non Qnet: " + user);
             return;

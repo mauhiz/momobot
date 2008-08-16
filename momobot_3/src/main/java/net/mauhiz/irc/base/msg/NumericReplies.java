@@ -137,6 +137,10 @@ public interface NumericReplies {
      */
     short ERR_PASSWDMISMATCH = 464;
     /**
+     * custom error qnet
+     */
+    short ERR_QNETSERVICEIMMUNE = 485;
+    /**
      * .
      */
     short ERR_SUMMONDISABLED = 445;

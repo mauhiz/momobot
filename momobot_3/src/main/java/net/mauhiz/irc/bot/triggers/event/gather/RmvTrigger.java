@@ -31,13 +31,13 @@ public class RmvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        Channel chan = Channels.get(im.getServer()).getChannel(im.getTo());
+        Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {
             reply = "Aucun gather ou pickup n'est lance.";
         } else {
-            IrcUser user = Users.get(im.getServer()).findUser(new Mask(im.getFrom()), false);
+            IrcUser user = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), false);
             if (evt instanceof Gather) {
                 reply = ((Gather) evt).remove(user);
             } else if (evt instanceof Pickup) {

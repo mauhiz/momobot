@@ -42,6 +42,9 @@ public class Channel extends HashSet<IrcUser> {
         evt = channelEvent;
     }
     
+    /**
+     * @return msg
+     */
     public String stopEvent() {
         ChannelEvent localEvent = evt;
         setEvent(null);
@@ -53,9 +56,6 @@ public class Channel extends HashSet<IrcUser> {
      */
     @Override
     public String toString() {
-        if (prefix == null) {
-            return nom;
-        }
         return prefix + nom;
     }
 }

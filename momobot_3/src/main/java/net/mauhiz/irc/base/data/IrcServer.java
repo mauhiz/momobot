@@ -132,7 +132,7 @@ public class IrcServer {
      * @return le nombre d'users
      */
     public int countUsers() {
-        return Users.get(this).size();
+        return Users.getInstance(this).size();
     }
     
     /**
