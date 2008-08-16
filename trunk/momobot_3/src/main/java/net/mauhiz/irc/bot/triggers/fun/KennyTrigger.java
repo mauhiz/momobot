@@ -164,13 +164,12 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         if (NORMAL_TO_KENNY.isEmpty()) {
             loadKenny();
         }
-        final String retour = NORMAL_TO_KENNY.get(Character.valueOf(ch));
+        final String retour = NORMAL_TO_KENNY.get(Character.valueOf(Character.toLowerCase(ch)));
         if (Character.isUpperCase(ch)) {
             return StringUtils.capitalize(retour);
         }
         return retour;
     }
-    
     /**
      * @param toTranslate
      *            un string
