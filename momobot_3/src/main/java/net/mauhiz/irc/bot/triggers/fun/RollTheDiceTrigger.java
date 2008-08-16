@@ -35,8 +35,8 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
         IrcUser user = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
         boolean engueuler = false;
         
-        // 100 par défaut;
-        int defaultmax = 100;
+        // 1000 par défaut;
+        int defaultmax = 1000;
         int max;
         try {
             // Pour pas se faire lamer
@@ -79,11 +79,10 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
             commentaire = "OMG leet lancé ! ";
         } else if (number == 666) {
             commentaire = "Vade Retro, Satan ! ";
+        } else if (number / (double) max > 0.8) {
+            commentaire = "Pas trop mal, ";
         }
-        // TODO : j'aimerais bien savoir diviser 2 int, moi aussi
-        /*
-         * else if (number / max > 0.8) { commentaire = "Pas trop mal, "; }
-         */
+
         else {
             commentaire = "";
         }
