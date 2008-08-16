@@ -7,6 +7,7 @@ import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.User;
 
 import org.apache.commons.net.SocketClient;
+import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
@@ -18,8 +19,13 @@ public class IrcIO extends SocketClient implements IIrcIO {
     enum Status {
         CONNECTED, CONNECTING, DISCONNECTED;
     }
+    /**
+     * logger
+     */
+    private static final Logger LOG = Logger.getLogger(IrcIO.class);
     private IIrcControl control;
     private IIrcOutput output;
+    
     private Status status = Status.DISCONNECTED;
     
     /**
@@ -43,7 +49,6 @@ public class IrcIO extends SocketClient implements IIrcIO {
         output.sendRawMsg(new Nick(server).toString());
         output.sendRawMsg(new User(server).toString());
     }
-    
     /**
      * @see org.apache.commons.net.SocketClient#disconnect()
      */
@@ -53,7 +58,7 @@ public class IrcIO extends SocketClient implements IIrcIO {
             try {
                 super.disconnect();
             } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
+                LOG.error(ioe, ioe);
             }
         }
         output.setRunning(false);
