@@ -31,7 +31,7 @@ public class Notice extends IrcMessage {
         return new Notice(null, toReply.getFrom(), toReply.getServer(), msg);
     }
     
-    String message;
+    private final String message;
     
     /**
      * @param from1
