@@ -13,7 +13,7 @@ import org.apache.commons.lang.NullArgumentException;
 /**
  * @author mauhiz
  */
-public class Users extends HashSet<IrcUser> {
+public final class Users extends HashSet<IrcUser> {
     /**
      * serial.
      */

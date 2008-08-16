@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class Channels extends ConcurrentSkipListMap<String, Channel> implements IrcSpecialChars {
+public final class Channels extends ConcurrentSkipListMap<String, Channel> implements IrcSpecialChars {
     /**
      * logger.
      */
@@ -49,7 +49,7 @@ public class Channels extends ConcurrentSkipListMap<String, Channel> implements 
      *            le nom à tester
      * @return si le nom est un channel ou nom
      */
-    public static final boolean isChannelName(final String toTest) {
+    public static boolean isChannelName(final String toTest) {
         if (StringUtils.isEmpty(toTest) || StringUtils.indexOfAny(toTest, Z_NOTCHSTRING) > 0) {
             return false;
         }
@@ -68,7 +68,7 @@ public class Channels extends ConcurrentSkipListMap<String, Channel> implements 
      *            le nom du channel
      * @return le channel
      */
-    public final Channel getChannel(final String channel) {
+    public Channel getChannel(final String channel) {
         // LOG.debug("getChannel : " + channel);
         final String chanLowerCase = channel.toLowerCase(Locale.FRANCE);
         Channel found = get(chanLowerCase);
@@ -102,7 +102,7 @@ public class Channels extends ConcurrentSkipListMap<String, Channel> implements 
      * @param channel
      *            le channel
      */
-    public final void removeChannel(final String channel) {
+    public void removeChannel(final String channel) {
         remove(channel.toLowerCase(Locale.FRANCE));
     }
 }
