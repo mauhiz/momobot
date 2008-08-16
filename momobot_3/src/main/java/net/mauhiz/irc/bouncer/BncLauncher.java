@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,15 +29,16 @@ public class BncLauncher implements IrcSpecialChars {
     static final IrcServer QNET;
     
     static {
-        try {
-            QNET = new IrcServer("irc://uk.quakenet.org:6667/");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        QNET = new IrcServer("irc://uk.quakenet.org:6667/");
         QNET.setMyFullName("MomoBouncer");
         QNET.setAlias("Quakenet");
     }
     
+    /**
+     * @param client
+     * @return
+     * @throws IOException
+     */
     static Account accept(final BncClient client) throws IOException {
         String nick = null;
         String line;

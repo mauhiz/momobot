@@ -1,7 +1,5 @@
 package net.mauhiz.irc.bot;
 
-import java.net.URISyntaxException;
-
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Join;
@@ -106,7 +104,7 @@ public class Launcher {
             IrcServer server;
             try {
                 server = new IrcServer(uri);
-            } catch (URISyntaxException e) {
+            } catch (IllegalArgumentException e) {
                 LOG.error(e);
                 continue;
             }

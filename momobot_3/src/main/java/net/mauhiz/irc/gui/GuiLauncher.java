@@ -1,7 +1,6 @@
 package net.mauhiz.irc.gui;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.IIrcMessage;
@@ -27,11 +26,7 @@ import org.eclipse.swt.widgets.Text;
 public class GuiLauncher {
     static IrcServer qnet;
     static {
-        try {
-            qnet = new IrcServer("irc://uk.quakenet.org:6667/");
-        } catch (URISyntaxException e) {
-            throw new ExceptionInInitializerError(e);
-        }
+        qnet = new IrcServer("irc://uk.quakenet.org:6667/");
         qnet.setMyLogin("mmb");
         qnet.setMyFullName("momobot le 3eme");
         qnet.setAlias("Quakenet");

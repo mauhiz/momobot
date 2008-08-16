@@ -2,7 +2,6 @@ package net.mauhiz.irc.base.data;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,9 +54,8 @@ public class IrcServer {
     
     /**
      * @param uriStr
-     * @throws URISyntaxException
      */
-    public IrcServer(final String uriStr) throws URISyntaxException {
+    public IrcServer(final String uriStr) {
         this();
         buildFromURI(uriStr);
     }
@@ -124,10 +122,9 @@ public class IrcServer {
     
     /**
      * @param uriStr
-     * @throws URISyntaxException
      */
-    public final void buildFromURI(final String uriStr) throws URISyntaxException {
-        URI uri = new URI(uriStr);
+    public final void buildFromURI(final String uriStr) {
+        URI uri = URI.create(uriStr);
         hostPort = new InetSocketAddress(uri.getHost(), uri.getPort());
     }
     
