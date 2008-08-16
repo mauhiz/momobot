@@ -122,8 +122,19 @@
 		</trigger>
 	</triggerpack>
 	<triggerpack bundle="websearch" package="net.mauhiz.irc.bot.triggers.websearch">
-        <trigger class="BashTrigger">
-            <command>bash</command>
-        </trigger>
-    </triggerpack>
+		<trigger class="BashTrigger">
+			<command>bash</command>
+		</trigger>
+		<trigger class="GoogleTrigger">
+			<command>google</command>
+		</trigger>
+		<trigger class="BabelfishTrigger">
+			<command>translate</command>
+			<command>babelfish</command>
+		</trigger>
+		<trigger class="GametigerTrigger">
+			<command>gt</command>
+			<command>gametiger</command>
+		</trigger>
+	</triggerpack>
 </momobot>
