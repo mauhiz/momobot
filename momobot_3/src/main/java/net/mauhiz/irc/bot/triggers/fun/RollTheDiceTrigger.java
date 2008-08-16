@@ -8,6 +8,8 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+import org.apache.commons.lang.math.RandomUtils;
+
 /**
  * Un trigger pour lancer les dés !
  * 
@@ -27,11 +29,63 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
+        // Récupère le nom du joueur
         IrcUser user = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
-        int max = 100;
-        int number = (int) (Math.random() * max + 1);
+        boolean engueuler = false;
         
-        Privmsg msg = Privmsg.buildAnswer(im, user + " a obtenu un " + number + " (sur " + max + ')');
+        // 100 par défaut;
+        int defaultmax = 100;
+        int max;
+        try {
+            // Pour pas se faire lamer
+            if (getArgs(im.getMessage()).length() > 6) {
+                engueuler = true;
+            }
+            // 
+            max = Integer.parseInt(getArgs(im.getMessage()));
+        } catch (NumberFormatException e) {
+            
+            max = defaultmax;
+        }
+        
+        // Fourchette arbitraire
+        if (max <= 1 || max > 10000) {
+            engueuler = true;
+        }
+        
+        // Un paramètre est incorrect, on s'arrete là avec un message d'erreur.
+        if (engueuler) {
+            Privmsg msg = Privmsg
+                    .buildAnswer(
+                            im,
+                            user
+                                    + ", me prend pas pour un con, je suis quand meme le momobot, et je lance les dés entre 2 et 10000.");
+            control.sendMsg(msg);
+            return;
+        }
+        
+        // random de base
+        int number = RandomUtils.nextInt(max) + 1;
+        
+        // Petits commentaires futés
+        String commentaire;
+        if (number == max) {
+            commentaire = "Quelle chance ! ";
+        } else if (number == 1) {
+            commentaire = "C'est vraiment pas son jour : ";
+        } else if (number == 1337) {
+            commentaire = "OMG leet lancé ! ";
+        } else if (number == 666) {
+            commentaire = "Vade Retro, Satan ! ";
+        }
+        // TODO : j'aimerais bien savoir diviser 2 int, moi aussi
+        /*
+         * else if (number / max > 0.8) { commentaire = "Pas trop mal, "; }
+         */
+        else {
+            commentaire = "";
+        }
+        Privmsg msg = Privmsg.buildAnswer(im, commentaire + user + " a obtenu un " + number + " (sur " + max + ')');
         control.sendMsg(msg);
         
     }
