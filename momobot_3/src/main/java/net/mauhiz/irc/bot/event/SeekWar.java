@@ -29,6 +29,7 @@ public class SeekWar {
      * liste des channels de seek
      */
     public static final String[] SEEK_CHANS = {"#clanwar.fr"};
+    static final String[] SEPARATEUR = {"vs", "v", "on", "o", "x"};
     /**
      * black list pour un msg pv
      */
@@ -81,6 +82,7 @@ public class SeekWar {
      * Liste des users qui ont pv le bot
      */
     private final List<String> userpv = new ArrayList<String>();
+    
     /**
      * 
      * @param gath
@@ -101,13 +103,13 @@ public class SeekWar {
     public final String getChannel() {
         return channel;
     }
-    
     /**
      * @return
      */
     public final String getMessageForSeeking() {
         return MomoStringUtils.genereSeekMessage(seekMessage, gather.getNumberPlayers(), seekServ, seekLevel);
     }
+    
     public final String getSeekWinner() {
         if (userpv.isEmpty()) {
             return "";
@@ -126,13 +128,12 @@ public class SeekWar {
      * @return false = TJS en vie true = DEAD!
      */
     public final boolean isTimeOut() {
-        System.out.println("Time seek : " + sw.getTime());
+        LOG.debug("Time seek : " + sw.getTime());
         if (sw.getTime() < seekTimeOut) {
             return false;
         }
         return true;
     }
-    
     /**
      * @param cmd
      *            String[] non normalise
@@ -145,10 +146,9 @@ public class SeekWar {
         boolean inquote = false;
         for (String element : cmd) {
             
-            if (element.charAt(0) == '\"' || element.charAt(element.length() - 1) == '\"') {
-                if (!(element.charAt(0) == '\"' && element.charAt(element.length() - 1) == '\"')) {
-                    inquote = !inquote;
-                }
+            /* hey, xoring! */
+            if (element.charAt(0) == '\"' ^ element.charAt(element.length() - 1) == '\"') {
+                inquote = !inquote;
             }
             
             if (tmpStg.isEmpty()) {
@@ -185,7 +185,7 @@ public class SeekWar {
                 return "Seek Par Defaut.";
                 
             case 1 :
-                if (cmdSeek.get(0).toLowerCase().equals("on") || cmdSeek.get(0).toLowerCase().equals("off")) {
+                if ("on".equalsIgnoreCase(cmdSeek.get(0)) || "off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
@@ -195,12 +195,12 @@ public class SeekWar {
                 return "Paramètre(s) Incorrect";
                 
             case 2 :
-                if (cmdSeek.get(0).toLowerCase().equals("on")) {
+                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
                     return "Seek : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
-                } else if (cmdSeek.get(0).toLowerCase().equals("off")) {
+                } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
@@ -212,13 +212,13 @@ public class SeekWar {
                 }
                 
             case 3 :
-                if (cmdSeek.get(0).toLowerCase().equals("on")) {
+                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
                     seekLevel = cmdSeek.get(2);
                     return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
-                } else if (cmdSeek.get(0).toLowerCase().equals("off")) {
+                } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
@@ -232,7 +232,7 @@ public class SeekWar {
                 }
                 
             case 4 :
-                if (cmdSeek.get(0).toLowerCase().equals("on")) {
+                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
@@ -252,6 +252,7 @@ public class SeekWar {
                 
         }
     }
+    
     /**
      * @return une String
      */
@@ -272,16 +273,15 @@ public class SeekWar {
     public final boolean submitChannelMessage(final String stg) {
         // On doit inverser le seek ex:Si je seek srv ON,le msg de match doit être serv off.
         String seekServ1 = "";
-        if (seekServ.toLowerCase().equals("on")) {
+        if ("on".equalsIgnoreCase(seekServ)) {
             seekServ1 = "off";
-        } else if (seekServ.toLowerCase().equals("off")) {
+        } else if ("off".equalsIgnoreCase(seekServ)) {
             seekServ1 = "on";
         }
         
-        String[] separateur = {"vs", "v", "on", "o", "x"};
         ArrayList<String> listMatch = new ArrayList<String>();
         int player = gather.getNumberPlayers();
-        for (String element : separateur) {
+        for (String element : SEPARATEUR) {
             listMatch.add(player + element + player);
             listMatch.add(player + " " + element + " " + player);
         }
@@ -451,7 +451,7 @@ public class SeekWar {
             // On pv le mec pr lui dire rdy?
             Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "rdy?");
             resultPrivmsg.add(msg1);
-            if (seekLevel.toLowerCase().equals("off")) {
+            if ("off".equalsIgnoreCase(seekLevel)) {
                 userpv.add("ip&pass?");
             }
             return resultPrivmsg;
