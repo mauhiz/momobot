@@ -1,7 +1,6 @@
 package net.mauhiz.irc.base.data.qnet;
 
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
 
 /**
  * @author mauhiz
@@ -10,10 +9,10 @@ public class QnetUser extends IrcUser {
     private String auth;
     
     /**
-     * @param hostmask1
+     * @param nick1
      */
-    public QnetUser(final Mask hostmask1) {
-        super(hostmask1);
+    public QnetUser(final String nick1) {
+        super(nick1);
     }
     
     /**

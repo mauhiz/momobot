@@ -4,21 +4,16 @@ package net.mauhiz.irc.base.data;
  * @author mauhiz
  */
 public class IrcUser {
-    private final Mask hostmask;
+    private String host;
+    private String nick;
     private final UserProperties props = new UserProperties();
+    private String user;
     
     /**
-     * @param hostmask1
+     * @param nick1
      */
-    public IrcUser(final Mask hostmask1) {
-        hostmask = hostmask1;
-    }
-    
-    /**
-     * @param nick
-     */
-    public IrcUser(final String nick) {
-        hostmask = new Mask(nick + "!*@*");
+    public IrcUser(final String nick1) {
+        nick = nick1;
     }
     
     /**
@@ -31,21 +26,28 @@ public class IrcUser {
         } else if (!(obj instanceof IrcUser)) {
             return false;
         }
-        return hostmask.equals(((IrcUser) obj).hostmask);
+        return nick.equals(((IrcUser) obj).nick);
     }
     
     /**
-     * @return {@link #hostmask}
+     * @return {@link #host}
      */
-    public Mask getHostmask() {
-        return hostmask;
+    public String getHost() {
+        return host;
     }
     
     /**
      * @return user nick
      */
     public String getNick() {
-        return hostmask.getNick();
+        return nick;
+    }
+    
+    /**
+     * @return {@link #user}
+     */
+    public String getUser() {
+        return user;
     }
     
     /**
@@ -53,7 +55,28 @@ public class IrcUser {
      */
     @Override
     public int hashCode() {
-        return hostmask.hashCode();
+        return nick.hashCode();
+    }
+    
+    /**
+     * @param host1
+     */
+    public void setHost(final String host1) {
+        host = host1;
+    }
+    
+    /**
+     * @param nick1
+     */
+    public void setNick(final String nick1) {
+        nick = nick1;
+    }
+    
+    /**
+     * @param user1
+     */
+    public void setUser(final String user1) {
+        user = user1;
     }
     
     /**
@@ -62,5 +85,19 @@ public class IrcUser {
     @Override
     public String toString() {
         return getNick();
+    }
+    
+    /**
+     * @param hostmask
+     */
+    public final void updateWithMask(final Mask hostmask) {
+        host = hostmask.getHost();
+        if ("*".equals(host)) {
+            host = null;
+        }
+        user = hostmask.getUser();
+        if ("*".equals(user)) {
+            user = null;
+        }
     }
 }

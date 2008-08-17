@@ -18,20 +18,24 @@ public final class Users extends HashSet<IrcUser> {
      * serial.
      */
     private static final long serialVersionUID = 1L;
-    static Map<IrcServer, Users> serverMap = new HashMap<IrcServer, Users>();
+    /**
+     * a chaque server sa liste d users.
+     */
+    private static final Map<IrcServer, Users> SERVERS = new HashMap<IrcServer, Users>();
     
     /**
      * @param server
      * @return users
      */
     public static Users getInstance(final IrcServer server) {
-        Users servUsers = serverMap.get(server);
+        Users servUsers = SERVERS.get(server);
         if (servUsers == null) {
             servUsers = new Users();
-            serverMap.put(server, servUsers);
+            SERVERS.put(server, servUsers);
         }
         return servUsers;
     }
+    
     /**
      * private ctor
      */
@@ -42,19 +46,28 @@ public final class Users extends HashSet<IrcUser> {
     /**
      * @param mask
      * @param addIfNotFound
+     *            means that all info from mask are safe, not just a query
      * @return IrcUser
      */
     public IrcUser findUser(final Mask mask, final boolean addIfNotFound) {
         if (mask == null) {
             throw new NullArgumentException("mask");
         }
+        String nick = mask.getNick();
+        if (nick == null) {
+            throw new NullArgumentException("nick");
+        }
         for (IrcUser user : this) {
-            if (mask.equals(user.getHostmask())) {
+            if (nick.equals(user.getNick())) {
+                if (addIfNotFound && (user.getHost() == null || user.getUser() == null)) {
+                    user.updateWithMask(mask);
+                }
                 return user;
             }
         }
         if (addIfNotFound) {
-            IrcUser newUser = new IrcUser(mask);
+            IrcUser newUser = new IrcUser(mask.getNick());
+            newUser.updateWithMask(mask);
             add(newUser);
             return newUser;
         }
@@ -92,5 +105,19 @@ public final class Users extends HashSet<IrcUser> {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * @param oldNick
+     * @param newNick
+     */
+    public void updateNick(final String oldNick, final String newNick) {
+        IrcUser changer = findUser(oldNick, false);
+        if (changer == null) {
+            /* we did not know him anyways. how so? */
+            findUser(newNick, true);
+        } else {
+            changer.setNick(newNick);
+        }
     }
 }
