@@ -29,6 +29,10 @@ public class StatusTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         IrcServer server = im.getServer();
         Channel chan = Channels.getInstance(server).get(im.getTo());
+        if (chan == null) {
+            /* msg prive */
+            return;
+        }
         ChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {
