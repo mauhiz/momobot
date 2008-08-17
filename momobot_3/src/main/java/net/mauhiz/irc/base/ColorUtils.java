@@ -106,7 +106,7 @@ public class ColorUtils implements IrcSpecialChars {
      * @return la chaine coloree
      */
     public static String toBiColor(final String text, final Color frontColor, final Color backColor) {
-        return DELIM_COLOR + frontColor.toString() + ',' + backColor + text + DELIM_NORMAL;
+        return DELIM_COLOR + frontColor.toString() + ',' + backColor + text + DELIM_COLOR;
     }
     
     /**
@@ -115,7 +115,7 @@ public class ColorUtils implements IrcSpecialChars {
      * @return la string en gras
      */
     public static String toBold(final String string) {
-        return DELIM_BOLD + string + DELIM_NORMAL;
+        return DELIM_BOLD + string + DELIM_BOLD;
     }
     
     /**
@@ -126,7 +126,16 @@ public class ColorUtils implements IrcSpecialChars {
      * @return la chaine coloree
      */
     public static String toColor(final String text, final Color color) {
-        return DELIM_COLOR + color.toString() + text + DELIM_NORMAL;
+        return DELIM_COLOR + color.toString() + text + DELIM_COLOR;
+    }
+    
+    /**
+     * @param string
+     *            la chaine à souligner
+     * @return la string en gras
+     */
+    public static String toUnderline(final String string) {
+        return DELIM_UNDERLINE + string + DELIM_UNDERLINE;
     }
     
     /**
