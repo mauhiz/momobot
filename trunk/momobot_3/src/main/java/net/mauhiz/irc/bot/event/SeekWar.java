@@ -1,10 +1,15 @@
 package net.mauhiz.irc.bot.event;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.NetUtils;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
@@ -29,11 +34,14 @@ public class SeekWar {
      * liste des channels de seek
      */
     public static final String[] SEEK_CHANS = {"#clanwar.fr"};
+    /**
+     * 
+     */
     static final String[] SEPARATEUR = {"vs", "v", "on", "o", "x"};
     /**
      * black list pour un msg pv
      */
-    private String[] blackList = {"www", "http", "://", ".com", ".fr", ".eu", ".info"};
+    private String[] blackList = {"www", "http", "://", ".com", ".fr", ".eu", ".info", "porn", "sex"};
     /**
      * channel sur lequel le seek a ete lance
      */
@@ -86,7 +94,7 @@ public class SeekWar {
     /**
      * 
      */
-    private boolean sWarmingMe = false;
+    private boolean sWarming = false;
     /**
      * Liste des users qui ont pv le bot
      */
@@ -320,11 +328,28 @@ public class SeekWar {
     
     /**
      * @param msg
+     * @param provenance
+     *            = nick
      * @return true si le bot pense que le PV est ok
      */
-    private boolean submitPVMessage(final String msg) {
+    private boolean submitPVMessage(final String msg, final String provenance) {
         
-        // RAJOUTE UNE DETECTION D'UNE IP&PASS
+        try {
+            Pattern p = Pattern.compile("(\\d{1,3}\\.){3}\\d{1,3}\\:\\d{1,5}");
+            Matcher m = p.matcher(msg);
+            if (m.find()) {
+                InetSocketAddress add1 = NetUtils.makeISA(m.group());
+                if (add1.getPort() > 2700 && add1.getPort() < 35000) {
+                    // On regarde si l'user est déja dans la liste
+                    if (!userpv.contains(provenance)) {
+                        userpv.add(provenance);
+                    }
+                    return true;
+                }
+            }
+        } catch (PatternSyntaxException pse) {
+        }
+        
         String lowerMsg = msg.toLowerCase();
         for (String element : blackList) {
             if (lowerMsg.contains(element)) {
@@ -354,9 +379,9 @@ public class SeekWar {
         
         // On test si il faut renvoié le msg de seek au channel
         
-        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarmingMe) {
+        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarming) {
             if (splited) {
-                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarmingMe) {
+                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(2, TimeUnit.MINUTES) & !sWarming) {
                     sw.split();
                     seekMessage = "." + seekMessage + ".";
                     for (String element : SEEK_CHANS) {
@@ -367,7 +392,7 @@ public class SeekWar {
             } else {
                 sw.split();
                 splited = true;
-                seekMessage = "." + seekMessage + ".";
+                seekMessage = ":" + seekMessage + ":";
                 for (String element : SEEK_CHANS) {
                     Privmsg msg1 = new Privmsg(null, element, im.getServer(), getMessageForSeeking());
                     resultPrivmsg.add(msg1);
@@ -381,7 +406,7 @@ public class SeekWar {
             
             // Si c'est "S" on se calme!
             if (provenance.toLowerCase().equals("S")) {
-                sWarmingMe = true;
+                sWarming = true;
                 Privmsg msg1 = new Privmsg(null, channel, im.getServer(), "S vient me faire ch**r. J'y vais calmos");
                 resultPrivmsg.add(msg1);
             }
@@ -391,7 +416,7 @@ public class SeekWar {
                 
                 if (userpv.contains(provenance)) {
                     // Le bot a déja été PV par ce type
-                    if (submitPVMessage(msg)) {
+                    if (submitPVMessage(msg, provenance)) {
                         // OK le bot valide le pv <=> SEEK REUSSI
                         // On lui file ip pass
                         // + GOGOGO
@@ -409,6 +434,14 @@ public class SeekWar {
                         resultPrivmsg.add(msg2);
                         Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance + " a mordu! GOGOGO o//");
                         resultPrivmsg.add(msg3);
+                        
+                        // ICI il faut faire leave le bot du channel de seek
+                        
+                        for (String element : SEEK_CHANS) {
+                            Part leave = new Part(im.getServer(), element, null);
+                            resultPrivmsg.add(leave);
+                        }
+                        
                         seekInProgress = false;
                         userpv.clear();
                         userpv.add(provenance);
@@ -438,14 +471,14 @@ public class SeekWar {
                     return resultPrivmsg;
                 }
                 // Le bot est PV pour la premiere fois
-                if (submitPVMessage(msg)) {
+                if (submitPVMessage(msg, provenance)) {
                     // Le bot detecte un msg correct
                     // On PV le bonhomme ok > GO
                     // On affiche le msg (çad l'ip & pass) ds le channel de seek
                     userpv.add(provenance);
                     Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "ok");
                     resultPrivmsg.add(msg1);
-                    Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "GO");
+                    Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go!");
                     resultPrivmsg.add(msg2);
                     Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance + " :" + msg);
                     resultPrivmsg.add(msg3);
