@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.mauhiz.irc.base.model;
 
 import java.util.Set;
