@@ -402,8 +402,8 @@ public class SeekWar {
         for (int i = 0; i < greenList.length; i++) {
             greenList1[i] = greenList[i];
         }
-        for (int i = greenList.length; i < greenList.length + lvl.length; i++) {
-            greenList1[i] = lvl[i];
+        for (int i = 0; i < greenList.length + lvl.length; i++) {
+            greenList1[i + greenList.length] = lvl[i];
         }
         
         for (String element : greenList1) {
