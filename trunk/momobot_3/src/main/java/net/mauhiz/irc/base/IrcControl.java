@@ -13,6 +13,7 @@ import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Kick;
+import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.NumericReplies;
 import net.mauhiz.irc.base.msg.Ping;
@@ -100,6 +101,12 @@ public class IrcControl implements IIrcControl, NumericReplies {
             }
             /* dont let it be processed */
             return;
+        } else if (msg instanceof Nick) {
+            Nick nick = (Nick) msg;
+            Mask from = new Mask(nick.getFrom());
+            Users users = Users.getInstance(server);
+            IrcUser target = users.findUser(from, true);
+            users.updateNick(target.getNick(), nick.getNewNick());
         }
         manager.processMsg(msg, this);
     }

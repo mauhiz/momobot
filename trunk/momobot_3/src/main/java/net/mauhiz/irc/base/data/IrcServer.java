@@ -108,7 +108,7 @@ public class IrcServer {
             } else if (QUIT.equals(cmd)) {
                 return new Quit(from, to, this, msg);
             } else if (NICK.equals(cmd)) {
-                return new Nick(this, msg);
+                return new Nick(this, from, msg);
             } else if (KICK.equals(cmd)) {
                 String reason = StringUtils.substringAfter(msg, " :");
                 msg = StringUtils.substringBefore(msg, " :");
