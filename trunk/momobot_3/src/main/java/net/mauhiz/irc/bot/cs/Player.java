@@ -1,7 +1,7 @@
 package net.mauhiz.irc.bot.cs;
 
 /**
- * Structure contenant...
+ * Bean contenant...
  * <dl>
  * <dd>nom</dd>
  * <dt>String</dt>
@@ -12,13 +12,14 @@ package net.mauhiz.irc.bot.cs;
  * <dd>master</dd>
  * <dt>boolean</dt>
  * </dl>
+ * 
  * @author mauhiz
  */
 public class Player {
     /**
      * nombre de frags.
      */
-    private int     frags;
+    private int frags;
     /**
      * si le joueur a du pouvoir sur le bot.
      */
@@ -26,77 +27,77 @@ public class Player {
     /**
      * nom.
      */
-    private String  nom;
+    private String nom;
     /**
      * steam ID.
      */
-    private String  steamId;
-
+    private String steamId;
+    
     /**
      * @param steamid
      *            le steam ID
      */
     public Player(final String steamid) {
-        this.steamId = steamid;
+        steamId = steamid;
     }
-
+    
     /**
      * @return Returns the frags.
      */
     public final int getFrags() {
-        return this.frags;
+        return frags;
     }
-
+    
     /**
      * @return Returns the name.
      */
     public final String getName() {
-        return this.nom;
+        return nom;
     }
-
+    
     /**
      * @return the steam_id
      */
     public final String getSteamId() {
-        return this.steamId;
+        return steamId;
     }
-
+    
     /**
      * @return the master
      */
     public final boolean isMaster() {
-        return this.master;
+        return master;
     }
-
+    
     /**
      * @param frags1
      *            The frags to set.
      */
     public final void setFrags(final int frags1) {
-        this.frags = frags1;
+        frags = frags1;
     }
-
+    
     /**
      * @param master1
      *            the master to set
      */
     public final void setMaster(final boolean master1) {
-        this.master = master1;
+        master = master1;
     }
-
+    
     /**
      * @param nom1
      *            The name to set.
      */
     public final void setName(final String nom1) {
-        this.nom = nom1;
+        nom = nom1;
     }
-
+    
     /**
      * @param steamId1
      *            the steam_id to set
      */
     public final void setSteamId(final String steamId1) {
-        this.steamId = steamId1;
+        steamId = steamId1;
     }
 }
