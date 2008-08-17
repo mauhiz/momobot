@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import net.mauhiz.irc.DateUtils;
 import net.mauhiz.irc.SqlUtils;
 import net.mauhiz.irc.base.Color;
+import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.msg.Notice;
@@ -33,7 +34,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IrcSpecialChars
     /**
      * un espace.
      */
-    private static final String SEP = " ";
+    private static final char SEP = ' ';
     
     /**
      * @param msg
@@ -46,18 +47,14 @@ public class YaquiTrigger extends AbstractTextTrigger implements IrcSpecialChars
         if (heureDispo.isEmpty()) {
             msg.append("personne ");
         } else {
-            msg.append(Color.DARK_GREEN);
-            for (final String string : heureDispo) {
-                msg.append(string).append(SEP);
-            }
-            msg.append(NORMAL);
+            String heuresDispo = StringUtils.join(heureDispo, SEP);
+            msg.append(ColorUtils.toColor(heuresDispo, Color.DARK_GREEN));
         }
         if (!heurePala.isEmpty()) {
-            msg.append("(absents : ").append(Color.RED);
-            for (final String string : heurePala) {
-                msg.append(string).append(SEP);
-            }
-            msg.append(NORMAL).append(") ");
+            msg.append("(absents : ");
+            String heuresDispo = StringUtils.join(heurePala, SEP);
+            msg.append(ColorUtils.toColor(heuresDispo, Color.RED));
+            msg.append(") ");
         }
         return msg;
     }
