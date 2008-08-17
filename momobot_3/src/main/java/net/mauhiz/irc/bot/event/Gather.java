@@ -177,7 +177,7 @@ public class Gather extends ChannelEvent {
         final StrBuilder temp = new StrBuilder(ColorUtils.toColor("Gather " + team.size() + '/' + team.getCapacity(),
                 Color.BROWN));
         temp.append(" (start: ");
-        temp.append(ColorUtils.toColor(DateUtils.getTimeStamp(sw), Color.GREEN));
+        temp.append(ColorUtils.toColor(DateUtils.getTimeStamp(sw), Color.DARK_GREEN));
         temp.append(") (tag: ");
         temp.append(ColorUtils.toColor(team.toString(), Color.RED));
         temp.append(") ");
