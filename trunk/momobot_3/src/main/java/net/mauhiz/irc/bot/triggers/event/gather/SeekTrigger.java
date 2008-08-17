@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
 import java.util.List;
+import java.util.Set;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
@@ -88,46 +89,54 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
             }
         } else {
             /* FIXME vilain hardcode */
-            Channel chan1 = Channels.getInstance(im.getServer()).get("#tsi.fr");
-            ChannelEvent evt1 = chan1.getEvt();
-            // if (evt instanceof Gather) {
-            if (evt1 instanceof Gather) {
-                final Gather gather = (Gather) evt1;
-                IrcUser kikoolol = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+            IrcUser mmb = Users.getInstance(im.getServer()).findUser(im.getServer().getMyNick(), false);
+            Channels channels = Channels.getInstance(im.getServer());
+            Set<Channel> myChans = channels.getChannels(mmb);
+            for (Channel element : myChans) {
                 
-                if (gather.getSeek().isSeekInProgress()) {
-                    if (!gather.getSeek().isTimeOut()) {
-                        // TJS en vie
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("MSG entrant : " + im.getMessage() + " to : " + im.getTo() + " from : "
-                                    + im.getFrom());
-                        }
-                        List<Privmsg> replies = gather.getSeek().submitSeekMessage(im);
-                        for (Privmsg element : replies) {
+                Channel chan1 = Channels.getInstance(im.getServer()).get(element.toString());
+                ChannelEvent evt1 = chan1.getEvt();
+                // if (evt instanceof Gather) {
+                if (evt1 instanceof Gather) {
+                    final Gather gather = (Gather) evt1;
+                    IrcUser kikoolol = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+                    
+                    if (gather.getSeek().isSeekInProgress()) {
+                        if (!gather.getSeek().isTimeOut()) {
+                            // TJS en vie
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("MSG entrant : " + im.getMessage() + " to : " + im.getTo() + " from : "
+                                        + im.getFrom());
+                            }
+                            List<Privmsg> replies = gather.getSeek().submitSeekMessage(im);
+                            for (Privmsg element1 : replies) {
+                                
+                                control.sendMsg(element1);
+                            }
                             
-                            control.sendMsg(element);
+                        } else {
+                            // !! Time out !!
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Seek-Time-Out atteint.");
+                            }
+                            Privmsg resp = new Privmsg(null, gather.getSeek().getChannel(), im.getServer(), gather
+                                    .getSeek().stopSeek());
+                            control.sendMsg(resp);
+                            // LEAVE LES CHANNELS
+                            StopSeekTrigger.leaveSeekChans(control, im.getServer());
                         }
-                        
-                    } else {
-                        // !! Time out !!
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Seek-Time-Out atteint.");
-                        }
-                        Privmsg resp = Privmsg.buildAnswer(im, gather.getSeek().stopSeek());
-                        control.sendMsg(resp);
-                        // LEAVE LES CHANNELS
+                        // Si c'est le winner du seek, je transmet le msg PV
+                    } else if (gather.getSeek().getSeekWinner().equals(kikoolol.getNick())
+                            && im.getTo().equals(im.getServer().getMyNick())) {
+                        Privmsg reply = new Privmsg(null, gather.getSeek().getChannel(), im.getServer(), kikoolol
+                                .getNick()
+                                + " : " + im.getMessage());
+                        control.sendMsg(reply);
+                        // Le seek est réussi, on leave les channels
+                    } else if (!gather.getSeek().isSeekInProgress() && gather.getSeek().isLunchedAndQuit) {
+                        gather.getSeek().isLunchedAndQuit = false;
                         StopSeekTrigger.leaveSeekChans(control, im.getServer());
                     }
-                    // Si c'est le winner du seek, je transmet le msg PV
-                } else if (gather.getSeek().getSeekWinner().equals(kikoolol.getNick())
-                        && im.getTo().equals(im.getServer().getMyNick())) {
-                    Privmsg reply = new Privmsg(null, gather.getSeek().getChannel(), im.getServer(), kikoolol.getNick()
-                            + " : " + im.getMessage());
-                    control.sendMsg(reply);
-                    // Le seek est réussi, on leave les channels
-                } else if (!gather.getSeek().isSeekInProgress() && gather.getSeek().isLunchedAndQuit) {
-                    gather.getSeek().isLunchedAndQuit = false;
-                    StopSeekTrigger.leaveSeekChans(control, im.getServer());
                 }
             }
         }
