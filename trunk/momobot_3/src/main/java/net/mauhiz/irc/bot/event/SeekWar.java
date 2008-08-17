@@ -61,8 +61,7 @@ public class SeekWar {
     /**
      * Liste d'ordre croissante des lvl
      */
-    private String[] lvl = {"low-", "low", "low+", "low++", "noob", "mid-", "middle", "mid", "mid+", "mid++", "pgm",
-            "skilled", "high", "roxor"};
+    private String[] lvl = {"noob", "low", "mid", "middle", "pgm", "skilled", "high", "roxor"};
     /**
      * True si le seek est en cour ; false sinon
      */
@@ -320,12 +319,36 @@ public class SeekWar {
             }
             
         }
-        if (numbermatch && stg.toLowerCase().contains(seekServ1) && StringUtils.containsIgnoreCase(stg, seekLevel)) {
-            return true;
+        if (numbermatch && stg.toLowerCase().contains(seekServ1)) {
+            
+            int i = -1;
+            // On regarde si le seekLevel match avec la liste de lvl
+            for (int j = 0; j < lvl.length; j++) {
+                if (lvl[i].equals(seekLevel.toLowerCase())) {
+                    i = j;
+                }
+            }
+            // Si le msg est a +-1 lvl on match
+            if (i > -1) {
+                if (StringUtils.containsIgnoreCase(stg, seekLevel)) {
+                    return true;
+                }
+                if (i == 0 && StringUtils.containsIgnoreCase(stg, lvl[i + 1])) {
+                    return true;
+                } else if (i == lvl.length - 1 && StringUtils.containsIgnoreCase(stg, lvl[i - 1])) {
+                    return true;
+                } else if (i != 0
+                        && i != lvl.length - 1
+                        && (StringUtils.containsIgnoreCase(stg, lvl[i + 1]) || StringUtils.containsIgnoreCase(stg,
+                                lvl[i - 1]))) {
+                    return true;
+                }
+                
+            }
+            
         }
         return false;
     }
-    
     /**
      * @param msg
      * @param provenance
@@ -356,7 +379,16 @@ public class SeekWar {
                 return false;
             }
         }
-        for (String element : greenList) {
+        // GreenList1 LVL + GREENLIST
+        String[] greenList1 = new String[greenList.length + lvl.length];
+        for (int i = 0; i < greenList.length; i++) {
+            greenList1[i] = greenList[i];
+        }
+        for (int i = greenList.length; i < greenList.length + lvl.length; i++) {
+            greenList1[i] = lvl[i];
+        }
+        
+        for (String element : greenList1) {
             if (lowerMsg.contains(element)) {
                 return true;
             }
@@ -435,13 +467,6 @@ public class SeekWar {
                         Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance + " a mordu! GOGOGO o//");
                         resultPrivmsg.add(msg3);
                         
-                        // ICI il faut faire leave le bot du channel de seek
-                        
-                        for (String element : SEEK_CHANS) {
-                            Part leave = new Part(im.getServer(), element, null);
-                            resultPrivmsg.add(leave);
-                        }
-                        
                         seekInProgress = false;
                         userpv.clear();
                         userpv.add(provenance);
@@ -459,7 +484,7 @@ public class SeekWar {
                 userpv.add(provenance);
                 Privmsg msg1 = Privmsg.buildPrivateAnswer(im, provenance);
                 resultPrivmsg.add(msg1);
-                Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "rdy?");
+                Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "lvl?");
                 resultPrivmsg.add(msg2);
                 return resultPrivmsg;
                 
