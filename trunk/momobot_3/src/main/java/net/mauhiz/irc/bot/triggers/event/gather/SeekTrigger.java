@@ -119,7 +119,8 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                         StopSeekTrigger.leaveSeekChans(control, im.getServer());
                     }
                     // Si c'est le winner du seek, je transmet le msg PV
-                } else if (gather.getSeek().getSeekWinner().equals(kikoolol.getNick()) && im.getTo().equals("mom0")) {
+                } else if (gather.getSeek().getSeekWinner().equals(kikoolol.getNick())
+                        && im.getTo().equals(im.getServer().getMyNick())) {
                     Privmsg reply = new Privmsg(null, gather.getSeek().getChannel(), im.getServer(), kikoolol.getNick()
                             + " : " + im.getMessage());
                     control.sendMsg(reply);
