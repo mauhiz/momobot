@@ -2,7 +2,6 @@ package net.mauhiz.irc.base.data;
 
 import java.util.HashSet;
 
-import net.mauhiz.irc.base.data.qnet.QnetChannelProperties;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 
 /**
@@ -13,12 +12,22 @@ public class Channel extends HashSet<IrcUser> {
      * serial
      */
     private static final long serialVersionUID = 1L;
+    /**
+     * event en cours (null si aucun)
+     */
     private ChannelEvent evt;
-    private String nom;
-    
-    Character prefix;
-    
-    ChannelProperties props = new QnetChannelProperties();
+    /**
+     * nom du chan sans le prefixe.
+     */
+    private final String nom;
+    /**
+     * prefixe du chan (#, &amp;)
+     */
+    private final Character prefix;
+    /**
+     * flags du chan
+     */
+    private final ChannelProperties props = new ChannelProperties();
     
     /**
      * @param chanName
@@ -29,10 +38,38 @@ public class Channel extends HashSet<IrcUser> {
     }
     
     /**
+     * @see java.util.AbstractSet#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof Channel)) {
+            return false;
+        }
+        return toString().equals(o.toString());
+    }
+    
+    /**
      * @return {@link #evt}
      */
     public ChannelEvent getEvt() {
         return evt;
+    }
+    
+    /**
+     * @return {@link #props}
+     */
+    public ChannelProperties getProps() {
+        return props;
+    }
+    
+    /**
+     * @see java.util.AbstractSet#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
     
     /**
