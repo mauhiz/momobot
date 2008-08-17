@@ -59,6 +59,10 @@ public class SeekWar {
      */
     private String ippass;
     /**
+     * 
+     */
+    public boolean isLunchedAndQuit = false;
+    /**
      * Liste d'ordre croissante des lvl
      */
     private String[] lvl = {"noob", "low", "mid", "middle", "pgm", "skilled", "high", "roxor"};
@@ -106,6 +110,7 @@ public class SeekWar {
      */
     public SeekWar(final Gather gath) {
         seekInProgress = false;
+        isLunchedAndQuit = false;
         seekServ = "ON";
         ippass = "87.98.196.75:27019 Gotserv.com: pw:gruik";
         seekLevel = "mid";
@@ -206,11 +211,13 @@ public class SeekWar {
             case 0 :
                 // Seek sans parametre
                 seekInProgress = true;
+                isLunchedAndQuit = true;
                 return "Seek Par Defaut.";
                 
             case 1 :
                 if ("on".equalsIgnoreCase(cmdSeek.get(0)) || "off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
+                    isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
                 }
@@ -221,11 +228,13 @@ public class SeekWar {
             case 2 :
                 if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
+                    isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
                     return "Seek : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
                 } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
+                    isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
                     return "Seek - Info : serv = " + seekServ + " level = " + seekLevel;
@@ -238,12 +247,14 @@ public class SeekWar {
             case 3 :
                 if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
+                    isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
                     seekLevel = cmdSeek.get(2);
                     return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
                 } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
+                    isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
                     seekMessage = cmdSeek.get(2);
@@ -258,6 +269,7 @@ public class SeekWar {
             case 4 :
                 if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
+                    isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
                     seekLevel = cmdSeek.get(2);
@@ -282,6 +294,7 @@ public class SeekWar {
      */
     public final String stopSeek() {
         seekInProgress = false;
+        isLunchedAndQuit = false;
         userpv.clear();
         sw.stop();
         sw.reset();
