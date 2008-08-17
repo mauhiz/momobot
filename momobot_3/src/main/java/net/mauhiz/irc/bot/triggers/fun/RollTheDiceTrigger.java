@@ -31,6 +31,7 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
+        String args = getArgs(im.getMessage());
         // Récupère le nom du joueur
         IrcUser user = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
         boolean engueuler = false;
@@ -40,11 +41,11 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
         int max;
         try {
             // Pour pas se faire lamer
-            if (getArgs(im.getMessage()).length() > 6) {
+            if (args.length() > 6) {
                 engueuler = true;
             }
             // 
-            max = Integer.parseInt(getArgs(im.getMessage()));
+            max = Integer.parseInt(args);
         } catch (NumberFormatException e) {
             
             max = defaultmax;
@@ -67,26 +68,24 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
         }
         
         // random de base
-        int number = RandomUtils.nextInt(max) + 1;
+        int diceRoll = RandomUtils.nextInt(max) + 1;
         
         // Petits commentaires futés
         String commentaire;
-        if (number == max) {
+        if (diceRoll == max) {
             commentaire = "Quelle chance ! ";
-        } else if (number == 1) {
+        } else if (diceRoll == 1) {
             commentaire = "C'est vraiment pas son jour : ";
-        } else if (number == 1337) {
+        } else if (diceRoll == 1337) {
             commentaire = "OMG leet lancé ! ";
-        } else if (number == 666) {
+        } else if (diceRoll == 666) {
             commentaire = "Vade Retro, Satan ! ";
-        } else if (number / (double) max > 0.8) {
+        } else if (diceRoll / (double) max > 0.8) {
             commentaire = "Pas trop mal, ";
-        }
-
-        else {
+        } else {
             commentaire = "";
         }
-        Privmsg msg = Privmsg.buildAnswer(im, commentaire + user + " a obtenu un " + number + " (sur " + max + ')');
+        Privmsg msg = Privmsg.buildAnswer(im, commentaire + user + " a obtenu un " + diceRoll + " (sur " + max + ')');
         control.sendMsg(msg);
         
     }
