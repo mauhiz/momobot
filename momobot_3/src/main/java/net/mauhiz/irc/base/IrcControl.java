@@ -16,6 +16,7 @@ import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.NumericReplies;
+import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Ping;
 import net.mauhiz.irc.base.msg.Pong;
 import net.mauhiz.irc.base.msg.Quit;
@@ -93,6 +94,21 @@ public class IrcControl implements IIrcControl, NumericReplies {
             Channel from = Channels.getInstance(server).get(kick.getChan());
             IrcUser kicked = Users.getInstance(server).findUser(kick.getTarget(), true);
             from.remove(kicked);
+        } else if (msg instanceof Part) {
+            Part part = (Part) msg;
+            Channel from = Channels.getInstance(server).get(part.getChan());
+            IrcUser leaver = Users.getInstance(server).findUser(part.getFrom(), true);
+            from.remove(leaver);
+        } else if (msg instanceof Quit) {
+            Quit quit = (Quit) msg;
+            Users users = Users.getInstance(server);
+            IrcUser quitter = users.findUser(new Mask(quit.getFrom()), false);
+            if (quitter != null) {
+                for (Channel every : Channels.getInstance(server).values()) {
+                    every.remove(quitter);
+                }
+                users.remove(quitter);
+            }
         } else if (msg instanceof Notice && io.getStatus() == Status.CONNECTING) {
             Notice notice = (Notice) msg;
             if (notice.getFrom() != null) {
