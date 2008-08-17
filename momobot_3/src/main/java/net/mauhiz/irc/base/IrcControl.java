@@ -106,7 +106,7 @@ public class IrcControl implements IIrcControl, NumericReplies {
             Mask from = new Mask(nick.getFrom());
             Users users = Users.getInstance(server);
             IrcUser target = users.findUser(from, true);
-            users.updateNick(target.getNick(), nick.getNewNick());
+            users.updateNick(target, nick.getNewNick());
         }
         manager.processMsg(msg, this);
     }

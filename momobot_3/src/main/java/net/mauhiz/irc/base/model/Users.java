@@ -108,16 +108,15 @@ public final class Users extends HashSet<IrcUser> {
     }
     
     /**
-     * @param oldNick
+     * @param oldUser
      * @param newNick
      */
-    public void updateNick(final String oldNick, final String newNick) {
-        IrcUser changer = findUser(oldNick, false);
-        if (changer == null) {
+    public void updateNick(final IrcUser oldUser, final String newNick) {
+        if (oldUser == null) {
             /* we did not know him anyways. how so? */
             findUser(newNick, true);
         } else {
-            changer.setNick(newNick);
+            oldUser.setNick(newNick);
         }
     }
 }
