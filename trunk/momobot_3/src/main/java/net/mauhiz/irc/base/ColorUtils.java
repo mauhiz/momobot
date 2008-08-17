@@ -3,29 +3,12 @@ package net.mauhiz.irc.base;
 import org.apache.commons.lang.text.StrBuilder;
 
 /**
- * The Colors class provides several static fields and methods that you may find
- * useful when writing an IRC Bot.
- * <p>
- * This class contains constants that are useful for formatting lines sent to
- * IRC servers. These constants allow you to apply various formatting to the
- * lines, such as colours, boldness, underlining and reverse text.
- * <p>
- * The class contains static methods to remove colours and formatting from lines
- * of IRC text.
- * <p>
- * Please note that some IRC channels may be configured to reject any messages
- * that use colours. Also note that older IRC clients may be unable to correctly
- * display lines that contain colours and other control characters.
- * <p>
- * 
- * @author Paul James Mutton, <a
- *         href="http://www.jibble.org/">http://www.jibble.org/</a>
+ * @author mauhiz
  */
 public class ColorUtils implements IrcSpecialChars {
     /**
      * Removes all colours from a line of IRC text.
      * 
-     * @since PircBot 1.2.0
      * @param line
      *            the input text.
      * @return the same text, but with all colours removed.
@@ -36,10 +19,10 @@ public class ColorUtils implements IrcSpecialChars {
         char index = 0;
         while (index < length) {
             char car = line.charAt(index);
-            if (car == NORMAL) {
+            if (car == DELIM_NORMAL) {
                 ++index;
                 continue;
-            } else if (car == COLOR) {
+            } else if (car == DELIM_COLOR) {
                 if (++index >= length) {
                     break;
                 }
@@ -97,8 +80,8 @@ public class ColorUtils implements IrcSpecialChars {
      * @return the same text, but without any bold, underlining, reverse, etc.
      */
     public static String removeFormatting(final String line) {
-        return new StrBuilder(line).deleteAll(NORMAL).deleteAll(BOLD).deleteAll(UNDERLINE).deleteAll(REVERSE)
-                .toString();
+        return new StrBuilder(line).deleteAll(DELIM_NORMAL).deleteAll(DELIM_BOLD).deleteAll(DELIM_UNDERLINE).deleteAll(
+                DELIM_REVERSE).toString();
     }
     
     /**
@@ -123,7 +106,7 @@ public class ColorUtils implements IrcSpecialChars {
      * @return la chaine coloree
      */
     public static String toBiColor(final String text, final Color frontColor, final Color backColor) {
-        return COLOR + frontColor.getCode() + ',' + backColor.getCode() + text + NORMAL;
+        return DELIM_COLOR + frontColor.toString() + ',' + backColor + text + DELIM_NORMAL;
     }
     
     /**
@@ -132,7 +115,7 @@ public class ColorUtils implements IrcSpecialChars {
      * @return la string en gras
      */
     public static String toBold(final String string) {
-        return BOLD + string + NORMAL;
+        return DELIM_BOLD + string + DELIM_NORMAL;
     }
     
     /**
@@ -143,13 +126,13 @@ public class ColorUtils implements IrcSpecialChars {
      * @return la chaine coloree
      */
     public static String toColor(final String text, final Color color) {
-        return COLOR + color.getCode() + text + NORMAL;
+        return DELIM_COLOR + color.toString() + text + DELIM_NORMAL;
     }
     
     /**
      * constructeur par défaut.
      */
-    protected ColorUtils() {
-        throw new UnsupportedOperationException();
+    private ColorUtils() {
+        super();
     }
 }
