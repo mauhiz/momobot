@@ -97,17 +97,6 @@ public final class Users extends HashSet<IrcUser> {
     }
     
     /**
-     * @param smith
-     * @return whether user is known
-     */
-    public boolean isKnown(final IrcUser smith) {
-        if (contains(smith)) {
-            return true;
-        }
-        return false;
-    }
-    
-    /**
      * @param oldUser
      * @param newNick
      */
