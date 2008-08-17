@@ -5,21 +5,9 @@ package net.mauhiz.irc.base;
  */
 public interface IrcSpecialChars {
     /**
-     * arobase.
-     */
-    char AROBAZ = '@';
-    /**
      * .
      */
-    char BACKSLASH = '\\';
-    /**
-     * .
-     */
-    char BELL = '\u0007';
-    /**
-     * Bold text.
-     */
-    char BOLD = '\u0002';
+    char BELL = 0x7;
     /**
      * .
      */
@@ -33,45 +21,49 @@ public interface IrcSpecialChars {
      */
     char COLON = ':';
     /**
+     * Bold text.
+     */
+    char DELIM_BOLD = 0x2;
+    /**
      * Colored text.
      */
-    char COLOR = '\u0003';
-    /**
-     * .
-     */
-    char CR = '\r';
-    /**
-     * String vide.
-     */
-    String EMPTY = "";
-    /**
-     * !.
-     */
-    char EXCL = '!';
-    /**
-     * .
-     */
-    char LF = '\n';
-    /**
-     * DLE.
-     */
-    char M_QUOTE = '\u0010';
-    /**
-     * .
-     */
-    char MINUS = '-';
+    char DELIM_COLOR = 3;
     /**
      * Removes all previously applied color and formatting attributes.
      */
-    char NORMAL = '\u000f';
+    char DELIM_NORMAL = 0xf;
     /**
-     * .
+     * Reversed text (may be rendered as italic text in some clients).
      */
-    char NUL = '\0';
+    char DELIM_REVERSE = 0x16;
     /**
-     * .
+     * Underlined text.
      */
-    char PLUS = '+';
+    char DELIM_UNDERLINE = 0x1f;
+    /**
+     * DLE.
+     */
+    char M_QUOTE = 0x10;
+    /**
+     * arobase.
+     */
+    char MASK_AROBAZ = '@';
+    /**
+     * !.
+     */
+    char MASK_EXCL = '!';
+    /**
+     * desactivation 'un mode.
+     */
+    char MODE_MINUS = '-';
+    /**
+     * activation d'un mode.
+     */
+    char MODE_PLUS = '+';
+    /**
+     * half-op.
+     */
+    char PREFIX_HALFOP = '%';
     /**
      * op.
      */
@@ -81,35 +73,43 @@ public interface IrcSpecialChars {
      */
     char PREFIX_VOICE = '+';
     /**
-     * Reversed text (may be rendered as italic text in some clients).
+     * .
      */
-    char REVERSE = '\u0016';
+    char QUOTE_BACKSLASH = '\\';
     /**
      * .
      */
-    char SPC = ' ';
+    char QUOTE_CR = '\r';
     /**
      * .
      */
-    char STX = '\1';
-    /**
-     * Underlined text.
-     */
-    char UNDERLINE = '\u001f';
+    char QUOTE_LF = '\n';
     /**
      * .
      */
-    char[] WHITE = new char[]{SPC, NUL, CR, LF,};
+    char QUOTE_NUL = 0;
     /**
      * .
      */
-    char[] Z_NOTCHSTRING = new char[]{SPC, BELL, NUL, CR, LF, ',',};
+    char QUOTE_SPC = ' ';
+    /**
+     * delimiteur CTCP
+     */
+    char QUOTE_STX = 1;
     /**
      * .
      */
-    char[] Z_SPCRLFCL = new char[]{NUL, CR, LF, SPC, COLON,};
+    char[] WHITE = new char[]{QUOTE_NUL, QUOTE_LF, QUOTE_CR, QUOTE_SPC};
     /**
      * .
      */
-    char[] Z_SPECIAL = new char[]{'-', '[', ']', BACKSLASH, '`', '^', '{', '}',};
+    char[] Z_NOTCHSTRING = new char[]{QUOTE_NUL, BELL, QUOTE_LF, QUOTE_CR, QUOTE_SPC, ','};
+    /**
+     * .
+     */
+    char[] Z_SPCRLFCL = new char[]{QUOTE_NUL, QUOTE_CR, QUOTE_LF, QUOTE_SPC, COLON};
+    /**
+     * .
+     */
+    char[] Z_SPECIAL = new char[]{'-', '[', ']', QUOTE_BACKSLASH, '`', '^', '{', '}'};
 }

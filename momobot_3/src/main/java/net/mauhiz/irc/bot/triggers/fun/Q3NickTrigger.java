@@ -21,7 +21,7 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     private static String computeQ3ColorCode(final String colorCode) {
         final String q3Code;
-        if (Color.BLACK.getCode().equals(colorCode)) {
+        if (Color.BLACK.toString().equals(colorCode)) {
             q3Code = "0";
         } else {
             return "";
@@ -38,7 +38,7 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         final StrBuilder colorCode = new StrBuilder();
         int inColor = 0;
         for (char c : args.toCharArray()) {
-            if (c == COLOR) {
+            if (c == DELIM_COLOR) {
                 inColor = 1;
                 continue;
             } else if (inColor == 1) {
