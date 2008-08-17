@@ -133,6 +133,14 @@ public class SeekWar {
     public final String getMessageForSeeking() {
         return MomoStringUtils.genereSeekMessage(seekMessage, gather.getNumberPlayers(), seekServ, seekLevel);
     }
+    /**
+     * @return String
+     * 
+     */
+    private final String getSeekInfo() {
+        return "Seek - Info : " + gather.getNumberPlayers() + "vs" + gather.getNumberPlayers() + " serv = " + seekServ
+                + " level = " + seekLevel;
+    }
     
     /**
      * @return String = qui a gagner le seek
@@ -212,14 +220,14 @@ public class SeekWar {
                 // Seek sans parametre
                 seekInProgress = true;
                 isLunchedAndQuit = true;
-                return "Seek Par Defaut.";
+                return "Seek Par Defaut >> " + getSeekInfo();
                 
             case 1 :
                 if ("on".equalsIgnoreCase(cmdSeek.get(0)) || "off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
-                    return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
+                    return getSeekInfo() + " ippass = " + ippass;
                 }
                 sw.stop();
                 sw.reset();
@@ -231,13 +239,13 @@ public class SeekWar {
                     isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
-                    return "Seek : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
+                    return getSeekInfo() + " ippass = " + ippass;
                 } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
-                    return "Seek - Info : serv = " + seekServ + " level = " + seekLevel;
+                    return getSeekInfo();
                 } else {
                     sw.stop();
                     sw.reset();
@@ -251,15 +259,14 @@ public class SeekWar {
                     seekServ = cmdSeek.get(0);
                     ippass = cmdSeek.get(1);
                     seekLevel = cmdSeek.get(2);
-                    return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel;
+                    return getSeekInfo() + " ippass = " + ippass;
                 } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
                     seekLevel = cmdSeek.get(1);
                     seekMessage = cmdSeek.get(2);
-                    return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel
-                            + " MSGSeek = " + seekMessage;
+                    return getSeekInfo() + " MSGSeek = " + seekMessage;
                 } else {
                     sw.stop();
                     sw.reset();
@@ -274,8 +281,7 @@ public class SeekWar {
                     ippass = cmdSeek.get(1);
                     seekLevel = cmdSeek.get(2);
                     seekMessage = cmdSeek.get(3);
-                    return "Seek - Info : serv = " + seekServ + " ippass = " + ippass + " level = " + seekLevel
-                            + " MSGSeek = " + seekMessage;
+                    return getSeekInfo() + " ippass = " + ippass + " MSGSeek = " + seekMessage;
                 }
                 sw.stop();
                 sw.reset();

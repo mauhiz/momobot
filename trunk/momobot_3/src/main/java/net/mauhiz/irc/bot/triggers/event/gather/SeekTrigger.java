@@ -10,6 +10,7 @@ import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Join;
+import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
@@ -80,6 +81,26 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                             Privmsg resp = new Privmsg(null, element, im.getServer(), ((Gather) evt).getSeek()
                                     .getMessageForSeeking());
                             control.sendMsg(resp);
+                        }
+                        
+                    } else {
+                        // Le seek a foiré! on notice le noob pour lui donner la syntaxe
+                        Notice notice;
+                        String[] noticeListHelp = {
+                                "syntaxe : " + toString() + " [on/off] (sans les [])",
+                                "syntaxe : " + toString() + " off [low,mid,skilled,pgm,high,autre level] (sans les [])",
+                                "syntaxe : "
+                                        + toString()
+                                        + " off level \"message de seek entre crochet :: %P=nombre de joueur, %L = level, %S = serv(off ici) \"",
+                                "syntaxe : " + toString() + " on \"adresse ip + mdp entre crochet\"",
+                                "syntaxe : " + toString()
+                                        + " on \"ip+pass\" [low,mid,skilled,pgm,high,autre level] (sans les [])",
+                                "syntaxe : "
+                                        + toString()
+                                        + " on \"ip+pass\" level \"message de seek entre crochet :: %P=nombre de joueur, %L = level, %S = serv(off ici) \""};
+                        for (String element : noticeListHelp) {
+                            notice = Notice.buildAnswer(im, element);
+                            control.sendMsg(notice);
                         }
                         
                     }
