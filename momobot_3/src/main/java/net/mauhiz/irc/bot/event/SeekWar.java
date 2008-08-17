@@ -101,7 +101,7 @@ public class SeekWar {
     /**
      * Liste des users qui ont pv le bot
      */
-    private final List<String> userpv = new ArrayList<String>();
+    private final List<IrcUser> userpv = new ArrayList<IrcUser>();
     
     /**
      * 
@@ -116,8 +116,8 @@ public class SeekWar {
         seekLevel = "mid";
         seekMessage = "seek %Pv%P - %S - %L pm ";
         gather = gath;
-        // 8 min
-        seekTimeOut = TimeUnit.MILLISECONDS.convert(8, TimeUnit.MINUTES);
+        // 6 min
+        seekTimeOut = TimeUnit.MILLISECONDS.convert(6, TimeUnit.MINUTES);
         userpv.clear();
     }
     
@@ -142,7 +142,7 @@ public class SeekWar {
         if (userpv.isEmpty()) {
             return "";
         }
-        return userpv.get(0);
+        return userpv.get(0).getNick();
     }
     
     /**
@@ -373,7 +373,7 @@ public class SeekWar {
      *            = nick
      * @return true si le bot pense que le PV est ok
      */
-    private boolean submitPVMessage(final String msg, final String provenance) {
+    private boolean submitPVMessage(final String msg, final IrcUser provenance) {
         
         try {
             Pattern p = Pattern.compile("(\\d{1,3}\\.){3}\\d{1,3}\\:\\d{1,5}");
@@ -421,17 +421,16 @@ public class SeekWar {
     
     public final List<Privmsg> submitSeekMessage(final Privmsg im) {
         IrcServer server1 = im.getServer();
-        IrcUser kikoolol = Users.getInstance(server1).findUser(new Mask(im.getFrom()), true);
-        String provenance = kikoolol.getNick();
+        IrcUser provenance = Users.getInstance(server1).findUser(new Mask(im.getFrom()), true);
         String destination = im.getTo();
         String msg = im.getMessage();
         List<Privmsg> resultPrivmsg = new ArrayList<Privmsg>(3);
         
         // On test si il faut renvoié le msg de seek au channel
         
-        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)) {
+        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS)) {
             if (splited) {
-                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(2, TimeUnit.MINUTES) & !sWarming) {
+                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarming) {
                     sw.split();
                     seekMessage = "." + seekMessage + ".";
                     for (String element : SEEK_CHANS) {
@@ -462,7 +461,7 @@ public class SeekWar {
             // C'est un msg PV
             
             // Si c'est "S" on se calme!
-            if (provenance.toLowerCase().equals("S")) {
+            if (provenance.getNick().toLowerCase().equals("S")) {
                 sWarming = true;
                 Privmsg msg1 = new Privmsg(null, channel, im.getServer(), "S vient me faire ch**r. J'y vais calmos");
                 resultPrivmsg.add(msg1);
@@ -489,7 +488,8 @@ public class SeekWar {
                         resultPrivmsg.add(msg1);
                         Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "GOGOGO");
                         resultPrivmsg.add(msg2);
-                        Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance + " a mordu! GOGOGO o//");
+                        Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance.getNick()
+                                + " a mordu! GOGOGO o//");
                         resultPrivmsg.add(msg3);
                         
                         seekInProgress = false;
@@ -508,7 +508,7 @@ public class SeekWar {
                 // On le slap
                 // Ensuite On lui demande si il est RDY
                 userpv.add(provenance);
-                Privmsg msg1 = Privmsg.buildPrivateAnswer(im, provenance);
+                Privmsg msg1 = Privmsg.buildPrivateAnswer(im, provenance.getNick());
                 resultPrivmsg.add(msg1);
                 Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "lvl?");
                 resultPrivmsg.add(msg2);
@@ -517,7 +517,7 @@ public class SeekWar {
             } else if (seekServ.toLowerCase().compareTo("off") == 0) {
                 // Le bot a déja été PV par ce bonhomme
                 if (userpv.contains(provenance)) {
-                    Privmsg msg1 = new Privmsg(null, channel, im.getServer(), provenance + " :" + msg);
+                    Privmsg msg1 = new Privmsg(null, channel, im.getServer(), provenance.getNick() + " :" + msg);
                     resultPrivmsg.add(msg1);
                     return resultPrivmsg;
                 }
@@ -531,7 +531,7 @@ public class SeekWar {
                     resultPrivmsg.add(msg1);
                     Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go!");
                     resultPrivmsg.add(msg2);
-                    Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance + " :" + msg);
+                    Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance.getNick() + " :" + msg);
                     resultPrivmsg.add(msg3);
                     return resultPrivmsg;
                     
@@ -561,7 +561,8 @@ public class SeekWar {
             Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "rdy?");
             resultPrivmsg.add(msg1);
             if ("off".equalsIgnoreCase(seekLevel)) {
-                userpv.add("ip&pass?");
+                Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "ip&pass?");
+                resultPrivmsg.add(msg2);
             }
             return resultPrivmsg;
             
