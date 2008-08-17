@@ -83,6 +83,12 @@
 		<trigger class="AddTrigger">
 			<command>add</command>
 		</trigger>
+		<trigger class="AdminaddTrigger">
+			<command>adminadd</command>
+		</trigger>
+		<trigger class="AdminrmvTrigger">
+			<command>adminrmv</command>
+		</trigger>
 		<trigger class="RmvTrigger">
 			<command>rmv</command>
 			<command>remove</command>
