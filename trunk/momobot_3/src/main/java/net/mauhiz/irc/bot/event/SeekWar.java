@@ -517,6 +517,13 @@ public class SeekWar {
             } else if (seekServ.toLowerCase().compareTo("off") == 0) {
                 // Le bot a déja été PV par ce bonhomme
                 if (userpv.contains(provenance)) {
+                    if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
+                        Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
+                        resultPrivmsg.add(msg1);
+                        Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go?");
+                        resultPrivmsg.add(msg2);
+                    }
+                    
                     Privmsg msg1 = new Privmsg(null, channel, im.getServer(), provenance.getNick() + " :" + msg);
                     resultPrivmsg.add(msg1);
                     return resultPrivmsg;
@@ -527,12 +534,21 @@ public class SeekWar {
                     // On PV le bonhomme ok > GO
                     // On affiche le msg (çad l'ip & pass) ds le channel de seek
                     userpv.add(provenance);
-                    Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "ok");
-                    resultPrivmsg.add(msg1);
-                    Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go!");
-                    resultPrivmsg.add(msg2);
-                    Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance.getNick() + " :" + msg);
-                    resultPrivmsg.add(msg3);
+                    if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
+                        Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
+                        resultPrivmsg.add(msg1);
+                        Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go?");
+                        resultPrivmsg.add(msg2);
+                        
+                    } else {
+                        Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "ok");
+                        resultPrivmsg.add(msg1);
+                        Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go!");
+                        resultPrivmsg.add(msg2);
+                        Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance.getNick() + " :" + msg);
+                        resultPrivmsg.add(msg3);
+                    }
+                    
                     return resultPrivmsg;
                     
                 }
