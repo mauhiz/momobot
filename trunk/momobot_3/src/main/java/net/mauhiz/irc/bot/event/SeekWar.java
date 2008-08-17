@@ -220,14 +220,17 @@ public class SeekWar {
                 // Seek sans parametre
                 seekInProgress = true;
                 isLunchedAndQuit = true;
-                return "Seek Par Defaut >> " + getSeekInfo();
+                return "Seek Par Defaut >> " + getSeekInfo() + " ippass = " + ippass;
                 
             case 1 :
                 if ("on".equalsIgnoreCase(cmdSeek.get(0)) || "off".equalsIgnoreCase(cmdSeek.get(0))) {
                     seekInProgress = true;
                     isLunchedAndQuit = true;
                     seekServ = cmdSeek.get(0);
-                    return getSeekInfo() + " ippass = " + ippass;
+                    if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
+                        return getSeekInfo() + " ippass = " + ippass;
+                    }
+                    return getSeekInfo();
                 }
                 sw.stop();
                 sw.reset();
