@@ -36,7 +36,7 @@ public class BncLauncher implements IrcSpecialChars {
     
     /**
      * @param client
-     * @return
+     * @return account
      * @throws IOException
      */
     static Account accept(final BncClient client) throws IOException {
