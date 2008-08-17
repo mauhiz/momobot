@@ -402,7 +402,7 @@ public class SeekWar {
         for (int i = 0; i < greenList.length; i++) {
             greenList1[i] = greenList[i];
         }
-        for (int i = 0; i < greenList.length + lvl.length; i++) {
+        for (int i = 0; i < lvl.length; i++) {
             greenList1[i + greenList.length] = lvl[i];
         }
         
@@ -458,7 +458,7 @@ public class SeekWar {
         }
         
         // Traitement des messages entrant
-        if ("mom0".equals(destination)) {
+        if (im.getServer().getMyNick().equals(destination)) {
             // C'est un msg PV
             
             // Si c'est "S" on se calme!
