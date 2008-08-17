@@ -30,7 +30,7 @@ public class UsersTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.model.Channels#getChannels(net.mauhiz.irc.base.data.IrcUser)}.
+     * Test method for {@link net.mauhiz.irc.base.model.Channels#getChannels(IrcUser)}.
      */
     @Test
     public void testMultiChan() {
@@ -46,7 +46,7 @@ public class UsersTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.model.Users#isKnown(IrcUser)}
+     * Test method for {@link net.mauhiz.irc.base.model.Users#contains(Object)}.
      */
     @Test
     public void testSingleChan() {
@@ -57,8 +57,8 @@ public class UsersTest {
         IrcUser peon2 = Users.getInstance(qnet).findUser("Gruiiik", true);
         chan.add(peon);
         chan.add(peon2);
-        Assert.assertTrue(Users.getInstance(qnet).isKnown(peon));
-        Assert.assertTrue(Users.getInstance(qnet).isKnown(peon2));
+        Assert.assertTrue(Users.getInstance(qnet).contains(peon));
+        Assert.assertTrue(Users.getInstance(qnet).contains(peon2));
         Assert.assertEquals(2, chan.size());
     }
 }
