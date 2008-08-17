@@ -90,7 +90,7 @@ class ValveUdpClient extends DatagramSocketClient {
      *             en cas de pépin!
      */
     public void getChallenge() throws IOException {
-        challenge = substringAfter(sendValveCmd(CHALLENGE), "challenge rcon ");
+        challenge = substringAfter(sendValveCmd(CHALLENGE), CHALLENGE + " ");
     }
     
     /**
@@ -99,7 +99,7 @@ class ValveUdpClient extends DatagramSocketClient {
      *             houla, ça va mal
      */
     public String getInfo() throws IOException {
-        return sendValveCmd(MOINS_UN + 'T' + A2S_INFO);
+        return sendValveCmd('T' + A2S_INFO);
     }
     
     /**
@@ -246,9 +246,9 @@ class ValveUdpClient extends DatagramSocketClient {
             }
         } else {
             try {
-                final StrBuilder builder = new StrBuilder(MOINS_UN);
-                builder.append("rcon ").append(challenge).append(' ').append('"').append(rcon).append('"').append(' ')
-                        .append(cmd);
+                final StrBuilder builder = new StrBuilder();
+                builder.append(MOINS_UN).append("rcon ").append(challenge).append(' ').append('"').append(rcon).append(
+                        '"').append(' ').append(cmd);
                 sendBuf = ByteBuffer.wrap(builder.toString().getBytes());
                 final DatagramPacket sendPacket = new DatagramPacket(sendBuf.array(), sendBuf.capacity(), server
                         .getIpay());
@@ -270,7 +270,8 @@ class ValveUdpClient extends DatagramSocketClient {
         if (null == _socket_) {
             _socket_ = new DefaultDatagramSocketFactory().createDatagramSocket();
         }
-        sendBuf = ByteBuffer.wrap((MOINS_UN + cmd + '\n').getBytes());
+        sendBuf = ByteBuffer.wrap((MOINS_UN + cmd + Server.NUL).getBytes());
+        LOG.debug("Sending : " + cmd);
         final DatagramPacket sendPacket = new DatagramPacket(sendBuf.array(), sendBuf.capacity(), server.getIpay());
         final DatagramPacket recPacket = createDatagramPacket();
         _socket_.send(sendPacket);

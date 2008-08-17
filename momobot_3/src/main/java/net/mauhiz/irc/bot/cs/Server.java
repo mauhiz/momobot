@@ -5,9 +5,9 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.text.StrBuilder;
+import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 /**
@@ -15,44 +15,19 @@ import org.apache.log4j.Logger;
  * 
  * @author mauhiz
  */
-public class Server {
-    /**
-     * indique que le serveur est dédié.
-     */
-    public static final char    DEDICATED        = 'd';
-    /**
-     * moteur de HL 1.
-     */
-    public static final char    GOLDSOURCE       = 'm';
-    /**
-     * indique que le serveur est un hltv.
-     */
-    public static final char    HLTV             = 'p';
-    /**
-     * indique que le serveur est sous linux.
-     */
-    public static final char    LINUX            = 'l';
-    /**
-     * indique que le serveur est listen.
-     */
-    public static final char    LISTEN           = 'l';
+public class Server implements ServerFlags {
     /**
      * logger.
      */
-    private static final Logger LOG              = Logger.getLogger(Server.class);
+    private static final Logger LOG = Logger.getLogger(Server.class);
+    /**
+     * breaker.
+     */
+    public static final char NUL = 0;
     /**
      * 
      */
-    private static final long   serialVersionUID = 1;
-    /**
-     * moteur source.
-     */
-    public static final char    SOURCE           = 'I';
-    /**
-     * indique que le serveur est sous windows.
-     */
-    public static final char    WINDOWS          = 'w';
-
+    private static final long serialVersionUID = 1;
     /**
      * @param buffer
      *            le bytebuffer
@@ -64,7 +39,7 @@ public class Server {
         while (buffer.hasRemaining()) {
             /* et non pas buffer.getChar() */
             temp = (char) buffer.get();
-            if ('\0' == temp) {
+            if (NUL == temp) {
                 break;
             }
             retour.append(temp);
@@ -74,40 +49,40 @@ public class Server {
     /**
      * Ip et port du serveur.
      */
-    private InetSocketAddress            ipay;
+    private InetSocketAddress ipay;
     /**
      * map actuelle.
      */
-    private String                       map;
+    private String map;
     /**
      * capacité du serveur en nombre de joueurs.
      */
-    private byte                         maxPlayers;
+    private byte maxPlayers;
     /**
      * hostname du serveur.
      */
-    private String                       name;
+    private String name;
     /**
      * mot de passe.
      */
-    private String                       pass;
+    private String pass;
     /**
      * Temps de latence en ms.
      */
-    private long                         ping    = -1;
+    private long ping = -1;
     /**
      * Nombre de joueurs présents sur le serveur. Utilisé avant d'avoir tous les joueurs.
      */
-    private byte                         playerCount;
+    private byte playerCount;
     /**
      * 
      */
-    private final Map < String, Player > players = new TreeMap < String, Player >();
+    private final Map<String, Player> players = new TreeMap<String, Player>();
     /**
      * Le client Valve UDP.
      */
-    private final ValveUdpClient         vuc;
-
+    private final ValveUdpClient vuc;
+    
     /**
      * Constructeur.
      * 
@@ -116,10 +91,10 @@ public class Server {
      */
     public Server(final InetSocketAddress ipay1) {
         super();
-        this.ipay = ipay1;
-        this.vuc = new ValveUdpClient(this);
+        ipay = ipay1;
+        vuc = new ValveUdpClient(this);
     }
-
+    
     /**
      * @param steamid
      *            le steamId
@@ -132,106 +107,107 @@ public class Server {
         final Player player = new Player(steamid);
         player.setName(nick);
         player.setFrags(frags);
-        this.players.put(steamid, player);
+        players.put(steamid, player);
     }
-
+    
     /**
      * @param cvar
      *            la cvar à demander
      */
     public final void askCvar(final String cvar) {
-        this.vuc.rconCmd(cvar);
+        vuc.rconCmd(cvar);
     }
-
+    
     /**
      * @param newmap
      *            la nouvelle map
      * @return si on a effectivement change de map
      */
     public final boolean changelevel(final String newmap) {
-        if (newmap.equals(this.map)) {
+        if (newmap.equals(map)) {
             return false;
         }
-        this.vuc.rconCmd("changelevel " + newmap);
+        vuc.rconCmd("changelevel " + newmap);
         return true;
     }
-
+    
     /**
      * affiche les détails du serveur. Voir <a href="http://developer.valvesoftware.com/wiki/Server_Queries#A2S_INFO">
      * VDW </a>
      */
     public void getDetails() {
-        final long start = System.nanoTime();
+        final StopWatch sw = new StopWatch();
+        sw.start();
         ByteBuffer result = null;
         try {
-            result = ByteBuffer.wrap(this.vuc.getInfo().getBytes());
+            result = ByteBuffer.wrap(vuc.getInfo().getBytes());
         } catch (final IOException ioe) {
             LOG.error(ioe, ioe);
         }
         if (null == result) {
             return;
         }
-        final long end = System.nanoTime();
-        this.ping = TimeUnit.MILLISECONDS.convert(end - start, TimeUnit.NANOSECONDS);
+        sw.stop();
+        ping = sw.getTime();
         result.position(Integer.SIZE / Byte.SIZE);
         final char type = (char) result.get();
         if (LOG.isDebugEnabled()) {
-            LOG.debug(Character.toString(type));
+            LOG.debug("Type: " + Character.toString(type));
         }
         if (type == GOLDSOURCE) {
             getDetailsGoldSource(result);
         } else if (type == SOURCE) {
             getDetailsSource(result);
         } else {
-                LOG.warn("Serveur inconnu (type = " + type + ")");
+            LOG.warn("Serveur inconnu (type = " + type + ")");
         }
     }
-
+    
     /**
      * @param result
      */
     private void getDetailsGoldSource(final ByteBuffer result) {
         final String adresse = getNextString(result);
         LOG.debug(adresse);
-        this.name = getNextString(result);
-        LOG.debug(this.name);
-        this.map = getNextString(result);
-        LOG.debug(this.map);
+        name = getNextString(result);
+        LOG.debug(name);
+        map = getNextString(result);
+        LOG.debug(map);
         final String gameDir = getNextString(result);
         LOG.debug(gameDir);
         final String gameDesc = getNextString(result);
-        LOG.debug(gameDesc);
-        this.playerCount = result.get();
+        LOG.debug("gameDesc: " + gameDesc);
+        playerCount = result.get();
         if (LOG.isDebugEnabled()) {
-            LOG.debug(Integer.toString(this.playerCount));
+            LOG.debug("playerCount: " + Integer.toString(playerCount));
         }
-        this.maxPlayers = result.get();
+        maxPlayers = result.get();
         if (LOG.isDebugEnabled()) {
-            LOG.debug(Integer.toString(this.maxPlayers));
+            LOG.debug("maxplayers: " + Integer.toString(maxPlayers));
         }
         final short version = result.get();
-        LOG.debug(Integer.toString(version));
+        LOG.debug("version: " + Integer.toString(version));
         final char dedicated = (char) result.get();
-        LOG.debug(Integer.toString(dedicated));
+        LOG.debug("dedicated: " + Character.toString(dedicated));
         final char operatingSystem = (char) result.get();
-        LOG.debug(Character.toString(operatingSystem));
+        LOG.debug("OS: " + Character.toString(operatingSystem));
         final boolean passWord = result.get() == 0x1;
-        LOG.debug(Boolean.toString(passWord));
+        LOG.debug("passWord: " + Boolean.toString(passWord));
         final boolean isMod = result.get() == 0x1;
-        LOG.debug(Boolean.toString(isMod));
+        LOG.debug("isMod: " + Boolean.toString(isMod));
         if (isMod) {
             getDetailsModGoldSource(result);
         }
         final boolean secure = result.get() == 0x1;
         if (LOG.isDebugEnabled()) {
-            LOG.debug(Boolean.toString(secure));
+            LOG.debug("secure: " + Boolean.toString(secure));
         }
         final short nbBots = result.get();
         if (LOG.isDebugEnabled()) {
-            LOG.debug(Integer.toString(nbBots));
+            LOG.debug("nbBots: " + Integer.toString(nbBots));
         }
     }
-
+    
     /**
      * @param result
      */
@@ -263,7 +239,7 @@ public class Server {
             LOG.debug(Boolean.toString(clDll));
         }
     }
-
+    
     /**
      * @param result
      */
@@ -272,10 +248,10 @@ public class Server {
         if (LOG.isDebugEnabled()) {
             LOG.debug(Integer.toString(version));
         }
-        this.name = getNextString(result);
-        LOG.debug(this.name);
-        this.map = getNextString(result);
-        LOG.debug(this.map);
+        name = getNextString(result);
+        LOG.debug(name);
+        map = getNextString(result);
+        LOG.debug(map);
         final String gameDir = getNextString(result);
         LOG.debug(gameDir);
         final String gameDesc = getNextString(result);
@@ -284,8 +260,8 @@ public class Server {
         if (LOG.isDebugEnabled()) {
             LOG.debug(Integer.toString(appId));
         }
-        this.playerCount = result.get();
-        this.maxPlayers = result.get();
+        playerCount = result.get();
+        maxPlayers = result.get();
         final short nbBots = result.get();
         if (LOG.isDebugEnabled()) {
             LOG.debug(Integer.toString(nbBots));
@@ -309,83 +285,90 @@ public class Server {
         final String gameVersion = getNextString(result);
         LOG.debug(gameVersion);
     }
-
+    
     /**
      * @return ip
      */
     public final String getIp() {
-        return this.ipay.getAddress().getHostAddress();
+        return ipay.getAddress().getHostAddress();
     }
-
+    
     /**
      * @return ipay
      */
     public final InetSocketAddress getIpay() {
-        return this.ipay;
+        return ipay;
     }
-
+    
     /**
      * @return Returns the map.
      */
     public final String getMap() {
-        return this.map;
+        return map;
     }
-
+    
     /**
      * @return maxPlayers
      */
     public final String getMaxPlayers() {
-        return Byte.toString(this.maxPlayers);
+        return Byte.toString(maxPlayers);
     }
-
+    
     /**
      * @return Returns the name.
      */
     public final String getName() {
-        return this.name;
+        return name;
     }
-
+    
     /**
      * @return Returns the pass.
      */
     public final String getPass() {
-        return this.pass;
+        return pass;
     }
-
+    
     /**
      * @return Returns the ping.
      */
     public final long getPing() {
-        return this.ping;
+        return ping;
     }
-
+    
     /**
      * @return playerCount
      */
     public final String getPlayerCount() {
-        return Integer.toString(this.playerCount);
+        return Integer.toString(playerCount);
     }
-
+    
     /**
      * @param steamid
      *            le SteamId
      * @return le nick du player
      */
     public final String getPlayerNick(final String steamid) {
-        final Player player = this.players.get(steamid);
+        final Player player = players.get(steamid);
         if (null != player) {
             return player.getName();
         }
         return null;
     }
-
+    
     /**
      * @return port
      */
     public final int getPort() {
-        return this.ipay.getPort();
+        return ipay.getPort();
     }
-
+    
+    /**
+     * Affiche le status.
+     */
+    public final void rconStatus() {
+        vuc.rconCmd("status");
+    }
+    
     /**
      * @param cvar
      *            la cvar
@@ -393,80 +376,73 @@ public class Server {
      *            la valeur
      */
     public final void setCvar(final String cvar, final String value) {
-        this.vuc.rconCmd(new StrBuilder().append('"').append(cvar).append('"').append(' ').append('"').append(value)
-                .append('"').toString());
+        vuc.rconCmd(new StrBuilder().append('"').append(cvar).append('"').append(' ').append('"').append(value).append(
+                '"').toString());
     }
-
+    
     /**
      * @param ipay1
      *            the ipay to set
      */
     protected final void setIpay(final InetSocketAddress ipay1) {
-        this.ipay = ipay1;
+        ipay = ipay1;
     }
-
+    
     /**
      * @param map1
      *            The map to set.
      */
     public final void setMap(final String map1) {
-        this.map = map1;
+        map = map1;
     }
-
+    
     /**
      * @param maxPlayers1
      *            le nombre maxi de players
      */
     public final void setMaxPlayers(final byte maxPlayers1) {
-        this.maxPlayers = maxPlayers1;
+        maxPlayers = maxPlayers1;
     }
-
+    
     /**
      * @param name1
      *            The name to set.
      */
     public final void setName(final String name1) {
-        this.name = name1;
+        name = name1;
     }
-
+    
     /**
      * @param pass1
      *            The pass to set.
      */
     public final void setPass(final String pass1) {
-        this.pass = pass1;
+        pass = pass1;
     }
-
+    
     /**
      * @param ping1
      *            The ping to set.
      */
     public final void setPing(final long ping1) {
-        this.ping = ping1;
+        ping = ping1;
     }
-
+    
     /**
      * @param playerCount1
      *            le nombre de joueurs courants
      */
     public final void setPlayerCount(final byte playerCount1) {
-        this.playerCount = playerCount1;
+        playerCount = playerCount1;
     }
-
-    /**
-     * Affiche le status.
-     */
-    public final void status() {
-        this.vuc.rconCmd("status");
-    }
-
+    
     /**
      * récupère le password.
      */
     public final void svPassword() {
         askCvar("sv_password");
     }
-
+    
     /**
      * Fixe un password.
      * 
@@ -476,7 +452,7 @@ public class Server {
     public final void svPassword(final String pwd) {
         setCvar("sv_password", pwd);
     }
-
+    
     /**
      * @param delay
      *            le délai avant le restart
@@ -484,7 +460,7 @@ public class Server {
     public final void svRestart(final int delay) {
         setCvar("sv_restart", Integer.toString(delay));
     }
-
+    
     /**
      * @return un affichage
      * @see Object#toString()
@@ -492,8 +468,7 @@ public class Server {
     @Override
     public String toString() {
         getDetails();
-        return getIp() + ":" + getPort() + " | " + this.name + " | " + this.ping + "ms (" + this.playerCount + "/"
-                + this.maxPlayers + ")";
+        return getIp() + ":" + getPort() + " | " + name + " | " + ping + "ms (" + playerCount + "/" + maxPlayers + ")";
         /* TODO : ajouter playerCount/maxPlayers */
     }
 }
