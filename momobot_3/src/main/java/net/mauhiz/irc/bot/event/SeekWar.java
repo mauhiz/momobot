@@ -65,7 +65,7 @@ public class SeekWar {
     /**
      * Liste d'ordre croissante des lvl
      */
-    private String[] lvl = {"noob", "low", "mid", "middle", "pgm", "skilled", "high", "roxor"};
+    private String[] lvl = {"noob", "low", "mid", "good", "skilled", "high", "roxor"};
     /**
      * True si le seek est en cour ; false sinon
      */
@@ -296,6 +296,7 @@ public class SeekWar {
         seekInProgress = false;
         isLunchedAndQuit = false;
         userpv.clear();
+        splited = false;
         sw.stop();
         sw.reset();
         return "Le seek est arrete.";
@@ -337,7 +338,7 @@ public class SeekWar {
             int i = -1;
             // On regarde si le seekLevel match avec la liste de lvl
             for (int j = 0; j < lvl.length; j++) {
-                if (lvl[i].equals(seekLevel.toLowerCase())) {
+                if (lvl[j].equals(seekLevel.toLowerCase())) {
                     i = j;
                 }
             }
@@ -356,6 +357,10 @@ public class SeekWar {
                                 lvl[i - 1]))) {
                     return true;
                 }
+                
+            } else {
+                // on a pas réussi a comprendre son lvl, on lui demande en PV
+                return true;
                 
             }
             
@@ -424,7 +429,7 @@ public class SeekWar {
         
         // On test si il faut renvoié le msg de seek au channel
         
-        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarming) {
+        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES)) {
             if (splited) {
                 if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(2, TimeUnit.MINUTES) & !sWarming) {
                     sw.split();
@@ -433,6 +438,13 @@ public class SeekWar {
                         Privmsg msg1 = new Privmsg(null, element, im.getServer(), getMessageForSeeking());
                         resultPrivmsg.add(msg1);
                     }
+                    // un deuxieme msg
+                    seekMessage = "." + seekMessage + ".";
+                    for (String element : SEEK_CHANS) {
+                        Privmsg msg1 = new Privmsg(null, element, im.getServer(), getMessageForSeeking());
+                        resultPrivmsg.add(msg1);
+                    }
+                    
                 }
             } else {
                 sw.split();
@@ -483,6 +495,7 @@ public class SeekWar {
                         seekInProgress = false;
                         userpv.clear();
                         userpv.add(provenance);
+                        splited = false;
                         sw.stop();
                         sw.reset();
                         return resultPrivmsg;
