@@ -26,8 +26,8 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @return replacement
      */
     public static String replaceTu(final String input, final String with) {
-        return StringUtils.replaceEach(input, new String[]{"tu es ", "Tu es "}, new String[]{with + " est",
-                with + " est"});
+        return StringUtils.replaceEach(input, new String[]{"tu es ", "Tu es "}, new String[]{with + " est ",
+                with + " est "});
     }
     
     /**
