@@ -35,6 +35,10 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
      */
     private static final Logger LOG = Logger.getLogger(SeekWar.class);
     /**
+     * 
+     */
+    private boolean isLunchedAndQuit = false;
+    /**
      * @param trigger
      *            le trigger
      */
@@ -63,6 +67,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                 if (((Gather) evt).getSeek().isSeekInProgress()) {
                     reply = "Seek déja en cours.";
                 } else {
+                    isLunchedAndQuit = true;
                     reply = ((Gather) evt).getSeek()
                             .start(StringUtils.split(getArgs(im.getMessage())), chan.toString());
                     if (((Gather) evt).getSeek().isSeekInProgress()) {
@@ -94,6 +99,11 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
             if (evt1 instanceof Gather) {
                 final Gather gather = (Gather) evt1;
                 IrcUser kikoolol = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+                // Si c'est "$stopseek" on réinitialise isLunchedAndQuit
+                if ("$stopseek".equals(im.getMessage().toLowerCase())) {
+                    isLunchedAndQuit = false;
+                }
+                
                 if (gather.getSeek().isSeekInProgress()) {
                     if (!gather.getSeek().isTimeOut()) {
                         // TJS en vie
@@ -122,6 +132,10 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                     Privmsg reply = new Privmsg(null, gather.getSeek().getChannel(), im.getServer(), kikoolol.getNick()
                             + " : " + im.getMessage());
                     control.sendMsg(reply);
+                    // Le seek est réussi, on leave les channels
+                } else if (!gather.getSeek().isSeekInProgress() && isLunchedAndQuit) {
+                    isLunchedAndQuit = false;
+                    StopSeekTrigger.leaveSeekChans(control, im.getServer());
                 }
             }
         }
