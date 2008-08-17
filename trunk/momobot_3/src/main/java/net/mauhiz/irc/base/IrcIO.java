@@ -54,6 +54,15 @@ public class IrcIO extends SocketClient implements IIrcIO {
      */
     @Override
     public void disconnect() {
+        status = Status.DISCONNECTED;
+        output.setRunning(false);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            LOG.error(e);
+            Thread.currentThread().interrupt();
+            return;
+        }
         if (isConnected()) {
             try {
                 super.disconnect();
@@ -61,8 +70,7 @@ public class IrcIO extends SocketClient implements IIrcIO {
                 LOG.error(ioe, ioe);
             }
         }
-        output.setRunning(false);
-        status = Status.DISCONNECTED;
+        
     }
     
     /**
