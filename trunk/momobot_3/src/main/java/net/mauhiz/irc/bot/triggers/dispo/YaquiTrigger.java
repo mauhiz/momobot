@@ -13,7 +13,6 @@ import net.mauhiz.irc.SqlUtils;
 import net.mauhiz.irc.base.Color;
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -26,7 +25,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class YaquiTrigger extends AbstractTextTrigger implements IrcSpecialChars, IPrivmsgTrigger {
+public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * logger.
      */
