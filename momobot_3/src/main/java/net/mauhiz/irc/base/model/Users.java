@@ -58,7 +58,7 @@ public final class Users extends HashSet<IrcUser> {
             throw new NullArgumentException("nick");
         }
         for (IrcUser user : this) {
-            if (nick.equals(user.getNick())) {
+            if (nick.equalsIgnoreCase(user.getNick())) {
                 if (addIfNotFound && (user.getHost() == null || user.getUser() == null)) {
                     user.updateWithMask(mask);
                 }
@@ -84,7 +84,7 @@ public final class Users extends HashSet<IrcUser> {
             throw new NullArgumentException("nick");
         }
         for (IrcUser user : this) {
-            if (nick.equals(user.getNick())) {
+            if (nick.equalsIgnoreCase(user.getNick())) {
                 return user;
             }
         }
