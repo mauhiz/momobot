@@ -10,20 +10,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.IrcControl;
-import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.data.IrcServer;
 
 import org.apache.log4j.Logger;
 
 /**
- * @author viper
+ * @author mauhiz
  */
-public class BncLauncher implements IrcSpecialChars {
+public class BncLauncher {
     static final List<Account> ACCOUNTS = new ArrayList<Account>();
     static long globalStartTime;
     static final String LOCAL_NICK = "root";
-    static final Logger LOG = Logger.getLogger(BncLauncher.class);
+    private static final Logger LOG = Logger.getLogger(BncLauncher.class);
     static final String METHOD = "NOTICE AUTH :";
     static final int MY_PORT = 6667;
     static final IrcServer QNET;
@@ -61,8 +61,10 @@ public class BncLauncher implements IrcSpecialChars {
         writer.println(":jbouncer 005 " + nick + " :");
         writer.println(METHOD + "Welcome to JBouncer. http://www.jibble.org/jbouncer/");
         writer.println(METHOD + "This is an IRC proxy/bouncer. Unauthorized users must disconnect immediately.");
-        writer.println(METHOD + "To connect, enter your password by typing " + BOLD + "/msg " + LOCAL_NICK + " "
-                + UNDERLINE + "login" + UNDERLINE + " " + UNDERLINE + "password");
+        writer.println(METHOD
+                + "To connect, enter your password by typing "
+                + ColorUtils.toBold("/msg " + LOCAL_NICK + " " + ColorUtils.toUnderline("login") + " "
+                        + ColorUtils.toUnderline("password")));
         // /* TODO auth stuff */
         writer.flush();
         while ((line = reader.readLine()) != null) {
