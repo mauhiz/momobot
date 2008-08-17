@@ -75,6 +75,6 @@ public class DateUtils {
      * @return un timestamp
      */
     public static String getTimeStamp(final StopWatch sw) {
-        return timeFormat.format(sw.getTime());
+        return timeFormat.format(System.currentTimeMillis() + sw.getTime());
     }
 }
