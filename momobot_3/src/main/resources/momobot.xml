@@ -43,7 +43,7 @@
 		</trigger>
 		<trigger class="JoinOnInviteTrigger" />
 		<trigger class="WelcomeTrigger" />
-		<trigger class="AboutTrigger" />
+		<trigger class="AboutTrigger">
 			<command>about</command>
 		</trigger>
 	</triggerpack>
