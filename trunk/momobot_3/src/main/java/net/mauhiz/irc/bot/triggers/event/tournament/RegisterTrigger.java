@@ -6,7 +6,7 @@ import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
-import net.mauhiz.irc.bot.event.Tournament;
+import net.mauhiz.irc.bot.tournament.Tournament;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
