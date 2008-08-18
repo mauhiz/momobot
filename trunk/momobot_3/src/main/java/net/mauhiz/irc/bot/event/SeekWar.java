@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.NetUtils;
@@ -22,14 +21,24 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Topper
- * 
  */
 public class SeekWar {
-    
+    /**
+     * pattern de detection d une IP
+     */
+    private static final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.){3}\\d{1,3}\\:\\d{1,5}");
     /**
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(SeekWar.class);
+    /**
+     * port maxi
+     */
+    private static final int MAX_SRV_PORT = 65535;
+    /**
+     * port mini
+     */
+    private static final int MIN_SRV_PORT = 1024;
     /**
      * liste des channels de seek
      */
@@ -61,7 +70,7 @@ public class SeekWar {
     /**
      * 
      */
-    public boolean isLunchedAndQuit = false;
+    public boolean isLaunchedAndQuit;
     /**
      * Liste d'ordre croissante des lvl
      */
@@ -83,42 +92,38 @@ public class SeekWar {
      */
     private String seekServ;
     /**
-     * Temps de time out
+     * Temps de time out : 6min par defaut
      */
-    private long seekTimeOut;
+    private long seekTimeOut = TimeUnit.MILLISECONDS.convert(6, TimeUnit.MINUTES);
     /**
      * si on a splité
      */
-    private boolean splited = false;
+    private boolean split;
+    
     /**
      * le temps où je commence.
      */
     private final StopWatch sw = new StopWatch();
+    
     /**
      * 
      */
-    private boolean sWarming = false;
+    private boolean sWarning;
     /**
      * Liste des users qui ont pv le bot
      */
     private final List<IrcUser> userpv = new ArrayList<IrcUser>();
-    
     /**
-     * 
      * @param gath
      *            = gather qui est propriétaire de SeekWar()
      */
     public SeekWar(final Gather gath) {
-        seekInProgress = false;
-        isLunchedAndQuit = false;
         seekServ = "ON";
         ippass = "87.98.196.75:27019 Gotserv.com: pw:gruik";
         seekLevel = "mid";
         seekMessage = "seek %Pv%P - %S - %L pm ";
         gather = gath;
         // 6 min
-        seekTimeOut = TimeUnit.MILLISECONDS.convert(6, TimeUnit.MINUTES);
-        userpv.clear();
     }
     
     /**
@@ -127,21 +132,22 @@ public class SeekWar {
     public final String getChannel() {
         return channel;
     }
+    
     /**
      * @return String = Message de seek complété
      */
     public final String getMessageForSeeking() {
         return MomoStringUtils.genereSeekMessage(seekMessage, gather.getNumberPlayers(), seekServ, seekLevel);
     }
+    
     /**
      * @return String
      * 
      */
-    private final String getSeekInfo() {
+    private String getSeekInfo() {
         return "Seek - Info : " + gather.getNumberPlayers() + "vs" + gather.getNumberPlayers() + " serv = " + seekServ
                 + " level = " + seekLevel;
     }
-    
     /**
      * @return String = qui a gagner le seek
      */
@@ -152,7 +158,6 @@ public class SeekWar {
         }
         return userpv.get(0).getNick();
     }
-    
     /**
      * @return String
      */
@@ -165,314 +170,27 @@ public class SeekWar {
      */
     public final boolean isTimeOut() {
         LOG.debug("Time seek : " + sw.getTime());
-        if (sw.getTime() < seekTimeOut) {
-            return false;
-        }
-        return true;
-    }
-    /**
-     * @param cmd
-     *            String[] non normalise
-     * @return un message
-     */
-    List<String> split(final String[] cmd) {
-        List<String> cmdNormalise = new ArrayList<String>();
-        String tmpStg = "";
-        
-        boolean inquote = false;
-        for (String element : cmd) {
-            
-            /* hey, xoring! */
-            if (element.charAt(0) == '\"' ^ element.charAt(element.length() - 1) == '\"') {
-                inquote = !inquote;
-            }
-            
-            if (tmpStg.isEmpty()) {
-                tmpStg = element;
-            } else {
-                tmpStg += " " + element;
-            }
-            if (!inquote) {
-                cmdNormalise.add(tmpStg);
-                tmpStg = "";
-            }
-        }
-        return cmdNormalise;
-    }
-    /**
-     * @param commandSeek
-     *            1) RIEN 2) ON IPPASS LVL 3) OFF LVL 4) ON IPPASS LVL MSGSEEK 5) OFF LVL MSGSEEK
-     * @param chan
-     * @return String
-     */
-    public String start(final String[] commandSeek, final String chan) {
-        sw.start();
-        channel = chan;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Lancement d'un seek = " + StringUtils.join(commandSeek));
-        }
-        
-        List<String> cmdSeek = split(commandSeek);
-        
-        // On CFG le seek avec les param
-        switch (cmdSeek.size()) {
-            case 0 :
-                // Seek sans parametre
-                seekInProgress = true;
-                isLunchedAndQuit = true;
-                return "Seek Par Defaut >> " + getSeekInfo() + " ippass = " + ippass;
-                
-            case 1 :
-                if ("on".equalsIgnoreCase(cmdSeek.get(0)) || "off".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
-                        return getSeekInfo() + " ippass = " + ippass;
-                    }
-                    return getSeekInfo();
-                }
-                sw.stop();
-                sw.reset();
-                return "Paramètre(s) Incorrect";
-                
-            case 2 :
-                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    ippass = cmdSeek.get(1);
-                    return getSeekInfo() + " ippass = " + ippass;
-                } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    seekLevel = cmdSeek.get(1);
-                    return getSeekInfo();
-                } else {
-                    sw.stop();
-                    sw.reset();
-                    return "Paramètre(s) Incorrect";
-                }
-                
-            case 3 :
-                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    ippass = cmdSeek.get(1);
-                    seekLevel = cmdSeek.get(2);
-                    return getSeekInfo() + " ippass = " + ippass;
-                } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    seekLevel = cmdSeek.get(1);
-                    seekMessage = cmdSeek.get(2);
-                    return getSeekInfo() + " MSGSeek = " + seekMessage;
-                } else {
-                    sw.stop();
-                    sw.reset();
-                    return "Paramètre(s) Incorrect";
-                }
-                
-            case 4 :
-                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    ippass = cmdSeek.get(1);
-                    seekLevel = cmdSeek.get(2);
-                    seekMessage = cmdSeek.get(3);
-                    return getSeekInfo() + " ippass = " + ippass + " MSGSeek = " + seekMessage;
-                }
-                sw.stop();
-                sw.reset();
-                return "Paramètre(s) Incorrect";
-                
-            default :
-                sw.stop();
-                sw.reset();
-                return "Paramètre(s) Incorrect";
-                
-        }
-    }
-    
-    /**
-     * @return une String
-     */
-    public final String stopSeek() {
-        seekInProgress = false;
-        isLunchedAndQuit = false;
-        userpv.clear();
-        splited = false;
-        sw.stop();
-        sw.reset();
-        return "Le seek est arrete.";
-    }
-    
-    /**
-     * @param stg
-     *            Message qui vient du channel de seek
-     * @return
-     * 
-     */
-    public final boolean submitChannelMessage(final String stg) {
-        // On doit inverser le seek ex:Si je seek srv ON,le msg de match doit être serv off.
-        String seekServ1;
-        if ("on".equalsIgnoreCase(seekServ)) {
-            seekServ1 = "off";
-        } else if ("off".equalsIgnoreCase(seekServ)) {
-            seekServ1 = "on";
-        } else {
-            seekServ1 = "";
-        }
-        
-        ArrayList<String> listMatch = new ArrayList<String>();
-        int player = gather.getNumberPlayers();
-        for (String element : SEPARATEUR) {
-            listMatch.add(player + element + player);
-            listMatch.add(player + " " + element + " " + player);
-        }
-        boolean numbermatch = false;
-        for (String element : listMatch) {
-            if (stg.toLowerCase().contains(element)) {
-                numbermatch = true;
-                break;
-            }
-            
-        }
-        if (numbermatch && stg.toLowerCase().contains(seekServ1)) {
-            
-            int i = -1;
-            // On regarde si le seekLevel match avec la liste de lvl
-            for (int j = 0; j < lvl.length; j++) {
-                if (lvl[j].equals(seekLevel.toLowerCase())) {
-                    i = j;
-                }
-            }
-            // Si le msg est a +-1 lvl on match
-            if (i > -1) {
-                if (StringUtils.containsIgnoreCase(stg, seekLevel)) {
-                    return true;
-                }
-                if (i == 0 && StringUtils.containsIgnoreCase(stg, lvl[i + 1])) {
-                    return true;
-                } else if (i == lvl.length - 1 && StringUtils.containsIgnoreCase(stg, lvl[i - 1])) {
-                    return true;
-                } else if (i != 0
-                        && i != lvl.length - 1
-                        && (StringUtils.containsIgnoreCase(stg, lvl[i + 1]) || StringUtils.containsIgnoreCase(stg,
-                                lvl[i - 1]))) {
-                    return true;
-                }
-                
-            } else {
-                // on a pas réussi a comprendre son lvl, on lui demande en PV
-                return true;
-                
-            }
-            
-        }
-        return false;
-    }
-    /**
-     * @param msg
-     * @param provenance
-     *            = nick
-     * @return true si le bot pense que le PV est ok
-     */
-    private boolean submitPVMessage(final String msg, final IrcUser provenance) {
-        
-        try {
-            Pattern p = Pattern.compile("(\\d{1,3}\\.){3}\\d{1,3}\\:\\d{1,5}");
-            Matcher m = p.matcher(msg);
-            if (m.find()) {
-                InetSocketAddress add1 = NetUtils.makeISA(m.group());
-                if (add1.getPort() > 2700 && add1.getPort() < 35000) {
-                    // On regarde si l'user est déja dans la liste
-                    if (!userpv.contains(provenance)) {
-                        userpv.add(provenance);
-                    }
-                    return true;
-                }
-            }
-        } catch (PatternSyntaxException pse) {
-        }
-        
-        String lowerMsg = msg.toLowerCase();
-        for (String element : blackList) {
-            if (lowerMsg.contains(element)) {
-                return false;
-            }
-        }
-        // GreenList1 LVL + GREENLIST
-        String[] greenList1 = new String[greenList.length + lvl.length];
-        for (int i = 0; i < greenList.length; i++) {
-            greenList1[i] = greenList[i];
-        }
-        for (int i = 0; i < lvl.length; i++) {
-            greenList1[i + greenList.length] = lvl[i];
-        }
-        
-        for (String element : greenList1) {
-            if (lowerMsg.contains(element)) {
-                return true;
-            }
-        }
-        return false;
+        return sw.getTime() >= seekTimeOut;
     }
     
     /**
      * @param im
-     * @return String
+     * @param resultPrivmsg
+     * @return list of {@link Privmsg}
      */
-    
-    public final List<Privmsg> submitSeekMessage(final Privmsg im) {
-        IrcServer server1 = im.getServer();
-        IrcUser provenance = Users.getInstance(server1).findUser(new Mask(im.getFrom()), true);
+    private List<Privmsg> processIncomingMessage(final Privmsg im, final List<Privmsg> resultPrivmsg) {
+        IrcServer server = im.getServer();
+        IrcUser provenance = Users.getInstance(server).findUser(new Mask(im.getFrom()), true);
         String destination = im.getTo();
         String msg = im.getMessage();
-        List<Privmsg> resultPrivmsg = new ArrayList<Privmsg>(3);
-        
-        // On test si il faut renvoié le msg de seek au channel
-        
-        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS)) {
-            if (splited) {
-                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarming) {
-                    sw.split();
-                    seekMessage = "." + seekMessage + ".";
-                    for (String element : SEEK_CHANS) {
-                        Privmsg msg1 = new Privmsg(null, element, im.getServer(), getMessageForSeeking());
-                        resultPrivmsg.add(msg1);
-                    }
-                    // un deuxieme msg
-                    seekMessage = "." + seekMessage + ".";
-                    for (String element : SEEK_CHANS) {
-                        Privmsg msg1 = new Privmsg(null, element, im.getServer(), getMessageForSeeking());
-                        resultPrivmsg.add(msg1);
-                    }
-                    
-                }
-            } else {
-                sw.split();
-                splited = true;
-                seekMessage = ":" + seekMessage + ":";
-                for (String element : SEEK_CHANS) {
-                    Privmsg msg1 = new Privmsg(null, element, im.getServer(), getMessageForSeeking());
-                    resultPrivmsg.add(msg1);
-                }
-            }
-        }
-        
         // Traitement des messages entrant
         if (im.getServer().getMyNick().equals(destination)) {
             // C'est un msg PV
             
             // Si c'est "S" on se calme!
             if (provenance.getNick().toLowerCase().equals("S")) {
-                sWarming = true;
-                Privmsg msg1 = new Privmsg(null, channel, im.getServer(), "S vient me faire ch**r. J'y vais calmos");
+                sWarning = true;
+                Privmsg msg1 = new Privmsg(null, channel, server, "S vient me faire ch**r. J'y vais calmos");
                 resultPrivmsg.add(msg1);
             }
             
@@ -504,7 +222,7 @@ public class SeekWar {
                         seekInProgress = false;
                         userpv.clear();
                         userpv.add(provenance);
-                        splited = false;
+                        split = false;
                         sw.stop();
                         sw.reset();
                         return resultPrivmsg;
@@ -523,7 +241,7 @@ public class SeekWar {
                 resultPrivmsg.add(msg2);
                 return resultPrivmsg;
                 
-            } else if (seekServ.toLowerCase().compareTo("off") == 0) {
+            } else if ("off".equalsIgnoreCase(seekServ)) {
                 // Le bot a déja été PV par ce bonhomme
                 if (userpv.contains(provenance)) {
                     if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
@@ -595,6 +313,297 @@ public class SeekWar {
         
         return resultPrivmsg;
     }
+    
+    /**
+     * @param cmd
+     *            String[] non normalise
+     * @return un message
+     */
+    List<String> split(final String[] cmd) {
+        List<String> cmdNormalise = new ArrayList<String>();
+        String tmpStg = "";
+        
+        boolean inquote = false;
+        for (String element : cmd) {
+            
+            /* hey, xoring! */
+            if (element.charAt(0) == '\"' ^ element.charAt(element.length() - 1) == '\"') {
+                inquote = !inquote;
+            }
+            
+            if (tmpStg.isEmpty()) {
+                tmpStg = element;
+            } else {
+                tmpStg += " " + element;
+            }
+            if (!inquote) {
+                cmdNormalise.add(tmpStg);
+                tmpStg = "";
+            }
+        }
+        return cmdNormalise;
+    }
+    /**
+     * @param commandSeek
+     *            1) RIEN 2) ON IPPASS LVL 3) OFF LVL 4) ON IPPASS LVL MSGSEEK 5) OFF LVL MSGSEEK
+     * @param chan
+     * @return String
+     */
+    public String start(final String[] commandSeek, final String chan) {
+        sw.start();
+        channel = chan;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Lancement d'un seek = " + StringUtils.join(commandSeek));
+        }
+        
+        List<String> cmdSeek = split(commandSeek);
+        
+        // On CFG le seek avec les param
+        switch (cmdSeek.size()) {
+            case 0 :
+                // Seek sans parametre
+                seekInProgress = true;
+                isLaunchedAndQuit = true;
+                return "Seek Par Defaut >> " + getSeekInfo() + " ippass = " + ippass;
+                
+            case 1 :
+                if ("on".equalsIgnoreCase(cmdSeek.get(0)) || "off".equalsIgnoreCase(cmdSeek.get(0))) {
+                    seekInProgress = true;
+                    isLaunchedAndQuit = true;
+                    seekServ = cmdSeek.get(0);
+                    if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
+                        return getSeekInfo() + " ippass = " + ippass;
+                    }
+                    return getSeekInfo();
+                }
+                sw.stop();
+                sw.reset();
+                return "Paramètre(s) Incorrect";
+                
+            case 2 :
+                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
+                    seekInProgress = true;
+                    isLaunchedAndQuit = true;
+                    seekServ = cmdSeek.get(0);
+                    ippass = cmdSeek.get(1);
+                    return getSeekInfo() + " ippass = " + ippass;
+                } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
+                    seekInProgress = true;
+                    isLaunchedAndQuit = true;
+                    seekServ = cmdSeek.get(0);
+                    seekLevel = cmdSeek.get(1);
+                    return getSeekInfo();
+                } else {
+                    sw.stop();
+                    sw.reset();
+                    return "Paramètre(s) Incorrect";
+                }
+                
+            case 3 :
+                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
+                    seekInProgress = true;
+                    isLaunchedAndQuit = true;
+                    seekServ = cmdSeek.get(0);
+                    ippass = cmdSeek.get(1);
+                    seekLevel = cmdSeek.get(2);
+                    return getSeekInfo() + " ippass = " + ippass;
+                } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
+                    seekInProgress = true;
+                    isLaunchedAndQuit = true;
+                    seekServ = cmdSeek.get(0);
+                    seekLevel = cmdSeek.get(1);
+                    seekMessage = cmdSeek.get(2);
+                    return getSeekInfo() + " MSGSeek = " + seekMessage;
+                } else {
+                    sw.stop();
+                    sw.reset();
+                    return "Paramètre(s) Incorrect";
+                }
+                
+            case 4 :
+                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
+                    seekInProgress = true;
+                    isLaunchedAndQuit = true;
+                    seekServ = cmdSeek.get(0);
+                    ippass = cmdSeek.get(1);
+                    seekLevel = cmdSeek.get(2);
+                    seekMessage = cmdSeek.get(3);
+                    return getSeekInfo() + " ippass = " + ippass + " MSGSeek = " + seekMessage;
+                }
+                sw.stop();
+                sw.reset();
+                return "Paramètre(s) Incorrect";
+                
+            default :
+                sw.stop();
+                sw.reset();
+                return "Paramètre(s) Incorrect";
+                
+        }
+    }
+    /**
+     * @return une String
+     */
+    public final String stopSeek() {
+        seekInProgress = false;
+        isLaunchedAndQuit = false;
+        userpv.clear();
+        split = false;
+        sw.stop();
+        sw.reset();
+        return "Le seek est arrete.";
+    }
+    /**
+     * @param stg
+     *            Message qui vient du channel de seek
+     * @return message
+     */
+    public final boolean submitChannelMessage(final String stg) {
+        // On doit inverser le seek ex:Si je seek srv ON,le msg de match doit être serv off.
+        String seekServ1;
+        if ("on".equalsIgnoreCase(seekServ)) {
+            seekServ1 = "off";
+        } else if ("off".equalsIgnoreCase(seekServ)) {
+            seekServ1 = "on";
+        } else {
+            seekServ1 = "";
+        }
+        
+        ArrayList<String> listMatch = new ArrayList<String>();
+        int player = gather.getNumberPlayers();
+        for (String element : SEPARATEUR) {
+            listMatch.add(player + element + player);
+            listMatch.add(player + " " + element + " " + player);
+        }
+        boolean numbermatch = false;
+        for (String element : listMatch) {
+            if (stg.toLowerCase().contains(element)) {
+                numbermatch = true;
+                break;
+            }
+            
+        }
+        if (numbermatch && stg.toLowerCase().contains(seekServ1)) {
+            
+            int i = -1;
+            // On regarde si le seekLevel match avec la liste de lvl
+            for (int j = 0; j < lvl.length; j++) {
+                if (lvl[j].equals(seekLevel.toLowerCase())) {
+                    i = j;
+                }
+            }
+            // Si le msg est a +-1 lvl on match
+            if (i > -1) {
+                if (StringUtils.containsIgnoreCase(stg, seekLevel)) {
+                    return true;
+                }
+                if (i == 0 && StringUtils.containsIgnoreCase(stg, lvl[i + 1])) {
+                    return true;
+                } else if (i == lvl.length - 1 && StringUtils.containsIgnoreCase(stg, lvl[i - 1])) {
+                    return true;
+                } else if (i != 0
+                        && i != lvl.length - 1
+                        && (StringUtils.containsIgnoreCase(stg, lvl[i + 1]) || StringUtils.containsIgnoreCase(stg,
+                                lvl[i - 1]))) {
+                    return true;
+                }
+                
+            } else {
+                // on a pas réussi a comprendre son lvl, on lui demande en PV
+                return true;
+                
+            }
+            
+        }
+        return false;
+    }
+    
+    /**
+     * @param msg
+     * @param provenance
+     *            = nick
+     * @return true si le bot pense que le PV est ok
+     */
+    private boolean submitPVMessage(final String msg, final IrcUser provenance) {
+        
+        Matcher m = IP_PATTERN.matcher(msg);
+        if (m.find()) {
+            InetSocketAddress add1 = NetUtils.makeISA(m.group());
+            if (add1.getPort() > MIN_SRV_PORT && add1.getPort() < MAX_SRV_PORT) {
+                // On regarde si l'user est déja dans la liste
+                if (!userpv.contains(provenance)) {
+                    userpv.add(provenance);
+                }
+                return true;
+            }
+        }
+        
+        String lowerMsg = msg.toLowerCase();
+        for (String element : blackList) {
+            if (lowerMsg.contains(element)) {
+                return false;
+            }
+        }
+        // GreenList1 LVL + GREENLIST
+        String[] greenList1 = new String[greenList.length + lvl.length];
+        for (int i = 0; i < greenList.length; i++) {
+            greenList1[i] = greenList[i];
+        }
+        for (int i = 0; i < lvl.length; i++) {
+            greenList1[i + greenList.length] = lvl[i];
+        }
+        
+        for (String element : greenList1) {
+            if (lowerMsg.contains(element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * @param im
+     * @return String
+     */
+    
+    public final List<Privmsg> submitSeekMessage(final Privmsg im) {
+        IrcServer server = im.getServer();
+        
+        List<Privmsg> resultPrivmsg = new ArrayList<Privmsg>(3);
+        
+        // On test si il faut renvoyer le msg de seek au channel
+        
+        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS)) {
+            if (split) {
+                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarning) {
+                    sw.split();
+                    seekMessage = "." + seekMessage + ".";
+                    for (String seekChan : SEEK_CHANS) {
+                        Privmsg msg1 = new Privmsg(null, seekChan, server, getMessageForSeeking());
+                        resultPrivmsg.add(msg1);
+                    }
+                    // un deuxieme msg
+                    seekMessage = "." + seekMessage + ".";
+                    for (String seekChan : SEEK_CHANS) {
+                        Privmsg msg1 = new Privmsg(null, seekChan, server, getMessageForSeeking());
+                        resultPrivmsg.add(msg1);
+                    }
+                    
+                }
+            } else {
+                sw.split();
+                split = true;
+                seekMessage = ":" + seekMessage + ":";
+                for (String seekChan : SEEK_CHANS) {
+                    Privmsg msg1 = new Privmsg(null, seekChan, server, getMessageForSeeking());
+                    resultPrivmsg.add(msg1);
+                }
+            }
+        }
+        
+        return processIncomingMessage(im, resultPrivmsg);
+        
+    }
+    
     /**
      * @return un msg
      */
