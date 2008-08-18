@@ -43,6 +43,9 @@
 		</trigger>
 		<trigger class="JoinOnInviteTrigger" />
 		<trigger class="WelcomeTrigger" />
+		<trigger class="AboutTrigger" />
+			<command>about</command>
+		</trigger>
 	</triggerpack>
 	<triggerpack bundle="admin" package="net.mauhiz.irc.bot.triggers.admin">
 		<trigger class="JoinTrigger">
