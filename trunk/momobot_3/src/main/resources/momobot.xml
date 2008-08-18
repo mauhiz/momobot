@@ -135,6 +135,9 @@
 		<trigger class="RouletteTrigger">
 			<command>roulette</command>
 		</trigger>
+		<trigger class="MargueriteTrigger">
+			<command>marguerite</command>
+		</trigger>
 	</triggerpack>
 	<triggerpack bundle="websearch" package="net.mauhiz.irc.bot.triggers.websearch">
 		<trigger class="BashTrigger">
