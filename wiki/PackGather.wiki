@@ -1,0 +1,36 @@
+#summary Details : triggerpack gather
+= About this package =
+
+Everything you need to set a up a gather is inside this package.
+
+
+= List of triggers =
+(sorted in alphabetical order)
+  * GatherTrigger : starts a new gather
+   ** *$start* 
+   ** *$gather*
+  * AddTrigger : add the triggering player to the gather
+   ** *$add* <arg keyword>
+  * AdminaddTrigger : force the player into the gather
+   ** *$adminadd* <arg player> 
+  * AdminrmvTrigger : force the player outside the gather
+   ** *$adminrmv* <arg player>
+  * RmvTrigger : remove the triggering player from the gather
+   ** *$rmv* <arg player>
+   ** *$remove* <arg player>
+  * RollTrigger : pickup a random player in the gather
+   ** *$adminrmv*
+   ** *$cagoule*
+  * TagTrigger : change the team tag
+   ** *$tag* <arg newtag>
+  * ShakeTrigger : ?
+   ** *$shake* ?
+  * PickupTrigger : start a new pickup
+   ** *$pickup* 
+   ** *$pick* 
+  * SeekTrigger : ?
+   ** *$seek* ?
+  * StopSeekTrigger : ?
+   ** *$stopseek* ?
+  * TgSeekTrigger : ?
+   ** *$tg* ?
