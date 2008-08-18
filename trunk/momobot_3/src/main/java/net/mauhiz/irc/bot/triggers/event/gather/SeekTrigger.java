@@ -99,7 +99,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                                         + toString()
                                         + " on \"ip+pass\" level \"message de seek entre crochet :: %P=nombre de joueur, %L = level, %S = serv(off ici) \""};
                         for (String element : noticeListHelp) {
-                            notice = Notice.buildAnswer(im, element);
+                            notice = Notice.buildPrivateAnswer(im, element);
                             control.sendMsg(notice);
                         }
                         
