@@ -6,9 +6,16 @@ This package regroup useful commands to control the bot (ie. make him join/part 
 
 = List of triggers =
 (sorted in alphabetical order)
-  * ActivateTrigger <arg trigger> : load the specified trigger
-  * DeActivateTrigger <arg trigger> : unload the specified trigger
-  * JoinTrigger <arg chan> : join the specified channel
-  * PartTrigger <arg chan> : part the specified channel
-  * QuitTrigger <arg reason> : leave the irc network
-  * SayTrigger <arg chan> <arg content> : make momobot say content on the specified channel
+  * ActivateTrigger : load the specified trigger
+   ** *$activate* <arg trigger>
+  * DeActivateTrigger : unload the specified trigger
+   ** *$deactivate* <arg trigger>
+  * JoinTrigger : join the specified channel
+   ** *$join* <arg chan>
+  * PartTrigger : part the specified channel
+   ** *$part* <arg chan>
+  * QuitTrigger : leave the irc network
+   ** *$quit* <arg reason>
+  * SayTrigger : make momobot say content on the specified channel
+   ** *$say* <arg chan> <arg content>
+  
