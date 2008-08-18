@@ -16,6 +16,7 @@
 		<loadtriggerpack prefix="$" bundle="pendu" />
 		<loadtriggerpack prefix="$" bundle="websearch" />
 		<loadtriggerpack prefix="$" bundle="fun" />
+		<loadtriggerpack prefix="$" bundle="tournament" />
 	</profil>
 	<profil name="seekbot" nick="mom0" login="mom0" fullName="Pv moi si t'es mon ami">
 		<autoconnect server="Quakenet">
@@ -24,6 +25,7 @@
 		<loadtriggerpack prefix="$" bundle="admin" />
 		<loadtriggerpack prefix="$" bundle="event" />
 		<loadtriggerpack prefix="$" bundle="gather" />
+		<loadtriggerpack prefix="$" bundle="tournament" />
 	</profil>
 	<profil name="local" nick="momobot3" login="mmb" fullName="MMB v3">
 		<autoconnect server="Localhost" fullName="MMB v3 - Localhost">
@@ -153,6 +155,17 @@
 		<trigger class="GametigerTrigger">
 			<command>gt</command>
 			<command>gametiger</command>
+		</trigger>
+	</triggerpack>
+	<triggerpack bundle="tournament" package="net.mauhiz.irc.bot.triggers.event.tournament">
+		<trigger class="TounamentTrigger">
+			<command>tn</command>
+		</trigger>
+		<trigger class="ResultTournament">
+			<command>tn-result</command>
+		</trigger>
+		<trigger class="RegisterTrigger">
+			<command>tn-register</command>
 		</trigger>
 	</triggerpack>
 </momobot>
