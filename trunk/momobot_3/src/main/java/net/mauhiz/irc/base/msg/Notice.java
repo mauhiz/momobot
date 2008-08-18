@@ -1,7 +1,10 @@
 package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.model.Users;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -67,7 +70,13 @@ public class Notice extends IrcMessage {
         }
         sb.append("NOTICE ");
         if (super.to != null) {
-            sb.append(super.to);
+            if (!Channels.isChannelName(super.to)) {
+                Mask m = new Mask(super.to);
+                IrcUser dest = Users.getInstance(super.server).findUser(m, true);
+                sb.append(dest.getNick());
+            } else {
+                sb.append(super.to);
+            }
             sb.append(' ');
         }
         sb.append(':');
