@@ -70,10 +70,14 @@ public class Notice extends IrcMessage {
         }
         sb.append("NOTICE ");
         if (super.to != null) {
-            if (!Channels.isChannelName(super.to)) {
-                Mask m = new Mask(super.to);
-                IrcUser dest = Users.getInstance(super.server).findUser(m, true);
-                sb.append(dest.getNick());
+            if (super.from == null && !Channels.isChannelName(super.to)) {
+                try {
+                    Mask m = new Mask(super.to);
+                    IrcUser dest = Users.getInstance(super.server).findUser(m, true);
+                    sb.append(dest.getNick());
+                } catch (IllegalArgumentException iae) {
+                    sb.append(super.to);
+                }
             } else {
                 sb.append(super.to);
             }

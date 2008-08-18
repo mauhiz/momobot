@@ -1,8 +1,10 @@
 package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.model.Users;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -72,7 +74,17 @@ public class Privmsg extends IrcMessage {
         }
         sb.append("PRIVMSG ");
         if (super.to != null) {
-            sb.append(super.to);
+            if (super.from == null && !Channels.isChannelName(super.to)) {
+                try {
+                    Mask m = new Mask(super.to);
+                    IrcUser dest = Users.getInstance(super.server).findUser(m, true);
+                    sb.append(dest.getNick());
+                } catch (IllegalArgumentException iae) {
+                    sb.append(super.to);
+                }
+            } else {
+                sb.append(super.to);
+            }
             sb.append(' ');
         }
         sb.append(':');
