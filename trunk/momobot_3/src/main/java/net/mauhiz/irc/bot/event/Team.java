@@ -19,6 +19,14 @@ public class Team extends ArrayList<IrcUser> {
     /**
      * 
      */
+    private String country;
+    /**
+     * 
+     */
+    private int ID;
+    /**
+     * 
+     */
     private String nom;
     
     /**
@@ -29,6 +37,31 @@ public class Team extends ArrayList<IrcUser> {
         super(size1);
         capacity = size1;
         nom = nom1;
+    }
+    
+    /**
+     * @param size1
+     * @param nom1
+     * @param id1
+     */
+    public Team(final int size1, final String nom1, final int id1) {
+        super(size1);
+        capacity = size1;
+        nom = nom1;
+        ID = id1;
+    }
+    
+    /**
+     * @param size1
+     * @param nom1
+     * @param country1
+     * 
+     */
+    public Team(final int size1, final String nom1, final String country1) {
+        super(size1);
+        capacity = size1;
+        nom = nom1;
+        country = country1;
     }
     
     /**
@@ -47,6 +80,20 @@ public class Team extends ArrayList<IrcUser> {
      */
     public int getCapacity() {
         return capacity;
+    }
+    
+    /**
+     * @return country
+     */
+    public String getCountry() {
+        return country;
+    }
+    
+    /**
+     * @return id de la team
+     */
+    public final int getId() {
+        return ID;
     }
     
     /**
