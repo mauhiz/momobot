@@ -10,11 +10,11 @@ import net.mauhiz.irc.bot.tournament.Tournament;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
-public class TounamentTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
      */
-    public TounamentTrigger(final String trigger) {
+    public TournamentTrigger(final String trigger) {
         super(trigger);
     }
     
