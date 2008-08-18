@@ -16,6 +16,7 @@ import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Ping;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Quit;
+import net.mauhiz.irc.base.msg.ServerError;
 import net.mauhiz.irc.base.msg.ServerMsg;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class IrcServer {
     static final Pattern CMD = Pattern.compile("([\\S^:]+) (.*)");
+    static final String ERROR = "ERROR";
     static final Pattern FROM = Pattern.compile(":([\\S^:]+) (.*)");
     static final String JOIN = "JOIN";
     static final String KICK = "KICK";
@@ -113,6 +115,8 @@ public class IrcServer {
                 String reason = StringUtils.substringAfter(msg, " :");
                 msg = StringUtils.substringBefore(msg, " :");
                 return new Kick(this, from, null, to, msg, reason);
+            } else if (ERROR.equals(cmd)) {
+                return new ServerError(this, cmd);
             }
         }
         // TODO ERROR :Closing Link: by underworld2.no.quakenet.org (Registration Timeout)
