@@ -11,4 +11,4 @@ Click on a pack to get more information about it the list of commands it contain
   * *[pack_base base]* : contains basic useful commands 
   * *[pack_event event]* : wtf ?
   * *[pack_gather gather]* : should contain everything you need to start a gather
-  * *[pack pendu pendu]* : contains commands to play a game of _pendu_
+  * *[pack\ pendu pendu]* : contains commands to play a game of _pendu_
