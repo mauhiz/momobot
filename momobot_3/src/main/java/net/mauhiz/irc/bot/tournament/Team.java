@@ -3,7 +3,7 @@ package net.mauhiz.irc.bot.tournament;
 import java.util.ArrayList;
 
 /**
- * @author mauhiz
+ * @author topper
  */
 public class Team extends ArrayList<String> {
     /**
@@ -30,36 +30,25 @@ public class Team extends ArrayList<String> {
     /**
      * @param size1
      * @param nom1
+     * @param country1
+     * 
      */
-    public Team(final int size1, final String nom1) {
+    public Team(final int size1, final int id1, final String nom1, final String country1) {
         super(size1);
         capacity = size1;
         nom = nom1;
-    }
-    
-    /**
-     * @param size1
-     * @param nom1
-     * @param id1
-     */
-    public Team(final int size1, final String nom1, final int id1) {
-        super(size1);
-        capacity = size1;
-        nom = nom1;
+        country = country1;
         ID = id1;
     }
     
     /**
      * @param size1
      * @param nom1
-     * @param country1
-     * 
      */
-    public Team(final int size1, final String nom1, final String country1) {
+    public Team(final int size1, final String nom1) {
         super(size1);
         capacity = size1;
         nom = nom1;
-        country = country1;
     }
     
     /**
@@ -98,6 +87,13 @@ public class Team extends ArrayList<String> {
     }
     
     /**
+     * 
+     */
+    public void setCountry(final String country1) {
+        country = country1;
+    }
+    
+    /**
      * @param nom1
      */
     public void setNom(final String nom1) {
@@ -110,6 +106,14 @@ public class Team extends ArrayList<String> {
      */
     @Override
     public String toString() {
-        return nom;
+        String listPlayer = "";
+        if (!isEmpty()) {
+            
+            for (String element : this) {
+                listPlayer += element + " ";
+            }
+        }
+        return "Team n°" + ID + " Tag :" + nom + " Pays :" + country + " Player(s) :" + listPlayer;
+        
     }
 }

@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.mauhiz.irc.base.data.Channel;
-import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
-import net.mauhiz.irc.bot.event.Match;
-import net.mauhiz.irc.bot.event.Team;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
@@ -59,22 +56,16 @@ public class Tournament extends ChannelEvent {
         }
         
         for (int i = 0; i < numberTeams; i++) {
-            Team team = new Team(numberPlayerPerTeam, "Team n°:" + i, i);
+            Team team = new Team(numberPlayerPerTeam, i, "Team n°:" + i, "FR");
             teamList.add(team);
         }
         // On Crée la liste de map
         for (String map : maps) {
             mapList.add(map);
         }
-        int reste = numberTeams % 2;
-        int phase = maps.length - 1; // 3
+        int phase = mapList.size(); // 3
         for (int i = 0; i < numberTeams / 2; i++) {
-            Match match = new Match(phase, i, mapList.get(0), teamList.get(0), teamList.get(i + 1));
-            matchList.add(match);
-        }
-        if (reste == 1) {
-            Match match = new Match(0, numberTeams / 2, mapList.get(0), teamList.get(teamList.size() - 1), teamList
-                    .get(teamList.size() - 1));
+            Match match = new Match(phase, i, mapList.get(0), teamList.get(2 * i), teamList.get(2 * i + 1));
             matchList.add(match);
         }
         
@@ -113,11 +104,15 @@ public class Tournament extends ChannelEvent {
             
         }
         int nombreMatchPerSide = power(2, newphase);
-        int newID = team.getId() / nombreMatchPerSide;
+        int id = team.getId();
+        while (id > nombreMatchPerSide) {
+            id = id / 2;
+        }
+        int newID = id / nombreMatchPerSide;
         int testMatch = testMatch(newphase, newID);
         if (testMatch == -1) {
             // le match n'existe pas
-            Match match = new Match(newphase, newID, mapList.get(mapList.size() - newID), team);
+            Match match = new Match(newphase, newID, mapList.get(mapList.size() - newphase), team);
             matchList.add(match);
             return "La team " + team.getId() + " en attente du résultat des adversaires. next map = " + match.getMap();
         }
@@ -138,54 +133,53 @@ public class Tournament extends ChannelEvent {
      * @return
      */
     
-    public String setScore(final int idTeam, final int score1, final int score2) {
+    public ArrayList<String> setScore(final int idTeam, final int score1, final int score2) {
+        ArrayList<String> reply = new ArrayList<String>();
         if (idTeam < 0 || idTeam > teamList.size() - 1) {
-            return "Erreur : Id team invalide";
+            reply.add("Erreur : Id team invalide");
+            return reply;
         }
         
-        if (score1 < score2) {
-            return "Erreur : vous etes sur de la team qui a gagne?";
+        if (score1 <= score2) {
+            reply.add("Erreur : vous etes sur de la team qui a gagne?");
+            return reply;
         }
         for (Match match : matchList) {
             
-            if (match.isTeamIn(teamList.get(idTeam))) {
-                match.setScore(score1, score2);
-                
-                return match.toString();
+            if (match.isTeamIn(teamList.get(idTeam)) && match.getWinner() == -1) {
+                reply.add(match.setScore(teamList.get(idTeam), score1, score2));
+                if (match.isReady()) {
+                    reply.add(setNextMatch(match, teamList.get(idTeam)));
+                }
+                return reply;
             }
         }
-        
-        return "La team " + teamList.get(idTeam).getId() + " est déja éléminé.";
+        reply.add("La team " + teamList.get(idTeam).getId() + " est déja éléminé.");
+        return reply;
     }
-    
     /**
      * @param index
+     * @param country
+     * @param tag
      * @param nicknames
-     * @return
+     *            REM : $tn-register IDTEAM COUNTRY TAG PLAYER1 PLAYER2 PLAYER..
+     * @return string
      */
-    public String setTeam(final int index, final String country, final String[] nicknames) {
-        if (index < 0 || index > teamList.size() - 1 || nicknames.length > numberPlayerPerTeam) {
-            return "Erreur";
+    public String setTeam(final int index, final String country, final String tag, final ArrayList<String> nicknames) {
+        if (index < 0 || index > teamList.size() - 1) {
+            return "Erreur index invalid";
         }
         
         Team team = teamList.get(index);
-        List<IrcUser> ircuserList = new ArrayList<IrcUser>();
-        for (String element : nicknames) {
-            IrcUser user = new IrcUser(element);
-            ircuserList.add(user);
-        }
+        team.setCountry(country);
+        team.setNom(tag);
+        
         // On clean pour tout remettre
         team.clear();
-        if (team.addAll(ircuserList)) {
-            String listPlayer = "";
-            if (!team.isEmpty()) {
-                for (IrcUser element : team) {
-                    listPlayer += element + " ";
-                }
-            }
+        
+        if (team.addAll(nicknames.subList(0, team.getCapacity()))) {
             
-            return "Team n°" + index + " Tag :" + team.toString() + " Pays :" + team.getCountry() + " Joueur(s) :"
-                    + listPlayer;
+            return team.toString();
         }
         return "erreur";
         
