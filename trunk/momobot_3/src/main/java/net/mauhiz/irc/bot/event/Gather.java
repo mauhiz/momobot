@@ -71,7 +71,8 @@ public class Gather extends ChannelEvent {
         if (element == null) {
             throw new IllegalArgumentException("element must not be null");
         }
-        final StrBuilder retour = new StrBuilder(String.valueOf(element));
+        final StrBuilder retour = new StrBuilder();
+        retour.append(element);
         
         if (team.contains(element)) {
             retour.append(": tu es déjà inscrit.");
