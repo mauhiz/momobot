@@ -88,7 +88,7 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
             notice = Notice.buildAnswer(cme, result(lang1, lang2, msg));
         } catch (final IOException ioe) {
             LOG.error(ioe, ioe);
-            notice = Notice.buildAnswer(cme, "syntaxe : $" + toString() + " lang1[fr/en/..] lang2[fr/en/...] texte");
+            notice = Notice.buildPrivateAnswer(cme, "syntaxe : " + this + " lang1[fr/en/..] lang2[fr/en/...] texte");
         }
         control.sendMsg(notice);
     }
