@@ -13,4 +13,5 @@ Click on a pack to get more information about it the list of commands it contain
   * *[PackFun fun]* : contains some hilarious commands.
   * *[PackGather gather]* : should contain everything you need to start a gather
   * *[PackPendu pendu]* : contains commands to play a game of _pendu_
+  * *[PackTournament tournament]* : contains what you need to organize a tournament via IRC.
   * *[PackWebsearch websearch]*: contains commands to query search engines suck as google or yahoo
