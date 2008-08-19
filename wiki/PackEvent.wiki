@@ -14,4 +14,4 @@ Some useful common commands to manage events are in this package
    ** *$status*
 
 
-BUG: what happened when severals events occur at the same  time ?
+note: for the time, only one event can occur at the same time on one channel.
