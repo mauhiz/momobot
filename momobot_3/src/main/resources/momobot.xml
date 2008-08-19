@@ -161,7 +161,7 @@
 		<trigger class="TournamentTrigger">
 			<command>tn</command>
 		</trigger>
-		<trigger class="ResultTournament">
+		<trigger class="ResultTrigger">
 			<command>tn-result</command>
 		</trigger>
 		<trigger class="RegisterTrigger">
