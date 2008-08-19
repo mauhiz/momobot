@@ -358,7 +358,7 @@ public class Tournament extends ChannelEvent {
             return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs. finale : "
                     + finale.toString();
         }
-        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + " Match en cour:"
+        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + " Match en cours:"
                 + matchEnCour + " Match en attente :" + matchEnAttente;
     }
     
