@@ -1,6 +1,6 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
@@ -42,11 +42,13 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                     int id = Integer.parseInt(args[0]);
                     int score1 = Integer.parseInt(args[1]);
                     int score2 = Integer.parseInt(args[2]);
-                    ArrayList<String> str = ((Tournament) event).setScore(id, score1, score2);
+                    Tournament tn = (Tournament) event;
+                    List<String> str = tn.setScore(id, score1, score2);
                     for (String element : str) {
                         Privmsg msg = Privmsg.buildAnswer(im, element);
                         control.sendMsg(msg);
                     }
+                    tn.generateTemplate();
                     return;
                 }
                 
