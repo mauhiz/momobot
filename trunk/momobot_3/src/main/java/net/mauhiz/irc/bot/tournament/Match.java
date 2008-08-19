@@ -64,6 +64,11 @@ public class Match extends ArrayList<Team> {
      *            team 2
      */
     public Match(final int phase1, final int id1, final String map1, final Team team1_, final Team team2_) {
+        // on met tjs les teams dans le bon sens
+        if (team1_.getId() < team2_.getId()) {
+            team2 = team1_;
+            team1 = team2_;
+        }
         team1 = team1_;
         team2 = team2_;
         phase = phase1;
@@ -124,22 +129,25 @@ public class Match extends ArrayList<Team> {
         }
         return -1;
     }
+    /**
+     * @return true si
+     */
     public boolean isReady() {
-        if (team1 == null || team2 == null) {
+        if (team2 == null) {
             return false;
         }
         return true;
     }
     
     /**
+     * @param team
+     * @return
      * 
      */
     public final boolean isTeamIn(final Team team) {
         if (winner == null) {
-            if (team1 != null) {
-                if (team1.getId() == team.getId()) {
-                    return true;
-                }
+            if (team1.getId() == team.getId()) {
+                return true;
             }
             if (team2 != null) {
                 if (team2.getId() == team.getId()) {
@@ -156,7 +164,7 @@ public class Match extends ArrayList<Team> {
      * @param scoreTeam2
      */
     public final String setScore(final Team team, final int scoreTeam1, final int scoreTeam2) {
-        if (team1 == null || team2 == null) {
+        if (team2 == null) {
             return "Erreur : Impossible de mettre le score, la team " + team.getId() + " n'a pas d'adversaire.";
         }
         
@@ -179,20 +187,27 @@ public class Match extends ArrayList<Team> {
      */
     @Override
     public final String toString() {
+        // on a un gagnant
         if (winner != null) {
-            if (team1 != null) {
-                if (team1.getId() == winner.getId()) {
-                    return "Team " + team1.getId() + " (WINNER): " + score[0] + " vs Team " + team2.getId() + ":"
-                            + score[1] + ".";
-                }
+            if (team1.getId() == winner.getId()) {
+                return "Team " + team1.getId() + " (WINNER): " + score[0] + " vs Team " + team2.getId() + ":"
+                        + score[1] + ".";
             }
-            if (team2 != null) {
-                if (team2.getId() == winner.getId()) {
-                    return "Team " + team1.getId() + ": " + score[0] + " vs Team " + team2.getId() + " (WINNER):"
-                            + score[1] + ".";
-                }
+            if (team2.getId() == winner.getId()) {
+                return "Team " + team1.getId() + ": " + score[0] + " vs Team " + team2.getId() + " (WINNER):"
+                        + score[1] + ".";
             }
+            
         }
-        return "Team " + team1.getId() + ": " + score[0] + " vs Team " + team2.getId() + ":" + score[1] + ".";
+        // on a pas de gagnant
+        if (team2 == null) {
+            // pas d'adversaire
+            return "La team " + team1.getId() + "=" + team1.getNom()
+                    + " en attente du résultat des adversaires. next map=" + map;
+        }
+        // le match est en attente de résultat
+        return "Team n°" + team1.getId() + "=" + team1.getNom() + " vs Team n°" + team2.getId() + "=" + team2.getNom()
+                + ".";
     }
+    
 }

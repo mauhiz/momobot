@@ -73,6 +73,14 @@ public class Team extends ArrayList<String> {
     }
     
     /**
+     * 
+     * 
+     **/
+    public String getNom() {
+        return nom;
+    }
+    
+    /**
      * @return si la team est complète.
      */
     public boolean isFull() {
@@ -92,7 +100,6 @@ public class Team extends ArrayList<String> {
     public void setCountry(final String country1) {
         country = country1;
     }
-    
     /**
      * @param nom1
      */
