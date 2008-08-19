@@ -158,7 +158,7 @@
 		</trigger>
 	</triggerpack>
 	<triggerpack bundle="tournament" package="net.mauhiz.irc.bot.triggers.event.tournament">
-		<trigger class="TounamentTrigger">
+		<trigger class="TournamentTrigger">
 			<command>tn</command>
 		</trigger>
 		<trigger class="ResultTournament">

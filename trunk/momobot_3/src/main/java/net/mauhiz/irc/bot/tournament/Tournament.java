@@ -140,17 +140,22 @@ public class Tournament extends ChannelEvent {
      * @return
      */
     
-    public ArrayList<String> setScore(final int idTeam, final int score1, final int score2) {
+    public ArrayList<String> setScore(final int idTeam, final int score1_, final int score2_) {
         ArrayList<String> reply = new ArrayList<String>();
+        int score1 = score1_;
+        int score2 = score2_;
+        
         if (idTeam < 0 || idTeam > teamList.size() - 1) {
             reply.add("Erreur : Id team invalide");
             return reply;
         }
         
         if (score1 <= score2) {
-            reply.add("Erreur : vous etes sur de la team qui a gagne?");
-            return reply;
+            int score3 = score1;
+            score1 = score2;
+            score2 = score3;
         }
+        
         for (Match match : matchList) {
             // on regarde si le match est complet ou pas
             if (match.isTeamIn(teamList.get(idTeam)) && match.getWinner() == -1) {
