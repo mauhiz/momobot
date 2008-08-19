@@ -1,10 +1,9 @@
 package net.mauhiz.irc.bot;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
+import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.ITriggerManager;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
@@ -30,20 +29,69 @@ import org.apache.log4j.Logger;
  */
 public class MmbTriggerManager implements ITriggerManager {
     /**
+     * @author mauhiz
+     * 
+     */
+    class TriggerLoop extends Thread {
+        private final IIrcControl control;
+        private final IIrcMessage msg;
+        
+        /**
+         * @param control1
+         * @param msg1
+         */
+        public TriggerLoop(final IIrcMessage msg1, final IIrcControl control1) {
+            control = control1;
+            msg = msg1;
+        }
+        
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        @Override
+        public void run() {
+            try {
+                for (ITrigger trigger : myKeeper) {
+                    if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
+                        IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
+                        Privmsg priv = (Privmsg) msg;
+                        if (trig.isActivatedBy(priv.getMessage())) {
+                            trig.doTrigger(priv, control);
+                        }
+                    } else if (msg instanceof Notice && trigger instanceof INoticeTrigger) {
+                        INoticeTrigger trig = (INoticeTrigger) trigger;
+                        Notice notic = (Notice) msg;
+                        if (trig.isActivatedBy(notic.getMessage())) {
+                            trig.doTrigger(notic, control);
+                        }
+                    } else if (msg instanceof Join && trigger instanceof IJoinTrigger) {
+                        ((IJoinTrigger) trigger).doTrigger((Join) msg, control);
+                    } else if (msg instanceof Part && trigger instanceof IPartTrigger) {
+                        ((IPartTrigger) trigger).doTrigger((Part) msg, control);
+                    } else if (msg instanceof Invite && trigger instanceof IInviteTrigger) {
+                        ((IInviteTrigger) trigger).doTrigger((Invite) msg, control);
+                    }
+                }
+                
+            } catch (RuntimeException unexpected) {
+                LOG.error(unexpected, unexpected);
+            }
+        }
+    }
+    /**
      * logger
      */
-    private static final Logger LOG = Logger.getLogger(MmbTriggerManager.class);
+    static final Logger LOG = Logger.getLogger(MmbTriggerManager.class);
     /**
      * keeper of the seven keys
      */
-    private final Set<ITrigger> myKeeper = new HashSet<ITrigger>();
-    private final Set<ITrigger> toAdd = new HashSet<ITrigger>();
-    private final Set<ITrigger> toRmv = new HashSet<ITrigger>();
+    final TriggerKeeper myKeeper = new TriggerKeeper();
+    
     /**
      * @param triggerClass
      * @param params
      */
-    public void addTrigger(final Class<ITrigger> triggerClass, final Object... params) {
+    void addTrigger(final Class<ITrigger> triggerClass, final Object... params) {
         try {
             ITrigger trigger = (ITrigger) ConstructorUtils.invokeConstructor(triggerClass, params);
             if (!(trigger instanceof AbstractTextTrigger)) {
@@ -56,7 +104,7 @@ public class MmbTriggerManager implements ITriggerManager {
                     }
                 }
             }
-            toAdd.add(trigger);
+            myKeeper.add(trigger);
         } catch (InstantiationException e) {
             LOG.warn(e, e);
         } catch (IllegalAccessException e) {
@@ -71,8 +119,40 @@ public class MmbTriggerManager implements ITriggerManager {
     /**
      * @return une vue des triggers
      */
-    public Set<ITrigger> getTriggers() {
-        return Collections.unmodifiableSet(myKeeper);
+    public Iterator<ITrigger> getTriggers() {
+        return myKeeper.iterator();
+    }
+    
+    /**
+     * @param trigClassFull
+     * @param prefix
+     * @param trigTexts
+     */
+    public void loadTrigClass(final String trigClassFull, final String prefix, final String[] trigTexts) {
+        Class<ITrigger> trigClass;
+        try {
+            Class<?> wannabe = Class.forName(trigClassFull);
+            if (!ITrigger.class.isAssignableFrom(wannabe)) {
+                LOG.warn("Not a trigger: " + wannabe.getName());
+                return;
+            }
+            trigClass = (Class<ITrigger>) wannabe;
+        } catch (ClassNotFoundException e) {
+            LOG.warn(e);
+            return;
+        }
+        
+        if (ArrayUtils.isEmpty(trigTexts)) {
+            LOG.debug("loading trigger: " + trigClass.getSimpleName());
+            addTrigger(trigClass, (Object[]) null);
+        } else {
+            for (String trigText : trigTexts) {
+                String fullTrigText = prefix + trigText;
+                addTrigger(trigClass, fullTrigText);
+                LOG.debug("loading trigger with command '" + fullTrigText + "': " + trigClass.getSimpleName());
+            }
+        }
+        myKeeper.update();
     }
     
     /**
@@ -86,39 +166,7 @@ public class MmbTriggerManager implements ITriggerManager {
             return;
         }
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
-        try {
-            for (ITrigger trigger : myKeeper) {
-                if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
-                    IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
-                    Privmsg priv = (Privmsg) msg;
-                    if (trig.isActivatedBy(priv.getMessage())) {
-                        trig.doTrigger(priv, control);
-                    }
-                } else if (msg instanceof Notice && trigger instanceof INoticeTrigger) {
-                    INoticeTrigger trig = (INoticeTrigger) trigger;
-                    Notice notic = (Notice) msg;
-                    if (trig.isActivatedBy(notic.getMessage())) {
-                        trig.doTrigger(notic, control);
-                    }
-                } else if (msg instanceof Join && trigger instanceof IJoinTrigger) {
-                    ((IJoinTrigger) trigger).doTrigger((Join) msg, control);
-                } else if (msg instanceof Part && trigger instanceof IPartTrigger) {
-                    ((IPartTrigger) trigger).doTrigger((Part) msg, control);
-                } else if (msg instanceof Invite && trigger instanceof IInviteTrigger) {
-                    ((IInviteTrigger) trigger).doTrigger((Invite) msg, control);
-                }
-            }
-            if (!toRmv.isEmpty()) {
-                myKeeper.removeAll(toRmv);
-                toRmv.clear();
-            }
-            if (!toAdd.isEmpty()) {
-                myKeeper.addAll(toAdd);
-                toAdd.clear();
-            }
-        } catch (RuntimeException unexpected) {
-            LOG.error(unexpected, unexpected);
-        }
+        new TriggerLoop(msg, control).start();
     }
     
     /**
@@ -131,22 +179,21 @@ public class MmbTriggerManager implements ITriggerManager {
             if (!ITrigger.class.isAssignableFrom(toRemove)) {
                 return;
             }
-            
             for (ITrigger every : myKeeper) {
                 if (toRemove.equals(every.getClass())) {
                     if (every instanceof AbstractTextTrigger && !ArrayUtils.isEmpty(texts)) {
                         AbstractTextTrigger textTrigger = (AbstractTextTrigger) every;
                         for (String text : texts) {
                             if (textTrigger.getTriggerText().equals(text)) {
-                                toRmv.add(every);
+                                myKeeper.remove(every);
                             }
                         }
                     }
                     /* degage */
-                    toRmv.add(every);
+                    myKeeper.remove(every);
                 }
             }
-            
+            myKeeper.update();
         } catch (ClassNotFoundException e) {
             LOG.warn(e);
         }

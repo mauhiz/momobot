@@ -1,6 +1,6 @@
 package net.mauhiz.irc.bot.triggers.base;
 
-import java.util.Set;
+import java.util.Iterator;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcControl;
@@ -39,7 +39,8 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     public void doTrigger(final Notice im, final IIrcControl control) {
         StrBuilder msg = new StrBuilder();
         msg.append(COMMANDES);
-        for (final ITrigger trig : getTriggers(control)) {
+        for (Iterator<ITrigger> it = getTriggers(control); it.hasNext();) {
+            ITrigger trig = it.next();
             if (trig instanceof INoticeTrigger) {
                 msg.append(trig).append(' ');
             }
@@ -56,7 +57,8 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         StrBuilder msg = new StrBuilder();
         msg.append(COMMANDES);
-        for (final ITrigger trig : getTriggers(control)) {
+        for (Iterator<ITrigger> it = getTriggers(control); it.hasNext();) {
+            ITrigger trig = it.next();
             if (trig instanceof IPrivmsgTrigger) {
                 msg.append(trig).append(' ');
             }
@@ -69,7 +71,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      * @param control
      * @return triggers view
      */
-    private Set<ITrigger> getTriggers(final IIrcControl control) {
+    private Iterator<ITrigger> getTriggers(final IIrcControl control) {
         IrcControl realControl = (IrcControl) control;
         MmbTriggerManager manager = (MmbTriggerManager) realControl.getManager();
         return manager.getTriggers();

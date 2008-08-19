@@ -5,7 +5,6 @@ import java.util.Arrays;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
-import net.mauhiz.irc.bot.Launcher;
 import net.mauhiz.irc.bot.MmbTriggerManager;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IAdminTrigger;
@@ -40,14 +39,14 @@ public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigge
         final String[] args = StringUtils.split(getArgs(pme.getMessage()));
         if (ArrayUtils.isEmpty(args)) {
             Privmsg retour = Privmsg.buildPrivateAnswer(pme, "you need to specify Trigger class name");
-            Privmsg retour2 = Privmsg.buildPrivateAnswer(pme, "for instance : " + this + " " + getClass().getName());
             control.sendMsg(retour);
+            Privmsg retour2 = Privmsg.buildPrivateAnswer(pme, "for instance : " + this + " " + getClass().getName());
             control.sendMsg(retour2);
         } else {
             String className = args[0];
             LOG.info("Activate trigger class = " + className);
-            Launcher.loadTrigClass(className, "", ((MmbTriggerManager) ((IrcControl) control).getManager()), Arrays
-                    .copyOfRange(args, 1, args.length));
+            ((MmbTriggerManager) ((IrcControl) control).getManager()).loadTrigClass(className, "", Arrays.copyOfRange(
+                    args, 1, args.length));
         }
     }
 }

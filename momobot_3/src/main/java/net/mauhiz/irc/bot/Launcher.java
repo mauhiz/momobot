@@ -3,7 +3,6 @@ package net.mauhiz.irc.bot;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Join;
-import net.mauhiz.irc.bot.triggers.ITrigger;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -23,38 +22,6 @@ public class Launcher {
      * logger
      */
     private static final Logger LOG = Logger.getLogger(Launcher.class);
-    /**
-     * @param trigClassFull
-     * @param prefix
-     * @param mtm
-     * @param trigTexts
-     */
-    public static void loadTrigClass(final String trigClassFull, final String prefix, final MmbTriggerManager mtm,
-            final String[] trigTexts) {
-        Class<ITrigger> trigClass;
-        try {
-            Class<?> wannabe = Class.forName(trigClassFull);
-            if (!ITrigger.class.isAssignableFrom(wannabe)) {
-                LOG.warn("Not a trigger: " + wannabe.getName());
-                return;
-            }
-            trigClass = (Class<ITrigger>) wannabe;
-        } catch (ClassNotFoundException e) {
-            LOG.warn(e);
-            return;
-        }
-        
-        if (ArrayUtils.isEmpty(trigTexts)) {
-            LOG.debug("loading trigger: " + trigClass.getSimpleName());
-            mtm.addTrigger(trigClass, (Object[]) null);
-        } else {
-            for (String trigText : trigTexts) {
-                String fullTrigText = prefix + trigText;
-                mtm.addTrigger(trigClass, fullTrigText);
-                LOG.debug("loading trigger with command '" + fullTrigText + "': " + trigClass.getSimpleName());
-            }
-        }
-    }
     
     /**
      * @param args
@@ -145,7 +112,7 @@ public class Launcher {
                     String[] trigTexts = config.getStringArray(packCriteria + "/trigger[@class='" + trigClassName
                             + "']/command");
                     String trigClassFull = pack + trigClassName;
-                    loadTrigClass(trigClassFull, prefix, mtm, trigTexts);
+                    mtm.loadTrigClass(trigClassFull, prefix, trigTexts);
                 }
             }
         }
