@@ -8,6 +8,10 @@ import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+/**
+ * @author topper
+ * 
+ */
 public class StopTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
