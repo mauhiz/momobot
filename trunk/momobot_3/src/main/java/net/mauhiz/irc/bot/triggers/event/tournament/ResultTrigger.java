@@ -12,12 +12,12 @@ import net.mauhiz.irc.bot.tournament.Tournament;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
-public class ResultTournament extends AbstractTextTrigger implements IPrivmsgTrigger {
+public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
      *            le trigger
      */
-    public ResultTournament(final String trigger) {
+    public ResultTrigger(final String trigger) {
         super(trigger);
     }
     
