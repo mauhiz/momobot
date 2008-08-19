@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.bot.event.ChannelEvent;
@@ -139,7 +140,7 @@ public class Tournament extends ChannelEvent {
         }
         
         for (int i = 0; i < numberTeams; i++) {
-            Team team = new Team(numberPlayerPerTeam, i, "Tag", "FR");
+            Team team = new Team(numberPlayerPerTeam, i, "Tag", Locale.FRANCE);
             teamList.add(team);
         }
         // On Crée la liste de map
@@ -218,7 +219,7 @@ public class Tournament extends ChannelEvent {
      */
     private String setNextMatch(final Match oldMatch, final Team team) {
         int newphase = oldMatch.getPhase() - 1;
-        int ID = oldMatch.getID();
+        int oldId = oldMatch.getID();
         // C'était la finale
         if (newphase == 0) {
             // Match match = new Match(newphase, 0, mapList.get(0), team, team);
@@ -250,15 +251,15 @@ public class Tournament extends ChannelEvent {
     /**
      * @param idTeam
      *            qui a win
-     * @param score1
+     * @param score1_
      *            de la team winner
-     * @param score2
+     * @param score2_
      *            de la team qui a loose
      * @return
      */
     
-    public ArrayList<String> setScore(final int idTeam, final int score1_, final int score2_) {
-        ArrayList<String> reply = new ArrayList<String>();
+    public List<String> setScore(final int idTeam, final int score1_, final int score2_) {
+        List<String> reply = new ArrayList<String>();
         int score1 = score1_;
         int score2 = score2_;
         
@@ -290,19 +291,19 @@ public class Tournament extends ChannelEvent {
     
     /**
      * @param index
-     * @param country
+     * @param loc
      * @param tag
      * @param nicknames
      *            REM : $tn-register IDTEAM COUNTRY TAG PLAYER1 PLAYER2 PLAYER..
      * @return string
      */
-    public String setTeam(final int index, final String country, final String tag, final ArrayList<String> nicknames) {
+    public String setTeam(final int index, final Locale loc, final String tag, final List<String> nicknames) {
         if (index < 0 || index > teamList.size() - 1) {
             return "Erreur index invalid";
         }
         
         Team team = teamList.get(index);
-        team.setCountry(country);
+        team.setCountry(loc);
         team.setNom(tag);
         
         // On clean pour tout remettre

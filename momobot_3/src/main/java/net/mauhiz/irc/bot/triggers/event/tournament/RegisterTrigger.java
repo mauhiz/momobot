@@ -1,6 +1,8 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
@@ -18,6 +20,34 @@ import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
  */
 public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
+     * @param string
+     * @return String[] ou a decoupe idTeam et Country
+     */
+    private static List<String> cutList(final String[] string) {
+        if (string.length < 3) {
+            return null;
+        }
+        
+        List<String> strReturn = new ArrayList<String>();
+        for (int i = 3; i < string.length; i++) {
+            strReturn.add(string[i]);
+        }
+        return strReturn;
+    }
+    
+    /**
+     * @param stg
+     * @return boolean
+     */
+    private static Locale testLocale(final String stg) {
+        for (Locale loc : Locale.getAvailableLocales()) {
+            if (loc.getCountry().equalsIgnoreCase(stg)) {
+                return loc;
+            }
+        }
+        return null;
+    }
+    /**
      * @param trigger
      *            le trigger
      */
@@ -25,21 +55,6 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         super(trigger);
     }
     
-    /**
-     * @param string
-     * @return String[] ou a decoupe idTeam et Country
-     */
-    private ArrayList<String> cutList(final String[] string) {
-        if (string.length < 3) {
-            return null;
-        }
-        
-        ArrayList<String> strReturn = new ArrayList<String>();
-        for (int i = 3; i < string.length; i++) {
-            strReturn.add(string[i]);
-        }
-        return strReturn;
-    }
     /**
      * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
@@ -62,13 +77,13 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 if (Integer.parseInt(args[0]) > -1) {
                     int id = Integer.parseInt(args[0]);
                     // on match le pays
-                    if (testLocale(args[1])) {
-                        String country = args[1];
+                    Locale loc = testLocale(args[1]);
+                    if (loc != null) {
                         // on match le nom de la team mininum 3 caractères
                         if (args[2].length() > 2) {
                             String tag = args[2];
                             // on découpe la liste
-                            Privmsg msg = Privmsg.buildAnswer(im, ((Tournament) event).setTeam(id, country, tag,
+                            Privmsg msg = Privmsg.buildAnswer(im, ((Tournament) event).setTeam(id, loc, tag,
                                     cutList(args)));
                             control.sendMsg(msg);
                             return;
@@ -93,19 +108,5 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             control.sendMsg(msg);
             return;
         }
-    }
-    
-    /**
-     * @param stg
-     * @return boolean
-     */
-    private boolean testLocale(final String stg) {
-        String str = stg.toLowerCase();
-        for (String element : java.util.Locale.getISOLanguages()) {
-            if (element.toLowerCase().equals(str)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.tournament;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * @author topper
@@ -17,11 +18,11 @@ public class Team extends ArrayList<String> {
     /**
      * 
      */
-    private String country;
+    private Locale country;
     /**
      * 
      */
-    private int ID;
+    private int id;
     /**
      * 
      */
@@ -33,12 +34,12 @@ public class Team extends ArrayList<String> {
      * @param country1
      * 
      */
-    public Team(final int size1, final int id1, final String nom1, final String country1) {
+    public Team(final int size1, final int id1, final String nom1, final Locale country1) {
         super(size1);
         capacity = size1;
         nom = nom1;
         country = country1;
-        ID = id1;
+        id = id1;
     }
     
     /**
@@ -61,7 +62,7 @@ public class Team extends ArrayList<String> {
     /**
      * @return country
      */
-    public String getCountry() {
+    public Locale getCountry() {
         return country;
     }
     
@@ -69,7 +70,7 @@ public class Team extends ArrayList<String> {
      * @return id de la team
      */
     public final int getId() {
-        return ID;
+        return id;
     }
     
     /**
@@ -97,7 +98,7 @@ public class Team extends ArrayList<String> {
     /**
      * 
      */
-    public void setCountry(final String country1) {
+    public void setCountry(final Locale country1) {
         country = country1;
     }
     /**
@@ -120,7 +121,7 @@ public class Team extends ArrayList<String> {
                 listPlayer += element + " ";
             }
         }
-        return "Team n°" + ID + " Tag :" + nom + " Pays :" + country + " Player(s) :" + listPlayer;
+        return "Team n°" + id + " Tag :" + nom + " Pays :" + country + " Player(s) :" + listPlayer;
         
     }
 }
