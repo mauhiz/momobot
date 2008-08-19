@@ -98,17 +98,15 @@ public class Tournament extends ChannelEvent {
         int ID = oldMatch.getID();
         // C'était la finale
         if (newphase == 0) {
-            Match match = new Match(newphase, 0, mapList.get(0), team, team);
-            matchList.add(match);
-            return "Bravo, team n°" + team.getId() + "=" + team.getNom() + " gagne le tn! o//";
+            // Match match = new Match(newphase, 0, mapList.get(0), team, team);
+            // matchList.add(match);
+            return "Bravo, team n°" + team.getId() + "=" + team.getNom() + " gagne le tournois! o//";
             
         }
         int nombreMatchPerSide = power(2, newphase);
         int id = team.getId();
-        while (id >= nombreMatchPerSide) {
-            id = id / 2;
-        }
-        int newID = id / nombreMatchPerSide;
+        // int newID = id / nombreMatchPerSide;
+        int newID = id / power(2, mapList.size() - newphase) / power(2, mapList.size() - newphase);
         int testMatch = testMatch(newphase, newID);
         if (testMatch == -1) {
             // le match n'existe pas
@@ -122,7 +120,7 @@ public class Tournament extends ChannelEvent {
         Match oldmatch = matchList.remove(testMatch);
         Match match = new Match(oldmatch, team);
         matchList.add(match);
-        return match.toString();
+        return "Nouveau match : " + match.toString();
         
     }
     /**
@@ -180,13 +178,17 @@ public class Tournament extends ChannelEvent {
         // On clean pour tout remettre
         team.clear();
         
-        if (team.addAll(nicknames.subList(0, team.getCapacity()))) {
-            
-            return team.toString();
+        if (nicknames.size() < team.getCapacity()) {
+            team.addAll(nicknames);
+            for (int i = nicknames.size() + 1; i <= team.getCapacity(); i++) {
+                team.add("Player " + i);
+            }
+        } else {
+            team.addAll(nicknames.subList(0, team.getCapacity()));
         }
-        return "erreur";
-        
+        return team.toString();
     }
+    
     /**
      * @param phase
      * @param id
@@ -211,6 +213,7 @@ public class Tournament extends ChannelEvent {
         // TODO Auto-generated method stub
         String matchEnAttente = "";
         String matchEnCour = "";
+        Match finale = null;
         for (Match element : matchList) {
             if (element.getWinner() == -1) {
                 if (element.isReady()) {
@@ -219,6 +222,14 @@ public class Tournament extends ChannelEvent {
                     matchEnAttente += element.toString();
                 }
             }
+            if (element.getPhase() == 1) {
+                
+                finale = element;
+            }
+        }
+        if (finale != null) {
+            return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs. finale : "
+                    + finale.toString();
         }
         return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + " Match en cour:"
                 + matchEnCour + " Match en attente :" + matchEnAttente;
