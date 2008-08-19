@@ -56,7 +56,7 @@ public class Tournament extends ChannelEvent {
         }
         
         for (int i = 0; i < numberTeams; i++) {
-            Team team = new Team(numberPlayerPerTeam, i, "Team n°:" + i, "FR");
+            Team team = new Team(numberPlayerPerTeam, i, "Tag", "FR");
             teamList.add(team);
         }
         // On Crée la liste de map
@@ -100,12 +100,12 @@ public class Tournament extends ChannelEvent {
         if (newphase == 0) {
             Match match = new Match(newphase, 0, mapList.get(0), team, team);
             matchList.add(match);
-            return "Bravo, team n°" + team.getId() + " gagne le tn! o//";
+            return "Bravo, team n°" + team.getId() + "=" + team.getNom() + " gagne le tn! o//";
             
         }
         int nombreMatchPerSide = power(2, newphase);
         int id = team.getId();
-        while (id > nombreMatchPerSide) {
+        while (id >= nombreMatchPerSide) {
             id = id / 2;
         }
         int newID = id / nombreMatchPerSide;
@@ -114,13 +114,15 @@ public class Tournament extends ChannelEvent {
             // le match n'existe pas
             Match match = new Match(newphase, newID, mapList.get(mapList.size() - newphase), team);
             matchList.add(match);
-            return "La team " + team.getId() + " en attente du résultat des adversaires. next map = " + match.getMap();
+            // "La team " + team.getId() + " en attente du résultat des adversaires. next map = " + match.getMap();
+            return match.toString();
+            
         }
         // le match existe, on ajoute l'autre team
         Match oldmatch = matchList.remove(testMatch);
         Match match = new Match(oldmatch, team);
         matchList.add(match);
-        return "Nouveau match : " + match.toString() + " map = " + match.getMap();
+        return match.toString();
         
     }
     /**
@@ -145,9 +147,10 @@ public class Tournament extends ChannelEvent {
             return reply;
         }
         for (Match match : matchList) {
-            
+            // on regarde si le match est complet ou pas
             if (match.isTeamIn(teamList.get(idTeam)) && match.getWinner() == -1) {
                 reply.add(match.setScore(teamList.get(idTeam), score1, score2));
+                // si le match est bien mise a jour
                 if (match.isReady()) {
                     reply.add(setNextMatch(match, teamList.get(idTeam)));
                 }
@@ -206,7 +209,19 @@ public class Tournament extends ChannelEvent {
     @Override
     public String toString() {
         // TODO Auto-generated method stub
-        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs.";
+        String matchEnAttente = "";
+        String matchEnCour = "";
+        for (Match element : matchList) {
+            if (element.getWinner() == -1) {
+                if (element.isReady()) {
+                    matchEnCour += element.toString();
+                } else {
+                    matchEnAttente += element.toString();
+                }
+            }
+        }
+        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + " Match en cour:"
+                + matchEnCour + " Match en attente :" + matchEnAttente;
     }
     
 }
