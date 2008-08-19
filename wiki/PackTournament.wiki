@@ -11,3 +11,7 @@ This package contains advanced function to organize your own tournament via IRC.
    ** *$tn-result* <arg winner-team-id> <arg score1> <arg score2>
   * TounamentTrigger: starts a new tournament based on specified maps.
    ** *$tn* <arg map1...mapN>
+
+
+
+note: tournament is an [event], so you may want to load the [PackEvent package event]
