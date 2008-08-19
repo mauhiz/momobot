@@ -1,0 +1,122 @@
+<html>
+<head>
+<STYLE>
+table{
+    
+}
+body{
+
+}
+thead{
+    
+}
+tr{
+    border: solid black 1px;
+    height: 20px;
+}
+td{
+    border: solid black 1px;
+    width: 150px;
+    text-align: center;
+}
+.linktop{
+    border-top:solid blue; 
+    border-right:solid blue;
+    border-left:0;
+    border-bottom:0;
+}
+.linkmid{
+    border-top:0; 
+    border-right:solid blue;
+    border-left:0;
+    border-bottom:0;
+}
+.linkbas{
+    border-top:0; 
+    border-right:solid blue;
+    border-left:0;
+    border-bottom:solid blue;
+}
+</STYLE>
+</head>
+<table CELLSPACING=0 CELLPADDING=0 BORDER=0>
+<script>
+
+maps=Array(${maps});
+nbmaps = maps.length;
+nbteams = Math.pow(2, nbmaps);
+nblignes = 2*nbteams;
+nbcolonnes = 2*nbmaps+1;
+
+document.write("<thead><tr>");
+for(i=0; i<nbmaps; i++){
+    tour = i+1;
+    document.write("<td>");
+    if(nbmaps-tour==0){
+        document.write("Finale");
+    }
+    else if(nbmaps-tour==1){
+        document.write("Demi-finale");
+    }
+    else{
+        document.write("Tour "+tour);
+    }
+    document.write("</td><td></td>");
+}
+document.write("<td>GAGNANT</td></tr><tr>");
+for(i=0; i<nbmaps; i++){
+    document.write("<td>"+maps[i]+"</td><td></td>");
+
+}
+document.write("<td></td>");
+document.write("</THEAD<TR>");
+
+
+for(i=0; i<nblignes; i++){
+    document.write("<tr>");
+    
+    
+    bracketstatus =0;
+    
+    
+    for(j=0; j<nbcolonnes; j++){
+        // On ecrit une colonne sur 2
+        if(j%2==0){
+            tour = j/2+1;
+            // A chaque tour numero k, on espace les temps de 2^k.
+            step = Math.pow(2,tour);
+            decalage = step/2-1;
+            if((i-decalage) % step==0){
+                document.write("<td bgcolor=green>tour " +tour+", n="+i+"</td>");
+            }
+            else{
+                document.write("<td></td>");
+            }
+        }
+        else{
+            s = Math.pow(2, step);
+            if( (i-decalage)%(2*step) == 0 ){
+                document.write("<td class=linktop>&nbsp;</td>");
+            }
+            else if( (i-decalage)%(2*step) > 0 &&  (i-decalage)%(2*step) < step){
+                document.write("<td class=linkmid>&nbsp;</td>");
+            }
+            else if( (i-decalage)%(2*step) == step){
+                document.write("<td class=linkbas>&nbsp;</td>");
+            }
+            else{
+                document.write("<td></td>");
+            }
+        }
+        
+        
+        
+    }
+    document.write("</tr>");
+}
+</script>
+
+
+
+</table>
+</html>
