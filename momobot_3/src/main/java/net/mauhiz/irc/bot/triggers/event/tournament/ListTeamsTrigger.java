@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
@@ -36,17 +37,17 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
         Channel chan = Channels.getInstance(server).get(im.getTo());
         ChannelEvent event = chan.getEvt();
         if (event == null) {
-            Privmsg msg = Privmsg.buildAnswer(im, "Aucun tournois n'est lance.");
+            Privmsg msg = Privmsg.buildAnswer(im, "Aucun tournoi n'est lance.");
             control.sendMsg(msg);
             return;
         }
         
         if (event instanceof Tournament) {
-            ArrayList<String> reply = new ArrayList<String>();
+            List<String> reply = new ArrayList<String>();
             reply = ((Tournament) event).getListTeam();
             if (!reply.isEmpty()) {
                 for (String element : reply) {
-                    Notice msg = Notice.buildAnswer(im, element);
+                    Notice msg = Notice.buildPrivateAnswer(im, element);
                     control.sendMsg(msg);
                 }
             }
