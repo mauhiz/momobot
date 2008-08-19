@@ -154,8 +154,8 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                                 + " : " + im.getMessage());
                         control.sendMsg(reply);
                         // Le seek est réussi, on leave les channels
-                    } else if (!gather.getSeek().isSeekInProgress() && gather.getSeek().isLunchedAndQuit) {
-                        gather.getSeek().isLunchedAndQuit = false;
+                    } else if (!gather.getSeek().isSeekInProgress() && gather.getSeek().isLaunchedAndQuit) {
+                        gather.getSeek().isLaunchedAndQuit = false;
                         StopSeekTrigger.leaveSeekChans(control, im.getServer());
                     }
                 }
