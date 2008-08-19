@@ -12,7 +12,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 /**
- * @author mauhiz
+ * @author topper
  * 
  */
 public class Tournament extends ChannelEvent {

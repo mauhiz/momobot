@@ -12,6 +12,10 @@ import net.mauhiz.irc.bot.tournament.Tournament;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+/**
+ * @author topper
+ * 
+ */
 public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
