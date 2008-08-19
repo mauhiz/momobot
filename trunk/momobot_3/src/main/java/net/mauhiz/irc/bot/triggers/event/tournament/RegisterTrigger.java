@@ -58,7 +58,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 if (Integer.parseInt(args[0]) > -1) {
                     int id = Integer.parseInt(args[0]);
                     // on match le pays
-                    if (args[1].length() == 2) {
+                    if (testLocale(args[1])) {
                         String country = args[1];
                         // on match le nom de la team mininum 3 caractères
                         if (args[2].length() > 2) {
@@ -73,8 +73,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                         control.sendMsg(msg);
                         return;
                     }
-                    Privmsg msg = Privmsg.buildAnswer(im,
-                            "Erreur : Abréviation du pays doit etre = a 2 caracteres ex: FR");
+                    Privmsg msg = Privmsg.buildAnswer(im, "Erreur : Abréviation du pays inconnu ex: FR");
                     control.sendMsg(msg);
                     return;
                 }
@@ -90,5 +89,19 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             control.sendMsg(msg);
             return;
         }
+    }
+    
+    /**
+     * @param stg
+     * @return boolean
+     */
+    private boolean testLocale(final String stg) {
+        String str = stg.toLowerCase();
+        for (String element : java.util.Locale.getISOLanguages()) {
+            if (element.toLowerCase().equals(str)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

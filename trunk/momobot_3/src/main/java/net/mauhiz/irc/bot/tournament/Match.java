@@ -65,12 +65,14 @@ public class Match extends ArrayList<Team> {
      */
     public Match(final int phase1, final int id1, final String map1, final Team team1_, final Team team2_) {
         // on met tjs les teams dans le bon sens
-        if (team1_.getId() < team2_.getId()) {
+        if (team1_.getId() > team2_.getId()) {
             team2 = team1_;
             team1 = team2_;
+        } else {
+            team1 = team1_;
+            team2 = team2_;
         }
-        team1 = team1_;
-        team2 = team2_;
+        
         phase = phase1;
         map = map1;
         score[0] = 0;
@@ -87,8 +89,14 @@ public class Match extends ArrayList<Team> {
      * @param team2_
      */
     public Match(final Match oldmatch, final Team team2_) {
-        team1 = oldmatch.team1;
-        team2 = team2_;
+        if (oldmatch.team1.getId() > team2_.getId()) {
+            // on switch team1 et team2
+            team2 = oldmatch.team1;
+            team1 = team2_;
+        } else {
+            team1 = oldmatch.team1;
+            team2 = team2_;
+        }
         phase = oldmatch.phase;
         map = oldmatch.map;
         score[0] = 0;
@@ -189,13 +197,19 @@ public class Match extends ArrayList<Team> {
     public final String toString() {
         // on a un gagnant
         if (winner != null) {
+            // on a gagner le tn
+            String gagnant = "";
+            if (phase == 1) {
+                gagnant = " " + winner.toString() + " gagne le tournois.";
+            }
+            
             if (team1.getId() == winner.getId()) {
                 return "Team " + team1.getId() + " (WINNER): " + score[0] + " vs Team " + team2.getId() + ":"
-                        + score[1] + ".";
+                        + score[1] + "." + gagnant;
             }
             if (team2.getId() == winner.getId()) {
                 return "Team " + team1.getId() + ": " + score[0] + " vs Team " + team2.getId() + " (WINNER):"
-                        + score[1] + ".";
+                        + score[1] + "." + gagnant;
             }
             
         }
