@@ -167,5 +167,11 @@
 		<trigger class="RegisterTrigger">
 			<command>tn-register</command>
 		</trigger>
+		<trigger class="StopTrigger">
+ 			<command>tn-stop</command>
+		</trigger>
+		<trigger class="ListTeamsTrigger">
+			<command>tn-list-teams</command>
+		</trigger>
 	</triggerpack>
 </momobot>
