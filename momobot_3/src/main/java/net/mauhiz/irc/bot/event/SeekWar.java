@@ -469,7 +469,7 @@ public class SeekWar {
             seekServ1 = "";
         }
         
-        ArrayList<String> listMatch = new ArrayList<String>();
+        List<String> listMatch = new ArrayList<String>();
         int player = gather.getNumberPlayers();
         for (String element : SEPARATEUR) {
             listMatch.add(player + element + player);
