@@ -36,4 +36,4 @@ Everything you need to set a up a gather is inside this package.
    ** *$tg* ?
 
 
-note: pendu is an [event], so you may want to load the [PackEvent package event]
+note: gather is an [event], so you may want to load the [PackEvent package event]
