@@ -12,7 +12,6 @@ import java.util.Locale;
 
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.bot.event.ChannelEvent;
-import net.mauhiz.irc.bot.event.Gather;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -39,7 +38,7 @@ public class Tournament extends ChannelEvent {
     /**
      * logger.
      */
-    private static final Logger LOG = Logger.getLogger(Gather.class);
+    private static final Logger LOG = Logger.getLogger(Tournament.class);
     /**
      * 
      */
