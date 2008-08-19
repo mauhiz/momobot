@@ -8,12 +8,12 @@ import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
-public class StopTournamentTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+public class StopTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
      *            le trigger
      */
-    public StopTournamentTrigger(final String trigger) {
+    public StopTrigger(final String trigger) {
         super(trigger);
     }
     
