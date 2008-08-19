@@ -9,4 +9,4 @@ Everything you need to play pendu is inside this package. momobot comes with a f
   * PenduTrigger: starts a new game
    ** *$pendu* <arg number of letters> ?
 
-note: pendu is an [event], so you maybe want to load the [PackEvent package event]
+note: pendu is an [event], so you may want to load the [PackEvent package event]
