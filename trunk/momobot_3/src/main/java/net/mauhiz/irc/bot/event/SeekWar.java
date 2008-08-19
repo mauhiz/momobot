@@ -188,7 +188,7 @@ public class SeekWar {
             // C'est un msg PV
             
             // Si c'est "S" on se calme!
-            if (provenance.getNick().toLowerCase().equals("S")) {
+            if ("S".equalsIgnoreCase(provenance.getNick())) {
                 sWarning = true;
                 Privmsg msg1 = new Privmsg(null, channel, server, "S vient me faire ch**r. J'y vais calmos");
                 resultPrivmsg.add(msg1);
@@ -546,12 +546,8 @@ public class SeekWar {
         }
         // GreenList1 LVL + GREENLIST
         String[] greenList1 = new String[greenList.length + lvl.length];
-        for (int i = 0; i < greenList.length; i++) {
-            greenList1[i] = greenList[i];
-        }
-        for (int i = 0; i < lvl.length; i++) {
-            greenList1[i + greenList.length] = lvl[i];
-        }
+        System.arraycopy(greenList, 0, greenList1, 0, greenList.length);
+        System.arraycopy(lvl, 0, greenList1, greenList.length, lvl.length);
         
         for (String element : greenList1) {
             if (lowerMsg.contains(element)) {
