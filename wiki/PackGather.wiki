@@ -10,14 +10,14 @@ Everything you need to set a up a gather is inside this package.
    ** *$start* 
    ** *$gather*
   * AddTrigger : add the triggering player to the gather
-   ** *$add* <arg keyword>
+   ** *$add* 
   * AdminaddTrigger : force the player into the gather
    ** *$adminadd* <arg player> 
   * AdminrmvTrigger : force the player outside the gather
    ** *$adminrmv* <arg player>
   * RmvTrigger : remove the triggering player from the gather
-   ** *$rmv* <arg player>
-   ** *$remove* <arg player>
+   ** *$rmv* 
+   ** *$remove* 
   * RollTrigger : pickup a random player in the gather
    ** *$adminrmv*
    ** *$cagoule*
