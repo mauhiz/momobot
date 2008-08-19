@@ -1,5 +1,11 @@
 package net.mauhiz.irc.bot.tournament;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,16 +13,28 @@ import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.log4j.Logger;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 
 /**
- * @author topper
- * 
+ * @author Topper
  */
 public class Tournament extends ChannelEvent {
-    
+    /**
+     * config
+     */
+    private static final Configuration CFG;
     /**
      * logger.
      */
@@ -25,6 +43,69 @@ public class Tournament extends ChannelEvent {
      * 
      */
     private static int numberPlayerPerTeam = 5;
+    static {
+        try {
+            CFG = new PropertiesConfiguration("tournament/tn.properties");
+        } catch (ConfigurationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+    /**
+     * @param a
+     * @param b
+     * @return int
+     */
+    static int power(final int a, final int b) {
+        if (b < 0) {
+            throw new IllegalArgumentException("b must be positive");
+        }
+        if (b == 0) {
+            return 1;
+        }
+        return a * power(a, b - 1);
+    }
+    /**
+     * @param temp
+     * @throws IOException
+     */
+    static void uploadFile(final File temp) throws IOException {
+        String ftp = CFG.getString("tn.upload.to");
+        URI ftpURI = URI.create(ftp);
+        if ("ftp".equals(ftpURI.getScheme())) {
+            FTPClient client = new FTPClient();
+            int port = ftpURI.getPort();
+            if (port <= 0) {
+                port = FTP.DEFAULT_PORT;
+            }
+            client.connect(ftpURI.getHost(), port);
+            client.enterLocalPassiveMode();
+            String userNfo = ftpURI.getUserInfo();
+            String user = StringUtils.substringBefore(userNfo, ":");
+            String password = StringUtils.substringAfter(userNfo, ":");
+            client.login(user, password);
+            String remotePath = ftpURI.getPath();
+            int slash = remotePath.lastIndexOf('/');
+            String remoteDir = remotePath.substring(0, slash);
+            LOG.debug("cwd to " + remoteDir);
+            client.changeWorkingDirectory(remoteDir);
+            
+            String remoteFileName = remotePath.substring(slash);
+            LOG.debug("storing to " + remoteFileName);
+            InputStream is = null;
+            try {
+                is = new FileInputStream(temp);
+                boolean success = client.storeFile(ftpURI.getPath(), is);
+                if (!success) {
+                    LOG.warn("Could not upload to " + ftpURI);
+                }
+            } finally {
+                IOUtils.closeQuietly(is);
+            }
+            
+        } else {
+            throw new UnsupportedOperationException("protocol not yet supported" + ftpURI.getScheme());
+        }
+    }
     /**
      * 
      */
@@ -33,10 +114,12 @@ public class Tournament extends ChannelEvent {
      * 
      */
     private List<Match> matchList = new ArrayList<Match>();
+    
     /**
      * le temps où je commence.
      */
     private final StopWatch sw = new StopWatch();
+    
     /**
      * l'ensemble de joueurs. Ne sera jamais <code>null</code>
      */
@@ -68,31 +151,64 @@ public class Tournament extends ChannelEvent {
             Match match = new Match(phase, i, mapList.get(0), teamList.get(2 * i), teamList.get(2 * i + 1));
             matchList.add(match);
         }
-        
     }
     
-    public ArrayList<String> getListTeam() {
-        ArrayList<String> reply = new ArrayList<String>();
+    /**
+     * @return template File.
+     * @throws Exception
+     */
+    File createTemplateFile() throws Exception {
+        VelocityContext context = new VelocityContext();
+        StringBuilder maps = new StringBuilder();
+        for (String map : mapList) {
+            maps.append(",'");
+            maps.append(map);
+            maps.append('\'');
+        }
+        context.put("maps", maps.substring(1));
+        
+        VelocityEngine ve = new VelocityEngine();
+        File temp = new File(CFG.getString("tn.tempfile.name"));
+        
+        ve.init();
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(temp);
+            
+            Template plate = ve.getTemplate(CFG.getString("tn.vm"));
+            plate.initDocument();
+            plate.merge(context, writer);
+            writer.flush();
+            LOG.debug(FileUtils.readFileToString(temp));
+        } finally {
+            IOUtils.closeQuietly(writer);
+        }
+        return temp;
+    }
+    
+    /**
+     * genere et upload le template
+     */
+    public void generateTemplate() {
+        File temp = null;
+        try {
+            temp = createTemplateFile();
+            uploadFile(temp);
+        } catch (Exception ioe) {
+            LOG.error(ioe, ioe);
+        } finally {
+            FileUtils.deleteQuietly(temp);
+        }
+    }
+    /**
+     * @return listTeam
+     */
+    public List<String> getListTeam() {
+        List<String> reply = new ArrayList<String>();
         for (Team element : teamList) {
             reply.add(element.toString());
         }
         return reply;
-    }
-    
-    /**
-     * @param a
-     * @param b
-     * @return int
-     */
-    private final int power(final int a, final int b) {
-        if (b < 0) {
-            return -1;
-        }
-        int rest = 1;
-        for (int i = 0; i < b; i++) {
-            rest = a * rest;
-        }
-        return rest;
     }
     /**
      * @param oldMatch
@@ -130,6 +246,7 @@ public class Tournament extends ChannelEvent {
         return "Nouveau match : " + match.toString();
         
     }
+    
     /**
      * @param idTeam
      *            qui a win
@@ -244,8 +361,8 @@ public class Tournament extends ChannelEvent {
             return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs. finale : "
                     + finale.toString();
         }
-        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + " Matchs en cours:"
-                + matchEnCour + " Matchs en attente :" + matchEnAttente;
+        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + " Match en cour:"
+                + matchEnCour + " Match en attente :" + matchEnAttente;
     }
     
 }

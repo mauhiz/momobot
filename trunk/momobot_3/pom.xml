@@ -161,6 +161,11 @@
 			<artifactId>commons-jxpath</artifactId>
 			<version>1.2</version>
 		</dependency>
+		<dependency>
+			<groupId>velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.5</version>
+		</dependency>
 	</dependencies>
 	<scm>
 		<connection>scm:svn:http://momobot.googlecode.com/svn/trunk/momobot_3/</connection>

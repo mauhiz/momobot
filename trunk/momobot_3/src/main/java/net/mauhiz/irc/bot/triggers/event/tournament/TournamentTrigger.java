@@ -10,6 +10,10 @@ import net.mauhiz.irc.bot.tournament.Tournament;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+/**
+ * @author Topper
+ * 
+ */
 public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
@@ -38,6 +42,7 @@ public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTr
             // Tcheck si les params st ok
             if (params.length != 0) {
                 Tournament tn = new Tournament(chan, params);
+                tn.generateTemplate();
                 respMsg = tn.toString();
             } else {
                 respMsg = "Paramètre(s) invalide(s)";
