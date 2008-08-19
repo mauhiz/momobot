@@ -71,6 +71,14 @@ public class Tournament extends ChannelEvent {
         
     }
     
+    public ArrayList<String> getListTeam() {
+        ArrayList<String> reply = new ArrayList<String>();
+        for (Team element : teamList) {
+            reply.add(element.toString());
+        }
+        return reply;
+    }
+    
     /**
      * @param a
      * @param b
@@ -86,7 +94,6 @@ public class Tournament extends ChannelEvent {
         }
         return rest;
     }
-    
     /**
      * @param oldMatch
      * @param team
@@ -158,6 +165,7 @@ public class Tournament extends ChannelEvent {
         reply.add("La team " + teamList.get(idTeam).getId() + " est déja éléminé.");
         return reply;
     }
+    
     /**
      * @param index
      * @param country
