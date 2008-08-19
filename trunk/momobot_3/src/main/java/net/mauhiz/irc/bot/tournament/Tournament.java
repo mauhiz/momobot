@@ -213,12 +213,10 @@ public class Tournament extends ChannelEvent {
     /**
      * @param oldMatch
      * @param team
-     * @return
-     * 
+     * @return String
      */
     private String setNextMatch(final Match oldMatch, final Team team) {
         int newphase = oldMatch.getPhase() - 1;
-        int oldId = oldMatch.getID();
         // C'était la finale
         if (newphase == 0) {
             // Match match = new Match(newphase, 0, mapList.get(0), team, team);
@@ -226,7 +224,6 @@ public class Tournament extends ChannelEvent {
             return "Bravo, team n°" + team.getId() + "=" + team.getNom() + " gagne le tournois! o//";
             
         }
-        int nombreMatchPerSide = power(2, newphase);
         int id = team.getId();
         // int newID = id / nombreMatchPerSide;
         int newID = id / power(2, mapList.size() - newphase) / power(2, mapList.size() - newphase);
@@ -254,7 +251,7 @@ public class Tournament extends ChannelEvent {
      *            de la team winner
      * @param score2_
      *            de la team qui a loose
-     * @return
+     * @return List String
      */
     
     public List<String> setScore(final int idTeam, final int score1_, final int score2_) {
