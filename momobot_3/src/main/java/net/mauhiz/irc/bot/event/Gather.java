@@ -28,7 +28,10 @@ public class Gather extends ChannelEvent {
      */
     private static final byte SIZE = 5;
     
-    private final SeekWar seekWar = new SeekWar(this);
+    /**
+     * 
+     */
+    private SeekWar seekWar = null;
     // /**
     // * Un serveur?
     // */
@@ -94,6 +97,15 @@ public class Gather extends ChannelEvent {
             }
         }
         return retour.toString();
+    }
+    
+    /**
+     * 
+     */
+    public final void createSeekWar() {
+        if (seekWar == null) {
+            seekWar = new SeekWar();
+        }
     }
     
     /**

@@ -28,13 +28,15 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
         ChannelEvent evt = chan.getEvt();
-        String reply;
+        String reply = "";
         if (evt == null) {
             reply = "Aucun gather n'est lance.";
         } else {
             if (evt instanceof Gather) {
-                if (((Gather) evt).getSeek().isSeekInProgress()) {
-                    reply = "Le seek est en cour.";
+                if (((Gather) evt).getSeek() != null) {
+                    if (((Gather) evt).getSeek().isSeekInProgress()) {
+                        reply = "Le seek est en cour.";
+                    }
                 } else {
                     reply = ((Gather) evt).getSeek().tg();
                 }

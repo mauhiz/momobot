@@ -56,10 +56,6 @@ public class SeekWar {
      */
     private String channel = "";
     /**
-     * gather
-     */
-    private Gather gather;
-    /**
      * 
      */
     private String[] greenList = {"ok", "oui", "go", "k", "ip", "pass", "yes", "lvl", "level", "yep", "moi"};
@@ -75,6 +71,10 @@ public class SeekWar {
      * Liste d'ordre croissante des lvl
      */
     private String[] lvl = {"noob", "low", "mid", "good", "skilled", "high", "roxor"};
+    /**
+     * gather
+     */
+    private int numberPlayers = 5;
     /**
      * True si le seek est en cour ; false sinon
      */
@@ -114,16 +114,13 @@ public class SeekWar {
      */
     private final List<IrcUser> userpv = new ArrayList<IrcUser>();
     /**
-     * @param gath
-     *            = gather qui est propriétaire de SeekWar()
+     * @param nbPlayers
      */
-    public SeekWar(final Gather gath) {
+    public SeekWar() {
         seekServ = "ON";
         ippass = "87.98.196.75:27019 Gotserv.com: pw:gruik";
         seekLevel = "mid";
         seekMessage = "seek %Pv%P - %S - %L pm ";
-        gather = gath;
-        // 6 min
     }
     
     /**
@@ -137,7 +134,7 @@ public class SeekWar {
      * @return String = Message de seek complété
      */
     public final String getMessageForSeeking() {
-        return MomoStringUtils.genereSeekMessage(seekMessage, gather.getNumberPlayers(), seekServ, seekLevel);
+        return MomoStringUtils.genereSeekMessage(seekMessage, numberPlayers, seekServ, seekLevel);
     }
     
     /**
@@ -145,8 +142,8 @@ public class SeekWar {
      * 
      */
     private String getSeekInfo() {
-        return "Seek - Info : " + gather.getNumberPlayers() + "vs" + gather.getNumberPlayers() + " serv = " + seekServ
-                + " level = " + seekLevel;
+        return "Seek - Info : " + numberPlayers + "vs" + numberPlayers + " serv = " + seekServ + " level = "
+                + seekLevel;
     }
     /**
      * @return String = qui a gagner le seek
@@ -349,9 +346,10 @@ public class SeekWar {
      * @param chan
      * @return String
      */
-    public String start(final String[] commandSeek, final String chan) {
+    public String start(final String[] commandSeek, final String chan, final int nbPlayers) {
         sw.start();
         channel = chan;
+        numberPlayers = nbPlayers;
         if (LOG.isDebugEnabled()) {
             LOG.debug("Lancement d'un seek = " + StringUtils.join(commandSeek));
         }
@@ -470,7 +468,7 @@ public class SeekWar {
         }
         
         List<String> listMatch = new ArrayList<String>();
-        int player = gather.getNumberPlayers();
+        int player = numberPlayers;
         for (String element : SEPARATEUR) {
             listMatch.add(player + element + player);
             listMatch.add(player + " " + element + " " + player);
