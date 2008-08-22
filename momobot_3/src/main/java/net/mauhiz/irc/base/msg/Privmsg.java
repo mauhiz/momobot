@@ -88,7 +88,7 @@ public class Privmsg extends IrcMessage {
             sb.append(' ');
         }
         sb.append(':');
-        sb.append(message);
+        sb.append(getMessage());
         return sb.toString();
     }
 }
