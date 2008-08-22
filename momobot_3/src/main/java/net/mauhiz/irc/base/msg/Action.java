@@ -1,22 +1,19 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
  */
-public class Action extends Privmsg {
+public class Action extends Privmsg implements IrcSpecialChars {
     
     /**
      * @param toReply
      * @param msg
-     * @return MeMsg
+     * @return new msg
      */
     public static Action buildAnswer(final IrcMessage toReply, final String msg) {
         String oldDest = toReply.getTo();
@@ -26,15 +23,17 @@ public class Action extends Privmsg {
         return buildPrivateAnswer(toReply, msg);
     }
     
+    /**
+     * @param toReply
+     * @param msg
+     * @return new msg
+     */
     public static Action buildPrivateAnswer(final IrcMessage toReply, final String msg) {
-        String from = toReply.getFrom();
-        Mask mask = new Mask(from);
-        return new Action(null, mask.getNick(), toReply.getServer(), msg);
+        Mask from = new Mask(toReply.getFrom());
+        return new Action(null, from.getNick(), toReply.getServer(), msg);
     }
     
     /**
-     * TODO constr private
-     * 
      * @param from1
      * @param to1
      * @param server1
@@ -45,38 +44,10 @@ public class Action extends Privmsg {
     }
     
     /**
-     * @see java.lang.Object#toString()
+     * @see net.mauhiz.irc.base.msg.Privmsg#getMessage()
      */
     @Override
-    public String toString() {
-        if (StringUtils.isEmpty(message)) {
-            return null;
-        }
-        StringBuilder sb = new StringBuilder();
-        if (super.from != null) {
-            sb.append(':');
-            sb.append(super.from);
-            sb.append(' ');
-        }
-        sb.append("PRIVMSG ");
-        if (super.to != null) {
-            if (super.from == null && !Channels.isChannelName(super.to)) {
-                try {
-                    Mask m = new Mask(super.to);
-                    IrcUser dest = Users.getInstance(super.server).findUser(m, true);
-                    sb.append(dest.getNick());
-                } catch (IllegalArgumentException iae) {
-                    sb.append(super.to);
-                }
-            } else {
-                sb.append(super.to);
-            }
-            sb.append(' ');
-        }
-        sb.append(':');
-        sb.append((char) 01 + "ACTION ");
-        sb.append(message);
-        sb.append((char) 01);
-        return sb.toString();
+    public String getMessage() {
+        return QUOTE_STX + message + QUOTE_STX;
     }
 }
