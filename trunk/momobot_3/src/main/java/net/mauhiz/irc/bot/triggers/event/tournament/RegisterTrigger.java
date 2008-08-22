@@ -7,7 +7,10 @@ import java.util.Locale;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.tournament.Tournament;
@@ -24,12 +27,12 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @return String[] ou a decoupe idTeam et Country
      */
     private static List<String> cutList(final String[] string) {
-        if (string.length < 3) {
+        if (string.length < 2) {
             return null;
         }
         
         List<String> strReturn = new ArrayList<String>();
-        for (int i = 3; i < string.length; i++) {
+        for (int i = 2; i < string.length; i++) {
             strReturn.add(string[i]);
         }
         return strReturn;
@@ -72,20 +75,24 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         
         if (event instanceof Tournament) {
             String[] args = getArgs(im.getMessage()).split(" ");
-            if (args.length > 3) {
-                // on match l'id de la team
-                if (Integer.parseInt(args[0]) > -1) {
-                    int id = Integer.parseInt(args[0]);
+            if (((Tournament) event).isReady()) {
+                if (args.length > 3) {
                     // on match le pays
-                    Locale loc = testLocale(args[1]);
+                    Locale loc = testLocale(args[0]);
                     if (loc != null) {
                         // on match le nom de la team mininum 3 caractères
-                        if (args[2].length() > 2) {
-                            String tag = args[2];
+                        if (args[1].length() > 2) {
+                            String tag = args[1];
                             // on découpe la liste
-                            Privmsg msg = Privmsg.buildAnswer(im, ((Tournament) event).setTeam(id, loc, tag,
-                                    cutList(args)));
+                            IrcUser ircuser = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+                            Privmsg msg = Privmsg.buildPrivateAnswer(im, ((Tournament) event).setTeam(ircuser, loc,
+                                    tag, cutList(args)));
+                            
+                            // on lance un status
+                            Privmsg msg1 = Privmsg.buildAnswer(im, ((Tournament) event).getStatus());
                             control.sendMsg(msg);
+                            control.sendMsg(msg1);
+                            
                             return;
                         }
                         Privmsg msg = Privmsg.buildAnswer(im, "Erreur : nom de team doit etre > a 3 caracteres.");
@@ -96,17 +103,16 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                     control.sendMsg(msg);
                     return;
                 }
-                Privmsg msg = Privmsg.buildAnswer(im,
-                        "Erreur : le premier argument doit etre un chiffre correspondant a l'ID de la team.");
+                Privmsg msg = Privmsg
+                        .buildAnswer(im,
+                                "Erreur : parametre(s) insuffisant(s). ex : $tn-register FR eule joueur1 joueur2 joueur3 joueur4 joueur5");
                 control.sendMsg(msg);
                 return;
-                
             }
-            Privmsg msg = Privmsg
-                    .buildAnswer(im,
-                            "Erreur : parametre(s) insuffisant(s). ex : $tn-register 5 FR eule joueur1 joueur2 joueur3 joueur4 joueur5");
+            Privmsg msg = Privmsg.buildAnswer(im, "Erreur : Tournois déja complet.");
             control.sendMsg(msg);
             return;
+            
         }
     }
 }

@@ -3,6 +3,8 @@ package net.mauhiz.irc.bot.tournament;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import net.mauhiz.irc.base.data.IrcUser;
+
 /**
  * @author topper
  */
@@ -27,6 +29,10 @@ public class Team extends ArrayList<String> {
      * 
      */
     private String nom;
+    /**
+     * 
+     */
+    private IrcUser owner;
     
     /**
      * @param size1
@@ -34,22 +40,13 @@ public class Team extends ArrayList<String> {
      * @param country1
      * 
      */
-    public Team(final int size1, final int id1, final String nom1, final Locale country1) {
+    public Team(final int size1, final int id1, final String nom1, final Locale country1, final IrcUser ircuser) {
         super(size1);
         capacity = size1;
         nom = nom1;
         country = country1;
         id = id1;
-    }
-    
-    /**
-     * @param size1
-     * @param nom1
-     */
-    public Team(final int size1, final String nom1) {
-        super(size1);
-        capacity = size1;
-        nom = nom1;
+        owner = ircuser;
     }
     
     /**
@@ -89,18 +86,28 @@ public class Team extends ArrayList<String> {
     }
     
     /**
+     * 
+     */
+    public boolean isTheOwner(final IrcUser ircuser) {
+        if (owner.equals(ircuser)) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
      * @return le nombre de places restantes.
      */
     public int remainingPlaces() {
         return capacity - size();
     }
-    
     /**
      * 
      */
     public void setCountry(final Locale country1) {
         country = country1;
     }
+    
     /**
      * @param nom1
      */

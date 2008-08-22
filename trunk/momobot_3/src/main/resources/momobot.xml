@@ -88,6 +88,9 @@
 			<command>start</command>
 			<command>gather</command>
 		</trigger>
+		<trigger class="GatherAndSeekTrigger">
+			<command>startandseek</command>
+		</trigger>
 		<trigger class="AddTrigger">
 			<command>add</command>
 		</trigger>

@@ -21,7 +21,7 @@ public class SplitTest {
         Channel chan = new Channel("#tsi.fr");
         Gather gather = new Gather(chan);
         String[] str = {"ON", "\"127.06576.467:27015", "FAST", "ET", "BAN", "mdp:dtcdtc\""};
-        SeekWar seekwar = new SeekWar(gather);
+        SeekWar seekwar = new SeekWar();
         List<String> split = seekwar.split(str);
         String[] strout = split.toArray(new String[split.size()]);
         Assert.assertEquals(strout[0], "ON");

@@ -216,12 +216,15 @@ public class Match extends ArrayList<Team> {
         // on a pas de gagnant
         if (team2 == null) {
             // pas d'adversaire
-            return "La team " + team1.getId() + "=" + team1.getNom()
-                    + " en attente du résultat des adversaires. next map=" + map;
+            // return "La team " + team1.getId() + "=" + team1.getNom()
+            // + " en attente du résultat des adversaires. next map=" + map;
+            return team1.getNom() + " en attente du résultat des adversaires. Next map=" + map;
         }
         // le match est en attente de résultat
-        return "Team n°" + team1.getId() + "=" + team1.getNom() + " vs Team n°" + team2.getId() + "=" + team2.getNom()
-                + ".";
+        // return "Team n°" + team1.getId() + "=" + team1.getNom() + " vs Team n°" + team2.getId() + "=" +
+        // team2.getNom()
+        // + ".";
+        return team1.getNom() + " vs " + team2.getNom() + ".";
     }
     
 }
