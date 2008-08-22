@@ -66,6 +66,9 @@
 		<trigger class="SayTrigger">
 			<command>say</command>
 		</trigger>
+		<trigger class="SayMeTrigger">
+			<command>sayme</command>
+		</trigger>
 		<trigger class="PartTrigger">
 			<command>part</command>
 			<command>leave</command>
