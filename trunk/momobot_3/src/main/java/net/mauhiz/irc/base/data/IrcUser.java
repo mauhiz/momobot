@@ -44,6 +44,13 @@ public class IrcUser {
     }
     
     /**
+     * @return {@link #props}
+     */
+    public UserProperties getProps() {
+        return props;
+    }
+    
+    /**
      * @return {@link #user}
      */
     public String getUser() {
