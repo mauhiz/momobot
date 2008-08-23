@@ -42,7 +42,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param stg
      * @return boolean
      */
-    private static Locale testLocale(final String stg) {
+    private static Locale getLocale(final String stg) {
         for (Locale loc : Locale.getAvailableLocales()) {
             if (loc.getCountry().equalsIgnoreCase(stg)) {
                 return loc;
@@ -78,7 +78,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             if (((Tournament) event).isReady()) {
                 if (args.length > 3) {
                     // on match le pays
-                    Locale loc = testLocale(args[0]);
+                    Locale loc = getLocale(args[0]);
                     if (loc != null) {
                         // on match le nom de la team mininum 3 caractères
                         if (args[1].length() > 2) {
