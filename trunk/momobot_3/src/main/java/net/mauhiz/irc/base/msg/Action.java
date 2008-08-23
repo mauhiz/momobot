@@ -48,6 +48,6 @@ public class Action extends Privmsg implements IrcSpecialChars {
      */
     @Override
     public String getMessage() {
-        return QUOTE_STX + message + QUOTE_STX;
+        return QUOTE_STX + super.getMessage() + QUOTE_STX;
     }
 }

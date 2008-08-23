@@ -15,7 +15,7 @@ public class Privmsg extends IrcMessage {
     /**
      * @param toReply
      * @param msg
-     * @return
+     * @return new msg
      */
     public static Privmsg buildAnswer(final IrcMessage toReply, final String msg) {
         String oldDest = toReply.getTo();
@@ -28,7 +28,7 @@ public class Privmsg extends IrcMessage {
     /**
      * @param toReply
      * @param msg
-     * @return
+     * @return new msg
      */
     public static Privmsg buildPrivateAnswer(final IrcMessage toReply, final String msg) {
         String from = toReply.getFrom();
@@ -36,7 +36,10 @@ public class Privmsg extends IrcMessage {
         return new Privmsg(null, mask.getNick(), toReply.getServer(), msg);
     }
     
-    String message;
+    /**
+     * message
+     */
+    private final String message;
     
     /**
      * TODO constr private
