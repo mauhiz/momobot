@@ -258,7 +258,7 @@ public class Tournament extends ChannelEvent {
         int id = team.getId();
         // int newID = id / nombreMatchPerSide;
         int newID = id / power(2, mapList.size() - newphase) / power(2, mapList.size() - newphase);
-        int testMatch = testMatch(newphase, newID);
+        int testMatch = getMatchId(newphase, newID);
         if (testMatch == -1) {
             // le match n'existe pas
             Match match = new Match(newphase, newID, mapList.get(mapList.size() - newphase), team);
@@ -363,7 +363,7 @@ public class Tournament extends ChannelEvent {
      * @param id
      * @return i <=> numéro du match ou -1 si le match n'existe pas
      */
-    private int testMatch(final int phase, final int id) {
+    private int getMatchId(final int phase, final int id) {
         for (int i = 0; i < matchList.size(); i++) {
             Match match = matchList.get(i);
             
@@ -382,12 +382,12 @@ public class Tournament extends ChannelEvent {
         // TODO Auto-generated method stub
         
         String matchEnAttente = " Match en cours: ";
-        String matchEnCour = " Match en attente : ";
+        String matchEnCours = " Match en attente : ";
         Match finale = null;
         for (Match element : matchList) {
             if (element.getWinner() == -1) {
                 if (element.isReady()) {
-                    matchEnCour += element.toString();
+                    matchEnCours += element.toString();
                 } else {
                     matchEnAttente += element.toString();
                 }
@@ -397,18 +397,18 @@ public class Tournament extends ChannelEvent {
                 finale = element;
             }
         }
-        if (matchEnAttente == " Match en cours: ") {
+        if (" Match en cours: ".equals(matchEnAttente)) {
             matchEnAttente = "";
         }
-        if (matchEnCour == " Match en attente : ") {
-            matchEnCour = "";
+        if (" Match en attente : ".equals(matchEnCours)) {
+            matchEnCours = "";
         }
         
         if (finale != null) {
             return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs. finale : "
                     + finale.toString();
         }
-        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + matchEnCour
+        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + matchEnCours
                 + matchEnAttente;
     }
     

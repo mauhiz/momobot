@@ -10,7 +10,7 @@ public class Match extends ArrayList<Team> {
     /**
      * Id du match
      */
-    private final int Id;
+    private final int id;
     /**
      * Map
      */
@@ -27,15 +27,15 @@ public class Match extends ArrayList<Team> {
     /**
      * Team 1
      */
-    private Team team1 = null;
+    private Team team1;
     /**
      * Team 2
      */
-    private Team team2 = null;
+    private Team team2;
     /**
      * Team winner
      */
-    private Team winner = null;
+    private Team winner;
     
     /**
      * @param phase1
@@ -48,7 +48,7 @@ public class Match extends ArrayList<Team> {
         map = map1;
         score[0] = 0;
         score[1] = 0;
-        Id = id1;
+        id = id1;
         if (team1.equals(team2)) {
             score[0] = -1;
             score[1] = -1;
@@ -77,7 +77,7 @@ public class Match extends ArrayList<Team> {
         map = map1;
         score[0] = 0;
         score[1] = 0;
-        Id = id1;
+        id = id1;
         if (team1.getId() == team2.getId()) {
             score[0] = -1;
             score[1] = -1;
@@ -101,7 +101,7 @@ public class Match extends ArrayList<Team> {
         map = oldmatch.map;
         score[0] = 0;
         score[1] = 0;
-        Id = oldmatch.Id;
+        id = oldmatch.id;
         if (team1.equals(team2)) {
             score[0] = -1;
             score[1] = -1;
@@ -109,7 +109,7 @@ public class Match extends ArrayList<Team> {
     }
     
     public final int getID() {
-        return Id;
+        return id;
     }
     /**
      * 
@@ -157,10 +157,8 @@ public class Match extends ArrayList<Team> {
             if (team1.getId() == team.getId()) {
                 return true;
             }
-            if (team2 != null) {
-                if (team2.getId() == team.getId()) {
-                    return true;
-                }
+            if (team2 != null && team2.getId() == team.getId()) {
+                return true;
             }
         }
         return false;

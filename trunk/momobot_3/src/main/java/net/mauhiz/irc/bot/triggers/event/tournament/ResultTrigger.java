@@ -40,21 +40,20 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         }
         if (event instanceof Tournament) {
             String[] args = getArgs(im.getMessage()).split(" ");
-            if (args.length == 3) {
-                if (Integer.parseInt(args[0]) > -1 && Integer.parseInt(args[1]) > -1 && Integer.parseInt(args[2]) > -1) {
-                    int id = Integer.parseInt(args[0]);
-                    int score1 = Integer.parseInt(args[1]);
-                    int score2 = Integer.parseInt(args[2]);
-                    Tournament tn = (Tournament) event;
-                    IrcUser ircuser = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
-                    List<String> str = tn.setScore(ircuser, id, score1, score2);
-                    for (String element : str) {
-                        Privmsg msg = Privmsg.buildAnswer(im, element);
-                        control.sendMsg(msg);
-                    }
-                    tn.generateTemplate();
-                    return;
+            if (args.length == 3 && Integer.parseInt(args[0]) > -1 && Integer.parseInt(args[1]) > -1
+                    && Integer.parseInt(args[2]) > -1) {
+                int id = Integer.parseInt(args[0]);
+                int score1 = Integer.parseInt(args[1]);
+                int score2 = Integer.parseInt(args[2]);
+                Tournament tn = (Tournament) event;
+                IrcUser ircuser = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+                List<String> str = tn.setScore(ircuser, id, score1, score2);
+                for (String element : str) {
+                    Privmsg msg = Privmsg.buildAnswer(im, element);
+                    control.sendMsg(msg);
                 }
+                tn.generateTemplate();
+                return;
                 
             }
             Privmsg msg = Privmsg.buildAnswer(im,
