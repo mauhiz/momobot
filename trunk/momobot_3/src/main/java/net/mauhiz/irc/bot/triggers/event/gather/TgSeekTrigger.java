@@ -36,16 +36,21 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                 if (((Gather) evt).getSeek() != null) {
                     if (((Gather) evt).getSeek().isSeekInProgress()) {
                         reply = "Le seek est en cour.";
+                        
+                    } else {
+                        // on reset le seek
+                        ((Gather) evt).setSeekToNull();
+                        reply = "ok je remballe.";
                     }
+                    
                 } else {
-                    reply = ((Gather) evt).getSeek().tg();
+                    reply = "Pas de seek en cour.";
                 }
                 
-            } else {
+                Privmsg msg = Privmsg.buildAnswer(im, reply);
+                control.sendMsg(msg);
                 return;
             }
         }
-        Privmsg msg = Privmsg.buildAnswer(im, reply);
-        control.sendMsg(msg);
     }
 }

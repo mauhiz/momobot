@@ -169,6 +169,10 @@ public class Gather extends ChannelEvent {
         return "Plouf, plouf, ce sera " + team.get(RandomUtils.nextInt(team.size())) + " qui ira seek!";
     }
     
+    public final void setSeekToNull() {
+        seekWar = null;
+    }
+    
     /**
      * @param string
      *            le nouveau tag
