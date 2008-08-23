@@ -290,17 +290,12 @@ public class SeekWar {
                 // Cas chelou :O ??!??!!??
                 Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "go?");
                 resultPrivmsg.add(msg1);
-                // seekInProgress = false;
-                // userpv.clear();
-                // userpv.add(provenance);
-                // sw.stop();
-                // sw.reset();
                 return resultPrivmsg;
             }
             // On pv le mec pr lui dire rdy?
             Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "rdy?");
             resultPrivmsg.add(msg1);
-            if ("off".equalsIgnoreCase(seekLevel)) {
+            if ("off".equalsIgnoreCase(seekServ)) {
                 Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "ip&pass?");
                 resultPrivmsg.add(msg2);
             }
@@ -596,13 +591,5 @@ public class SeekWar {
         
         return processIncomingMessage(im, resultPrivmsg);
         
-    }
-    
-    /**
-     * @return un msg
-     */
-    public final String tg() {
-        userpv.clear();
-        return "Ok je la ferme.";
     }
 }
