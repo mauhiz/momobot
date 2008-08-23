@@ -6,12 +6,18 @@ import net.mauhiz.irc.base.data.IrcServer;
  * @author mauhiz
  */
 public interface IIrcMessage {
-    String getFrom();
-
     /**
-     * @return
+     * @return from
+     */
+    String getFrom();
+    
+    /**
+     * @return server
      */
     IrcServer getServer();
-
+    
+    /**
+     * @return to
+     */
     String getTo();
 }
