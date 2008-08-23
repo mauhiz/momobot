@@ -13,6 +13,8 @@ import net.mauhiz.irc.bot.event.Gather;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author mauhiz
  */
@@ -38,8 +40,20 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             respMsg = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + cme.getTo();
         } else {
             IrcUser user = Users.getInstance(server).findUser(new Mask(cme.getFrom()), true);
+            String[] args;
+            int nbPlayers = 5;
+            try {
+                args = StringUtils.split(getArgs(cme.getMessage()));
+                nbPlayers = Integer.parseInt(args[0]);
+                if (nbPlayers < 0) {
+                    nbPlayers = 5;
+                }
+            } catch (NumberFormatException e) {
+                
+            }
             respMsg = "Gather lancé par " + user;
-            new Gather(chan).add(user);
+            Gather gather = new Gather(chan, nbPlayers);
+            gather.add(user);
         }
         Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
         control.sendMsg(resp);

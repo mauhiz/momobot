@@ -37,10 +37,10 @@ public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivms
             
             try {
                 int nbPlayers = Integer.parseInt(getArgs(cme.getMessage()));
-                if (nbPlayers > 0 && nbPlayers < 6) {
+                if (nbPlayers > 0) {
                     IrcUser user = Users.getInstance(server).findUser(new Mask(cme.getFrom()), true);
                     respMsg = "Gather lancé par " + user;
-                    GatherAndSeek gath = new GatherAndSeek(chan);
+                    GatherAndSeek gath = new GatherAndSeek(chan, nbPlayers);
                     for (int i = 0; i < nbPlayers; i++) {
                         IrcUser ircuser = new IrcUser("P" + (i + 1));
                         gath.add(ircuser);
