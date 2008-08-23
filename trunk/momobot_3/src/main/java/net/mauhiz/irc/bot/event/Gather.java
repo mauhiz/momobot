@@ -24,14 +24,14 @@ public class Gather extends ChannelEvent {
      */
     private static final Logger LOG = Logger.getLogger(Gather.class);
     /**
-     * La taille d'un gather.
-     */
-    private static final byte SIZE = 5;
-    
-    /**
      * 
      */
     private SeekWar seekWar = null;
+    
+    /**
+     * La taille d'un gather.
+     */
+    private final int SIZE;
     // /**
     // * Un serveur?
     // */
@@ -50,7 +50,11 @@ public class Gather extends ChannelEvent {
      *            le channel
      */
     public Gather(final Channel channel1) {
-        this(channel1, "eule^");
+        this(channel1, "eule^", (byte) 5);
+    }
+    
+    public Gather(final Channel channel1, final int nbPlayers) {
+        this(channel1, "eule^", nbPlayers);
     }
     
     /**
@@ -59,9 +63,10 @@ public class Gather extends ChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Gather(final Channel channel1, final String tag) {
+    public Gather(final Channel channel1, final String tag, final int size) {
         super(channel1);
         sw.start();
+        SIZE = size;
         team = new Team(SIZE, tag);
     }
     
@@ -169,6 +174,9 @@ public class Gather extends ChannelEvent {
         return "Plouf, plouf, ce sera " + team.get(RandomUtils.nextInt(team.size())) + " qui ira seek!";
     }
     
+    /**
+     * 
+     */
     public final void setSeekToNull() {
         seekWar = null;
     }

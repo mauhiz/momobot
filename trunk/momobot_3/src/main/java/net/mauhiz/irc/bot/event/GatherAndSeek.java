@@ -8,8 +8,8 @@ public class GatherAndSeek extends Gather {
      * @param channel1
      * @param nbPlayers
      */
-    public GatherAndSeek(final Channel channel1) {
-        super(channel1);
+    public GatherAndSeek(final Channel channel1, final int nbPlayers) {
+        super(channel1, nbPlayers);
         
     }
     
