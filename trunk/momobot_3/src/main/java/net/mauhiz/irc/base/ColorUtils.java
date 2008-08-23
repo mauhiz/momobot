@@ -5,7 +5,7 @@ import org.apache.commons.lang.text.StrBuilder;
 /**
  * @author mauhiz
  */
-public class ColorUtils implements IrcSpecialChars {
+public final class ColorUtils implements IrcSpecialChars {
     /**
      * Removes all colours from a line of IRC text.
      * 
