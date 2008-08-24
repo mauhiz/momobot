@@ -8,6 +8,10 @@ import java.util.ArrayList;
  */
 public class Match extends ArrayList<Team> {
     /**
+     * serial
+     */
+    private static final long serialVersionUID = 1L;
+    /**
      * Id du match
      */
     private final int id;
@@ -40,6 +44,7 @@ public class Match extends ArrayList<Team> {
     /**
      * @param phase1
      * @param id1
+     * @param map1
      * @param team1_
      */
     public Match(final int phase1, final int id1, final String map1, final Team team1_) {
@@ -58,6 +63,7 @@ public class Match extends ArrayList<Team> {
      * @param phase1
      * @param id1
      *            ID du match
+     * @param map1
      * @param team1_
      *            team 1
      * @param team2_
@@ -108,17 +114,20 @@ public class Match extends ArrayList<Team> {
         }
     }
     
-    public final int getID() {
+    /**
+     * @return {@link #id}
+     */
+    public final int getId() {
         return id;
     }
     /**
-     * 
+     * @return {@link #map}
      */
     public final String getMap() {
         return map;
     }
     /**
-     * @return phase
+     * @return {@link #phase}
      */
     public final int getPhase() {
         return phase;
