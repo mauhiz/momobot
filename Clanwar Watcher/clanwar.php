@@ -86,7 +86,7 @@ select{
 			$query .= " AND serv = '$srvopt'";
 		if($lvlopt != '%')
 			$query .= " AND lvl = '$lvlopt'";
-		$query .= " ORDER BY datetime DESC LIMIT 0 , 30";
+		$query .= " ORDER BY when DESC LIMIT 0 , 30";
 		echo "<!-- $query -->";
 		$result = mysql_query($query) or die(mysql_error());
 		
