@@ -96,7 +96,7 @@ public class War {
 			}*/
 		}
 		else{
-			if(SeekMessage.contains("pcw") || SeekMessage.contains("war"))
+			if(SeekMessage.contains("pcw") || SeekMessage.contains("war") || SeekMessage.contains("pracc"))
 			{
 				this.nbjoueurs = 5;
 			}
