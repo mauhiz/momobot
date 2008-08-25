@@ -12,7 +12,7 @@ public class War {
 	
 	// Regexp magique de FenX
 	//public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|v)\\s?(\\d+)", Pattern.CASE_INSENSITIVE);
-	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|c|x|n|on|v)\\s?(\\d+)");
+	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|c|x|n|on|/|v)\\s?(\\d+)");
 	
 	private int nbjoueurs;
 	private Level level;

@@ -22,7 +22,7 @@ public class ClanwarWatcherBot extends PircBot{
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		// TODO Faire un lanceur plus propre ?
 		@SuppressWarnings("unused")
 		ClanwarWatcherBot bot = new ClanwarWatcherBot();
 		
@@ -115,7 +115,16 @@ public class ClanwarWatcherBot extends PircBot{
         // Si le parser n'a pas réussi a trouver une war on arrete
         
         if(war.isNull()) {
-        	// TODO : Stocker les messages dont le traitement a échoué quelque part ?
+        	// TODO : Rajouter une option debug ou pas : pour faire une version du bot plus légère.
+        	try {
+                Statement stmt = mysqlConnection.createStatement();
+                String sql = "INSERT INTO `untreated` (`id` ,`when` ,`user` ,`msg`) VALUES (NULL , NOW( ), '"+sender+"', '"+message+"');";
+                stmt.executeUpdate(sql);
+
+            } catch (SQLException e) {
+            	// TODO Auto-generated catch block
+    			e.printStackTrace();
+            }
         	return;
         }
         
