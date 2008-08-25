@@ -13,25 +13,9 @@
 
         if ($distance_in_minutes <1) {
             return $distance_in_seconds.' second(s)';
-        } elseif ($distance_in_minutes >= 1 and $distance_in_minutes < 44) {
-            return $distance_in_minutes . ' minute(s)';
-        } elseif ($distance_in_minutes >= 45 and $distance_in_minutes <= 89) {
-            return 'about 1 hour';
-        } elseif ($distance_in_minutes >= 90 and $distance_in_minutes <= 1439) {
-            return 'about ' . round(floatval($distance_in_minutes) / 60.0) . ' hours';
-        } elseif ($distance_in_minutes >= 1440 and $distance_in_minutes <= 2879) {
-            return '1 day';
-        } elseif ($distance_in_minutes >= 2880 and $distance_in_minutes <= 43199) {
-            return 'about ' . round(floatval($distance_in_minutes) / 1440) . ' days';
-        } elseif ($distance_in_minutes >= 43200 and $distance_in_minutes <= 86399) {
-            return 'about 1 month';
-        } elseif ($distance_in_minutes >= 86400 and $distance_in_minutes <= 525599) {
-            return round(floatval($distance_in_minutes) / 43200) . ' months';
-        } elseif ($distance_in_minutes >= 525600 and $distance_in_minutes <= 1051199) {
-            return 'about 1 year';
         } else {
-            return 'over ' . round(floatval($distance_in_minutes) / 525600) . ' years';
-        }
+            return $distance_in_minutes . ' minute(s)';
+	}
 	}
 ?>
 

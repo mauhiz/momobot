@@ -12,7 +12,7 @@ public class War {
 	
 	// Regexp magique de FenX
 	//public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|v)\\s?(\\d+)", Pattern.CASE_INSENSITIVE);
-	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|c|n|on|v)\\s?(\\d+)");
+	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|c|x|n|on|v)\\s?(\\d+)");
 	
 	private int nbjoueurs;
 	private Level level;
@@ -111,10 +111,10 @@ public class War {
 		if(SeekMessage.contains("roxor")){
 			this.level = Level.ROXOR;
 		}
-		else if(SeekMessage.contains("skilled") || SeekMessage.contains("hard")){
+		else if(SeekMessage.contains("skilled") || SeekMessage.contains("hard") || SeekMessage.contains("high")){
 			this.level = Level.SKILLED;
 		}
-		else if(SeekMessage.contains("good")){
+		else if(SeekMessage.contains("good") || SeekMessage.contains("goood")){
 			this.level = Level.GOOD;
 		}
 		else if(SeekMessage.contains("mid+") || SeekMessage.contains("mid +")){

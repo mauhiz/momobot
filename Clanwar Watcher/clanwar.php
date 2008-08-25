@@ -86,13 +86,13 @@ select{
 			$query .= " AND serv = '$srvopt'";
 		if($lvlopt != '%')
 			$query .= " AND lvl = '$lvlopt'";
-		$query .= " ORDER BY when DESC LIMIT 0 , 30";
+		$query .= " ORDER BY `when` DESC LIMIT 0 , 30";
 		echo "<!-- $query -->";
 		$result = mysql_query($query) or die(mysql_error());
 		
 		
 		while($row = mysql_fetch_array($result)){
-			$stamp = strtotime($row['datetime']);
+			$stamp = strtotime($row['when']);
 			$ago = distanceOfTimeInWords($stamp, $now);
 			$level = getLevelFromCode($row['lvl']);
 			$server = getServerFromCode($row['serv']);
@@ -125,9 +125,9 @@ for($i=0; $i<9; $i++){
 </SELECT>
 <SELECT NAME="srvopt">
 <?php
-$srvlist = array('-all serv-', 'I HAVE A SERVER', 'I DON\'T HAVE ANY');
+$srvlist = array('-all serv-', 'I DON\'T HAVE ANY', 'I HAVE A SERVER');
 for($i=0; $i<3; $i++){
-	echo "<OPTION ".(($_GET['lvlopt']==$i)?"SELECTED ":"")."VALUE=\"$i\">$lvllist[$i]</OPTION>";
+	echo "<OPTION ".(($_GET['srvopt']==$i)?"SELECTED ":"")."VALUE=\"$i\">$srvlist[$i]</OPTION>";
 }
 ?>
 </SELECT>

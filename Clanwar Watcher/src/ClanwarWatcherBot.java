@@ -73,12 +73,37 @@ public class ClanwarWatcherBot extends PircBot{
 		this.joinChannel(ircChan);
 	}
 	
+	public void onQuit(String sourceNick, String sourceLogin, String sourceHostname, String reason){
+		removeSeekFromUser(sourceNick);
+	}
+	
+	public void onPart(String channel, String sender, String login, String hostname){
+		removeSeekFromUser(sender);
+	}
+	
 	public void onMessage(String channel, String sender, String login, String hostname, String message) {
         //String lowMsg = message.trim().toLowerCase();
         // TODO : filtrer certains types de messages ?
         
         processMessage(sender, message);
     }
+	
+
+	/**
+	 * Enleve les seeks des user ayant quit clanwar de la bdd
+	 * @param user
+	 */
+	public void removeSeekFromUser(String user){
+		try {
+            Statement stmt = mysqlConnection.createStatement();
+            String sql = "DELETE FROM `clanwar`.`wars` WHERE `user`='"+ user +"';";
+            stmt.executeUpdate(sql);
+            
+        } catch (SQLException e) {
+        	// TODO Auto-generated catch block
+			e.printStackTrace();
+        }
+	}
 	
 	public void processMessage(String sender, String message) {
         message = message.trim();
@@ -88,8 +113,11 @@ public class ClanwarWatcherBot extends PircBot{
         War war = new War(sender, message);
         
         // Si le parser n'a pas réussi a trouver une war on arrete
-        // TODO : Stocker les messages dont le traitement a échoué quelque part ?
-        if(war.isNull()) return;
+        
+        if(war.isNull()) {
+        	// TODO : Stocker les messages dont le traitement a échoué quelque part ?
+        	return;
+        }
         
         
        
@@ -102,7 +130,7 @@ public class ClanwarWatcherBot extends PircBot{
             // Prepare a statement to insert a record
             
             // On insert le nouveau seek, en remplacant l'ancien si un seek du meme joueur existe déjà
-            String sql = "INSERT INTO `clanwar`.`wars` (`nbjoueurs` ,`serv` ,`lvl` ,`msg` ,`user` ,`when`) VALUES ('" + war.getNbjoueurs() + "', '"+ war.getServer().getCode()+"', '"+war.getLevel().getCode()+"', '"+message+"', '"+sender+"', NOW( )) ON DUPLICATE KEY UPDATE nbjoueurs='"+war.getNbjoueurs()+"', serv='"+war.getServer().getCode()+"', lvl='"+war.getLevel().getCode()+"', when=NOW( ), msg='"+message+"';";
+            String sql = "INSERT INTO `clanwar`.`wars` (`nbjoueurs` ,`serv` ,`lvl` ,`msg` ,`user` ,`when`) VALUES ('" + war.getNbjoueurs() + "', '"+ war.getServer().getCode()+"', '"+war.getLevel().getCode()+"', '"+message+"', '"+sender+"', NOW( )) ON DUPLICATE KEY UPDATE nbjoueurs='"+war.getNbjoueurs()+"', serv='"+war.getServer().getCode()+"', lvl='"+war.getLevel().getCode()+"', `when`=NOW( ), `msg`='"+message+"';";
             
             // Execute the insert statement
             stmt.executeUpdate(sql);
