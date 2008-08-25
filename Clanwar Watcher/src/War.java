@@ -12,7 +12,7 @@ public class War {
 	
 	// Regexp magique de FenX
 	//public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|v)\\s?(\\d+)", Pattern.CASE_INSENSITIVE);
-	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|v)\\s?(\\d+)");
+	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|c|n|on|v)\\s?(\\d+)");
 	
 	private int nbjoueurs;
 	private Level level;
@@ -52,11 +52,18 @@ public class War {
 	}
 	
 	public War(String User, String SeekMessage){
-		this.user = User;
-		
 		// Important
 		SeekMessage = SeekMessage.toLowerCase();
+		if(SeekMessage.contains("dispo") || SeekMessage.contains("tn")){
+			this.nbjoueurs = 0;
+			this.level = Level.UNKOWN;
+			this.server = ServerStatus.UNKOWN;
+			this.user = "";
+			return;
+		}
 		
+		this.user = User;
+			
 		Matcher matcher = patternNbJoueurs.matcher(SeekMessage);
 		
 		/*
@@ -89,7 +96,13 @@ public class War {
 			}*/
 		}
 		else{
-			this.nbjoueurs = 0;
+			if(SeekMessage.contains("pcw") || SeekMessage.contains("war"))
+			{
+				this.nbjoueurs = 5;
+			}
+			else{
+				this.nbjoueurs = 0;
+			}
 		}
 		
 		/**
@@ -127,7 +140,11 @@ public class War {
 	}
 	
 	public boolean isNull(){
-		if(this.level == Level.UNKOWN && this.server == ServerStatus.UNKOWN && this.nbjoueurs == 0)
+		int nulllevel = 0;
+		if(this.level == Level.UNKOWN) nulllevel++;
+		if(this.server == ServerStatus.UNKOWN) nulllevel++;
+		if(this.nbjoueurs == 0) nulllevel++;
+		if(nulllevel >= 2)
 			return true;
 		return false;
 	}

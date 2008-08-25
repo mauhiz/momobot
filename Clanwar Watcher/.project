@@ -14,4 +14,16 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>clanwar.php</name>
+			<type>1</type>
+			<location>C:/xampplite/htdocs/clanwar.php</location>
+		</link>
+		<link>
+			<name>cw.utils.php</name>
+			<type>1</type>
+			<location>C:/xampplite/htdocs/cw.utils.php</location>
+		</link>
+	</linkedResources>
 </projectDescription>

@@ -11,6 +11,13 @@ import org.jibble.pircbot.*;
  */
 public class ClanwarWatcherBot extends PircBot{
 	java.sql.Connection mysqlConnection; 
+	private final String mysqlHost = "localhost";
+	private final String mysqlUser = "cww";
+	private final String mysqlPass = "355U7HYzfYEybw8f";
+	private final String mysqlDB = "clanwar";
+	private final String ircServer = "irc.quakenet.org";
+	private final String ircChan = "#clanwar.fr";
+	private final String ircNickname = "abbybobot";
 	/**
 	 * @param args
 	 */
@@ -34,7 +41,7 @@ public class ClanwarWatcherBot extends PircBot{
 		}
 
 		try {
-			mysqlConnection = DriverManager.getConnection("jdbc:mysql://localhost/clanwar", "cww", "355U7HYzfYEybw8f");
+			mysqlConnection = DriverManager.getConnection("jdbc:mysql://"+mysqlHost+"/"+mysqlDB, mysqlUser, mysqlPass);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -47,10 +54,10 @@ public class ClanwarWatcherBot extends PircBot{
 		 * Connection au serveur IRC.
 		 */
 		this.setVerbose(true);
-		this.setName("abbytestozor");
-		this.setLogin("abbytestozor");
+		this.setName(ircNickname);
+		this.setLogin(ircNickname);
         try{
-        	this.connect("irc.quakenet.org");
+        	this.connect(ircServer);
         }
         catch(NickAlreadyInUseException e){
         	// TODO Auto-generated catch block
@@ -63,7 +70,7 @@ public class ClanwarWatcherBot extends PircBot{
 			e.printStackTrace();
 		}
 
-		this.joinChannel("#clanwar.fr");
+		this.joinChannel(ircChan);
 	}
 	
 	public void onMessage(String channel, String sender, String login, String hostname, String message) {
@@ -75,7 +82,7 @@ public class ClanwarWatcherBot extends PircBot{
 	
 	public void processMessage(String sender, String message) {
         message = message.trim();
-        String lowMsg = message.toLowerCase();
+        //String lowMsg = message.toLowerCase();
         
         // TODO : est-ce que l'objet war est bien supprimé a chaque fois ?
         War war = new War(sender, message);
@@ -94,8 +101,8 @@ public class ClanwarWatcherBot extends PircBot{
         
             // Prepare a statement to insert a record
             
-            // TODO : remplacer le seek d'un joueur portant le meme nom fait auparavant au lieu d'en rajouter un nouveau
-            String sql = "INSERT INTO `clanwar`.`wars` (`nbjoueurs` ,`serv` ,`lvl` ,`msg` ,`user` ,`datetime`) VALUES ('" + war.getNbjoueurs() + "', '"+ war.getServer().getCode()+"', '"+war.getLevel().getCode()+"', '"+message+"', '"+sender+"', NOW( ));";
+            // On insert le nouveau seek, en remplacant l'ancien si un seek du meme joueur existe déjà
+            String sql = "INSERT INTO `clanwar`.`wars` (`nbjoueurs` ,`serv` ,`lvl` ,`msg` ,`user` ,`datetime`) VALUES ('" + war.getNbjoueurs() + "', '"+ war.getServer().getCode()+"', '"+war.getLevel().getCode()+"', '"+message+"', '"+sender+"', NOW( )) ON DUPLICATE KEY UPDATE nbjoueurs='"+war.getNbjoueurs()+"', serv='"+war.getServer().getCode()+"', lvl='"+war.getLevel().getCode()+"', datetime=NOW( ), msg='"+message+"';";
             
             // Execute the insert statement
             stmt.executeUpdate(sql);
