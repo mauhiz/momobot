@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/abby/Mes documents/eclipse-workspace/pircbot-1.4.6/pircbot.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/abby/Mes documents/eclipse-workspace/mysql-connector-java-5.1.6/mysql-connector-java-5.1.6-bin.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.6-bin.jar"/>
+	<classpathentry kind="lib" path="lib/pircbot.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
