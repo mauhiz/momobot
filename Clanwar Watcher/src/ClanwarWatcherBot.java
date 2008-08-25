@@ -42,6 +42,14 @@ public class ClanwarWatcherBot extends PircBot{
 
 		try {
 			mysqlConnection = DriverManager.getConnection("jdbc:mysql://"+mysqlHost+"/"+mysqlDB, mysqlUser, mysqlPass);
+			
+			// On vide les tables direct en arrivant
+			// TODO : permettre un paramétrage de cette fonction ?
+			Statement stmt = mysqlConnection.createStatement();
+            String sql = "TRUNCATE TABLE `wars`;";
+            stmt.executeUpdate(sql);
+			
+			
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -54,7 +54,7 @@ public class War {
 	public War(String User, String SeekMessage){
 		// Important
 		SeekMessage = SeekMessage.toLowerCase();
-		if(SeekMessage.contains("dispo") || SeekMessage.contains("tn")){
+		if(SeekMessage.contains("dispo") || SeekMessage.contains("tn") || SeekMessage.contains("last")){
 			this.nbjoueurs = 0;
 			this.level = Level.UNKOWN;
 			this.server = ServerStatus.UNKOWN;
