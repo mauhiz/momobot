@@ -11,8 +11,12 @@ public class War {
 	 */
 	
 	// Regexp magique de FenX
-	//public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|v)\\s?(\\d+)", Pattern.CASE_INSENSITIVE);
+	// Inutile de mettre Pattern.CASE_INSENSITIVE
+	// Parfait pour les 5vs5, 4x4, ...
 	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|c|x|n|on|/|v)\\s?(\\d+)");
+	
+	// Pour les joueurs en 55, 44, 33...
+	//public static Pattern patternNbJoueursShort = Pattern.compile("(\\d)(\\d)");
 	
 	private int nbjoueurs;
 	private Level level;
@@ -54,7 +58,11 @@ public class War {
 	public War(String User, String SeekMessage){
 		// Important
 		SeekMessage = SeekMessage.toLowerCase();
-		if(SeekMessage.contains("dispo") || SeekMessage.contains("tn") || SeekMessage.contains("last")){
+		if(SeekMessage.contains("dispo") || 
+				SeekMessage.contains("tn") ||
+				SeekMessage.contains("last") ||
+				SeekMessage.contains("binome") ||
+				SeekMessage.contains("cherche team")){
 			this.nbjoueurs = 0;
 			this.level = Level.UNKOWN;
 			this.server = ServerStatus.UNKOWN;
@@ -64,8 +72,8 @@ public class War {
 		
 		this.user = User;
 			
-		Matcher matcher = patternNbJoueurs.matcher(SeekMessage);
-		
+		Matcher matcherNbJoueurs = patternNbJoueurs.matcher(SeekMessage);
+		//Matcher matcherNbJoueursShort = patternNbJoueursShort.matcher(SeekMessage);
 		/*
 		 * On détecte le serveur
 		 */
@@ -86,21 +94,49 @@ public class War {
 		// TODO : a faire avec des regexp pour les différences nombres de joueurs.
 		//  (\d+) ?(vs|o|v|on) ?(\d+)
 		// case insensitive
-		if(matcher.find()){
-			if(matcher.group(1).compareTo(matcher.group(3)) == 0){
-				this.nbjoueurs = Integer.parseInt(matcher.group(1));
+		if(matcherNbJoueurs.find()){
+			if(matcherNbJoueurs.group(1).compareTo(matcherNbJoueurs.group(3)) == 0){
+				this.nbjoueurs = Integer.parseInt(matcherNbJoueurs.group(1));
 			}
-			/*int i;
-			for(i=0; i<=matcher.groupCount(); i++){
-				System.out.println("Groupe " + i + " : '" + matcher.group(i)+"'");
+			int i;
+			for(i=0; i<=matcherNbJoueurs.groupCount(); i++){
+				System.out.println("Groupe " + i + " : '" + matcherNbJoueurs.group(i)+"'");
 				
-			}*/
+			}
 		}
+		/*else if(matcherNbJoueursShort.find()){
+			
+			// TODO: tester le code ci dessous
+			if(matcherNbJoueurs.group(1).compareTo(matcherNbJoueurs.group(3)) == 0){
+				this.nbjoueurs = Integer.parseInt(matcherNbJoueurs.group(1));
+			}
+			int i;
+			for(i=0; i<=matcherNbJoueursShort.groupCount(); i++){
+				System.out.println("Groupe " + i + " : '" + matcherNbJoueursShort.group(i)+"'");
+				
+			}
+		}*/
 		else{
 			// TODO : mettre le 55 en regexp (pour que ca marche aussi avec 33)
-			if(SeekMessage.contains("pcw") || SeekMessage.contains("war") || SeekMessage.contains("pracc") || SeekMessage.contains("55"))
+			if(SeekMessage.contains("pcw") || 
+					SeekMessage.contains("war") || 
+					SeekMessage.contains("pracc") ||
+					SeekMessage.contains("55") ||
+					SeekMessage.contains("5 5"))
 			{
 				this.nbjoueurs = 5;
+			}
+			else if(SeekMessage.contains("44") ||
+					SeekMessage.contains("4 4")){
+				this.nbjoueurs = 4;
+			}
+			else if(SeekMessage.contains("33") ||
+					SeekMessage.contains("3 3")){
+				this.nbjoueurs = 3;
+			}
+			else if(SeekMessage.contains("22") ||
+					SeekMessage.contains("2 2")){
+				this.nbjoueurs = 2;
 			}
 			else{
 				this.nbjoueurs = 0;

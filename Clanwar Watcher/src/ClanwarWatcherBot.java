@@ -117,7 +117,7 @@ public class ClanwarWatcherBot extends PircBot{
 			e.printStackTrace();
         }
 	}
-	public static String[] ignoreNickList = {"[CW|FR]", "Q" };
+	public static String[] ignoreNickList = {"[CW|FR]", "Q" , "S"};
 	public void processMessage(String sender, String message) {
         message = message.trim();
         //String lowMsg = message.toLowerCase();
