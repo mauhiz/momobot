@@ -131,7 +131,10 @@ public class ClanwarWatcherBot extends PircBot{
         	// TODO : Rajouter une option debug ou pas : pour faire une version du bot plus légère.
         	try {
                 Statement stmt = mysqlConnection.createStatement();
-                String sql = "INSERT INTO `untreated` (`id` ,`when` ,`user` ,`msg`) VALUES (NULL , NOW( ), '"+sender+"', '"+message+"');";
+                
+                // TODO : trouver une méthode de magic quotes plus propre.
+                String messageToSql = message.replace("\'", "");
+                String sql = "INSERT INTO `untreated` (`id` ,`when` ,`user` ,`msg`) VALUES (NULL , NOW( ), '"+sender+"', '"+messageToSql+"');";
                 stmt.executeUpdate(sql);
 
             } catch (SQLException e) {

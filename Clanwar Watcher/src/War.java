@@ -13,7 +13,7 @@ public class War {
 	// Regexp magique de FenX
 	// Inutile de mettre Pattern.CASE_INSENSITIVE
 	// Parfait pour les 5vs5, 4x4, ...
-	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|o|c|x|n|on|/|v)\\s?(\\d+)");
+	public static Pattern patternNbJoueurs = Pattern.compile("(\\d+)\\s?(vs|vv|o|c|x|n|on|/|v)\\s?(\\d+)");
 	
 	// Pour les joueurs en 55, 44, 33...
 	//public static Pattern patternNbJoueursShort = Pattern.compile("(\\d)(\\d)");
@@ -78,10 +78,21 @@ public class War {
 		 * On détecte le serveur
 		 */
 		// TODO : faire une regexp pour ca aussi ?
-		if(SeekMessage.contains("on") || SeekMessage.contains("servok") || SeekMessage.contains("serv ok") || SeekMessage.contains("serv:ok") || SeekMessage.contains("gotserv")){
+		// Espace avant le ' on' pour éviter de matcher le 5on5 off
+		if(SeekMessage.contains(" on") ||
+				SeekMessage.contains("servon") ||
+				SeekMessage.contains("servok") ||
+				SeekMessage.contains("serv ok") ||
+				SeekMessage.contains("serv:ok") ||
+				SeekMessage.contains("gotserv")){
 			this.server = ServerStatus.ON;
 		}
-		else if (SeekMessage.contains("off")){
+		else if (SeekMessage.contains("off") ||
+				SeekMessage.contains("0ff") ||
+				SeekMessage.contains("noserv") ||
+				SeekMessage.contains("no serv") ||
+				SeekMessage.contains("pas de serv") ||
+				SeekMessage.contains("pa de serv")){
 			this.server = ServerStatus.OFF;	
 		}
 		else{
@@ -98,11 +109,11 @@ public class War {
 			if(matcherNbJoueurs.group(1).compareTo(matcherNbJoueurs.group(3)) == 0){
 				this.nbjoueurs = Integer.parseInt(matcherNbJoueurs.group(1));
 			}
-			int i;
+			/*int i;
 			for(i=0; i<=matcherNbJoueurs.groupCount(); i++){
 				System.out.println("Groupe " + i + " : '" + matcherNbJoueurs.group(i)+"'");
 				
-			}
+			}*/
 		}
 		/*else if(matcherNbJoueursShort.find()){
 			
@@ -155,10 +166,13 @@ public class War {
 		else if(SeekMessage.contains("good") || SeekMessage.contains("goood")){
 			this.level = Level.GOOD;
 		}
-		else if(SeekMessage.contains("mid+") || SeekMessage.contains("mid +")){
+		else if(SeekMessage.contains("mid+") || 
+				SeekMessage.contains("mid +") || 
+				SeekMessage.contains("midl+") ||
+				SeekMessage.contains("mi +")){
 			this.level = Level.MIDPLUS;
 		}
-		else if(SeekMessage.contains("mid")){
+		else if(SeekMessage.contains("mid") || SeekMessage.contains("med")){
 			this.level = Level.MID;
 		}
 		else if(SeekMessage.contains("low+") || SeekMessage.contains("low +")){
@@ -167,7 +181,7 @@ public class War {
 		else if(SeekMessage.contains("low")){
 			this.level = Level.LOW;
 		}
-		else if(SeekMessage.contains("noob")){
+		else if(SeekMessage.contains("noob") || SeekMessage.contains("invincible")){
 			this.level = Level.NOOB;
 		}
 		else {
