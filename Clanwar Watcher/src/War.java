@@ -78,12 +78,18 @@ public class War {
 		 * On détecte le serveur
 		 */
 		// TODO : faire une regexp pour ca aussi ?
+		// Du style : (serv)(2 caract maxi)(on|0n|ok|0k)
 		// Espace avant le ' on' pour éviter de matcher le 5on5 off
+		// Ca ne marche plus pour '5 on 5' OFF
 		if(SeekMessage.contains(" on") ||
 				SeekMessage.contains("servon") ||
 				SeekMessage.contains("servok") ||
 				SeekMessage.contains("serv ok") ||
 				SeekMessage.contains("serv:ok") ||
+				SeekMessage.contains("serv_on") ||
+				SeekMessage.contains("serv0n") ||
+				SeekMessage.contains("serv.on") ||
+				SeekMessage.contains("have serv") ||
 				SeekMessage.contains("gotserv")){
 			this.server = ServerStatus.ON;
 		}
