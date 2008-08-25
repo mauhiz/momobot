@@ -2,23 +2,33 @@ package net.mauhiz.irc.bot.event;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.time.StopWatch;
-
 public class SeekWarThreadTimeOut extends Thread {
     
-    static boolean isRunning;
-    private final StopWatch sw = new StopWatch();
+    private final SeekWar2 seekwar;
+    // private final StopWatch sw = new StopWatch();
     private long timeOut;
     
-    SeekWarThreadTimeOut(final int timeOut1) {
+    SeekWarThreadTimeOut(final SeekWar2 seekwar1, final int timeOut1) {
         timeOut = TimeUnit.MILLISECONDS.convert(timeOut1, TimeUnit.MINUTES);
-        sw.start();
+        seekwar = seekwar1;
+        // sw.start();
     }
     @Override
     public void run() {
-        isRunning = true;
-        while (sw.getTime() < timeOut && isRunning) {
+        
+        boolean isRunning = SeekWarSelecter.isRunnable;
+        // while (sw.getTime() < timeOut && isRunning) {
+        // }
+        // On demande de leave
+        try {
+            Thread.sleep(timeOut);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        sw.stop();
+        isRunning = true;
+        seekwar.setStop("TimeOut");
+        // sw.stop();
     }
+    
 }

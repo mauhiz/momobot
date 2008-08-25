@@ -118,11 +118,11 @@
 			<command>pickup</command>
 			<command>pick</command>
 		</trigger>
-		<trigger class="SeekTrigger">
-			<command>seek</command>
+		<trigger class="Seek2Trigger">
+			<command>seek2</command>
 		</trigger>
 		<trigger class="StopSeekTrigger">
-			<command>stopseek</command>
+			<command>stopseek2</command>
 		</trigger>
 		<trigger class="TgSeekTrigger">
 			<command>tg</command>
