@@ -69,7 +69,8 @@ public class War {
 		/*
 		 * On détecte le serveur
 		 */
-		if(SeekMessage.contains("on") || SeekMessage.contains("servok") || SeekMessage.contains("serv ok")){
+		// TODO : faire une regexp pour ca aussi ?
+		if(SeekMessage.contains("on") || SeekMessage.contains("servok") || SeekMessage.contains("serv ok") || SeekMessage.contains("serv:ok") || SeekMessage.contains("gotserv")){
 			this.server = ServerStatus.ON;
 		}
 		else if (SeekMessage.contains("off")){
