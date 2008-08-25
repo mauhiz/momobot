@@ -90,9 +90,14 @@ public class ClanwarWatcherBot extends PircBot{
 	}
 	
 	public void onMessage(String channel, String sender, String login, String hostname, String message) {
-        //String lowMsg = message.trim().toLowerCase();
-        // TODO : filtrer certains types de messages ?
+		// On ignore les messages trop courts pour être utile
+        if(message.length()<= 3) return;
+        // On ignore les messages provenant de certains utilisateurs.
+        for(int i=0; i<ignoreNickList.length; i++){
+        	if(sender == ignoreNickList[i]) return;
+        }
         
+        // Commande de parsage des wars
         processMessage(sender, message);
     }
 	
@@ -112,7 +117,7 @@ public class ClanwarWatcherBot extends PircBot{
 			e.printStackTrace();
         }
 	}
-	
+	public static String[] ignoreNickList = {"[CW|FR]", "Q" };
 	public void processMessage(String sender, String message) {
         message = message.trim();
         //String lowMsg = message.toLowerCase();

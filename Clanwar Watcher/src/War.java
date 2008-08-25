@@ -69,7 +69,7 @@ public class War {
 		/*
 		 * On détecte le serveur
 		 */
-		if(SeekMessage.contains("on")){
+		if(SeekMessage.contains("on") || SeekMessage.contains("servok") || SeekMessage.contains("serv ok")){
 			this.server = ServerStatus.ON;
 		}
 		else if (SeekMessage.contains("off")){
@@ -96,7 +96,8 @@ public class War {
 			}*/
 		}
 		else{
-			if(SeekMessage.contains("pcw") || SeekMessage.contains("war") || SeekMessage.contains("pracc"))
+			// TODO : mettre le 55 en regexp (pour que ca marche aussi avec 33)
+			if(SeekMessage.contains("pcw") || SeekMessage.contains("war") || SeekMessage.contains("pracc") || SeekMessage.contains("55"))
 			{
 				this.nbjoueurs = 5;
 			}
