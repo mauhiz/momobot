@@ -6,10 +6,6 @@ import java.util.regex.*;
  *
  */
 public class War {
-	/**
-	 * nbjoueur = 0 <=> UNKNOWN
-	 */
-	
 	// Regexp magique de FenX
 	// Inutile de mettre Pattern.CASE_INSENSITIVE
 	// Parfait pour les 5vs5, 4x4, ...
@@ -18,9 +14,22 @@ public class War {
 	// Pour les joueurs en 55, 44, 33...
 	//public static Pattern patternNbJoueursShort = Pattern.compile("(\\d)(\\d)");
 	
+	/**
+	 * Nombre de joueurs dans la war.
+	 * nbjoueur = 0 <=> UNKNOWN
+	 */
 	private int nbjoueurs;
+	/**
+	 * Le niveau seeké
+	 */
 	private Level level;
+	/**
+	 * Cette war dispose-t-elle d'un serveur ?
+	 */
 	private ServerStatus server;
+	/**
+	 * Le nom de l'utilisateur qui a lancé la war
+	 */
 	private String user;
 	
 	public int getNbjoueurs() {
@@ -56,8 +65,10 @@ public class War {
 	}
 	
 	public War(String User, String SeekMessage){
-		// Important
+		// Important de mettre en minuscules
 		SeekMessage = SeekMessage.toLowerCase();
+		
+		// On élimine les messages types de #clanwar.fr qui ne sont pas des seekwar.
 		if(SeekMessage.contains("dispo") || 
 				SeekMessage.contains("tn") ||
 				SeekMessage.contains("last") ||
@@ -70,8 +81,11 @@ public class War {
 			return;
 		}
 		
+		// Ce champ là est facile à remplir.
 		this.user = User;
 			
+		// TODO : lorsqu'on a réussi a comprendre une partie de la ligne, peut etre faudrait-il l'éliminer afin de ne pas la retraiter dans les autres parsages ?
+		
 		Matcher matcherNbJoueurs = patternNbJoueurs.matcher(SeekMessage);
 		//Matcher matcherNbJoueursShort = patternNbJoueursShort.matcher(SeekMessage);
 		/*
@@ -197,6 +211,10 @@ public class War {
 		
 	}
 	
+	/**
+	 * Vérifie si le parser a su trouvé suffisament d'information sur la war
+	 * @return true si la war est trop incorrecte, false si elle est ok.
+	 */
 	public boolean isNull(){
 		int nulllevel = 0;
 		if(this.level == Level.UNKOWN) nulllevel++;
