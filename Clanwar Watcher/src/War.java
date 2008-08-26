@@ -112,7 +112,7 @@ public class War {
 		//  (\d+) ?(vs|o|v|on) ?(\d+)
 		// case insensitive
 		if(matcherNbJoueurs.find()){
-			if(matcherNbJoueurs.group(1).compareTo(matcherNbJoueurs.group(3)) == 0){
+			if(matcherNbJoueurs.group(1).equalsIgnoreCase(matcherNbJoueurs.group(3))){
 				this.nbjoueurs = Integer.parseInt(matcherNbJoueurs.group(1));
 			}
 			/*int i;
