@@ -159,8 +159,8 @@ public class NetUtils {
                 return new InetSocketAddress(ip, port);
             } catch (final IOException ioe) {
                 LOG.warn(ioe, ioe);
-            } catch (final NumberFormatException nfe) {
-                LOG.warn(nfe, nfe);
+            } catch (final IllegalArgumentException iae) {
+                LOG.warn(iae, iae);
             }
         }
         return null;
