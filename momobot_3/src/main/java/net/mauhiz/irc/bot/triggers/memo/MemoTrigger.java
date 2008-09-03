@@ -28,14 +28,15 @@ public class MemoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         final String msg = getArgs(cme.getMessage());
         String respMsg;
         if (StringUtils.isEmpty(msg)) {
-            respMsg = "Je connais " + DbMemoUtils.countMemos() + " memos. $listmemos pour avoir une liste";
+            respMsg = "Je connais " + MemoDb.getInstance(cme.getServer()).countMemos()
+                    + " memos. $listmemos pour avoir une liste";
         } else {
             final int index = msg.indexOf(' ');
             if (index < 1) {
-                respMsg = DbMemoUtils.getMemo(msg);
+                respMsg = MemoDb.getInstance(cme.getServer()).getMemo(msg);
             } else {
                 final String cle = msg.substring(0, index);
-                respMsg = DbMemoUtils.setMemo(cle, msg.substring(index + 1));
+                respMsg = MemoDb.getInstance(cme.getServer()).setMemo(cle, msg.substring(index + 1));
             }
         }
         Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
