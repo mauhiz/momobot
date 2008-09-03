@@ -367,7 +367,7 @@ public class Tournament extends ChannelEvent {
         for (int i = 0; i < matchList.size(); i++) {
             Match match = matchList.get(i);
             
-            if (match.getPhase() == phase && match.getID() == id) {
+            if (match.getPhase() == phase && match.getId() == id) {
                 return i;
             }
         }
