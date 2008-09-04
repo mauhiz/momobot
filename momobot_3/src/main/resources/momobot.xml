@@ -8,6 +8,7 @@
 	<profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
 		<autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">
 			<join>#tsi.fr</join>
+			<join>#cos_squad</join>
 		</autoconnect>
 		<loadtriggerpack prefix="$" bundle="admin" />
 		<loadtriggerpack prefix="$" bundle="base" />
@@ -17,6 +18,7 @@
 		<loadtriggerpack prefix="$" bundle="websearch" />
 		<loadtriggerpack prefix="$" bundle="fun" />
 		<loadtriggerpack prefix="$" bundle="tournament" />
+		<loadtriggerpack prefix="$" bundle="memo" />
 	</profil>
 	<profil name="seekbot" nick="mom0" login="mom0" fullName="Pv moi si t'es mon ami">
 		<autoconnect server="Quakenet">
@@ -26,6 +28,12 @@
 		<loadtriggerpack prefix="$" bundle="event" />
 		<loadtriggerpack prefix="$" bundle="gather" />
 		<loadtriggerpack prefix="$" bundle="tournament" />
+	</profil>
+	<profil name="cwwb" nick="cwwb_" login="mom0" fullName="Clanwar Watcher (TM)">
+		<autoconnect server="Quakenet">
+			<join>#clanwar.fr</join>
+		</autoconnect>
+		<loadtriggerpack bundle="cwwb" />
 	</profil>
 	<profil name="local" nick="momobot3" login="mmb" fullName="MMB v3">
 		<autoconnect server="Localhost" fullName="MMB v3 - Localhost">
@@ -47,6 +55,9 @@
 		<trigger class="WelcomeTrigger" />
 		<trigger class="AboutTrigger">
 			<command>about</command>
+		</trigger>
+		<trigger class="CountUsersTrigger">
+			<command>countusers</command>
 		</trigger>
 	</triggerpack>
 	<triggerpack bundle="admin" package="net.mauhiz.irc.bot.triggers.admin">
@@ -165,19 +176,33 @@
 	</triggerpack>
 	<triggerpack bundle="tournament" package="net.mauhiz.irc.bot.triggers.event.tournament">
 		<trigger class="TournamentTrigger">
-			<command>tn</command>
-		</trigger>
-		<trigger class="ResultTrigger">
-			<command>tn-result</command>
+			<command>tn-start</command>
 		</trigger>
 		<trigger class="RegisterTrigger">
 			<command>tn-register</command>
 		</trigger>
-		<trigger class="StopTrigger">
- 			<command>tn-stop</command>
-		</trigger>
 		<trigger class="ListTeamsTrigger">
 			<command>tn-list-teams</command>
 		</trigger>
+		<trigger class="ResultTrigger">
+			<command>tn-result</command>
+		</trigger>
+		<trigger class="StopTrigger">
+			<command>tn-stop</command>
+		</trigger>
+	</triggerpack>
+	<triggerpack bundle="memo" package="net.mauhiz.irc.bot.triggers.memo">
+		<trigger class="MemoTrigger">
+			<command>memo</command>
+		</trigger>
+		<trigger class="MemoTrigger">
+			<command>serv</command>
+		</trigger>
+		<trigger class="ListMemosTrigger">
+			<command>listmemos</command>
+		</trigger>
+	</triggerpack>
+	<triggerpack bundle="cwwb" package="net.mauhiz.irc.bot.triggers.cwwb">
+		<trigger class="ClanwarWatchTrigger" />
 	</triggerpack>
 </momobot>
