@@ -2,21 +2,12 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="net.mauhiz.irc.bot.triggers.memo.Memo" table="MEMO">
-		<id column="MEMO_ID" name="id" type="java.lang.Long" />
+		<id column="MEMO_ID" name="id" type="java.lang.Long">
+			<generator class="native" />
+		</id>
 		<property column="MEMO_KEY" name="key" type="java.lang.String" />
 		<property column="MEMO_VALUE" name="value" type="java.lang.String" />
 		<property column="MEMO_SERVER" name="serverAlias" type="java.lang.String" />
 		<property column="MEMO_CHANNEL" name="channel" type="java.lang.String" />
 	</class>
-	<sql-query name="getMemo">
-		<query-param name="key" type="String" />
-		<query-param name="serverAlias" type="String" />
-		SELECT MEMO_VALUE FROM MEMO WHERE MEMO_KEY = :key AND MEMO_SERVER = :serverAlias
-	</sql-query>
-	<sql-query name="getChannelMemo">
-		<query-param name="key" type="String" />
-		<query-param name="serverAlias" type="String" />
-		<query-param name="channel" type="String" />
-		SELECT MEMO_VALUE FROM MEMO WHERE MEMO_KEY = :key AND MEMO_SERVER = :serverAlias AND MEMO_CHANNEL = :channel
-	</sql-query>
 </hibernate-mapping>
