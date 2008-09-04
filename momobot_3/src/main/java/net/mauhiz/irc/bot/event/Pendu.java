@@ -13,7 +13,6 @@ import net.mauhiz.irc.base.data.Channel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -91,11 +90,11 @@ public class Pendu extends ChannelEvent {
     /**
      * le mot en cours de devinage (négatif).
      */
-    private final StrBuilder devinage = new StrBuilder();
+    private final StringBuilder devinage = new StringBuilder();
     /**
      * le mot en cours de devinage (positif).
      */
-    private final StrBuilder mot = new StrBuilder();
+    private final StringBuilder mot = new StringBuilder();
     /**
      * la solution.
      */
@@ -119,9 +118,7 @@ public class Pendu extends ChannelEvent {
         solution = MomoStringUtils.effaceAccents(solutionPure);
         mot.append(solution);
         vies = calibre(mot.length());
-        for (byte k = 0; k < mot.length(); ++k) {
-            devinage.append(UNDERSCORE);
-        }
+        devinage.append(StringUtils.rightPad("", mot.length(), UNDERSCORE));
         LOG.debug(solutionPure);
     }
     
@@ -132,7 +129,7 @@ public class Pendu extends ChannelEvent {
      */
     public final boolean findLetter(final char car) {
         boolean present = false;
-        for (byte index = 0; index < solution.length(); ++index) {
+        for (int index = 0; index < solution.length(); ++index) {
             if (car == mot.charAt(index)) {
                 present = true;
                 devinage.setCharAt(index, solutionPure.charAt(index));
@@ -154,8 +151,8 @@ public class Pendu extends ChannelEvent {
      *            la lettre
      * @return un message
      */
-    public final StrBuilder submitLettre(final char toSubmit) {
-        final StrBuilder penduMsg = new StrBuilder();
+    public final StringBuilder submitLettre(final char toSubmit) {
+        final StringBuilder penduMsg = new StringBuilder();
         if (!Character.isLetter(toSubmit)) {
             return penduMsg;
         } else if (!alreadyTried.add(Character.valueOf(toSubmit))) {
@@ -194,8 +191,8 @@ public class Pendu extends ChannelEvent {
      *            le mot à tester
      * @return un msg
      */
-    public final StrBuilder submitMot(final String test) {
-        final StrBuilder retour = new StrBuilder();
+    public final StringBuilder submitMot(final String test) {
+        final StringBuilder retour = new StringBuilder();
         if (!StringUtils.isAlpha(test) || test.length() != solution.length()) {
             return retour;
         }
