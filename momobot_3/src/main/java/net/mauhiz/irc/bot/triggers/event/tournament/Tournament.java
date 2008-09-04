@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.tournament;
+package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import net.mauhiz.irc.MathUtils;
 import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.bot.event.ChannelEvent;
@@ -57,20 +58,6 @@ public class Tournament extends ChannelEvent {
         }
     }
     
-    /**
-     * @param a
-     * @param b
-     * @return int
-     */
-    static int power(final int a, final int b) {
-        if (b < 0) {
-            throw new IllegalArgumentException("b must be positive");
-        }
-        if (b == 0) {
-            return 1;
-        }
-        return a * power(a, b - 1);
-    }
     /**
      * @param temp
      * @throws IOException
@@ -134,7 +121,7 @@ public class Tournament extends ChannelEvent {
     /**
      * l'ensemble de joueurs. Ne sera jamais <code>null</code>
      */
-    private final List<Team> teamList = new ArrayList<Team>();
+    private final List<TournamentTeam> teamList = new ArrayList<TournamentTeam>();
     
     /**
      * @param channel1
@@ -144,7 +131,7 @@ public class Tournament extends ChannelEvent {
         super(channel1);
         sw.start();
         numberPlayerPerTeam = CFG.getInt("tn.numberPlayerPerTeam");
-        numberTeams = power(2, maps.length); // 2^4=16
+        numberTeams = MathUtils.power(2, maps.length); // 2^4=16
         // On crée les teams
         if (LOG.isDebugEnabled()) {
             LOG.debug("Lancement d'un tn sur: " + channel1.toString() + " maps: " + StringUtils.join(maps));
@@ -209,11 +196,27 @@ public class Tournament extends ChannelEvent {
      */
     public List<String> getListTeam() {
         List<String> reply = new ArrayList<String>();
-        for (Team element : teamList) {
+        for (TournamentTeam element : teamList) {
             reply.add(element.toString());
         }
         return reply;
     }
+    /**
+     * @param phase
+     * @param id
+     * @return i <=> numéro du match ou -1 si le match n'existe pas
+     */
+    private int getMatchId(final int phase, final int id) {
+        for (int i = 0; i < matchList.size(); i++) {
+            Match match = matchList.get(i);
+            
+            if (match.getPhase() == phase && match.getId() == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
     /**
      * @return
      * 
@@ -246,7 +249,7 @@ public class Tournament extends ChannelEvent {
      * @param team
      * @return String
      */
-    private String setNextMatch(final Match oldMatch, final Team team) {
+    private String setNextMatch(final Match oldMatch, final TournamentTeam team) {
         int newphase = oldMatch.getPhase() - 1;
         // C'était la finale
         if (newphase == 0) {
@@ -257,7 +260,7 @@ public class Tournament extends ChannelEvent {
         }
         int id = team.getId();
         // int newID = id / nombreMatchPerSide;
-        int newID = id / power(2, mapList.size() - newphase) / power(2, mapList.size() - newphase);
+        int newID = id / MathUtils.power(2, mapList.size() - newphase) / MathUtils.power(2, mapList.size() - newphase);
         int testMatch = getMatchId(newphase, newID);
         if (testMatch == -1) {
             // le match n'existe pas
@@ -274,7 +277,6 @@ public class Tournament extends ChannelEvent {
         return "Nouveau match : " + match.toString();
         
     }
-    
     /**
      * @param idTeam
      *            qui a win
@@ -325,9 +327,9 @@ public class Tournament extends ChannelEvent {
      * @return string
      */
     public String setTeam(final IrcUser ircuser, final Locale loc, final String tag, final List<String> nicknames) {
-        for (Team element : teamList) {
+        for (TournamentTeam element : teamList) {
             if (element.isTheOwner(ircuser)) {
-                Team team = element;
+                TournamentTeam team = element;
                 team.setCountry(loc);
                 team.setNom(tag);
                 
@@ -346,7 +348,7 @@ public class Tournament extends ChannelEvent {
                 return team.toString();
             }
         }
-        Team team = new Team(numberPlayerPerTeam, teamList.size(), tag, loc, ircuser);
+        TournamentTeam team = new TournamentTeam(numberPlayerPerTeam, teamList.size(), tag, loc, ircuser);
         if (nicknames.size() < team.getCapacity()) {
             team.addAll(nicknames);
             for (int i = nicknames.size() + 1; i <= team.getCapacity(); i++) {
@@ -357,21 +359,6 @@ public class Tournament extends ChannelEvent {
         }
         teamList.add(team);
         return team.toString();
-    }
-    /**
-     * @param phase
-     * @param id
-     * @return i <=> numéro du match ou -1 si le match n'existe pas
-     */
-    private int getMatchId(final int phase, final int id) {
-        for (int i = 0; i < matchList.size(); i++) {
-            Match match = matchList.get(i);
-            
-            if (match.getPhase() == phase && match.getId() == id) {
-                return i;
-            }
-        }
-        return -1;
     }
     
     /**

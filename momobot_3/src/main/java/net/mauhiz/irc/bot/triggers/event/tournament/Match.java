@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.tournament;
+package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author Topper
  * 
  */
-public class Match extends ArrayList<Team> {
+public class Match extends ArrayList<TournamentTeam> {
     /**
      * serial
      */
@@ -31,15 +31,15 @@ public class Match extends ArrayList<Team> {
     /**
      * Team 1
      */
-    private Team team1;
+    private TournamentTeam team1;
     /**
      * Team 2
      */
-    private Team team2;
+    private TournamentTeam team2;
     /**
      * Team winner
      */
-    private Team winner;
+    private TournamentTeam winner;
     
     /**
      * @param phase1
@@ -47,7 +47,7 @@ public class Match extends ArrayList<Team> {
      * @param map1
      * @param team1_
      */
-    public Match(final int phase1, final int id1, final String map1, final Team team1_) {
+    public Match(final int phase1, final int id1, final String map1, final TournamentTeam team1_) {
         team1 = team1_;
         phase = phase1;
         map = map1;
@@ -69,7 +69,7 @@ public class Match extends ArrayList<Team> {
      * @param team2_
      *            team 2
      */
-    public Match(final int phase1, final int id1, final String map1, final Team team1_, final Team team2_) {
+    public Match(final int phase1, final int id1, final String map1, final TournamentTeam team1_, final TournamentTeam team2_) {
         // on met tjs les teams dans le bon sens
         if (team1_.getId() > team2_.getId()) {
             team2 = team1_;
@@ -94,7 +94,7 @@ public class Match extends ArrayList<Team> {
      * @param oldmatch
      * @param team2_
      */
-    public Match(final Match oldmatch, final Team team2_) {
+    public Match(final Match oldmatch, final TournamentTeam team2_) {
         if (oldmatch.team1.getId() > team2_.getId()) {
             // on switch team1 et team2
             team2 = oldmatch.team1;
@@ -161,7 +161,7 @@ public class Match extends ArrayList<Team> {
      * @return
      * 
      */
-    public final boolean isTeamIn(final Team team) {
+    public final boolean isTeamIn(final TournamentTeam team) {
         if (winner == null) {
             if (team1.getId() == team.getId()) {
                 return true;
@@ -178,7 +178,7 @@ public class Match extends ArrayList<Team> {
      * @param scoreTeam1
      * @param scoreTeam2
      */
-    public final String setScore(final Team team, final int scoreTeam1, final int scoreTeam2) {
+    public final String setScore(final TournamentTeam team, final int scoreTeam1, final int scoreTeam2) {
         if (team2 == null) {
             return "Erreur : Impossible de mettre le score, la team " + team.getId() + " n'a pas d'adversaire.";
         }

@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.tournament;
+package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -8,7 +8,7 @@ import net.mauhiz.irc.base.data.IrcUser;
 /**
  * @author topper
  */
-public class Team extends ArrayList<String> {
+public class TournamentTeam extends ArrayList<String> {
     /**
      * 
      */
@@ -40,7 +40,7 @@ public class Team extends ArrayList<String> {
      * @param country1
      * 
      */
-    public Team(final int size1, final int id1, final String nom1, final Locale country1, final IrcUser ircuser) {
+    public TournamentTeam(final int size1, final int id1, final String nom1, final Locale country1, final IrcUser ircuser) {
         super(size1);
         capacity = size1;
         nom = nom1;
@@ -86,6 +86,8 @@ public class Team extends ArrayList<String> {
     }
     
     /**
+     * @param ircuser
+     * @return
      * 
      */
     public boolean isTheOwner(final IrcUser ircuser) {
