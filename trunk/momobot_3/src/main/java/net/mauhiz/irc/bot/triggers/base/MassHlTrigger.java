@@ -7,11 +7,11 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.qnet.QnetUser;
 import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.model.Users;
+import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -50,7 +50,8 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         }
         
         LOG.debug("MassHlTrigger : " + chan + " has " + chan.size() + " users");
-        final StrBuilder msg = new StrBuilder("Hey! ");
+        final StringBuilder msg = new StringBuilder();
+        msg.append("nudges ");
         IrcUser from = Users.getInstance(server).findUser(cme.getFrom(), true);
         for (final IrcUser nextIrcUser : chan) {
             if (nextIrcUser instanceof QnetUser && ((QnetUser) nextIrcUser).isService()) {
@@ -67,10 +68,10 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                 continue;
             }
             LOG.debug("appending : " + nextIrcUser);
-            msg.append(' ').append(nextIrcUser);
+            msg.append(' ');
+            msg.append(nextIrcUser);
         }
-        Privmsg pmsg = Privmsg.buildAnswer(cme, msg.toString());
+        Action pmsg = Action.buildAnswer(cme, msg.toString());
         control.sendMsg(pmsg);
-        /* FIXME action */
     }
 }
