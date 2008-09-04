@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
@@ -35,7 +34,7 @@ public class Server implements ServerFlags {
      */
     private static String getNextString(final ByteBuffer buffer) {
         char temp;
-        final StrBuilder retour = new StrBuilder();
+        final StringBuilder retour = new StringBuilder();
         while (buffer.hasRemaining()) {
             /* et non pas buffer.getChar() */
             temp = (char) buffer.get();
@@ -57,7 +56,7 @@ public class Server implements ServerFlags {
     /**
      * capacité du serveur en nombre de joueurs.
      */
-    private byte maxPlayers;
+    private int maxPlayers;
     /**
      * hostname du serveur.
      */
@@ -73,7 +72,7 @@ public class Server implements ServerFlags {
     /**
      * Nombre de joueurs présents sur le serveur. Utilisé avant d'avoir tous les joueurs.
      */
-    private byte playerCount;
+    private int playerCount;
     /**
      * 
      */
@@ -311,7 +310,7 @@ public class Server implements ServerFlags {
      * @return maxPlayers
      */
     public final String getMaxPlayers() {
-        return Byte.toString(maxPlayers);
+        return Integer.toString(maxPlayers);
     }
     
     /**
@@ -376,8 +375,8 @@ public class Server implements ServerFlags {
      *            la valeur
      */
     public final void setCvar(final String cvar, final String value) {
-        vuc.rconCmd(new StrBuilder().append('"').append(cvar).append('"').append(' ').append('"').append(value).append(
-                '"').toString());
+        vuc.rconCmd(new StringBuilder().append('"').append(cvar).append('"').append(' ').append('"').append(value)
+                .append('"').toString());
     }
     
     /**
@@ -400,7 +399,7 @@ public class Server implements ServerFlags {
      * @param maxPlayers1
      *            le nombre maxi de players
      */
-    public final void setMaxPlayers(final byte maxPlayers1) {
+    public final void setMaxPlayers(final int maxPlayers1) {
         maxPlayers = maxPlayers1;
     }
     
@@ -432,7 +431,7 @@ public class Server implements ServerFlags {
      * @param playerCount1
      *            le nombre de joueurs courants
      */
-    public final void setPlayerCount(final byte playerCount1) {
+    public final void setPlayerCount(final int playerCount1) {
         playerCount = playerCount1;
     }
     
