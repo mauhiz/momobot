@@ -41,6 +41,7 @@ public class MmbTriggerManager implements ITriggerManager {
          * @param msg1
          */
         public TriggerLoop(final IIrcMessage msg1, final IIrcControl control1) {
+            super("Trigger processing");
             control = control1;
             msg = msg1;
         }
@@ -147,7 +148,7 @@ public class MmbTriggerManager implements ITriggerManager {
             addTrigger(trigClass, (Object[]) null);
         } else {
             for (String trigText : trigTexts) {
-                String fullTrigText = prefix + trigText;
+                String fullTrigText = prefix == null ? trigText : prefix + trigText;
                 addTrigger(trigClass, fullTrigText);
                 LOG.debug("loading trigger with command '" + fullTrigText + "': " + trigClass.getSimpleName());
             }
