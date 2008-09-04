@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="net.mauhiz.irc.bot.triggers.cwwb.War" table="WAR">
+        <id column="WAR_ID" name="id" type="java.lang.Long">
+            <generator class="native" />
+        </id>
+        <property column="WAR_LEVEL" name="level" type="java.lang.Integer" />
+        <property column="WAR_NBJOUEURS" name="nbjoueurs" type="java.lang.Integer" />
+        <property column="WAR_SERVER" name="server" type="java.lang.String" />
+        <property column="WAR_USER" name="user" type="java.lang.String" />
+        <property column="WAR_WHEN" name="when" type="java.util.Calendar" />
+    </class>
+</hibernate-mapping>
