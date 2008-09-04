@@ -7,7 +7,6 @@ import java.util.Map;
 import net.mauhiz.irc.HibernateUtils;
 import net.mauhiz.irc.base.data.IrcServer;
 
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 
@@ -77,7 +76,7 @@ public class MemoDb {
             return "Pas de memo pour l'instant";
         }
         
-        final StrBuilder msg = new StrBuilder("mémos :");
+        final StringBuilder msg = new StringBuilder("mémos :");
         for (final String result : results) {
             msg.append(' ').append(result);
         }
@@ -106,7 +105,7 @@ public class MemoDb {
      */
     public String setMemo(final String key, final String value) {
         String oldValue = getValue(key);
-        final StrBuilder msg = new StrBuilder("Mémo '").append(key).append("' ");
+        final StringBuilder msg = new StringBuilder("Mémo '").append(key).append("' ");
         HibernateUtils.currentSession().getTransaction().begin();
         if (oldValue == null) {
             Memo memo = new Memo();
