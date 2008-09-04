@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
 import net.mauhiz.irc.SqlUtils;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.commons.net.DatagramSocketClient;
 import org.apache.commons.net.DefaultDatagramSocketFactory;
@@ -246,7 +245,7 @@ class ValveUdpClient extends DatagramSocketClient {
             }
         } else {
             try {
-                final StrBuilder builder = new StrBuilder();
+                final StringBuilder builder = new StringBuilder();
                 builder.append(MOINS_UN).append("rcon ").append(challenge).append(' ').append('"').append(rcon).append(
                         '"').append(' ').append(cmd);
                 sendBuf = ByteBuffer.wrap(builder.toString().getBytes());
