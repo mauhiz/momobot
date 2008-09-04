@@ -1,10 +1,10 @@
-package net.mauhiz.irc.bot.tournament;
+package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.Assert;
 import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.bot.triggers.event.tournament.Tournament;
 
 import org.junit.Test;
 
@@ -15,16 +15,7 @@ import org.junit.Test;
 public class TournamentTest {
     
     /**
-     * Test method for {@link net.mauhiz.irc.bot.tournament.Tournament#power(int, int)}.
-     * 
-     */
-    @Test
-    public void powerTest() {
-        Assert.assertEquals(32, Tournament.power(2, 5));
-    }
-    
-    /**
-     * Test method for {@link net.mauhiz.irc.bot.tournament.Tournament#generateTemplate()}.
+     * Test method for {@link net.mauhiz.irc.bot.triggers.event.tournament.Tournament#generateTemplate()}.
      * 
      * @throws Exception
      */
@@ -35,7 +26,7 @@ public class TournamentTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.bot.tournament.Tournament#generateTemplate()}.
+     * Test method for {@link net.mauhiz.irc.bot.triggers.event.tournament.Tournament#generateTemplate()}.
      * 
      * @throws IOException
      */
