@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.base;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IAdminTrigger;
@@ -32,8 +33,8 @@ public class ActTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
             msg = Privmsg.buildPrivateAnswer(im, "syntaxe $" + this + " target msg");
             control.sendMsg(msg);
         } else {
-            /* FIXME action et cross-server */
-            Privmsg msg = new Privmsg(null, args.substring(0, index), im.getServer(), args.substring(index + 1));
+            /* FIXME cross-server */
+            Action msg = new Action(null, args.substring(0, index), im.getServer(), args.substring(index + 1));
             control.sendMsg(msg);
         }
     }
