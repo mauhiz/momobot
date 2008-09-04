@@ -7,7 +7,6 @@ import net.mauhiz.irc.base.data.Channel;
 import net.mauhiz.irc.base.data.IrcUser;
 
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
@@ -26,7 +25,7 @@ public class Gather extends ChannelEvent {
     /**
      * 
      */
-    private SeekWar seekWar = null;
+    private SeekWar seekWar;
     
     /**
      * La taille d'un gather.
@@ -50,7 +49,7 @@ public class Gather extends ChannelEvent {
      *            le channel
      */
     public Gather(final Channel channel1) {
-        this(channel1, "eule^", (byte) 5);
+        this(channel1, "eule^", 5);
     }
     
     public Gather(final Channel channel1, final int nbPlayers) {
@@ -79,7 +78,7 @@ public class Gather extends ChannelEvent {
         if (element == null) {
             throw new IllegalArgumentException("element must not be null");
         }
-        final StrBuilder retour = new StrBuilder();
+        final StringBuilder retour = new StringBuilder();
         retour.append(element);
         
         if (team.contains(element)) {
@@ -134,7 +133,7 @@ public class Gather extends ChannelEvent {
     // if (null == this.serv) {
     // return "serv off :/";
     // }
-    // return new StrBuilder("IP:
+    // return new StringBuilder("IP:
     // ").append(this.serv.getIp()).append(':').append(this.serv.getPort()).append(
     // " pass: ").append(this.serv.getPass()).toString();
     // }
@@ -199,8 +198,8 @@ public class Gather extends ChannelEvent {
      */
     @Override
     public final String toString() {
-        final StrBuilder temp = new StrBuilder(ColorUtils.toColor("Gather " + team.size() + '/' + team.getCapacity(),
-                Color.BROWN));
+        final StringBuilder temp = new StringBuilder(ColorUtils.toColor("Gather " + team.size() + '/'
+                + team.getCapacity(), Color.BROWN));
         temp.append(" (start: ");
         temp.append(ColorUtils.toColor(DateUtils.getTimeStamp(sw), Color.DARK_GREEN));
         temp.append(") (tag: ");
