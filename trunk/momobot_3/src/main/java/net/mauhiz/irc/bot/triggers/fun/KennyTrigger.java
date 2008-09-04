@@ -14,7 +14,6 @@ import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -26,7 +25,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     /**
      * longueur d'une kennylettre.
      */
-    private static final byte KENNY_LETTER_LEN = 3;
+    private static final int KENNY_LETTER_LEN = 3;
     /**
      * The KENNYLETTERS in alphabetical order. Big Letters are the Same with the only difference That the First char is
      * UpperCase
@@ -100,7 +99,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      *            String to Translate
      * @return translated String
      */
-    public static StrBuilder translate(final String toTranslate) {
+    public static StringBuilder translate(final String toTranslate) {
         if (isKenny(toTranslate)) {
             return translateKennyToNormal(toTranslate);
         }
@@ -130,8 +129,8 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * @param toTranslate
      * @return ...
      */
-    private static StrBuilder translateKennyToNormal(final String toTranslate) {
-        final StrBuilder result = new StrBuilder();
+    private static StringBuilder translateKennyToNormal(final String toTranslate) {
+        final StringBuilder result = new StringBuilder();
         int index = 0;
         while (index < toTranslate.length()) {
             while (Character.toUpperCase(toTranslate.charAt(index)) != 'M'
@@ -175,8 +174,8 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      *            un string
      * @return ...
      */
-    private static StrBuilder translateNormalToKenny(final String toTranslate) {
-        final StrBuilder result = new StrBuilder();
+    private static StringBuilder translateNormalToKenny(final String toTranslate) {
+        final StringBuilder result = new StringBuilder();
         for (final char ch : toTranslate.toCharArray()) {
             /* Ordered according to optimisations suggested by Stuart */
             if (ch < 'A' || ch > 'Z' && ch < 'a' || ch > 'z') {
