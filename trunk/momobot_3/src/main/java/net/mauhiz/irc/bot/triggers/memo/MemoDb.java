@@ -60,7 +60,7 @@ public class MemoDb {
     public String getMemo(final String key) {
         String result = getValue(key);
         if (result == null) {
-            return "Pas de mémo pour " + key;
+            return "Pas de mémo pour '" + key + "'";
         }
         return result;
     }
@@ -69,11 +69,15 @@ public class MemoDb {
      * @return la liste des memos
      */
     public String getMemos() {
-        final StrBuilder msg = new StrBuilder("mémos :");
         Query getQry = HibernateUtils.currentSession().createQuery(
                 "select value from Memo where serverAlias = :serverAlias");
         getQry.setString("serverAlias", server.getAlias());
         List<String> results = getQry.list();
+        if (results.isEmpty()) {
+            return "Pas de memo pour l'instant";
+        }
+        
+        final StrBuilder msg = new StrBuilder("mémos :");
         for (final String result : results) {
             msg.append(' ').append(result);
         }
@@ -102,19 +106,33 @@ public class MemoDb {
      */
     public String setMemo(final String key, final String value) {
         String oldValue = getValue(key);
-        final StrBuilder msg = new StrBuilder("Mémo ").append(key);
+        final StrBuilder msg = new StrBuilder("Mémo '").append(key).append("' ");
+        HibernateUtils.currentSession().getTransaction().begin();
         if (oldValue == null) {
             Memo memo = new Memo();
             memo.setServerAlias(server.getAlias());
             memo.setKey(key);
             memo.setValue(value);
             HibernateUtils.currentSession().save(memo);
-            msg.append(" enregistré");
+            msg.append("enregistré");
         } else {
             /* TODO mise a jour */
-            msg.append(" mis à jour");
+            Query getQry = HibernateUtils.currentSession().createQuery(
+                    "update Memo set value = :value where serverAlias = :serverAlias and key = :key");
+            getQry.setString("serverAlias", server.getAlias());
+            getQry.setString("key", key);
+            getQry.setString("value", value);
+            int updated = getQry.executeUpdate();
+            if (updated == 1) {
+                msg.append("mis à jour");
+            } else {
+                HibernateUtils.currentSession().getTransaction().rollback();
+                return "Erreur, mémo non enregistré";
+            }
         }
+        
+        HibernateUtils.currentSession().getTransaction().commit();
         return msg.toString();
-        // return "Erreur, mémo non enregistré";
+        
     }
 }
