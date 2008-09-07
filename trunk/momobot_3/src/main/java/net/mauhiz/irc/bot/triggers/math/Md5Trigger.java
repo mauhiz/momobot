@@ -14,21 +14,6 @@ import org.apache.commons.lang.StringUtils;
  * @author mauhiz
  */
 public class Md5Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    
-    /**
-     * @param b
-     * @return un affichage hexa du byte non signe
-     */
-    static String byteToString(final byte b) {
-        String out = Integer.toHexString(b);
-        if (out.length() > 2) {
-            return out.substring(6);
-        } else if (out.length() == 1) {
-            return "0" + out;
-        }
-        return out;
-    }
-    
     /**
      * @param trigger
      */

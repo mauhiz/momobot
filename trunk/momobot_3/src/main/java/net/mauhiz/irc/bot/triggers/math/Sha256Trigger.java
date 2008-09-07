@@ -8,9 +8,8 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrBuilder;
-import org.apache.log4j.Logger;
 
 /**
  * Calcule un sha-256.
@@ -18,10 +17,6 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class Sha256Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    /**
-     * 
-     */
-    static final Logger LOG = Logger.getLogger(Sha256Trigger.class);
     
     /**
      * @param input
@@ -30,11 +25,7 @@ public class Sha256Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     static String computeSha256(final byte[] input) throws NoSuchAlgorithmException {
         byte[] output = MessageDigest.getInstance("SHA-256").digest(input);
-        StrBuilder sb = new StrBuilder();
-        for (byte b : output) {
-            sb.append(Md5Trigger.byteToString(b));
-        }
-        return sb.toString();
+        return new String(Hex.encodeHex(output));
     }
     
     /**
