@@ -8,8 +8,12 @@
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>
 		<property name="hibernate.connection.url">jdbc:mysql://mysql.mauhiz.net:3306/momobot</property>
-		<property name="hibernate.connection.username">root</property>
-		<property name="hibernate.connection.password">root</property>
+		<property name="hibernate.connection.username">momobot</property>
+		<property name="hibernate.connection.password">tobomom</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
 		<mapping resource="net/mauhiz/irc/bot/triggers/memo/Memo.xml" />
+		<mapping resource="net/mauhiz/irc/bot/triggers/dispo/Dispo.xml" />
+		<mapping resource="net/mauhiz/irc/bot/triggers/cwwb/Untreated.xml" />
+		<mapping resource="net/mauhiz/irc/bot/triggers/cwwb/War.xml" />
 	</session-factory>
 </hibernate-configuration>

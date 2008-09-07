@@ -27,6 +27,10 @@ public class NetUtilsTest {
      * 192.168.0.255
      */
     private static final long LONG_CLASS_C_MASK = (long) 192 * 256 * 256 * 256 + 168 * 256 * 256 + 255;
+    /**
+     * 192.168.0.255
+     */
+    private static final String STR_CLASS_C_MASK = "192.168.0.255";
     
     /**
      * Test method for {@link net.mauhiz.irc.NetUtils#byteTabToSignedInt(byte[])}.
@@ -45,7 +49,7 @@ public class NetUtilsTest {
     @Test
     public void testIntTabToIp() {
         InetAddress localhost = NetUtils.charTabToIa(CHARS_CLASS_C_MASK);
-        Assert.assertEquals("192.168.0.255", localhost.getHostAddress());
+        Assert.assertEquals(STR_CLASS_C_MASK, localhost.getHostAddress());
     }
     /**
      * Test method for {@link net.mauhiz.irc.NetUtils#intToBytes(int)}.
@@ -66,7 +70,7 @@ public class NetUtilsTest {
      */
     @Test
     public void testIpToLong() throws UnknownHostException {
-        InetAddress localhost = InetAddress.getByName("192.168.0.255");
+        InetAddress localhost = InetAddress.getByName(STR_CLASS_C_MASK);
         Assert.assertEquals(LONG_CLASS_C_MASK, NetUtils.iaToLong(localhost));
     }
     /**

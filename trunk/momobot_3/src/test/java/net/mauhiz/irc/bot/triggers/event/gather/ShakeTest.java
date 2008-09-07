@@ -1,7 +1,8 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.defaut.DefaultChannel;
 import net.mauhiz.irc.bot.event.Pickup;
 
 import org.junit.Test;
@@ -17,16 +18,16 @@ public class ShakeTest {
      */
     @Test
     public void testShake() {
-        Channel chan = new Channel("#tsi.fr");
+        IrcChannel chan = new DefaultChannel("#tsi.fr");
         Pickup p = new Pickup(chan);
-        IrcUser a = new IrcUser("a");
-        IrcUser b = new IrcUser("b");
-        IrcUser c = new IrcUser("c");
-        IrcUser d = new IrcUser("d");
-        IrcUser e = new IrcUser("e");
-        IrcUser f = new IrcUser("f");
-        IrcUser g = new IrcUser("g");
-        IrcUser h = new IrcUser("h");
+        IrcUser a = new FakeUser("a");
+        IrcUser b = new FakeUser("b");
+        IrcUser c = new FakeUser("c");
+        IrcUser d = new FakeUser("d");
+        IrcUser e = new FakeUser("e");
+        IrcUser f = new FakeUser("f");
+        IrcUser g = new FakeUser("g");
+        IrcUser h = new FakeUser("h");
         
         p.add(a, "a");
         p.add(b, "a");

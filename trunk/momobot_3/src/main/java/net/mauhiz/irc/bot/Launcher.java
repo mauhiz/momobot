@@ -2,8 +2,10 @@ package net.mauhiz.irc.bot;
 
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.defaut.DefaultServer;
 import net.mauhiz.irc.base.msg.Join;
 
+import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
@@ -68,10 +70,14 @@ public class Launcher {
         for (String serverName : serverNames) {
             String uri = config.getString("server[@alias='" + serverName + "']/@uri");
             LOG.debug("uri=" + uri);
+            String serverClass = config.getString("server[@alias='" + serverName + "']/@class");
+            if (serverClass == null) {
+                serverClass = DefaultServer.class.getName();
+            }
             IrcServer server;
             try {
-                server = new IrcServer(uri);
-            } catch (IllegalArgumentException e) {
+                server = (IrcServer) ConstructorUtils.invokeConstructor(Class.forName(serverClass), uri);
+            } catch (Exception e) {
                 LOG.error(e);
                 continue;
             }

@@ -1,6 +1,5 @@
 package net.mauhiz.irc.bot.triggers.spam;
 
-import net.mauhiz.irc.AbstractRunnable;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -24,9 +23,10 @@ public class SpamTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         /* FIXME use args */
-        Privmsg spamMsg = new Privmsg(null, null, null, null);
+        /* TODO cross server */
+        Privmsg spamMsg = new Privmsg(null, null, im.getServer(), null);
         long delay = 150;
-        AbstractRunnable spam = new SpamRunnable(spamMsg, control, delay);
-        spam.execute();
+        SpamRunnable spam = new SpamRunnable(spamMsg, control, delay);
+        spam.execute("Spam");
     }
 }

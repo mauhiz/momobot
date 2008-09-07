@@ -1,6 +1,6 @@
 package net.mauhiz.irc.bot.automate;
 
-import net.mauhiz.irc.base.IrcControl;
+import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 
@@ -16,7 +16,7 @@ public class AddservAutomate extends Automate {
      * @param control
      * @param server
      */
-    public AddservAutomate(final IrcUser user1, final IrcControl control, final IrcServer server) {
+    public AddservAutomate(final IrcUser user1, final IIrcControl control, final IrcServer server) {
         super(user1, control, server);
         setEtat(STARTED);
     }

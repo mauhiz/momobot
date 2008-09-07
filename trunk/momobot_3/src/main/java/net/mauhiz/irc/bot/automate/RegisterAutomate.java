@@ -51,8 +51,8 @@ public class RegisterAutomate extends Automate {
             pause(SLEEPTIME);
             switch (getEtat()) {
                 case STARTED :
-                    whois = new WhoisRequest(getUser().getNick(), getServer(), getControl());
-                    whois.execute();
+                    whois = new WhoisRequest(getUser().getNick(), getServer(), control);
+                    whois.execute("Whois");
                     sendMsgToUser("Detection de ton auth Qnet...");
                     setEtat(WHOISING);
                     break;

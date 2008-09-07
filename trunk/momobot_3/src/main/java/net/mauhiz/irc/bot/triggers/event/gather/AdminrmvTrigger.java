@@ -1,11 +1,9 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
@@ -35,7 +33,7 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         IrcServer server = im.getServer();
-        Channel chan = Channels.getInstance(server).get(im.getTo());
+        IrcChannel chan = server.findChannel(im.getTo());
         ChannelEvent event = chan.getEvt();
         if (event == null) {
             Privmsg msg = Privmsg.buildAnswer(im, "Aucun gather ou pickup n'est lance.");
@@ -49,7 +47,7 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         
         if (event instanceof Gather) {
             for (String who : whos) {
-                IrcUser target = Users.getInstance(server).findUser(who, false);
+                IrcUser target = server.findUser(who, false);
                 if (target == null) {
                     Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan);
                     control.sendMsg(msg);
@@ -62,7 +60,7 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             
         } else if (event instanceof Pickup) {
             for (String who : whos) {
-                IrcUser target = Users.getInstance(server).findUser(who, false);
+                IrcUser target = server.findUser(who, false);
                 if (target == null) {
                     Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan);
                     control.sendMsg(msg);

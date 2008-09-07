@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.util.Collection;
 
 import net.mauhiz.irc.base.IrcIO.Status;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Kick;
+import net.mauhiz.irc.base.msg.Mode;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.NumericReplies;
@@ -86,28 +85,27 @@ public class IrcControl implements IIrcControl, NumericReplies {
             processServerMsg((ServerMsg) msg);
         } else if (msg instanceof Join) {
             Join join = (Join) msg;
-            Channel joined = Channels.getInstance(server).get(join.getChan());
-            IrcUser joiner = Users.getInstance(server).findUser(new Mask(join.getFrom()), true);
+            IrcChannel joined = server.findChannel(join.getChan());
+            IrcUser joiner = server.findUser(new Mask(join.getFrom()), true);
             joined.add(joiner);
         } else if (msg instanceof Kick) {
             Kick kick = (Kick) msg;
-            Channel from = Channels.getInstance(server).get(kick.getChan());
-            IrcUser kicked = Users.getInstance(server).findUser(kick.getTarget(), true);
+            IrcChannel from = server.findChannel(kick.getChan());
+            IrcUser kicked = server.findUser(kick.getTarget(), true);
             from.remove(kicked);
         } else if (msg instanceof Part) {
             Part part = (Part) msg;
-            Channel from = Channels.getInstance(server).get(part.getChan());
-            IrcUser leaver = Users.getInstance(server).findUser(part.getFrom(), true);
+            IrcChannel from = server.findChannel(part.getChan());
+            IrcUser leaver = server.findUser(part.getFrom(), true);
             from.remove(leaver);
         } else if (msg instanceof Quit) {
             Quit quit = (Quit) msg;
-            Users users = Users.getInstance(server);
-            IrcUser quitter = users.findUser(new Mask(quit.getFrom()), false);
+            IrcUser quitter = server.findUser(new Mask(quit.getFrom()), false);
             if (quitter != null) {
-                for (Channel every : Channels.getInstance(server).values()) {
+                for (IrcChannel every : server.getChannels()) {
                     every.remove(quitter);
                 }
-                users.remove(quitter);
+                server.remove(quitter);
             }
         } else if (msg instanceof Notice && io.getStatus() == Status.CONNECTING) {
             Notice notice = (Notice) msg;
@@ -120,9 +118,10 @@ public class IrcControl implements IIrcControl, NumericReplies {
         } else if (msg instanceof Nick) {
             Nick nick = (Nick) msg;
             Mask from = new Mask(nick.getFrom());
-            Users users = Users.getInstance(server);
-            IrcUser target = users.findUser(from, true);
-            users.updateNick(target, nick.getNewNick());
+            IrcUser target = server.findUser(from, true);
+            server.updateNick(target, nick.getNewNick());
+        } else if (msg instanceof Mode) {
+            /* TODO process mode */
         }
         manager.processMsg(msg, this);
     }
@@ -180,7 +179,7 @@ public class IrcControl implements IIrcControl, NumericReplies {
                 int sep = names.indexOf(" :");
                 String chanName = names.substring(2, sep);
                 String[] prefixedNames = StringUtils.split(names.substring(sep + 2));
-                Channel chan = Channels.getInstance(smsg.getServer()).get(chanName);
+                IrcChannel chan = smsg.getServer().findChannel(chanName);
                 if (chan == null) {
                     return;
                 }
@@ -189,7 +188,7 @@ public class IrcControl implements IIrcControl, NumericReplies {
                     if (prefix == '+' || prefix == '@' || prefix == '%') {
                         prefixedName = prefixedName.substring(1);
                     }
-                    IrcUser next = Users.getInstance(smsg.getServer()).findUser(prefixedName, true);
+                    IrcUser next = smsg.getServer().findUser(prefixedName, true);
                     chan.add(next);
                 }
                 LOG.info("Names Reply on " + chan + ": " + StringUtils.join(prefixedNames, ' '));

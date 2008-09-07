@@ -21,6 +21,7 @@ public class ExitAction implements SelectionListener {
      * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
      */
     public void widgetDefaultSelected(final SelectionEvent arg0) {
+        /* do nothing */
     }
     
     /**

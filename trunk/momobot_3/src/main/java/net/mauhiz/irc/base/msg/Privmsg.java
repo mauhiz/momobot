@@ -1,10 +1,9 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -19,7 +18,7 @@ public class Privmsg extends IrcMessage {
      */
     public static Privmsg buildAnswer(final IrcMessage toReply, final String msg) {
         String oldDest = toReply.getTo();
-        if (Channels.isChannelName(oldDest)) {
+        if (MomoStringUtils.isChannelName(oldDest)) {
             return new Privmsg(null, oldDest, toReply.getServer(), msg);
         }
         return buildPrivateAnswer(toReply, msg);
@@ -77,10 +76,10 @@ public class Privmsg extends IrcMessage {
         }
         sb.append("PRIVMSG ");
         if (super.to != null) {
-            if (super.from == null && !Channels.isChannelName(super.to)) {
+            if (super.from == null && !MomoStringUtils.isChannelName(super.to)) {
                 try {
                     Mask m = new Mask(super.to);
-                    IrcUser dest = Users.getInstance(super.server).findUser(m, true);
+                    IrcUser dest = super.server.findUser(m, true);
                     sb.append(dest.getNick());
                 } catch (IllegalArgumentException iae) {
                     sb.append(super.to);

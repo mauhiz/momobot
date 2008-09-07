@@ -12,7 +12,6 @@ import net.mauhiz.irc.NetUtils;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 
 import org.apache.commons.lang.StringUtils;
@@ -113,10 +112,9 @@ public class SeekWar {
      * Liste des users qui ont pv le bot
      */
     private final List<IrcUser> userpv = new ArrayList<IrcUser>();
-    /**
-     * @param nbPlayers
-     */
+    
     public SeekWar() {
+        super();
         seekServ = "ON";
         ippass = "87.98.196.75:27019 Gotserv.com: pw:gruik";
         seekLevel = "mid";
@@ -177,7 +175,7 @@ public class SeekWar {
      */
     private List<Privmsg> processIncomingMessage(final Privmsg im, final List<Privmsg> resultPrivmsg) {
         IrcServer server = im.getServer();
-        IrcUser provenance = Users.getInstance(server).findUser(new Mask(im.getFrom()), true);
+        IrcUser provenance = server.findUser(new Mask(im.getFrom()), true);
         String destination = im.getTo();
         String msg = im.getMessage();
         // Traitement des messages entrant
@@ -339,6 +337,7 @@ public class SeekWar {
      * @param commandSeek
      *            1) RIEN 2) ON IPPASS LVL 3) OFF LVL 4) ON IPPASS LVL MSGSEEK 5) OFF LVL MSGSEEK
      * @param chan
+     * @param nbPlayers
      * @return String
      */
     public String start(final String[] commandSeek, final String chan, final int nbPlayers) {

@@ -375,7 +375,7 @@ public class Server implements ServerFlags {
     }
     
     /**
-     * @return
+     * @return {@link #players}
      */
     public Map<String, Player> getPlayers() {
         return players;

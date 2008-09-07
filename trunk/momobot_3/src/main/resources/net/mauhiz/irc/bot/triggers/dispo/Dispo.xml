@@ -6,5 +6,8 @@
             <generator class="native" />
         </id>
         <property column="DISPO_WHEN" name="when" type="java.sql.Date" />
+        <property column="DISPO_CHANNEL" name="channel" type="java.lang.String" />
+        <property column="DISPO_SERVER" name="serverAlias" type="java.lang.String" />
+        <property column="DISPO_QAUTH" name="qauth" type="java.lang.String" />
     </class>
 </hibernate-mapping>

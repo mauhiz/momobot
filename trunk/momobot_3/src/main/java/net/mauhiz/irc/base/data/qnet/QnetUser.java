@@ -1,11 +1,11 @@
 package net.mauhiz.irc.base.data.qnet;
 
-import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.AbstractIrcUser;
 
 /**
  * @author mauhiz
  */
-public class QnetUser extends IrcUser {
+public class QnetUser extends AbstractIrcUser {
     private String auth;
     
     /**
@@ -13,6 +13,7 @@ public class QnetUser extends IrcUser {
      */
     public QnetUser(final String nick1) {
         super(nick1);
+        props = new QnetUserProperties();
     }
     
     /**
@@ -23,8 +24,9 @@ public class QnetUser extends IrcUser {
     }
     
     /**
-     * @return si je suis un service Qnet
+     * @see net.mauhiz.irc.base.data.IrcUser#isService()
      */
+    @Override
     public boolean isService() {
         return getNick().length() == 1;
     }

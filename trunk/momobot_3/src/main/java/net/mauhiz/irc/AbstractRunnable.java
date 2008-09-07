@@ -11,33 +11,43 @@ public abstract class AbstractRunnable implements Runnable {
      */
     private static final Logger LOG = Logger.getLogger(AbstractRunnable.class);
     /**
+     * @param duree
+     *            en ms
+     * @return si j'ai bien dormi
+     */
+    public static final boolean sleep(final long duree) {
+        try {
+            Thread.sleep(duree);
+            return true;
+        } catch (final InterruptedException ie) {
+            LOG.error(ie, ie);
+            Thread.currentThread().interrupt();
+            return false;
+        }
+        
+    }
+    
+    /**
      * si le thread tourne.
      */
-    private boolean             running;
-
+    private boolean running;
+    
     /**
      * lance le thread.
+     * 
+     * @param name
      */
-    public final void execute() {
-        new Thread(this).start();
+    public final void execute(final String name) {
+        new Thread(this, name).start();
     }
-
+    
     /**
      * @return si le runnable est lancé.
      */
     public final boolean isRunning() {
-        return this.running;
+        return running;
     }
-
-    /**
-     * arrete le runnable.
-     * @param running1
-     *            un booléen
-     */
-    public final void setRunning(final boolean running1) {
-        this.running = running1;
-    }
-
+    
     /**
      * @param duree
      *            la durée à dormir
@@ -47,20 +57,14 @@ public abstract class AbstractRunnable implements Runnable {
             setRunning(false);
         }
     }
-
+    
     /**
-     * @param duree
-     *            en ms
-     * @return si j'ai bien dormi
+     * arrete le runnable.
+     * 
+     * @param running1
+     *            un booléen
      */
-    public static final boolean sleep(final long duree) {
-        try {
-            Thread.sleep(duree);
-        } catch (final InterruptedException ie) {
-            LOG.error(ie, ie);
-            Thread.currentThread().interrupt();
-            return false;
-        }
-        return true;
+    public final void setRunning(final boolean running1) {
+        running = running1;
     }
 }

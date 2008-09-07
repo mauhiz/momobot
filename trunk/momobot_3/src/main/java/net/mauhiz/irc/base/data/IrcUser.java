@@ -2,109 +2,23 @@ package net.mauhiz.irc.base.data;
 
 /**
  * @author mauhiz
+ * 
  */
-public class IrcUser {
-    private String host;
-    private String nick;
-    private final UserProperties props = new UserProperties();
-    private String user;
+public interface IrcUser extends IHookable<IrcUser> {
+    
+    String getHost();
+    
+    String getNick();
+    
+    String getUser();
     
     /**
-     * @param nick1
+     * @return si je suis un service du reseau
      */
-    public IrcUser(final String nick1) {
-        nick = nick1;
-    }
+    boolean isService();
     
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (!(obj instanceof IrcUser)) {
-            return false;
-        }
-        return nick.equals(((IrcUser) obj).nick);
-    }
+    void setNick(String newNick);
     
-    /**
-     * @return {@link #host}
-     */
-    public String getHost() {
-        return host;
-    }
+    void updateWithMask(Mask mask);
     
-    /**
-     * @return user nick
-     */
-    public String getNick() {
-        return nick;
-    }
-    
-    /**
-     * @return {@link #props}
-     */
-    public UserProperties getProps() {
-        return props;
-    }
-    
-    /**
-     * @return {@link #user}
-     */
-    public String getUser() {
-        return user;
-    }
-    
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return nick.hashCode();
-    }
-    
-    /**
-     * @param host1
-     */
-    public void setHost(final String host1) {
-        host = host1;
-    }
-    
-    /**
-     * @param nick1
-     */
-    public void setNick(final String nick1) {
-        nick = nick1;
-    }
-    
-    /**
-     * @param user1
-     */
-    public void setUser(final String user1) {
-        user = user1;
-    }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return getNick();
-    }
-    
-    /**
-     * @param hostmask
-     */
-    public final void updateWithMask(final Mask hostmask) {
-        host = hostmask.getHost();
-        if ("*".equals(host)) {
-            host = null;
-        }
-        user = hostmask.getUser();
-        if ("*".equals(user)) {
-            user = null;
-        }
-    }
 }

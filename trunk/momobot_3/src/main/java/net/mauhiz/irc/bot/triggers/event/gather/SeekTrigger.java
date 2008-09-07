@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -51,7 +49,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         if (isCommandMsg(im.getMessage())) {
-            Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
+            IrcChannel chan = im.getServer().findChannel(im.getTo());
             if (chan == null) {
                 /* msg prive */
                 return;
@@ -115,18 +113,16 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                 
             }
         } else {
-            /* FIXME vilain hardcode */
-            IrcUser mmb = Users.getInstance(im.getServer()).findUser(im.getServer().getMyNick(), false);
-            Channels channels = Channels.getInstance(im.getServer());
-            Set<Channel> myChans = channels.getChannels(mmb);
-            for (Channel element : myChans) {
+            IrcUser mmb = im.getServer().findUser(im.getServer().getMyNick(), false);
+            Set<IrcChannel> myChans = im.getServer().getChannelsForUser(mmb);
+            for (IrcChannel element : myChans) {
                 
-                Channel chan1 = Channels.getInstance(im.getServer()).get(element.toString());
+                IrcChannel chan1 = im.getServer().findChannel(element.toString());
                 ChannelEvent evt1 = chan1.getEvt();
                 // if (evt instanceof Gather) {
                 if (evt1 instanceof Gather) {
                     final Gather gather = (Gather) evt1;
-                    IrcUser kikoolol = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+                    IrcUser kikoolol = im.getServer().findUser(new Mask(im.getFrom()), true);
                     if (gather.getSeek() != null) {
                         // if (gather.getSeek().isSeekInProgress()) {
                         if (!gather.getSeek().isTimeOut()) {

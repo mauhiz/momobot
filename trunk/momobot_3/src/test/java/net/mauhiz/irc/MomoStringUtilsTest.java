@@ -1,5 +1,9 @@
 package net.mauhiz.irc;
 
+import java.util.regex.Matcher;
+
+import net.mauhiz.irc.bot.event.SeekWar2;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,6 +22,7 @@ public class MomoStringUtilsTest {
         String output = MomoStringUtils.genereSeekMessage(input, 5, "Off", "midz");
         Assert.assertEquals("seek 5v5 - Off - midz pm ", output);
     }
+    
     /**
      * Test for {@link MomoStringUtils#effaceAccents(String)}
      */
@@ -28,4 +33,12 @@ public class MomoStringUtilsTest {
         Assert.assertEquals("aaaceeeiinoqu ", output);
     }
     
+    /** "192.168.0.5:27015 pass:dtcdtc" */
+    @Test
+    public void testMatchIp() {
+        String text = "192.168.0.5:27015 pass:dtcdtc";
+        Matcher m = SeekWar2.IP_PATTERN.matcher(text);
+        Assert.assertTrue(m.find());
+        Assert.assertEquals("192.168.0.5:27015", m.group());
+    }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.mauhiz.irc.MathUtils;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 
@@ -45,11 +45,6 @@ public class Tournament extends ChannelEvent {
      * 
      */
     private static int numberPlayerPerTeam;
-    /**
-     * 
-     */
-    private static int numberTeams;
-    
     static {
         try {
             CFG = new PropertiesConfiguration("tournament/tn.properties");
@@ -100,10 +95,11 @@ public class Tournament extends ChannelEvent {
             throw new UnsupportedOperationException("protocol not yet supported" + ftpURI.getScheme());
         }
     }
+    
     /**
      * 
      */
-    private boolean isLunched = false;
+    private boolean isLunched;
     /**
      * 
      */
@@ -112,6 +108,10 @@ public class Tournament extends ChannelEvent {
      * 
      */
     private List<Match> matchList = new ArrayList<Match>();
+    /**
+     * 
+     */
+    private int numberTeams;
     
     /**
      * le temps où je commence.
@@ -124,17 +124,17 @@ public class Tournament extends ChannelEvent {
     private final List<TournamentTeam> teamList = new ArrayList<TournamentTeam>();
     
     /**
-     * @param channel1
+     * @param chan
      * @param maps
      */
-    public Tournament(final Channel channel1, final String[] maps) {
-        super(channel1);
+    public Tournament(final IrcChannel chan, final String[] maps) {
+        super(chan);
         sw.start();
         numberPlayerPerTeam = CFG.getInt("tn.numberPlayerPerTeam");
         numberTeams = MathUtils.power(2, maps.length); // 2^4=16
         // On crée les teams
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Lancement d'un tn sur: " + channel1.toString() + " maps: " + StringUtils.join(maps));
+            LOG.debug("Lancement d'un tn sur: " + chan.toString() + " maps: " + StringUtils.join(maps));
         }
         
         // On Crée la liste de map
@@ -218,8 +218,7 @@ public class Tournament extends ChannelEvent {
     }
     
     /**
-     * @return
-     * 
+     * @return status
      */
     public String getStatus() {
         
@@ -278,19 +277,20 @@ public class Tournament extends ChannelEvent {
         
     }
     /**
+     * @param ircuser
      * @param idTeam
      *            qui a win
-     * @param score1_
+     * @param score01
      *            de la team winner
-     * @param score2_
+     * @param score02
      *            de la team qui a loose
      * @return List String
      */
     
-    public List<String> setScore(final IrcUser ircuser, final int idTeam, final int score1_, final int score2_) {
+    public List<String> setScore(final IrcUser ircuser, final int idTeam, final int score01, final int score02) {
         List<String> reply = new ArrayList<String>();
-        int score1 = score1_;
-        int score2 = score2_;
+        int score1 = score01;
+        int score2 = score02;
         
         if (idTeam < 0 || idTeam > teamList.size() - 1) {
             reply.add("Erreur : Id team invalide");
@@ -319,7 +319,6 @@ public class Tournament extends ChannelEvent {
     }
     /**
      * @param ircuser
-     * @param index
      * @param loc
      * @param tag
      * @param nicknames
@@ -328,7 +327,7 @@ public class Tournament extends ChannelEvent {
      */
     public String setTeam(final IrcUser ircuser, final Locale loc, final String tag, final List<String> nicknames) {
         for (TournamentTeam element : teamList) {
-            if (element.isTheOwner(ircuser)) {
+            if (element.isOwner(ircuser)) {
                 TournamentTeam team = element;
                 team.setCountry(loc);
                 team.setNom(tag);

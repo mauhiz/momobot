@@ -3,9 +3,8 @@ package net.mauhiz.irc.bot.triggers.fun;
 import java.util.Iterator;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -31,11 +30,11 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         String from = im.getTo();
-        Channel wannabe = Channels.getInstance(im.getServer()).get(from);
+        IrcChannel wannabe = im.getServer().findChannel(from);
         if (wannabe == null) {
             /* look args to determine channels */
             String args = getArgs(im.getMessage());
-            wannabe = Channels.getInstance(im.getServer()).get(args);
+            wannabe = im.getServer().findChannel(args);
             if (wannabe == null) {
                 return;
             }

@@ -150,7 +150,7 @@ class ValveUdpClient extends DatagramSocketClient {
             throw new UnsupportedOperationException("pas de rcon défini");
         }
         vucl = new ValveUdpClientListener(this);
-        vucl.execute();
+        vucl.execute("Valve Udp Listener on " + server.getIp());
     }
     
     /**
@@ -303,7 +303,8 @@ class ValveUdpClient extends DatagramSocketClient {
     private byte[] sendValveCmd(final String cmd) throws IOException {
         if (null == _socket_) {
             _socket_ = new DefaultDatagramSocketFactory().createDatagramSocket();
-            _socket_.setSoTimeout(60);
+            /* timeout en ms */
+            _socket_.setSoTimeout(60000);
         }
         sendBuf = ByteBuffer.wrap((MOINS_UN + cmd + Server.NUL).getBytes());
         LOG.debug("Sending : " + cmd);
@@ -324,7 +325,7 @@ class ValveUdpClient extends DatagramSocketClient {
         }
         rcon = rcon1;
         if (!vucl.isRunning()) {
-            vucl.execute();
+            initLogThread();
         }
     }
     
