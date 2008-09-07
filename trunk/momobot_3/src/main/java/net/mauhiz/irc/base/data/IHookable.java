@@ -8,7 +8,7 @@ public interface IHookable<C extends IHookable<?>> {
     /**
      * @param <H>
      * @param hookClass
-     * @return
+     * @return hooked object
      */
     <H extends IHook<C>> H getHookedObject(Class<H> hookClass);
     

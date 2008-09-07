@@ -34,11 +34,9 @@ public class NetUtilsTest {
     
     /**
      * Test method for {@link net.mauhiz.irc.NetUtils#byteTabToSignedInt(byte[])}.
-     * 
-     * @throws UnknownHostException
      */
     @Test
-    public void testBytesToInt() throws UnknownHostException {
+    public void testBytesToInt() {
         int toInt = NetUtils.byteTabToSignedInt(BYTES_CLASS_C_MASK);
         Assert.assertEquals(INT_CLASS_C_MASK, toInt);
     }

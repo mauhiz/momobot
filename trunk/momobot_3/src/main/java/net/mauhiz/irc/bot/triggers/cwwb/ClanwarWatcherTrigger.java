@@ -1,6 +1,4 @@
 package net.mauhiz.irc.bot.triggers.cwwb;
-import java.io.IOException;
-
 import net.mauhiz.irc.HibernateUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Part;
@@ -20,9 +18,8 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
     private static final String[] IGNORED_NICKS = {"[CW|FR]", "Q", "S"};
     
     /**
-     * @throws IOException
      */
-    public ClanwarWatcherTrigger() throws IOException {
+    public ClanwarWatcherTrigger() {
         super();
         
         // On vide les tables direct en arrivant
