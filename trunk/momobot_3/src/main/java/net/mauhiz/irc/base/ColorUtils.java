@@ -15,7 +15,7 @@ public final class ColorUtils implements IrcSpecialChars {
      */
     public static String removeColors(final String line) {
         final int length = line.length();
-        final StrBuilder buffer = new StrBuilder();
+        final StringBuilder buffer = new StringBuilder();
         char index = 0;
         while (index < length) {
             char car = line.charAt(index);
