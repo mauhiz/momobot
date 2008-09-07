@@ -12,8 +12,6 @@ import net.mauhiz.irc.bot.triggers.INoticeTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.ITrigger;
 
-import org.apache.commons.lang.text.StrBuilder;
-
 /**
  * @author mauhiz
  */
@@ -37,7 +35,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      */
     @Override
     public void doTrigger(final Notice im, final IIrcControl control) {
-        StrBuilder msg = new StrBuilder();
+        StringBuilder msg = new StringBuilder();
         msg.append(COMMANDES);
         for (Iterator<ITrigger> it = getTriggers(control); it.hasNext();) {
             ITrigger trig = it.next();
@@ -55,8 +53,9 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        StrBuilder msg = new StrBuilder();
+        StringBuilder msg = new StringBuilder();
         msg.append(COMMANDES);
+        /* TODO : ordre alphabetique ? */
         for (Iterator<ITrigger> it = getTriggers(control); it.hasNext();) {
             ITrigger trig = it.next();
             if (trig instanceof IPrivmsgTrigger) {
