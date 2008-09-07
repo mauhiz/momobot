@@ -19,6 +19,8 @@
 		<loadtriggerpack prefix="$" bundle="fun" />
 		<loadtriggerpack prefix="$" bundle="tournament" />
 		<loadtriggerpack prefix="$" bundle="memo" />
+		<loadtriggerpack prefix="$" bundle="cs" />
+		<loadtriggerpack prefix="$" bundle="dispo" />
 	</profil>
 	<profil name="seekbot" nick="mom0" login="mom0" fullName="Pv moi si t'es mon ami">
 		<autoconnect server="Quakenet">
@@ -204,5 +206,21 @@
 	</triggerpack>
 	<triggerpack bundle="cwwb" package="net.mauhiz.irc.bot.triggers.cwwb">
 		<trigger class="ClanwarWatchTrigger" />
+	</triggerpack>
+	<triggerpack bundle="cs" package="net.mauhiz.irc.bot.triggers.cs">
+		<trigger class="ServStatusTrigger">
+			<command>srvstatus</command>
+		</trigger>
+		<trigger class="TopFraggerTrigger">
+			<command>topfragger</command>
+		</trigger>
+	</triggerpack>
+	<triggerpack bundle="dispo" package="net.mauhiz.irc.bot.triggers.dispo">
+		<trigger class="DispoTrigger">
+			<command>dispo</command>
+		</trigger>
+		<trigger class="YaquiTrigger">
+			<command>yaqui</command>
+		</trigger>
 	</triggerpack>
 </momobot>
