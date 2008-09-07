@@ -1,11 +1,9 @@
 package net.mauhiz.irc.bot.triggers.dispo;
 
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 
 import net.mauhiz.irc.DateUtils;
-import net.mauhiz.irc.SqlUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
@@ -16,6 +14,7 @@ import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
+import net.mauhiz.irc.bot.triggers.dispo.Dispo.Present;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -56,9 +55,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             while (whois.isRunning()) {
                 Thread.yield();
             }
-            /*
-             * TODO : bug a la con de merde, il detecte pas le whois tout de suite :/
-             */
+            /* TODO : bug a la con de merde, il detecte pas le whois tout de suite :/ */
             if (StringUtils.isEmpty(quser.getAuth())) {
                 Notice notice = Notice.buildPrivateAnswer(cme,
                         "il faut etre auth sur Qnet pour utiliser cette fonction");
@@ -73,21 +70,27 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         args[1] = tokenizer.nextToken();
         /* tokens finis */
         final Calendar date = DateUtils.getDateFromJour(jour);
-        final byte[] heures = new byte[2];
-        for (byte i = 0; i < 2; ++i) {
+        final Present[] heures = new Present[2];
+        for (int i = 0; i < 2; ++i) {
             if (args[i].equalsIgnoreCase("oui")) {
-                heures[i] = 1;
+                heures[i] = Present.LA;
             } else if (args[i].equalsIgnoreCase("non")) {
-                heures[i] = -1;
+                heures[i] = Present.PAS_LA;
             }
         }
         Notice notice;
-        try {
-            SqlUtils.updateDispo(cme.getTo(), quser.getAuth(), date.getTimeInMillis(), heures[0], heures[1]);
-            notice = Notice.buildPrivateAnswer(cme, "dispo enregistrée pour le " + DateUtils.dateFormat.format(date));
-        } catch (final SQLException sqle) {
+        if (date == null) {
             notice = Notice.buildPrivateAnswer(cme, "syntaxe : " + this
                     + " jour[lundi/mardi/...] 21h[oui/non/?] 22h30[oui/non/?]");
+        } else {
+            Dispo dispo = new Dispo();
+            dispo.setChannel(cme.getTo());
+            dispo.setPresent1(heures[0]);
+            dispo.setPresent2(heures[1]);
+            dispo.setQauth(quser.getAuth());
+            dispo.setServerAlias(cme.getServer().getAlias());
+            dispo.setWhen(new java.sql.Date(date.getTimeInMillis()));
+            notice = Notice.buildPrivateAnswer(cme, "dispo enregistrée pour le " + DateUtils.DATE_FORMAT.format(date));
         }
         control.sendMsg(notice);
     }
