@@ -1,7 +1,5 @@
 package net.mauhiz.irc.bot.triggers.memo;
 
-import java.sql.SQLException;
-
 import junit.framework.Assert;
 import net.mauhiz.irc.HibernateUtils;
 
@@ -14,11 +12,10 @@ import org.junit.Test;
  * 
  */
 public class MemoTest {
-    /**
-     * @throws SQLException
+    /*
      */
     @Test
-    public void testMemo() throws SQLException {
+    public void testMemo() {
         Session session = HibernateUtils.currentSession();
         Memo memo0 = new Memo();
         memo0.setKey("haroun");
