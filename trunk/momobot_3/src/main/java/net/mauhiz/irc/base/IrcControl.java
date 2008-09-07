@@ -2,12 +2,15 @@ package net.mauhiz.irc.base;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.mauhiz.irc.base.IrcIO.Status;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.ident.IdentServer;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Kick;
@@ -21,8 +24,6 @@ import net.mauhiz.irc.base.msg.Pong;
 import net.mauhiz.irc.base.msg.Quit;
 import net.mauhiz.irc.base.msg.ServerMsg;
 
-import org.apache.commons.collections.BidiMap;
-import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -34,11 +35,11 @@ public class IrcControl implements IIrcControl, NumericReplies {
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(IrcControl.class);
+    private final ITriggerManager manager;
     /**
      * key = {@link IrcServer}, value = {@link IIrcIO}.
      */
-    private BidiMap ioMap = new DualHashBidiMap();
-    ITriggerManager manager;
+    private final Map<IrcServer, IIrcIO> serverToIo = new HashMap<IrcServer, IIrcIO>();
     
     /**
      * @param mtm
@@ -51,16 +52,16 @@ public class IrcControl implements IIrcControl, NumericReplies {
      * @see net.mauhiz.irc.base.IIrcControl#connect(net.mauhiz.irc.base.data.IrcServer)
      */
     public void connect(final IrcServer server) {
-        if (ioMap.containsKey(server)) {
+        if (serverToIo.containsKey(server)) {
             /* already connected */
             return;
         }
-        IIrcIO io = new IrcIO(this);
-        ioMap.put(server, io);
+        
         try {
-            // new IdentServer().start(server.getMyLogin());
-            io.connect(server);
-            while (io.getStatus() != Status.CONNECTED) {
+            IIrcIO ircio = new IrcIO(this, server);
+            serverToIo.put(server, ircio);
+            new IdentServer(server.getMyLogin()).start();
+            while (ircio.getStatus() != Status.CONNECTED) {
                 Thread.yield();
             }
         } catch (IOException e) {
@@ -72,14 +73,12 @@ public class IrcControl implements IIrcControl, NumericReplies {
      * @see net.mauhiz.irc.base.IIrcControl#decodeIrcRawMsg(java.lang.String, net.mauhiz.irc.base.IIrcIO)
      */
     public void decodeIrcRawMsg(final String raw, final IIrcIO io) {
-        IrcServer server = (IrcServer) ioMap.getKey(io);
+        IrcServer server = io.getServer();
         if (server == null) {
             throw new IllegalStateException("io had no associated server");
         }
         IIrcMessage msg = server.buildFromRaw(raw);
-        if (msg == null) {
-            return;
-        } else if (msg instanceof Ping) {
+        if (msg instanceof Ping) {
             sendMsg(new Pong(server, ((Ping) msg).getPingId()));
         } else if (msg instanceof ServerMsg) {
             processServerMsg((ServerMsg) msg);
@@ -123,14 +122,14 @@ public class IrcControl implements IIrcControl, NumericReplies {
         } else if (msg instanceof Mode) {
             /* TODO process mode */
         }
-        manager.processMsg(msg, this);
+        getManager().processMsg(msg, this);
     }
     
     /**
      * @see net.mauhiz.irc.base.IIrcControl#exit()
      */
     public void exit() {
-        Collection<IIrcIO> ios = ioMap.values();
+        Collection<IIrcIO> ios = serverToIo.values();
         for (IIrcIO io : ios) {
             io.disconnect();
         }
@@ -224,11 +223,11 @@ public class IrcControl implements IIrcControl, NumericReplies {
      */
     public void sendMsg(final IIrcMessage msg) {
         IrcServer server = msg.getServer();
-        IIrcIO io = (IIrcIO) ioMap.get(server);
+        IIrcIO io = serverToIo.get(server);
         io.sendMsg(msg.toString());
         if (msg instanceof Quit) {
             io.disconnect();
-            ioMap.remove(server);
+            serverToIo.remove(server);
         }
         
     }

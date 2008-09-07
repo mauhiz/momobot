@@ -166,14 +166,15 @@ public class Server implements ServerFlags {
             LOG.error(ioe, ioe);
             return;
         }
-        
+        /* TODO process players */
+
         try {
             result = ByteBuffer.wrap(vuc.getRules());
         } catch (final IOException ioe) {
             LOG.error(ioe, ioe);
             return;
         }
-        
+        /* TODO process rules */
     }
     
     /**

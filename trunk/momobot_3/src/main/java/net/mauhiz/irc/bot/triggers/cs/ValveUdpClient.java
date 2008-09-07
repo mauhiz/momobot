@@ -150,7 +150,7 @@ class ValveUdpClient extends DatagramSocketClient {
             throw new UnsupportedOperationException("pas de rcon défini");
         }
         vucl = new ValveUdpClientListener(this);
-        vucl.execute("Valve Udp Listener on " + server.getIp());
+        vucl.startAs("Valve Udp Listener on " + server.getIp());
     }
     
     /**

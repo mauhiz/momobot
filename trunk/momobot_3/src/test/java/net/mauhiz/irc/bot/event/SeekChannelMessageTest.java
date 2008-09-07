@@ -15,6 +15,6 @@ public class SeekChannelMessageTest {
     @Test
     public void testSplit() {
         SeekWar seekwar = new SeekWar();
-        Assert.assertTrue(seekwar.submitChannelMessage("1vs1 off mid"));
+        Assert.assertTrue(seekwar.submitChannelMessage("5vs5 off mid"));
     }
 }

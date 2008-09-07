@@ -1,16 +1,11 @@
 package net.mauhiz.irc.base;
 
-import java.io.IOException;
-import java.net.Socket;
-
 /**
  * @author mauhiz
  */
-public interface IIrcInput extends Runnable {
-    
+public interface IIrcInput {
     /**
-     * @param sock
-     * @throws IOException
+     * go !
      */
-    void connect(Socket sock) throws IOException;
+    void start();
 }

@@ -277,17 +277,17 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
     protected abstract IrcUser newUser(final String nick);
     
     /**
+     * @param channel
+     */
+    public void remove(final IrcChannel channel) {
+        channels.remove(channel);
+    }
+    
+    /**
      * @see net.mauhiz.irc.base.data.IrcServer#remove(net.mauhiz.irc.base.data.IrcUser)
      */
     public void remove(final IrcUser quitter) {
         users.remove(quitter);
-    }
-    
-    /**
-     * @param channel
-     */
-    public void remove(final String channel) {
-        channels.remove(channel.toLowerCase(Locale.FRANCE));
     }
     
     /**

@@ -9,19 +9,39 @@ import net.mauhiz.irc.base.data.IrcServer;
  * @author mauhiz
  */
 public interface IIrcIO {
-    void connect(IrcServer server) throws IOException;
-    
     /**
      * @exception RuntimeException
      *                if {@link IOException}
      */
     void disconnect();
     
+    /**
+     * @return server
+     */
+    IrcServer getServer();
+    
+    /**
+     * @return status
+     */
     Status getStatus();
     
+    /**
+     * @param msg
+     */
     void processMsg(String msg);
     
+    /**
+     * @throws IOException
+     */
+    void reconnect() throws IOException;
+    
+    /**
+     * @param msg
+     */
     void sendMsg(String msg);
     
+    /**
+     * @param status
+     */
     void setStatus(Status status);
 }

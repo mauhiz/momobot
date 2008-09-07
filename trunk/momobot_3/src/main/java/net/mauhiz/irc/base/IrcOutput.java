@@ -69,4 +69,20 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
             Thread.currentThread().interrupt();
         }
     }
+    
+    /**
+     * @see net.mauhiz.irc.base.IIrcOutput#start()
+     */
+    @Override
+    public void start() {
+        startAs("Output Thread");
+    }
+    
+    /**
+     * @see net.mauhiz.irc.base.IIrcOutput#stop()
+     */
+    @Override
+    public void stop() {
+        setRunning(false);
+    }
 }

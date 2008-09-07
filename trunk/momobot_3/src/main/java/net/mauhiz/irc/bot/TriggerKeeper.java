@@ -92,6 +92,6 @@ class TriggerKeeper implements Iterable<ITrigger> {
      * maj
      */
     void update() {
-        new UpdaterThread().execute("Trigger Updater");
+        new UpdaterThread().startAs("Trigger Updater");
     }
 }
