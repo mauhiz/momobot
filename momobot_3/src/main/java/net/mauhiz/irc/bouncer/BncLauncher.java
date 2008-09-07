@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.mauhiz.irc.AbstractRunnable;
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.qnet.QnetServer;
 
 import org.apache.log4j.Logger;
 
@@ -20,16 +22,16 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class BncLauncher {
-    static final List<Account> ACCOUNTS = new ArrayList<Account>();
+    private static final List<Account> ACCOUNTS = new ArrayList<Account>();
     static long globalStartTime;
-    static final String LOCAL_NICK = "root";
+    private static final String LOCAL_NICK = "root";
     private static final Logger LOG = Logger.getLogger(BncLauncher.class);
-    static final String METHOD = "NOTICE AUTH :";
-    static final int MY_PORT = 6667;
-    static final IrcServer QNET;
+    private static final String METHOD = "NOTICE AUTH :";
+    private static final int MY_PORT = 6667;
+    private static final IrcServer QNET;
     
     static {
-        QNET = new IrcServer("irc://uk.quakenet.org:6667/");
+        QNET = new QnetServer("irc://uk.quakenet.org:6667/");
         QNET.setMyFullName("MomoBouncer");
         QNET.setAlias("Quakenet");
     }
@@ -44,7 +46,11 @@ public class BncLauncher {
         String line;
         BufferedReader reader = new BufferedReader(new InputStreamReader(client.connection.getInputStream()));
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(client.connection.getOutputStream()));
-        while ((line = reader.readLine()) != null) {
+        while (true) {
+            line = reader.readLine();
+            if (line == null) {
+                break;
+            }
             if (line.startsWith("NICK ")) {
                 nick = line.substring(5);
                 break;
@@ -67,7 +73,11 @@ public class BncLauncher {
                         + ColorUtils.toUnderline("password")));
         // /* TODO auth stuff */
         writer.flush();
-        while ((line = reader.readLine()) != null) {
+        while (true) {
+            line = reader.readLine();
+            if (line == null) {
+                break;
+            }
             if (line.toLowerCase().startsWith("privmsg " + LOCAL_NICK + " :")) {
                 line = line.substring(("privmsg " + LOCAL_NICK + " :").length());
                 String[] parts = line.split("\\s+");
@@ -82,11 +92,7 @@ public class BncLauncher {
                     LOG.info("Failed login attempt from " + client.connection.getInetAddress().getHostName() + " ("
                             + login + "/" + password + ")");
                 }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // Do nothing.
-                }
+                AbstractRunnable.sleep(1000);
                 writer.println(METHOD + "Invalid login or password.");
             }
         }

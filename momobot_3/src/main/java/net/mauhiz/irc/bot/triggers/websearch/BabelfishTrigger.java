@@ -47,7 +47,7 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
             throws IOException {
         final NameValuePair[] data = {new NameValuePair("trtext", URLEncoder.encode(toTranslate, ENCODE)),
                 new NameValuePair("lp", URLEncoder.encode(langue1 + '_' + langue2, ENCODE)),
-                new NameValuePair("tt", "urltext"), new NameValuePair("intl", "tt"), new NameValuePair("doit", "done"),};
+                new NameValuePair("tt", "urltext"), new NameValuePair("intl", "tt"), new NameValuePair("doit", "done")};
         POST.setRequestBody(data);
         new HttpClient().executeMethod(POST);
         String page = POST.getResponseBodyAsString();

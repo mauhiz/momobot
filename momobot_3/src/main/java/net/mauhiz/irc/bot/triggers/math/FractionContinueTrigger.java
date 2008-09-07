@@ -9,7 +9,6 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -71,7 +70,8 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
     static String displayFraction(final List<Integer> fraction, final boolean exactMatch) {
         final List<Integer> safeCopy = new ArrayList<Integer>(fraction.size());
         safeCopy.addAll(fraction);
-        final StrBuilder retour = new StrBuilder("[");
+        final StringBuilder retour = new StringBuilder();
+        retour.append("[");
         if (safeCopy.isEmpty()) {
             retour.append("0]");
         } else {

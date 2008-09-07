@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
-
-import org.apache.commons.lang.text.StrBuilder;
 
 /**
  * @author mauhiz
@@ -31,7 +29,7 @@ public class Pickup extends ChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Pickup(final Channel channel1) {
+    public Pickup(final IrcChannel channel1) {
         super(channel1);
         for (char nom = 'a'; teams.size() < NB_TEAMS; ++nom) {
             teams.add(new Team(SIZE, Character.toString(nom)));
@@ -39,19 +37,19 @@ public class Pickup extends ChannelEvent {
     }
     
     /**
-     * @param element
+     * @param a
      *            l'élément à ajouter
      * @param choix
      *            le choix
      * @return un msg
      */
-    public final String add(final IrcUser element, final String choix) {
+    public final String add(final IrcUser a, final String choix) {
         if (isFull()) {
             return "C'est complet!";
         }
         synchronized (teams) {
             final Team assignedTeam = assignTeam(choix);
-            final Team currentTeam = getTeam(element);
+            final Team currentTeam = getTeam(a);
             if (null == currentTeam) {
                 /* element n'est pas encore présent */
                 if (null == assignedTeam) {
@@ -60,25 +58,25 @@ public class Pickup extends ChannelEvent {
                         /*
                          * on essaye de le mettre dans la première équipe qu'on trouve
                          */
-                        if (tryTeam.add(element)) {
-                            return element + " ajouté a la team " + tryTeam + '.';
+                        if (tryTeam.add(a)) {
+                            return a + " ajouté a la team " + tryTeam + '.';
                         }
                     }
                     /* on ne doit pas arriver là */
-                    throw new IllegalStateException("J'ai pas réussi à ajouter " + element + " au gather.");
+                    throw new IllegalStateException("J'ai pas réussi à ajouter " + a + " au gather.");
                 }
                 /* pas de problème, il a choisi, on l'ajoute */
-                assignedTeam.add(element);
-                return element + " ajouté a la team " + assignedTeam + '.';
+                assignedTeam.add(a);
+                return a + " ajouté a la team " + assignedTeam + '.';
             }
             /* element est déjà présent et ne veut pas changer d'équipe */
             if (null == assignedTeam || assignedTeam.equals(currentTeam)) {
                 return "Tu es déjà inscrit dans la team " + currentTeam + '.';
             }
             /* element est déjà présent et veut changer d'équipe */
-            currentTeam.remove(element);
-            assignedTeam.add(element);
-            return element + " déplacé vers la team " + assignedTeam + '.';
+            currentTeam.remove(a);
+            assignedTeam.add(a);
+            return a + " déplacé vers la team " + assignedTeam + '.';
         }
     }
     
@@ -103,13 +101,13 @@ public class Pickup extends ChannelEvent {
     }
     
     /**
-     * @param element
+     * @param a
      *            l'utilisateur à inscrire
      * @return le numero de la team dans laquelle il est inscrit
      */
-    public final Team getTeam(final IrcUser element) {
+    public final Team getTeam(final IrcUser a) {
         for (final Team team : teams) {
-            if (team.contains(element)) {
+            if (team.contains(a)) {
                 return team;
             }
         }
@@ -176,7 +174,7 @@ public class Pickup extends ChannelEvent {
      */
     @Override
     public final String toString() {
-        final StrBuilder retour = new StrBuilder();
+        final StringBuilder retour = new StringBuilder();
         for (final Team team : teams) {
             retour.append("Team " + team + ": ");
             for (final IrcUser user : team) {

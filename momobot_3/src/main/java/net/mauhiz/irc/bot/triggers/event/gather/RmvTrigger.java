@@ -1,11 +1,9 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
@@ -31,13 +29,13 @@ public class RmvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
+        IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {
             reply = "Aucun gather ou pickup n'est lance.";
         } else {
-            IrcUser user = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), false);
+            IrcUser user = im.getServer().findUser(new Mask(im.getFrom()), false);
             if (evt instanceof Gather) {
                 reply = ((Gather) evt).remove(user);
             } else if (evt instanceof Pickup) {

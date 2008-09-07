@@ -1,6 +1,6 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 
 /**
@@ -13,7 +13,7 @@ public class ChanPrivmsg extends Privmsg {
      * @param server1
      * @param message1
      */
-    public ChanPrivmsg(final String from1, final Channel toChan, final IrcServer server1, final String message1) {
+    public ChanPrivmsg(final String from1, final IrcChannel toChan, final IrcServer server1, final String message1) {
         super(from1, toChan.toString(), server1, message1);
     }
 }

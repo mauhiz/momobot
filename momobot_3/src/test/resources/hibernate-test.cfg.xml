@@ -12,5 +12,8 @@
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password">root</property>
 		<mapping resource="net/mauhiz/irc/bot/triggers/memo/Memo.xml" />
+		<mapping resource="net/mauhiz/irc/bot/triggers/dispo/Dispo.xml" />
+		<mapping resource="net/mauhiz/irc/bot/triggers/cwwb/Untreated.xml" />
+		<mapping resource="net/mauhiz/irc/bot/triggers/cwwb/War.xml" />
 	</session-factory>
 </hibernate-configuration>

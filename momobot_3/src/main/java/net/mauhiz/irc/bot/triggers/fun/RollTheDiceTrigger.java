@@ -3,7 +3,6 @@ package net.mauhiz.irc.bot.triggers.fun;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
@@ -33,7 +32,7 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         String args = getArgs(im.getMessage());
         // Récupère le nom du joueur
-        IrcUser user = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+        IrcUser user = im.getServer().findUser(new Mask(im.getFrom()), true);
         boolean engueuler = false;
         
         // 1000 par défaut;

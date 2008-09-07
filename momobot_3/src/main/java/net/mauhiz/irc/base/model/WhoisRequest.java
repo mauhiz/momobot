@@ -24,7 +24,7 @@ public class WhoisRequest extends AbstractRunnable {
     /**
      * tous les whois en cours.
      */
-    private static final Map<IrcUser, WhoisRequest> allWhois = new HashMap<IrcUser, WhoisRequest>();
+    private static final Map<String, WhoisRequest> ALL_WHOIS = new HashMap<String, WhoisRequest>();
     /**
      * logger
      */
@@ -92,24 +92,24 @@ public class WhoisRequest extends AbstractRunnable {
             return;
         }
         
-        IrcUser user = Users.getInstance(server).findUser(target, false);
+        IrcUser user = server.findUser(target, false);
         if (user == null) {
             /* user inconnu */
-            user = new IrcUser(target);
             purgatory = true;
         }
         /* fréquence maximale de whois */
-        WhoisRequest oldWr = allWhois.get(user);
+        WhoisRequest oldWr = ALL_WHOIS.get(target);
         /* whois en cours */
         if (oldWr != null && oldWr.sw.getTime() < TIMEOUT) {
+            /* whois precedent en cours */
             return;
-            /* echec du whois precedent */
+            /* else : echec du whois precedent : retry */
         }
         
         sw.start();
         
         setRunning(true);
-        allWhois.put(user, this);
+        ALL_WHOIS.put(target, this);
         Whois who = new Whois(null, null, server, target);
         control.sendMsg(who);
         while (isRunning()) {
@@ -147,7 +147,7 @@ public class WhoisRequest extends AbstractRunnable {
         if (boo) {
             respMsg = result.result[0];
             if (purgatory) {
-                Users.getInstance(server).findUser(target, true);
+                server.findUser(target, true);
             }
         } else {
             respMsg = "Could not whois " + target;

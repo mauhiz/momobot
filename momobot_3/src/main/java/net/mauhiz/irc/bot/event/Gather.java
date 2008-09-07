@@ -3,7 +3,7 @@ package net.mauhiz.irc.bot.event;
 import net.mauhiz.irc.DateUtils;
 import net.mauhiz.irc.base.Color;
 import net.mauhiz.irc.base.ColorUtils;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 
 import org.apache.commons.lang.math.RandomUtils;
@@ -15,6 +15,10 @@ import org.apache.log4j.Logger;
  */
 public class Gather extends ChannelEvent {
     /**
+     * La taille d'un gather.
+     */
+    public static final int DEFAULT_SIZE = 5;
+    /**
      * séparateur entre l'affichage des différents membres du gather.
      */
     private static final String DISPLAY_SEPARATOR = " - ";
@@ -22,15 +26,11 @@ public class Gather extends ChannelEvent {
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(Gather.class);
+    
     /**
      * 
      */
     private SeekWar seekWar;
-    
-    /**
-     * La taille d'un gather.
-     */
-    private final int SIZE;
     // /**
     // * Un serveur?
     // */
@@ -48,11 +48,15 @@ public class Gather extends ChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Gather(final Channel channel1) {
-        this(channel1, "eule^", 5);
+    public Gather(final IrcChannel channel1) {
+        this(channel1, "eule^", DEFAULT_SIZE);
     }
     
-    public Gather(final Channel channel1, final int nbPlayers) {
+    /**
+     * @param channel1
+     * @param nbPlayers
+     */
+    public Gather(final IrcChannel channel1, final int nbPlayers) {
         this(channel1, "eule^", nbPlayers);
     }
     
@@ -61,12 +65,12 @@ public class Gather extends ChannelEvent {
      *            le tag
      * @param channel1
      *            le channel
+     * @param size
      */
-    public Gather(final Channel channel1, final String tag, final int size) {
+    public Gather(final IrcChannel channel1, final String tag, final int size) {
         super(channel1);
         sw.start();
-        SIZE = size;
-        team = new Team(SIZE, tag);
+        team = new Team(size, tag);
     }
     
     /**
@@ -149,18 +153,18 @@ public class Gather extends ChannelEvent {
     // return this.serv != null;
     // }
     /**
-     * @param element
+     * @param user
      *            un type à virer
      * @return un message
      */
-    public final String remove(final IrcUser element) {
-        if (element == null) {
+    public final String remove(final IrcUser user) {
+        if (user == null) {
             return "";
         }
-        if (team.remove(element)) {
-            return element + " a été retiré du gather.";
+        if (team.remove(user)) {
+            return user + " a été retiré du gather.";
         }
-        return element + ": tu n'étais pas inscrit tfaçon.";
+        return user + ": tu n'étais pas inscrit tfaçon.";
     }
     
     /**

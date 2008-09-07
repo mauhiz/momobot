@@ -3,17 +3,19 @@ package net.mauhiz.irc.bot.triggers.event.tournament;
 import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+/**
+ * @author Topper
+ * 
+ */
 public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
@@ -30,7 +32,7 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
         IrcServer server = im.getServer();
-        Channel chan = Channels.getInstance(server).get(im.getTo());
+        IrcChannel chan = server.findChannel(im.getTo());
         ChannelEvent event = chan.getEvt();
         if (event == null) {
             Privmsg msg = Privmsg.buildAnswer(im, "Aucun tournois n'est lance.");
@@ -45,7 +47,7 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                 int score1 = Integer.parseInt(args[1]);
                 int score2 = Integer.parseInt(args[2]);
                 Tournament tn = (Tournament) event;
-                IrcUser ircuser = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+                IrcUser ircuser = im.getServer().findUser(new Mask(im.getFrom()), true);
                 List<String> str = tn.setScore(ircuser, id, score1, score2);
                 for (String element : str) {
                     Privmsg msg = Privmsg.buildAnswer(im, element);

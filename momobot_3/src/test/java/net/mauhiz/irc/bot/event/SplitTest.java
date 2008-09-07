@@ -2,8 +2,6 @@ package net.mauhiz.irc.bot.event;
 
 import java.util.List;
 
-import net.mauhiz.irc.base.data.Channel;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,8 +16,6 @@ public class SplitTest {
      */
     @Test
     public void testSplit() {
-        Channel chan = new Channel("#tsi.fr");
-        Gather gather = new Gather(chan);
         String[] str = {"ON", "\"127.06576.467:27015", "FAST", "ET", "BAN", "mdp:dtcdtc\""};
         SeekWar seekwar = new SeekWar();
         List<String> split = seekwar.split(str);

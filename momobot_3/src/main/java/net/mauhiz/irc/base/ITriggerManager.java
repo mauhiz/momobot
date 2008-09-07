@@ -7,4 +7,5 @@ import net.mauhiz.irc.base.msg.IIrcMessage;
  */
 public interface ITriggerManager {
     void processMsg(IIrcMessage msg, IrcControl ircControl);
+    void shutdown();
 }

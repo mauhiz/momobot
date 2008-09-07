@@ -35,11 +35,11 @@ public class Team extends ArrayList<IrcUser> {
      * @see java.util.ArrayList#add(java.lang.Object)
      */
     @Override
-    public boolean add(final IrcUser e) {
+    public boolean add(final IrcUser a) {
         if (isFull()) {
             throw new IllegalStateException("Team is full!");
         }
-        return super.add(e);
+        return super.add(a);
     }
     
     /**

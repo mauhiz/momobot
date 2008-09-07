@@ -1,8 +1,7 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
-import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
@@ -26,7 +25,7 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
+        IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String reply = "";
         if (evt == null) {

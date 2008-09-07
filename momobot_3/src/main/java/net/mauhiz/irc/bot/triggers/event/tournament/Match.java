@@ -45,10 +45,10 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param phase1
      * @param id1
      * @param map1
-     * @param team1_
+     * @param pTeam1
      */
-    public Match(final int phase1, final int id1, final String map1, final TournamentTeam team1_) {
-        team1 = team1_;
+    public Match(final int phase1, final int id1, final String map1, final TournamentTeam pTeam1) {
+        team1 = pTeam1;
         phase = phase1;
         map = map1;
         score[0] = 0;
@@ -64,19 +64,20 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param id1
      *            ID du match
      * @param map1
-     * @param team1_
+     * @param pTeam1
      *            team 1
-     * @param team2_
+     * @param pTeam2
      *            team 2
      */
-    public Match(final int phase1, final int id1, final String map1, final TournamentTeam team1_, final TournamentTeam team2_) {
+    public Match(final int phase1, final int id1, final String map1, final TournamentTeam pTeam1,
+            final TournamentTeam pTeam2) {
         // on met tjs les teams dans le bon sens
-        if (team1_.getId() > team2_.getId()) {
-            team2 = team1_;
-            team1 = team2_;
+        if (pTeam1.getId() > pTeam2.getId()) {
+            team2 = pTeam1;
+            team1 = pTeam2;
         } else {
-            team1 = team1_;
-            team2 = team2_;
+            team1 = pTeam1;
+            team2 = pTeam2;
         }
         
         phase = phase1;
@@ -92,16 +93,16 @@ public class Match extends ArrayList<TournamentTeam> {
     /**
      * 
      * @param oldmatch
-     * @param team2_
+     * @param pTeam2
      */
-    public Match(final Match oldmatch, final TournamentTeam team2_) {
-        if (oldmatch.team1.getId() > team2_.getId()) {
+    public Match(final Match oldmatch, final TournamentTeam pTeam2) {
+        if (oldmatch.team1.getId() > pTeam2.getId()) {
             // on switch team1 et team2
             team2 = oldmatch.team1;
-            team1 = team2_;
+            team1 = pTeam2;
         } else {
             team1 = oldmatch.team1;
-            team2 = team2_;
+            team2 = pTeam2;
         }
         phase = oldmatch.phase;
         map = oldmatch.map;
@@ -158,8 +159,7 @@ public class Match extends ArrayList<TournamentTeam> {
     
     /**
      * @param team
-     * @return
-     * 
+     * @return isTeamIn
      */
     public final boolean isTeamIn(final TournamentTeam team) {
         if (winner == null) {
@@ -177,6 +177,7 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param team
      * @param scoreTeam1
      * @param scoreTeam2
+     * @return reponse
      */
     public final String setScore(final TournamentTeam team, final int scoreTeam1, final int scoreTeam2) {
         if (team2 == null) {

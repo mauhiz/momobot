@@ -2,6 +2,8 @@ package net.mauhiz.irc;
 
 import java.text.Normalizer;
 
+import net.mauhiz.irc.base.IrcSpecialChars;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.text.StrBuilder;
@@ -21,6 +23,8 @@ public class MomoStringUtils {
     }
     
     /**
+     * TODO utiliser un MessageFormat
+     * 
      * @param seekmsg
      * @param nbPlayer
      * @param server
@@ -30,12 +34,22 @@ public class MomoStringUtils {
      */
     public static String genereSeekMessage(final String seekmsg, final int nbPlayer, final String server,
             final String level) {
-        String str;
-        str = seekmsg;
+        String str = seekmsg;
         str = str.replace("%P", String.valueOf(nbPlayer));
         str = str.replace("%S", server);
         str = str.replace("%L", level);
         return str;
+    }
+    /**
+     * @param toTest
+     *            le nom à tester
+     * @return si le nom est un channel ou nom
+     */
+    public static boolean isChannelName(final String toTest) {
+        if (StringUtils.isEmpty(toTest) || StringUtils.indexOfAny(toTest, IrcSpecialChars.Z_NOTCHSTRING) > 0) {
+            return false;
+        }
+        return toTest.charAt(0) == IrcSpecialChars.CHAN_DEFAULT || toTest.charAt(0) == IrcSpecialChars.CHAN_LOCAL;
     }
     /**
      * méthode pour le wquizz.
@@ -70,21 +84,21 @@ public class MomoStringUtils {
         temp = StringUtils.removeStart(temp, "dans ");
         return StringUtils.removeEnd(temp, "?");
     }
+    
     /**
      * @param seq
      *            une chaine à shaker
      * @return la chaine randomisee
      */
-    public static StrBuilder shuffle(final String seq) {
-        final StrBuilder input = new StrBuilder(seq);
-        final StrBuilder output = new StrBuilder();
-        int random;
+    public static String shuffle(final String seq) {
+        final StringBuilder input = new StringBuilder(seq);
+        final StringBuilder output = new StringBuilder(seq.length());
         for (int len = input.length(); len > 0; --len) {
-            random = RandomUtils.nextInt(len);
+            int random = RandomUtils.nextInt(len);
             output.append(input.charAt(random));
             input.deleteCharAt(random);
         }
-        return output;
+        return output.toString();
     }
     
 }

@@ -1,7 +1,6 @@
 package net.mauhiz.irc.bot.triggers.memo;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import junit.framework.Assert;
 import net.mauhiz.irc.HibernateUtils;
@@ -31,8 +30,7 @@ public class MemoTest {
         Query qry1 = session.getNamedQuery("getMemo");
         qry1.setString("key", "haroun");
         qry1.setString("serverAlias", "quakenet");
-        List results = qry1.list();
-        System.out.println(results);
+        System.out.println(qry1.list());
         
         Query qry2 = session.createQuery("from Memo where key = :key and serverAlias = :serverAlias");
         qry2.setString("key", "haroun");

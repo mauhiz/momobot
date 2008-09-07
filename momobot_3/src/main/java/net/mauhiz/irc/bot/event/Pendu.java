@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.mauhiz.irc.MomoStringUtils;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -112,7 +112,7 @@ public class Pendu extends ChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Pendu(final Channel channel1) {
+    public Pendu(final IrcChannel channel1) {
         super(channel1);
         solutionPure = getNextMot();
         solution = MomoStringUtils.effaceAccents(solutionPure);

@@ -3,6 +3,7 @@ package net.mauhiz.irc.bot;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
+import net.mauhiz.irc.AbstractRunnable;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.ITriggerManager;
 import net.mauhiz.irc.base.IrcControl;
@@ -18,6 +19,7 @@ import net.mauhiz.irc.bot.triggers.IJoinTrigger;
 import net.mauhiz.irc.bot.triggers.INoticeTrigger;
 import net.mauhiz.irc.bot.triggers.IPartTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
+import net.mauhiz.irc.bot.triggers.ITextTrigger;
 import net.mauhiz.irc.bot.triggers.ITrigger;
 
 import org.apache.commons.beanutils.ConstructorUtils;
@@ -32,7 +34,7 @@ public class MmbTriggerManager implements ITriggerManager {
      * @author mauhiz
      * 
      */
-    class TriggerLoop extends Thread {
+    class TriggerLoop extends AbstractRunnable {
         private final IIrcControl control;
         private final IIrcMessage msg;
         
@@ -41,7 +43,6 @@ public class MmbTriggerManager implements ITriggerManager {
          * @param msg1
          */
         public TriggerLoop(final IIrcMessage msg1, final IIrcControl control1) {
-            super("Trigger processing");
             control = control1;
             msg = msg1;
         }
@@ -148,9 +149,11 @@ public class MmbTriggerManager implements ITriggerManager {
             addTrigger(trigClass, (Object[]) null);
         } else {
             for (String trigText : trigTexts) {
-                String fullTrigText = prefix == null ? trigText : prefix + trigText;
-                addTrigger(trigClass, fullTrigText);
-                LOG.debug("loading trigger with command '" + fullTrigText + "': " + trigClass.getSimpleName());
+                if (prefix != null) {
+                    trigText = prefix + trigText;
+                }
+                addTrigger(trigClass, trigText);
+                LOG.debug("loading trigger with command '" + trigText + "': " + trigClass.getSimpleName());
             }
         }
         myKeeper.update();
@@ -167,7 +170,7 @@ public class MmbTriggerManager implements ITriggerManager {
             return;
         }
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
-        new TriggerLoop(msg, control).start();
+        TriggerExecutor.getInstance().execute(new TriggerLoop(msg, control));
     }
     
     /**
@@ -182,8 +185,8 @@ public class MmbTriggerManager implements ITriggerManager {
             }
             for (ITrigger every : myKeeper) {
                 if (toRemove.equals(every.getClass())) {
-                    if (every instanceof AbstractTextTrigger && !ArrayUtils.isEmpty(texts)) {
-                        AbstractTextTrigger textTrigger = (AbstractTextTrigger) every;
+                    if (every instanceof ITextTrigger && !ArrayUtils.isEmpty(texts)) {
+                        ITextTrigger textTrigger = (ITextTrigger) every;
                         for (String text : texts) {
                             if (textTrigger.getTriggerText().equals(text)) {
                                 myKeeper.remove(every);
@@ -198,5 +201,13 @@ public class MmbTriggerManager implements ITriggerManager {
         } catch (ClassNotFoundException e) {
             LOG.warn(e);
         }
+    }
+    
+    /**
+     * @see net.mauhiz.irc.base.ITriggerManager#shutdown()
+     */
+    @Override
+    public void shutdown() {
+        TriggerExecutor.getInstance().shutdown();
     }
 }

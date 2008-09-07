@@ -1,5 +1,6 @@
 package net.mauhiz.irc.base.data;
 
+import net.mauhiz.irc.base.data.qnet.QnetServer;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Kick;
@@ -26,7 +27,7 @@ public class IrcServerTest {
      */
     @Before
     public void setUp() throws Exception {
-        server = new IrcServer("irc://irc.quakenet.org:6667/");
+        server = new QnetServer("irc://irc.quakenet.org:6667/");
         server.setMyNick("momobot3");
         server.setMyLogin("mmb");
         server.setMyFullName("MMB v3");
@@ -34,7 +35,7 @@ public class IrcServerTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#buildFromRaw(java.lang.String)}.
+     * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
     @Test
     public void testBuildFromRaw1() {
@@ -48,7 +49,7 @@ public class IrcServerTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#buildFromRaw(java.lang.String)}.
+     * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
     @Test
     public void testBuildFromRaw2() {
@@ -62,7 +63,7 @@ public class IrcServerTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#buildFromRaw(java.lang.String)}.
+     * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
     @Test
     public void testBuildFromRaw3() {
@@ -75,7 +76,7 @@ public class IrcServerTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#buildFromRaw(java.lang.String)}.
+     * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
     @Test
     public void testBuildFromRaw4() {
@@ -88,7 +89,7 @@ public class IrcServerTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#buildFromRaw(java.lang.String)}.
+     * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
     @Test
     public void testBuildFromRaw5() {
@@ -101,7 +102,7 @@ public class IrcServerTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#buildFromRaw(java.lang.String)}.
+     * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
     @Test
     public void testKick() {

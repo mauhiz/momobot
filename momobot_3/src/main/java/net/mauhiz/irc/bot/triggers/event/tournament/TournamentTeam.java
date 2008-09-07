@@ -36,11 +36,13 @@ public class TournamentTeam extends ArrayList<String> {
     
     /**
      * @param size1
+     * @param id1
      * @param nom1
      * @param country1
-     * 
+     * @param ircuser
      */
-    public TournamentTeam(final int size1, final int id1, final String nom1, final Locale country1, final IrcUser ircuser) {
+    public TournamentTeam(final int size1, final int id1, final String nom1, final Locale country1,
+            final IrcUser ircuser) {
         super(size1);
         capacity = size1;
         nom = nom1;
@@ -71,9 +73,8 @@ public class TournamentTeam extends ArrayList<String> {
     }
     
     /**
-     * 
-     * 
-     **/
+     * @return {@link #nom}
+     */
     public String getNom() {
         return nom;
     }
@@ -87,10 +88,10 @@ public class TournamentTeam extends ArrayList<String> {
     
     /**
      * @param ircuser
-     * @return
+     * @return if ircuser is Owner
      * 
      */
-    public boolean isTheOwner(final IrcUser ircuser) {
+    public boolean isOwner(final IrcUser ircuser) {
         if (owner.equals(ircuser)) {
             return true;
         }
@@ -104,7 +105,7 @@ public class TournamentTeam extends ArrayList<String> {
         return capacity - size();
     }
     /**
-     * 
+     * @param country1
      */
     public void setCountry(final Locale country1) {
         country = country1;

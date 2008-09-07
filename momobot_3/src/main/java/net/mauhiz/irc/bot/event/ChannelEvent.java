@@ -1,11 +1,12 @@
 package net.mauhiz.irc.bot.event;
 
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.AbstractHook;
+import net.mauhiz.irc.base.data.IrcChannel;
 
 /**
  * @author mauhiz
  */
-public abstract class ChannelEvent implements IChannelEvent {
+public abstract class ChannelEvent extends AbstractHook<IrcChannel> implements IChannelEvent {
     /**
      * running
      */
@@ -14,8 +15,8 @@ public abstract class ChannelEvent implements IChannelEvent {
      * @param chan
      *            le channel
      */
-    public ChannelEvent(final Channel chan) {
-        chan.setEvent(this);
+    public ChannelEvent(final IrcChannel chan) {
+        super(chan);
     }
     
     /**

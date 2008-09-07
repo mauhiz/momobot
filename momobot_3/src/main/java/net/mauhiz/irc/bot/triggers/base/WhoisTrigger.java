@@ -30,7 +30,7 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     @Override
     public void doTrigger(final Join im, final IIrcControl control) {
         // if (MomoBot.AUTOJOIN.contains(im.getChan().toLowerCase(Locale.US))) {
-        new WhoisRequest(im.getFrom(), im.getServer(), control).execute();
+        new WhoisRequest(im.getFrom(), im.getServer(), control).execute("Whois Request");
         // }
     }
     
@@ -40,6 +40,6 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(final Privmsg pme, final IIrcControl control) {
-        new WhoisRequest(getArgs(pme.getMessage()), pme.getServer(), control, pme.getFrom()).execute();
+        new WhoisRequest(getArgs(pme.getMessage()), pme.getServer(), control, pme.getFrom()).execute("Whois Request");
     }
 }

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.mauhiz.irc.AbstractRunnable;
 import net.mauhiz.irc.bot.triggers.ITrigger;
 
 /**
@@ -13,9 +14,9 @@ class TriggerKeeper implements Iterable<ITrigger> {
     /**
      * @author mauhiz
      */
-    class UpdaterThread extends Thread {
+    class UpdaterThread extends AbstractRunnable {
         /**
-         * @see java.lang.Thread#run()
+         * @see java.lang.Runnable#run()
          */
         @Override
         public void run() {
@@ -91,6 +92,6 @@ class TriggerKeeper implements Iterable<ITrigger> {
      * maj
      */
     void update() {
-        new UpdaterThread().start();
+        new UpdaterThread().execute("Trigger Updater");
     }
 }

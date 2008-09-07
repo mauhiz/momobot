@@ -1,18 +1,19 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.GatherAndSeek;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+/**
+ * @author Topper
+ */
 public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
@@ -28,7 +29,7 @@ public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivms
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
         IrcServer server = cme.getServer();
-        Channel chan = Channels.getInstance(server).get(cme.getTo());
+        IrcChannel chan = server.findChannel(cme.getTo());
         ChannelEvent evt = chan.getEvt();
         String respMsg = "";
         if (evt != null) {
@@ -38,11 +39,11 @@ public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivms
             try {
                 int nbPlayers = Integer.parseInt(getArgs(cme.getMessage()));
                 if (nbPlayers > 0) {
-                    IrcUser user = Users.getInstance(server).findUser(new Mask(cme.getFrom()), true);
+                    IrcUser user = server.findUser(new Mask(cme.getFrom()), true);
                     respMsg = "Gather lancé par " + user;
                     GatherAndSeek gath = new GatherAndSeek(chan, nbPlayers);
                     for (int i = 0; i < nbPlayers; i++) {
-                        IrcUser ircuser = new IrcUser("P" + (i + 1));
+                        IrcUser ircuser = new FakeUser("P" + (i + 1));
                         gath.add(ircuser);
                     }
                     

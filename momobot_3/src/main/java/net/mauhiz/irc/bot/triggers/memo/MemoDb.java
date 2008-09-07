@@ -1,44 +1,35 @@
 package net.mauhiz.irc.bot.triggers.memo;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.mauhiz.irc.HibernateUtils;
+import net.mauhiz.irc.base.data.AbstractHook;
 import net.mauhiz.irc.base.data.IrcServer;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
 /**
  * @author mauhiz
  */
-public class MemoDb {
-    private static final Map<IrcServer, MemoDb> DBS = new HashMap<IrcServer, MemoDb>();
-    
-    /**
-     * logger.
-     */
-    private static final Logger LOG = Logger.getLogger(MemoDb.class);
+public class MemoDb extends AbstractHook<IrcServer> {
     /**
      * @param server
-     * @return
+     * @return instance
      */
     public static MemoDb getInstance(final IrcServer server) {
-        MemoDb db = DBS.get(server);
-        if (db == null) {
-            db = new MemoDb(server);
-            DBS.put(server, db);
+        MemoDb ret = server.getHookedObject(MemoDb.class);
+        if (ret == null) {
+            return new MemoDb(server);
         }
-        return db;
+        return ret;
     }
-    IrcServer server;
     
     /**
      * @param server1
      */
     public MemoDb(final IrcServer server1) {
-        server = server1;
+        super(server1);
     }
     
     /**
@@ -47,8 +38,12 @@ public class MemoDb {
     public int countMemos() {
         Query countQry = HibernateUtils.currentSession().createQuery(
                 "select count(1) from Memo where serverAlias = :serverAlias");
-        countQry.setString("serverAlias", server.getAlias());
-        return (Integer) countQry.uniqueResult();
+        countQry.setString("server.getAlias()", hook.getAlias());
+        Integer uniqueResult = (Integer) countQry.uniqueResult();
+        if (uniqueResult == null) {
+            return 0;
+        }
+        return uniqueResult.intValue();
     }
     
     /**
@@ -69,18 +64,14 @@ public class MemoDb {
      */
     public String getMemos() {
         Query getQry = HibernateUtils.currentSession().createQuery(
-                "select value from Memo where serverAlias = :serverAlias");
-        getQry.setString("serverAlias", server.getAlias());
+                "select key from Memo where serverAlias = :serverAlias");
+        getQry.setString("serverAlias", hook.getAlias());
         List<String> results = getQry.list();
         if (results.isEmpty()) {
             return "Pas de memo pour l'instant";
         }
         
-        final StringBuilder msg = new StringBuilder("mémos :");
-        for (final String result : results) {
-            msg.append(' ').append(result);
-        }
-        return msg.toString();
+        return "mémos : " + StringUtils.join(results, ' ');
     }
     
     /**
@@ -91,7 +82,7 @@ public class MemoDb {
     public String getValue(final String key) {
         Query getQry = HibernateUtils.currentSession().createQuery(
                 "select value from Memo where serverAlias = :serverAlias and key = :key");
-        getQry.setString("serverAlias", server.getAlias());
+        getQry.setString("serverAlias", hook.getAlias());
         getQry.setString("key", key);
         return (String) getQry.uniqueResult();
     }
@@ -109,7 +100,7 @@ public class MemoDb {
         HibernateUtils.currentSession().getTransaction().begin();
         if (oldValue == null) {
             Memo memo = new Memo();
-            memo.setServerAlias(server.getAlias());
+            memo.setServerAlias(hook.getAlias());
             memo.setKey(key);
             memo.setValue(value);
             HibernateUtils.currentSession().save(memo);
@@ -118,7 +109,7 @@ public class MemoDb {
             /* TODO mise a jour */
             Query getQry = HibernateUtils.currentSession().createQuery(
                     "update Memo set value = :value where serverAlias = :serverAlias and key = :key");
-            getQry.setString("serverAlias", server.getAlias());
+            getQry.setString("serverAlias", hook.getAlias());
             getQry.setString("key", key);
             getQry.setString("value", value);
             int updated = getQry.executeUpdate();

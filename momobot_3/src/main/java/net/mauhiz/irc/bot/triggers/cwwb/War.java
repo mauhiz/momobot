@@ -79,24 +79,20 @@ public class War {
             if (matcherNbJoueurs.group(1).compareTo(matcherNbJoueurs.group(3)) == 0) {
                 nbjoueurs = Integer.parseInt(matcherNbJoueurs.group(1));
             }
-            /*
-             * int i; for(i=0; i<=matcherNbJoueurs.groupCount(); i++){ System.out.println("Groupe " + i + " : '" +
-             * matcherNbJoueurs.group(i)+"'");
-             * 
-             * }
-             */
-        }
-        /*
-         * else if(matcherNbJoueursShort.find()){
-         * 
-         * // TODO: tester le code ci dessous if(matcherNbJoueurs.group(1).compareTo(matcherNbJoueurs.group(3)) == 0){
-         * this.nbjoueurs = Integer.parseInt(matcherNbJoueurs.group(1)); } int i; for(i=0;
-         * i<=matcherNbJoueursShort.groupCount(); i++){ System.out.println("Groupe " + i + " : '" +
-         * matcherNbJoueursShort.group(i)+"'");
-         * 
-         * } }
-         */
-        else {
+            // for(int i=0; i<=matcherNbJoueurs.groupCount(); i++){
+            // System.out.println("Groupe " + i + " : '" +
+            // matcherNbJoueurs.group(i)+"'");
+            // }
+            // } else if(matcherNbJoueursShort.find()){
+            // TODO: tester le code ci dessous
+            // if (matcherNbJoueurs.group(1).compareTo(matcherNbJoueurs.group(3)) == 0) {
+            // this.nbjoueurs = Integer.parseInt(matcherNbJoueurs.group(1));
+            // }
+            // for (int i = 0; i <= matcherNbJoueursShort.groupCount(); i++) {
+            // System.out.println("Groupe " + i + " : '" + matcherNbJoueursShort.group(i) + "'");
+            // }
+            
+        } else {
             // TODO : mettre le 55 en regexp (pour que ca marche aussi avec 33)
             if (seekMessage.contains("pcw") || seekMessage.contains("war") || seekMessage.contains("pracc")
                     || seekMessage.contains("55") || seekMessage.contains("5 5")) {

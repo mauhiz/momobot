@@ -39,7 +39,7 @@ public class IrcInput implements IIrcInput {
         while (true) {
             try {
                 String next = reader.readLine();
-                LOG.debug("<< " + next);
+                LOG.info("<< " + next);
                 if (next == null) {
                     LOG.warn("disconnected");
                     break;

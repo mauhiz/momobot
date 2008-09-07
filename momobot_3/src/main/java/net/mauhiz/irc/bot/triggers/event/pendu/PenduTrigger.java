@@ -3,8 +3,7 @@ package net.mauhiz.irc.bot.triggers.event.pendu;
 import java.util.Locale;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
-import net.mauhiz.irc.base.model.Channels;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Pendu;
@@ -29,7 +28,7 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
      */
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        Channel chan = Channels.getInstance(cme.getServer()).get(cme.getTo());
+        IrcChannel chan = cme.getServer().findChannel(cme.getTo());
         if (chan == null) {
             /* c est un msg prive */
             return;
@@ -56,7 +55,7 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
             Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
             control.sendMsg(resp);
             if (!pendu.isRunning()) {
-                chan.setEvent(null);
+                chan.stopEvent();
             }
         }
     }

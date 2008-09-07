@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.log4j.Logger;
 
 /**
@@ -74,7 +73,7 @@ public class NetUtils {
             throw new IllegalArgumentException("short array must be of length " + IP_FIELDS);
         }
         try {
-            StrBuilder name = new StrBuilder();
+            StringBuilder name = new StringBuilder();
             for (char ipField : ip) {
                 name.append('.');
                 name.append((int) ipField);

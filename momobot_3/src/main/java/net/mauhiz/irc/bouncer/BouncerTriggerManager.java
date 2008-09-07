@@ -34,4 +34,12 @@ public class BouncerTriggerManager implements ITriggerManager, Runnable {
             break;
         }
     }
+    
+    /**
+     * @see net.mauhiz.irc.base.ITriggerManager#shutdown()
+     */
+    @Override
+    public void shutdown() {
+        // do nothing
+    }
 }

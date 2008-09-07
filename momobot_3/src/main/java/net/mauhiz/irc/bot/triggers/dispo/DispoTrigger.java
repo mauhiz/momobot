@@ -8,7 +8,6 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.data.qnet.QnetUser;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.model.WhoisRequest;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -42,7 +41,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        IrcUser user = Users.getInstance(cme.getServer()).findUser(new Mask(cme.getFrom()), false);
+        IrcUser user = cme.getServer().findUser(new Mask(cme.getFrom()), false);
         if (!(user instanceof QnetUser)) {
             LOG.error("user non Qnet: " + user);
             return;
@@ -50,7 +49,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         final QnetUser quser = (QnetUser) user;
         if (StringUtils.isEmpty(quser.getAuth())) {
             final WhoisRequest whois = new WhoisRequest(quser.getNick(), cme.getServer(), control);
-            whois.execute();
+            whois.execute("Whois Request");
             /* on attend le whois */
             while (whois.isRunning()) {
                 Thread.yield();

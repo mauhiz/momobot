@@ -1,11 +1,11 @@
 package net.mauhiz.irc.base.model;
 
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.qnet.QnetServer;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -14,7 +14,7 @@ import org.junit.Test;
 public class UsersTest {
     static IrcServer qnet;
     static {
-        qnet = new IrcServer("irc://uk.quakenet.org:6667/");
+        qnet = new QnetServer("irc://uk.quakenet.org:6667/");
         qnet.setMyLogin("mmb");
         qnet.setMyFullName("momobot le 3eme");
         qnet.setAlias("Quakenet");
@@ -22,43 +22,35 @@ public class UsersTest {
     }
     
     /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-        Users.getInstance(qnet);
-    }
-    
-    /**
-     * Test method for {@link net.mauhiz.irc.base.model.Channels#getChannels(IrcUser)}.
+     * 
      */
     @Test
     public void testMultiChan() {
-        Channel chan = Channels.getInstance(qnet).get("#tsi.Fr");
-        IrcUser peon = Users.getInstance(qnet).findUser("Truite", true);
-        IrcUser peon2 = Users.getInstance(qnet).findUser("Gruiiik", true);
+        IrcChannel chan = qnet.findChannel("#tsi.Fr", true);
+        IrcUser peon = qnet.findUser("Truite", true);
+        IrcUser peon2 = qnet.findUser("Gruiiik", true);
         chan.add(peon);
         chan.add(peon2);
-        Channel chan2 = Channels.getInstance(qnet).get("#-duCk-");
+        IrcChannel chan2 = qnet.findChannel("#-duCk-", true);
         chan2.add(peon2);
-        Assert.assertEquals(2, Channels.getInstance(qnet).getChannels(peon2).size());
-        Assert.assertEquals(2, Users.getInstance(qnet).size());
+        Assert.assertEquals(2, qnet.getChannelsForUser(peon2).size());
+        Assert.assertEquals(2, qnet.countUsers());
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.base.model.Users#contains(Object)}.
+     * 
      */
     @Test
     public void testSingleChan() {
-        Channel chan = Channels.getInstance(qnet).get("#tsi.Fr");
-        Channel chan2 = Channels.getInstance(qnet).get("#tsi.fr");
+        IrcChannel chan = qnet.findChannel("#tsi.Fr", true);
+        IrcChannel chan2 = qnet.findChannel("#tsi.fr", true);
         Assert.assertTrue(chan == chan2);
-        IrcUser peon = Users.getInstance(qnet).findUser("Truite", true);
-        IrcUser peon2 = Users.getInstance(qnet).findUser("Gruiiik", true);
+        IrcUser peon = qnet.findUser("Truite", true);
+        IrcUser peon2 = qnet.findUser("Gruiiik", true);
         chan.add(peon);
         chan.add(peon2);
-        Assert.assertTrue(Users.getInstance(qnet).contains(peon));
-        Assert.assertTrue(Users.getInstance(qnet).contains(peon2));
+        Assert.assertNotNull(qnet.findUser(peon.getNick(), false));
+        Assert.assertNotNull(qnet.findUser(peon.getNick(), false));
         Assert.assertEquals(2, chan.size());
     }
 }

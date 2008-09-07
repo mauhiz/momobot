@@ -1,9 +1,8 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.model.Channels;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -28,7 +27,7 @@ public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTr
     @Override
     public void doTrigger(final Privmsg cme, final IIrcControl control) {
         IrcServer server = cme.getServer();
-        Channel chan = Channels.getInstance(server).get(cme.getTo());
+        IrcChannel chan = server.findChannel(cme.getTo());
         ChannelEvent evt = chan.getEvt();
         String respMsg;
         if (evt != null) {

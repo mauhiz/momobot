@@ -1,10 +1,8 @@
 package net.mauhiz.irc.bot.automate;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.mauhiz.irc.AbstractRunnable;
-import net.mauhiz.irc.base.IrcControl;
+import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.AbstractHook;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -15,10 +13,28 @@ import net.mauhiz.irc.base.msg.Privmsg;
  * @author mauhiz
  */
 public abstract class Automate extends AbstractRunnable {
+    
     /**
+     * @author mauhiz
      * 
      */
-    static final Map<IrcUser, Automate> AUTOMATES = new HashMap<IrcUser, Automate>();
+    static class AutomateHook extends AbstractHook<IrcUser> {
+        
+        /**
+         * @param hookable
+         */
+        public AutomateHook(final IrcUser hookable) {
+            super(hookable);
+        }
+        
+        /**
+         * @return #hook
+         */
+        IrcUser getUser() {
+            return hook;
+        }
+        
+    }
     /**
      * éteint.
      */
@@ -31,16 +47,16 @@ public abstract class Automate extends AbstractRunnable {
      * indique que l automate est demarre.
      */
     protected static final int STARTED = 1;
-    private final IrcControl control;
+    protected final IIrcControl control;
     /**
      * l'état, off par défaut.
      */
     private int etat = OFF;
-    private final IrcServer server;
     /**
      * L'user associé.
      */
-    private final IrcUser user;
+    private final AutomateHook myHook;
+    private final IrcServer server;
     
     /**
      * @param user1
@@ -48,19 +64,11 @@ public abstract class Automate extends AbstractRunnable {
      * @param control1
      * @param server1
      */
-    public Automate(final IrcUser user1, final IrcControl control1, final IrcServer server1) {
+    public Automate(final IrcUser user1, final IIrcControl control1, final IrcServer server1) {
         super();
-        user = user1;
         control = control1;
         server = server1;
-        AUTOMATES.put(user1, this);
-    }
-    
-    /**
-     * @return {@link #control}
-     */
-    public IrcControl getControl() {
-        return control;
+        myHook = new AutomateHook(user1);
     }
     
     /**
@@ -80,15 +88,15 @@ public abstract class Automate extends AbstractRunnable {
     /**
      * @return le user
      */
-    public final IrcUser getUser() {
-        return user;
+    protected final IrcUser getUser() {
+        return myHook.getUser();
     }
     
     /**
      * @param text
      */
     protected void sendMsgToUser(final String text) {
-        Privmsg msg = new Privmsg(null, user.getNick(), server, text);
+        Privmsg msg = new Privmsg(null, getUser().getNick(), server, text);
         control.sendMsg(msg);
     }
     

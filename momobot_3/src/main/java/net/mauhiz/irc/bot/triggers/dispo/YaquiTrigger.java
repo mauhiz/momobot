@@ -19,16 +19,11 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
 public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    /**
-     * logger.
-     */
-    private static final Logger LOG = Logger.getLogger(YaquiTrigger.class);
     /**
      * un espace.
      */

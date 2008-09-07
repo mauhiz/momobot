@@ -2,6 +2,7 @@ package net.mauhiz.irc.base;
 
 import java.io.IOException;
 
+import net.mauhiz.irc.AbstractRunnable;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.User;
@@ -17,14 +18,14 @@ public class IrcIO extends SocketClient implements IIrcIO {
      * @author mauhiz
      */
     enum Status {
-        CONNECTED, CONNECTING, DISCONNECTED;
+        CONNECTED, CONNECTING, DISCONNECTED, DISCONNECTING;
     }
     /**
      * logger
      */
     private static final Logger LOG = Logger.getLogger(IrcIO.class);
     private IIrcControl control;
-    private IIrcOutput output;
+    private IrcOutput output;
     
     private Status status = Status.DISCONNECTED;
     
@@ -54,15 +55,9 @@ public class IrcIO extends SocketClient implements IIrcIO {
      */
     @Override
     public void disconnect() {
-        status = Status.DISCONNECTED;
+        status = Status.DISCONNECTING;
         output.setRunning(false);
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            LOG.error(e);
-            Thread.currentThread().interrupt();
-            return;
-        }
+        AbstractRunnable.sleep(2000);
         if (isConnected()) {
             try {
                 super.disconnect();
@@ -70,7 +65,7 @@ public class IrcIO extends SocketClient implements IIrcIO {
                 LOG.error(ioe, ioe);
             }
         }
-        
+        status = Status.DISCONNECTED;
     }
     
     /**

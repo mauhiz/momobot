@@ -8,6 +8,8 @@ import net.mauhiz.irc.base.ITriggerManager;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 
+import org.eclipse.swt.widgets.Display;
+
 /**
  * @author mauhiz
  */
@@ -22,6 +24,9 @@ public class GuiTriggerManager implements ITriggerManager {
         return client;
     }
     
+    /**
+     * @return next msg
+     */
     public IIrcMessage nextMsg() {
         return incoming.poll();
     }
@@ -41,5 +46,13 @@ public class GuiTriggerManager implements ITriggerManager {
             Thread.currentThread().interrupt();
             throw new IllegalStateException(e);
         }
+    }
+    
+    /**
+     * @see net.mauhiz.irc.base.ITriggerManager#shutdown()
+     */
+    @Override
+    public void shutdown() {
+        Display.getDefault().dispose();
     }
 }

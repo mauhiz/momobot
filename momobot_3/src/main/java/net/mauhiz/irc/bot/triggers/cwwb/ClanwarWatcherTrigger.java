@@ -17,7 +17,7 @@ import org.hibernate.SQLQuery;
  * @author abby
  */
 public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQuitTrigger {
-    public static final String[] IGNORED_NICKS = {"[CW|FR]", "Q", "S"};
+    private static final String[] IGNORED_NICKS = {"[CW|FR]", "Q", "S"};
     
     /**
      * @throws IOException
@@ -74,13 +74,23 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
     /**
      * @see net.mauhiz.irc.bot.triggers.ITextTrigger#getTriggerHelp()
      */
+    @Override
     public String getTriggerHelp() {
+        return "";
+    }
+    
+    /**
+     * @see net.mauhiz.irc.bot.triggers.ITextTrigger#getTriggerText()
+     */
+    @Override
+    public String getTriggerText() {
         return null;
     }
     
     /**
      * @see net.mauhiz.irc.bot.triggers.ITextTrigger#isActivatedBy(java.lang.String)
      */
+    @Override
     public boolean isActivatedBy(final String text) {
         return true;
     }

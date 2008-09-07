@@ -1,11 +1,9 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.Channel;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.Channels;
-import net.mauhiz.irc.base.model.Users;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Pickup;
@@ -30,13 +28,13 @@ public class PickupTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     @Override
     public void doTrigger(final Privmsg im, final IIrcControl control) {
-        Channel chan = Channels.getInstance(im.getServer()).get(im.getTo());
+        IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String resp;
         if (evt != null) {
             resp = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + chan;
         } else {
-            IrcUser user = Users.getInstance(im.getServer()).findUser(new Mask(im.getFrom()), true);
+            IrcUser user = im.getServer().findUser(new Mask(im.getFrom()), true);
             new Pickup(chan).add(user, null);
             
             resp = "Pickup lancé par " + user;
