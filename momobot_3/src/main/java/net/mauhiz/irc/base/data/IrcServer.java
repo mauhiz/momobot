@@ -11,16 +11,39 @@ import net.mauhiz.irc.base.msg.IIrcMessage;
  */
 public interface IrcServer extends IHookable<IrcServer> {
     
+    /**
+     * @param test
+     * @return
+     */
     IIrcMessage buildFromRaw(String test);
     
     int countUsers();
     
+    /**
+     * @param chanName
+     * @return
+     */
     IrcChannel findChannel(String chanName);
     
+    /**
+     * @param chanName
+     * @param b
+     * @return
+     */
     IrcChannel findChannel(String chanName, boolean b);
     
+    /**
+     * @param mask
+     * @param b
+     * @return
+     */
     IrcUser findUser(Mask mask, boolean b);
     
+    /**
+     * @param target
+     * @param b
+     * @return
+     */
     IrcUser findUser(String target, boolean b);
     
     InetSocketAddress getAddress();
@@ -29,7 +52,11 @@ public interface IrcServer extends IHookable<IrcServer> {
     
     Iterable<IrcChannel> getChannels();
     
-    Set<IrcChannel> getChannelsForUser(IrcUser peon2);
+    /**
+     * @param smith
+     * @return
+     */
+    Set<IrcChannel> getChannelsForUser(IrcUser smith);
     
     String getMyFullName();
     
@@ -37,15 +64,38 @@ public interface IrcServer extends IHookable<IrcServer> {
     
     String getMyNick();
     
+    /**
+     * @param channel
+     */
+    void remove(final IrcChannel channel);
+    /**
+     * @param quitter
+     */
     void remove(IrcUser quitter);
     
-    void setAlias(String string);
+    /**
+     * @param alias
+     */
+    void setAlias(String alias);
     
-    void setMyFullName(String string);
+    /**
+     * @param fullName
+     */
+    void setMyFullName(String fullName);
     
-    void setMyLogin(String username);
+    /**
+     * @param login
+     */
+    void setMyLogin(String login);
     
+    /**
+     * @param username
+     */
     void setMyNick(String username);
     
+    /**
+     * @param target
+     * @param newNick
+     */
     void updateNick(IrcUser target, String newNick);
 }

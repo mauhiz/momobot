@@ -144,7 +144,7 @@ public class WhoisRequest extends AbstractRunnable {
     public final void setSuccess(final boolean boo) {
         setRunning(false);
         String respMsg;
-        if (boo) {
+        if (boo && result != null) {
             respMsg = result.result[0];
             if (purgatory) {
                 server.findUser(target, true);

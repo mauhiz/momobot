@@ -48,7 +48,7 @@ public class SeekWar2 extends ChannelEvent {
     private static final int SEEK_TIMEOUT;
     static {
         try {
-            Configuration cfg = new PropertiesConfiguration("seekar/skwar.properties");
+            Configuration cfg = new PropertiesConfiguration("seekwar/skwar.properties");
             // On charge la cfg
             SEEK_CHANNELS = cfg.getStringArray("skwar.SEEK_CHANS");
             SEEK_TIMEOUT = cfg.getInt("skwar.TimeOut");
@@ -97,7 +97,7 @@ public class SeekWar2 extends ChannelEvent {
         level = DEFAULT_LVL;
         // on crée le thread de time-out
         threadTimeOut = new SeekWarThreadTimeOut(this, SEEK_TIMEOUT);
-        threadTimeOut.execute("SeekWar TimeOut");
+        threadTimeOut.startAs("SeekWar TimeOut");
         
         // on traite les parametres entrants
         Pattern pat = Pattern.compile("(abc)");
@@ -303,7 +303,7 @@ public class SeekWar2 extends ChannelEvent {
                 
             case 66 :
                 // Le bot PV le mec qui a envoie un msg de seek qui match
-                user.add(privmsg.getTo().toString() + " :" + privmsg.getMessage());
+                user.add(privmsg.getTo() + " :" + privmsg.getMessage());
                 if (DEFAULT_SERV) {
                     Privmsg msga = new Privmsg(null, user.getNick(), ircServer, user.getNick());
                     Privmsg msga1 = new Privmsg(null, user.getNick(), ircServer, "lvl?");

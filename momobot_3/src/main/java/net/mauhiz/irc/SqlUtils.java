@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Map.Entry;
@@ -23,7 +23,7 @@ public class SqlUtils {
     /**
      * mes maîtres.
      */
-    private static final Collection<String> MASTERS = new TreeSet<String>();
+    private static final Set<String> MASTERS = new TreeSet<String>();
     /**
      * (steamid, qauth).
      */

@@ -1,6 +1,5 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
@@ -41,8 +40,7 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
         }
         
         if (event instanceof Tournament) {
-            List<String> reply = new ArrayList<String>();
-            reply = ((Tournament) event).getListTeam();
+            List<String> reply = ((Tournament) event).getListTeam();
             if (!reply.isEmpty()) {
                 for (String element : reply) {
                     Notice msg = Notice.buildPrivateAnswer(im, element);

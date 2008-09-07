@@ -13,5 +13,5 @@ public class ChannelProperties {
     boolean moderated;
     boolean noExt;
     boolean prive;
-    String topic;
+    Topic topic;
 }

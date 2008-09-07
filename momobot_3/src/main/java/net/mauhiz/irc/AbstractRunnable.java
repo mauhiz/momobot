@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public abstract class AbstractRunnable implements Runnable {
+public abstract class AbstractRunnable implements IRunnable {
     /**
      * logger.
      */
@@ -33,24 +33,14 @@ public abstract class AbstractRunnable implements Runnable {
     private boolean running;
     
     /**
-     * lance le thread.
-     * 
-     * @param name
-     */
-    public final void execute(final String name) {
-        new Thread(this, name).start();
-    }
-    
-    /**
-     * @return si le runnable est lancé.
+     * @see net.mauhiz.irc.IRunnable#isRunning()
      */
     public final boolean isRunning() {
         return running;
     }
     
     /**
-     * @param duree
-     *            la durée à dormir
+     * @see net.mauhiz.irc.IRunnable#pause(long)
      */
     public final void pause(final long duree) {
         if (!sleep(duree)) {
@@ -59,12 +49,16 @@ public abstract class AbstractRunnable implements Runnable {
     }
     
     /**
-     * arrete le runnable.
-     * 
-     * @param running1
-     *            un booléen
+     * @see net.mauhiz.irc.IRunnable#setRunning(boolean)
      */
     public final void setRunning(final boolean running1) {
         running = running1;
+    }
+    
+    /**
+     * @see net.mauhiz.irc.IRunnable#startAs(java.lang.String)
+     */
+    public final void startAs(final String name) {
+        new Thread(this, name).start();
     }
 }

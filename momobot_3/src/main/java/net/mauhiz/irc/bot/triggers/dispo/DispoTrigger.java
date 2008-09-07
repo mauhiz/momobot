@@ -49,7 +49,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         final QnetUser quser = (QnetUser) user;
         if (StringUtils.isEmpty(quser.getAuth())) {
             final WhoisRequest whois = new WhoisRequest(quser.getNick(), cme.getServer(), control);
-            whois.execute("Whois Request");
+            whois.startAs("Whois Request");
             /* on attend le whois */
             while (whois.isRunning()) {
                 Thread.yield();

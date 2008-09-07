@@ -52,7 +52,7 @@ public class RegisterAutomate extends Automate {
             switch (getEtat()) {
                 case STARTED :
                     whois = new WhoisRequest(getUser().getNick(), getServer(), control);
-                    whois.execute("Whois");
+                    whois.startAs("Whois");
                     sendMsgToUser("Detection de ton auth Qnet...");
                     setEtat(WHOISING);
                     break;

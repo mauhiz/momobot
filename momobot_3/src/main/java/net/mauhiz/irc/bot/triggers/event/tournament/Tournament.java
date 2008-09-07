@@ -41,10 +41,6 @@ public class Tournament extends ChannelEvent {
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(Tournament.class);
-    /**
-     * 
-     */
-    private static int numberPlayerPerTeam;
     static {
         try {
             CFG = new PropertiesConfiguration("tournament/tn.properties");
@@ -52,7 +48,6 @@ public class Tournament extends ChannelEvent {
             throw new ExceptionInInitializerError(e);
         }
     }
-    
     /**
      * @param temp
      * @throws IOException
@@ -100,6 +95,7 @@ public class Tournament extends ChannelEvent {
      * 
      */
     private boolean isLunched;
+    
     /**
      * 
      */
@@ -108,6 +104,10 @@ public class Tournament extends ChannelEvent {
      * 
      */
     private List<Match> matchList = new ArrayList<Match>();
+    /**
+     * 
+     */
+    private int numberPlayerPerTeam;
     /**
      * 
      */
