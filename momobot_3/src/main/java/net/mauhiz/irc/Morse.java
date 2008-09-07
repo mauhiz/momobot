@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.text.StrBuilder;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 
@@ -40,7 +39,7 @@ public class Morse {
         if (REVERSE_MORSE.isEmpty()) {
             loadMorse();
         }
-        final StrBuilder output = new StrBuilder();
+        final StringBuilder output = new StringBuilder();
         for (final String element : new StrTokenizer(work).getTokenArray()) {
             output.append(REVERSE_MORSE.get(element));
         }
@@ -59,8 +58,7 @@ public class Morse {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("morse_map.txt");
             final List<String> lignes = IOUtils.readLines(is, "ASCII");
             /*
-             * si on est arrivés jusque là le fichier existe, donc on peut
-             * nettoyer nos maps.
+             * si on est arrivés jusque là le fichier existe, donc on peut nettoyer nos maps.
              */
             if (!CODE_MORSE.isEmpty()) {
                 CODE_MORSE.clear();
@@ -90,7 +88,7 @@ public class Morse {
         if (CODE_MORSE.isEmpty()) {
             loadMorse();
         }
-        final StrBuilder output = new StrBuilder();
+        final StringBuilder output = new StringBuilder();
         final String upper = work.toUpperCase(Locale.FRANCE);
         for (final char element : upper.toCharArray()) {
             output.append(CODE_MORSE.get(Character.valueOf(element)));
