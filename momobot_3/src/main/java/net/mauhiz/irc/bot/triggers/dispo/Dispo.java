@@ -4,51 +4,115 @@ package net.mauhiz.irc.bot.triggers.dispo;
  * @author mauhiz
  */
 public class Dispo {
+    enum Present {
+        LA, PAS_LA, SAIT_PAS;
+    }
+    private String channel;
+    private long id;
     /**
      * La première heure (21h00).
      */
-    private final int    heure1;
+    private Present present1;
     /**
      * La deuxième heure (22h30).
      */
-    private final int    heure2;
+    private Present present2;
     /**
      * L'auth Qnet.
      */
-    private final String qauth;
-
+    private String qauth;
+    private String serverAlias;
+    private java.sql.Date when;
     /**
-     * @param qauth1
-     *            l'auth Qnet
-     * @param heure11
-     *            l'heure1
-     * @param heure21
-     *            l'heure2
+     * @return the channel
      */
-    public Dispo(final String qauth1, final int heure11, final int heure21) {
-        this.qauth = qauth1;
-        this.heure1 = heure11;
-        this.heure2 = heure21;
+    public String getChannel() {
+        return channel;
     }
-
     /**
-     * @return Returns the heure1.
+     * @return the id
      */
-    public final int getHeure1() {
-        return this.heure1;
+    public long getId() {
+        return id;
     }
-
     /**
-     * @return Returns the heure2.
+     * @return the present1
      */
-    public final int getHeure2() {
-        return this.heure2;
+    public Present getPresent1() {
+        return present1;
     }
-
     /**
-     * @return Returns the qauth.
+     * @return the present2
      */
-    public final String getQauth() {
-        return this.qauth;
+    public Present getPresent2() {
+        return present2;
     }
+    /**
+     * @return the qauth
+     */
+    public String getQauth() {
+        return qauth;
+    }
+    /**
+     * @return the serverAlias
+     */
+    public String getServerAlias() {
+        return serverAlias;
+    }
+    /**
+     * @return the when
+     */
+    public java.sql.Date getWhen() {
+        return when;
+    }
+    /**
+     * @param channel
+     *            the channel to set
+     */
+    public void setChannel(final String channel) {
+        this.channel = channel;
+    }
+    /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(final long id) {
+        this.id = id;
+    }
+    /**
+     * @param present1
+     *            the present1 to set
+     */
+    public void setPresent1(final Present present1) {
+        this.present1 = present1;
+    }
+    /**
+     * @param present2
+     *            the present2 to set
+     */
+    public void setPresent2(final Present present2) {
+        this.present2 = present2;
+    }
+    /**
+     * @param qauth
+     *            the qauth to set
+     */
+    public void setQauth(final String qauth) {
+        this.qauth = qauth;
+    }
+    /**
+     * @param serverAlias
+     *            the serverAlias to set
+     */
+    public void setServerAlias(final String serverAlias) {
+        this.serverAlias = serverAlias;
+    }
+    /**
+     * @param when
+     *            the when to set
+     */
+    public void setWhen(final java.sql.Date when) {
+        this.when = when;
+    }
+    
 }
