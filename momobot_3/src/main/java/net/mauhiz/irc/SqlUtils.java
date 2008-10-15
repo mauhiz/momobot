@@ -1,9 +1,5 @@
 package net.mauhiz.irc;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -28,10 +24,6 @@ public class SqlUtils {
      * (steamid, qauth).
      */
     private static final Map<String, String> PLAYERS = new TreeMap<String, String>();
-    /**
-     * url du serveur mysql.
-     */
-    private static final String URL = "jdbc:mysql://mysql.mauhiz.net/momobot";
     
     /**
      * @param auth
@@ -50,47 +42,6 @@ public class SqlUtils {
     }
     
     /**
-     * @param sql
-     *            la requête sql.
-     * @return un resultset
-     * @throws SQLException
-     *             en cas de problème!
-     */
-    public static ResultSet doSqlQuery(final String sql) throws SQLException {
-        final Connection con = getConnection();
-        try {
-            return con.createStatement().executeQuery(sql);
-        } finally {
-            con.close();
-        }
-    }
-    
-    /**
-     * @param sql
-     *            la requête SQL.
-     * @return si l'update a reussi
-     * @throws SQLException
-     *             en cas de problème!
-     */
-    public static int doSqlUpdate(final String sql) throws SQLException {
-        final Connection con = getConnection();
-        try {
-            return con.createStatement().executeUpdate(sql);
-        } finally {
-            con.close();
-        }
-    }
-    
-    /**
-     * @return une connection vers mysql
-     * @throws SQLException
-     *             en cas de connection impossible
-     */
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, "momobot", "tobomom");
-    }
-    
-    /**
      * @return les players
      */
     public static Iterable<Entry<String, String>> getPlayers() {
@@ -106,45 +57,45 @@ public class SqlUtils {
         return MASTERS.contains(steamid);
     }
     
-    /**
-     * @throws SQLException
-     *             en cas de foirage.
-     */
-    public static void loadPlayerDB() throws SQLException {
-        final ResultSet rs = doSqlQuery("SELECT `steamid`, `qauth`, `adminlvl` FROM `players`");
-        try {
-            while (rs.next()) {
-                final String steamid = rs.getString("steamid");
-                final String qauth = rs.getString("qauth");
-                final int master = rs.getInt("adminlvl");
-                PLAYERS.put(steamid, qauth);
-                if (master > 0) {
-                    MASTERS.add(steamid);
-                }
-            }
-        } finally {
-            rs.close();
-        }
-        LOG.debug("PlayerDB loaded");
-    }
+//    /**
+//     * @throws SQLException
+//     *             en cas de foirage.
+//     */
+//    public static void loadPlayerDB() throws SQLException {
+//        final ResultSet rs = doSqlQuery("SELECT `steamid`, `qauth`, `adminlvl` FROM `players`");
+//        try {
+//            while (rs.next()) {
+//                final String steamid = rs.getString("steamid");
+//                final String qauth = rs.getString("qauth");
+//                final int master = rs.getInt("adminlvl");
+//                PLAYERS.put(steamid, qauth);
+//                if (master > 0) {
+//                    MASTERS.add(steamid);
+//                }
+//            }
+//        } finally {
+//            rs.close();
+//        }
+//        LOG.debug("PlayerDB loaded");
+//    }
     
-    /**
-     * @param steamid
-     *            le steam_id
-     * @param qnetAuth
-     *            l'auth Qnet
-     * @return un msg
-     */
-    public static String registerPlayer(final String steamid, final String qnetAuth) {
-        PLAYERS.put(steamid, qnetAuth);
-        try {
-            doSqlUpdate("INSERT INTO players (steamid, qauth) VALUES ('" + steamid + "', '" + qnetAuth + "')");
-            return "Joueur enregistré";
-        } catch (final SQLException sqle) {
-            LOG.error(sqle, sqle);
-            return "Erreur : joueur non enregistré";
-        }
-    }
+//    /**
+//     * @param steamid
+//     *            le steam_id
+//     * @param qnetAuth
+//     *            l'auth Qnet
+//     * @return un msg
+//     */
+//    public static String registerPlayer(final String steamid, final String qnetAuth) {
+//        PLAYERS.put(steamid, qnetAuth);
+//        try {
+//            doSqlUpdate("INSERT INTO players (steamid, qauth) VALUES ('" + steamid + "', '" + qnetAuth + "')");
+//            return "Joueur enregistré";
+//        } catch (final SQLException sqle) {
+//            LOG.error(sqle, sqle);
+//            return "Erreur : joueur non enregistré";
+//        }
+//    }
     
     /**
      * @param steamid
