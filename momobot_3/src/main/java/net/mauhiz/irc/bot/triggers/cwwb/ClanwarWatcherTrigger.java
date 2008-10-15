@@ -15,6 +15,9 @@ import org.hibernate.SQLQuery;
  * @author abby
  */
 public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQuitTrigger {
+    /**
+     * nicks ignorés.
+     */
     private static final String[] IGNORED_NICKS = {"[CW|FR]", "Q", "S"};
     
     /**
@@ -50,7 +53,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
         }
         // On ignore les messages provenant de certains utilisateurs.
         for (String element : IGNORED_NICKS) {
-            if (sender == element) {
+            if (element.equals(sender)) {
                 return;
             }
         }
