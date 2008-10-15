@@ -86,7 +86,8 @@ public class RegisterAutomate extends Automate {
                         setRunning(false);
                         break;
                     }
-                    sendMsgToUser(SqlUtils.registerPlayer(steamid, ((QnetUser) getUser()).getAuth()));
+                    // FIXME
+                    // sendMsgToUser(SqlUtils.registerPlayer(steamid, ((QnetUser) getUser()).getAuth()));
                     setRunning(false);
                     break;
                 default :
