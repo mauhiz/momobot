@@ -64,15 +64,13 @@ public class SeekWar2 extends ChannelEvent {
     }
     private final IrcChannel channel;
     private final IIrcControl control;
+    private boolean expired;
     private String ipPw;
     private final IrcServer ircServer;
     private String level;
     private final List<SeekUserHistory> listIrcSeekUser = new ArrayList<SeekUserHistory>();
     private final int nbPlayers;
     private boolean serv;
-    /**
-     * 
-     */
     private final StopWatch sw = new StopWatch();
     private SeekWarThreadTimeOut threadTimeOut;
     private SeekUserHistory winner;
@@ -97,7 +95,6 @@ public class SeekWar2 extends ChannelEvent {
         level = DEFAULT_LVL;
         // on crée le thread de time-out
         threadTimeOut = new SeekWarThreadTimeOut(this, SEEK_TIMEOUT);
-        threadTimeOut.startAs("SeekWar TimeOut");
         
         // on traite les parametres entrants
         Pattern pat = Pattern.compile("(abc)");
@@ -369,7 +366,7 @@ public class SeekWar2 extends ChannelEvent {
     }
     
     public boolean isExpired() {
-        return threadTimeOut.isRunning();
+        return expired;
     }
     
     /**
@@ -381,6 +378,10 @@ public class SeekWar2 extends ChannelEvent {
         return -1;
     }
     
+    /**
+     * @param st
+     * @return
+     */
     private boolean isMatchAgreeMessage(final String st) {
         if ((st.contains("ok") || st.contains("k") || st.contains("go") || st.contains("ac") || st.contains("oui")
                 || st.contains("ui") || st.contains("yes") || st.contains("y"))
@@ -390,6 +391,10 @@ public class SeekWar2 extends ChannelEvent {
         return false;
     }
     
+    /**
+     * @param st
+     * @return
+     */
     private boolean isMatchIp(final String st) {
         Matcher m = IP_PATTERN.matcher(st);
         if (m.find()) {
@@ -401,6 +406,10 @@ public class SeekWar2 extends ChannelEvent {
         return false;
     }
     
+    /**
+     * @param st
+     * @return
+     */
     private boolean isMatchLevel(final String st) {
         String lvl = level.toLowerCase();
         String st1 = st.toLowerCase();
@@ -427,6 +436,10 @@ public class SeekWar2 extends ChannelEvent {
         return false;
     }
     
+    /**
+     * @param st
+     * @return
+     */
     private boolean isMatchLVLMessage(final String st) {
         if ((st.contains("lvl") || st.contains("level")) && !isMatchUrl(st)) {
             return true;
@@ -434,6 +447,10 @@ public class SeekWar2 extends ChannelEvent {
         return false;
     }
     
+    /**
+     * @param str
+     * @return
+     */
     private boolean isMatchMessageChannel(final String str) {
         String st = str.toLowerCase();
         if (st.contains("dispo") || st.contains("tn") || st.contains("last")) {
@@ -453,12 +470,16 @@ public class SeekWar2 extends ChannelEvent {
             
         } else {
             if (st.contains("pracc") || st.contains("pcw")) {
-                
+                // FIXME
             }
         }
         return false;
     }
     
+    /**
+     * @param st
+     * @return
+     */
     private boolean isMatchServer(final String st) {
         String st1 = st.toLowerCase();
         if (DEFAULT_SERV) {
@@ -470,6 +491,10 @@ public class SeekWar2 extends ChannelEvent {
         return false;
     }
     
+    /**
+     * @param st
+     * @return
+     */
     private boolean isMatchUrl(final String st) {
         if (st.contains("http://") || st.contains("www.")) {
             return true;
@@ -477,6 +502,10 @@ public class SeekWar2 extends ChannelEvent {
         return false;
     }
     
+    /**
+     * @param user
+     * @return
+     */
     private boolean isUserAleadyIn(final SeekUserHistory user) {
         for (SeekUserHistory element : listIrcSeekUser) {
             if (element.equals(user)) {
@@ -500,12 +529,13 @@ public class SeekWar2 extends ChannelEvent {
     }
     
     private void setExpired() {
-        if (threadTimeOut.isRunning()) {
-            // crado
-            SeekWarSelecter.isRunnable = false;
-        }
+        threadTimeOut.cancel();
+        expired = true;
     }
     
+    /**
+     * @param reason
+     */
     public void setStop(final String reason) {
         // on leave les channels de seek
         for (String element : SEEK_CHANNELS) {
@@ -540,6 +570,9 @@ public class SeekWar2 extends ChannelEvent {
         
     }
     
+    /**
+     * @param privmsg
+     */
     public void submitIncommingMessage(final Privmsg privmsg) {
         if (privmsg == null) {
             return;
@@ -553,12 +586,15 @@ public class SeekWar2 extends ChannelEvent {
         }
     }
     
+    /**
+     * @param privmsg
+     */
     private void submitPVMessage(final Privmsg privmsg) {
         // test l'user
         IrcUser user = privmsg.getServer().findUser(new Mask(privmsg.getFrom()), true);
         for (SeekUserHistory element : listIrcSeekUser) {
             // si il existe on forward le msg
-            if (element.equals(user)) {
+            if (element.getNick().equals(user.getNick())) {
                 doJob(element, privmsg);
                 break;
             }

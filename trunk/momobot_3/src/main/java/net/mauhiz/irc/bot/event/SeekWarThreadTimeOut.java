@@ -1,39 +1,48 @@
 package net.mauhiz.irc.bot.event;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import net.mauhiz.irc.AbstractRunnable;
-
-public class SeekWarThreadTimeOut extends AbstractRunnable {
-    
-    private final SeekWar2 seekwar;
-    // private final StopWatch sw = new StopWatch();
-    private long timeOut;
+/**
+ * @author mauhiz
+ */
+public class SeekWarThreadTimeOut extends Timer {
     
     /**
      * @param seekwar1
-     * @param timeOut1
+     * @param timeOutMinutes
      */
-    SeekWarThreadTimeOut(final SeekWar2 seekwar1, final int timeOut1) {
-        timeOut = TimeUnit.MILLISECONDS.convert(timeOut1, TimeUnit.MINUTES);
-        seekwar = seekwar1;
-        // sw.start();
+    SeekWarThreadTimeOut(final SeekWar2 seekwar1, final int timeOutMinutes) {
+        super("SeekWar TimeOut");
+        long timeOut = TimeUnit.MILLISECONDS.convert(timeOutMinutes, TimeUnit.MINUTES);
+        schedule(new Timeout(seekwar1), timeOut);
     }
     
     /**
-     * @see java.lang.Runnable#run()
+     * @author mauhiz
+     * 
      */
-    @Override
-    public void run() {
+    static class Timeout extends TimerTask {
         
-        setRunning(SeekWarSelecter.isRunnable);
-        // while (sw.getTime() < timeOut && isRunning) {
-        // }
-        // On demande de leave
-        sleep(timeOut);
+        /**
+         * reference
+         */
+        private final SeekWar2 seekwar;
         
-        setRunning(true);
-        seekwar.setStop("TimeOut");
-        // sw.stop();
+        /**
+         * @param seekwar2
+         */
+        Timeout(final SeekWar2 seekwar2) {
+            seekwar = seekwar2;
+        }
+        
+        /**
+         * @see java.util.TimerTask#run()
+         */
+        @Override
+        public void run() {
+            seekwar.setStop("TimeOut");
+        }
     }
 }
