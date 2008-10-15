@@ -8,6 +8,7 @@ import net.mauhiz.irc.base.data.IrcUser;
  * @author Topper
  */
 public class SeekUserHistory extends ArrayList<String> {
+    private static final long serialVersisonUID = 1;
     private int id;
     private IrcUser user;
     
