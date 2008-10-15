@@ -93,7 +93,7 @@ public class MmbTriggerManager implements ITriggerManager {
      * @param triggerClass
      * @param params
      */
-    void addTrigger(final Class<ITrigger> triggerClass, final Object... params) {
+    void addTrigger(final Class<? extends ITrigger> triggerClass, final Object... params) {
         try {
             ITrigger trigger = (ITrigger) ConstructorUtils.invokeConstructor(triggerClass, params);
             if (!(trigger instanceof AbstractTextTrigger)) {
@@ -131,14 +131,14 @@ public class MmbTriggerManager implements ITriggerManager {
      * @param trigTexts
      */
     public void loadTrigClass(final String trigClassFull, final String prefix, final String[] trigTexts) {
-        Class<ITrigger> trigClass;
+        Class<? extends ITrigger> trigClass;
         try {
             Class<?> wannabe = Class.forName(trigClassFull);
             if (!ITrigger.class.isAssignableFrom(wannabe)) {
                 LOG.warn("Not a trigger: " + wannabe.getName());
                 return;
             }
-            trigClass = (Class<ITrigger>) wannabe;
+            trigClass = wannabe.asSubclass(ITrigger.class);
         } catch (ClassNotFoundException e) {
             LOG.warn(e);
             return;
