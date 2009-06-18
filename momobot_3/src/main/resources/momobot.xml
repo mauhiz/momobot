@@ -1,223 +1,246 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <momobot>
-	<server alias="Quakenet" uri="irc://irc.quakenet.org:6667/" class="net.mauhiz.irc.base.data.qnet.QnetServer" />
-	<server alias="Localhost" uri="irc://localhost:6667/" />
-	<profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
-		<autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">
-			<join>#tsi.fr</join>
-			<join>#cos_squad</join>
-		</autoconnect>
-		<loadtriggerpack prefix="$" bundle="admin" />
-		<loadtriggerpack prefix="$" bundle="base" />
-		<loadtriggerpack prefix="$" bundle="event" />
-		<loadtriggerpack prefix="$" bundle="gather" />
-		<loadtriggerpack prefix="$" bundle="pendu" />
-		<loadtriggerpack prefix="$" bundle="websearch" />
-		<loadtriggerpack prefix="$" bundle="fun" />
-		<loadtriggerpack prefix="$" bundle="tournament" />
-		<loadtriggerpack prefix="$" bundle="memo" />
-		<loadtriggerpack prefix="$" bundle="cs" />
-		<loadtriggerpack prefix="$" bundle="dispo" />
-	</profil>
-	<profil name="seekbot" nick="mom0" login="mom0" fullName="Pv moi si t'es mon ami">
-		<autoconnect server="Quakenet">
-			<join>#tsi.fr</join>
-		</autoconnect>
-		<loadtriggerpack prefix="$" bundle="admin" />
-		<loadtriggerpack prefix="$" bundle="event" />
-		<loadtriggerpack prefix="$" bundle="gather" />
-		<loadtriggerpack prefix="$" bundle="tournament" />
-	</profil>
-	<profil name="cwwb" nick="cwwb_" login="mom0" fullName="Clanwar Watcher (TM)">
-		<autoconnect server="Quakenet">
-			<join>#clanwar.fr</join>
-		</autoconnect>
-		<loadtriggerpack bundle="cwwb" />
-	</profil>
-	<profil name="local" nick="momobot3" login="mmb" fullName="MMB v3">
-		<autoconnect server="Localhost" fullName="MMB v3 - Localhost">
-			<join>#test</join>
-		</autoconnect>
-		<loadtriggerpack prefix="$" bundle="admin" />
-		<loadtriggerpack prefix="$" bundle="base" />
-	</profil>
-	<triggerpack bundle="base" package="net.mauhiz.irc.bot.triggers.base">
-		<trigger class="MassHlTrigger">
-			<command>fessee</command>
-			<command>masshl</command>
-		</trigger>
-		<trigger class="HelpTrigger">
-			<command>help</command>
-			<command>aide</command>
-		</trigger>
-		<trigger class="JoinOnInviteTrigger" />
-		<trigger class="WelcomeTrigger" />
-		<trigger class="AboutTrigger">
-			<command>about</command>
-		</trigger>
-		<trigger class="CountUsersTrigger">
-			<command>countusers</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="admin" package="net.mauhiz.irc.bot.triggers.admin">
-		<trigger class="JoinTrigger">
-			<command>join</command>
-			<command>go</command>
-		</trigger>
-		<trigger class="ActivateTrigger">
-			<command>activate</command>
-		</trigger>
-		<trigger class="DeActivateTrigger">
-			<command>deactivate</command>
-		</trigger>
-		<trigger class="QuitTrigger">
-			<command>quit</command>
-		</trigger>
-		<trigger class="SayTrigger">
-			<command>say</command>
-		</trigger>
-		<trigger class="ActionTrigger">
-			<command>act</command>
-		</trigger>
-		<trigger class="PartTrigger">
-			<command>part</command>
-			<command>leave</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="event" package="net.mauhiz.irc.bot.triggers.event">
-		<trigger class="StopTrigger">
-			<command>reset</command>
-			<command>stop</command>
-		</trigger>
-		<trigger class="StatusTrigger">
-			<command>status</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="gather" package="net.mauhiz.irc.bot.triggers.event.gather">
-		<trigger class="GatherTrigger">
-			<command>start</command>
-			<command>gather</command>
-		</trigger>
-		<trigger class="GatherAndSeekTrigger">
-			<command>startandseek</command>
-		</trigger>
-		<trigger class="AddTrigger">
-			<command>add</command>
-		</trigger>
-		<trigger class="AdminaddTrigger">
-			<command>adminadd</command>
-		</trigger>
-		<trigger class="AdminrmvTrigger">
-			<command>adminrmv</command>
-		</trigger>
-		<trigger class="RmvTrigger">
-			<command>rmv</command>
-			<command>remove</command>
-		</trigger>
-		<trigger class="RollTrigger">
-			<command>roll</command>
-			<command>cagoule</command>
-		</trigger>
-		<trigger class="TagTrigger">
-			<command>tag</command>
-		</trigger>
-		<trigger class="ShakeTrigger">
-			<command>shake</command>
-		</trigger>
-		<trigger class="PickupTrigger">
-			<command>pickup</command>
-			<command>pick</command>
-		</trigger>
-		<trigger class="Seek2Trigger">
-			<command>seek2</command>
-		</trigger>
-		<trigger class="StopSeekTrigger">
-			<command>stopseek2</command>
-		</trigger>
-		<trigger class="TgSeekTrigger">
-			<command>tg</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="pendu" package="net.mauhiz.irc.bot.triggers.event.pendu">
-		<trigger class="PenduTrigger">
-			<command>pendu</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="fun" package="net.mauhiz.irc.bot.triggers.fun">
-		<trigger class="KennyTrigger">
-			<command>kenny</command>
-		</trigger>
-		<trigger class="RollTheDiceTrigger">
-			<command>dice</command>
-		</trigger>
-		<trigger class="RouletteTrigger">
-			<command>roulette</command>
-		</trigger>
-		<trigger class="MargueriteTrigger">
-			<command>marguerite</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="websearch" package="net.mauhiz.irc.bot.triggers.websearch">
-		<trigger class="BashTrigger">
-			<command>bash</command>
-		</trigger>
-		<trigger class="GoogleTrigger">
-			<command>google</command>
-		</trigger>
-		<trigger class="BabelfishTrigger">
-			<command>translate</command>
-			<command>babelfish</command>
-		</trigger>
-		<trigger class="GametigerTrigger">
-			<command>gt</command>
-			<command>gametiger</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="tournament" package="net.mauhiz.irc.bot.triggers.event.tournament">
-		<trigger class="TournamentTrigger">
-			<command>tn-start</command>
-		</trigger>
-		<trigger class="RegisterTrigger">
-			<command>tn-register</command>
-		</trigger>
-		<trigger class="ListTeamsTrigger">
-			<command>tn-list-teams</command>
-		</trigger>
-		<trigger class="ResultTrigger">
-			<command>tn-result</command>
-		</trigger>
-		<trigger class="StopTrigger">
-			<command>tn-stop</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="memo" package="net.mauhiz.irc.bot.triggers.memo">
-		<trigger class="MemoTrigger">
-			<command>memo</command>
-		</trigger>
-		<trigger class="MemoTrigger">
-			<command>serv</command>
-		</trigger>
-		<trigger class="ListMemosTrigger">
-			<command>listmemos</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="cwwb" package="net.mauhiz.irc.bot.triggers.cwwb">
-		<trigger class="ClanwarWatchTrigger" />
-	</triggerpack>
-	<triggerpack bundle="cs" package="net.mauhiz.irc.bot.triggers.cs">
-		<trigger class="ServStatusTrigger">
-			<command>srvstatus</command>
-		</trigger>
-		<trigger class="TopFraggerTrigger">
-			<command>topfragger</command>
-		</trigger>
-	</triggerpack>
-	<triggerpack bundle="dispo" package="net.mauhiz.irc.bot.triggers.dispo">
-		<trigger class="DispoTrigger">
-			<command>dispo</command>
-		</trigger>
-		<trigger class="YaquiTrigger">
-			<command>yaqui</command>
-		</trigger>
-	</triggerpack>
+  <server alias="Quakenet" uri="irc://irc.quakenet.org:6667/" class="net.mauhiz.irc.base.data.qnet.QnetServer" />
+  <server alias="Localhost" uri="irc://localhost:6667/" />
+  <profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
+    <autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">
+      <join>#tsi.fr</join>
+      <!--join>#cos_squad</join-->
+      <join>#prolama</join>
+    </autoconnect>
+    <loadtriggerpack prefix="$" bundle="admin" />
+    <loadtriggerpack prefix="$" bundle="base" />
+    <loadtriggerpack prefix="$" bundle="control" />
+    <loadtriggerpack prefix="$" bundle="event" />
+    <loadtriggerpack prefix="$" bundle="gather" />
+    <loadtriggerpack prefix="$" bundle="pendu" />
+    <loadtriggerpack prefix="$" bundle="websearch" />
+    <loadtriggerpack prefix="$" bundle="fun" />
+    <loadtriggerpack prefix="$" bundle="tournament" />
+    <loadtriggerpack prefix="$" bundle="memo" />
+    <loadtriggerpack prefix="$" bundle="cs" />
+    <loadtriggerpack prefix="$" bundle="dispo" />
+  </profil>
+  <profil name="seekbot" nick="mom0" login="mom0" fullName="Pv moi si t'es mon ami">
+    <autoconnect server="Quakenet">
+      <join>#tsi.fr</join>
+    </autoconnect>
+    <loadtriggerpack prefix="$" bundle="admin" />
+    <loadtriggerpack prefix="$" bundle="control" />
+    <loadtriggerpack prefix="$" bundle="event" />
+    <loadtriggerpack prefix="$" bundle="gather" />
+  </profil>
+  <profil name="cwwb" nick="cwwb_" login="mom0" fullName="Clanwar Watcher (TM)">
+    <autoconnect server="Quakenet">
+      <join>#clanwar.fr</join>
+    </autoconnect>
+    <loadtriggerpack prefix="$" bundle="admin" />
+    <loadtriggerpack bundle="cwwb" />
+  </profil>
+  <profil name="local" nick="momobot3" login="mmb" fullName="MMB v3">
+    <autoconnect server="Localhost" fullName="MMB v3 - Localhost">
+      <join>#test</join>
+    </autoconnect>
+    <loadtriggerpack prefix="$" bundle="admin" />
+    <loadtriggerpack prefix="$" bundle="control" />
+  </profil>
+  <triggerpack bundle="base" package="net.mauhiz.irc.bot.triggers.base">
+    <trigger class="MassHlTrigger">
+      <command>fessee</command>
+      <command>masshl</command>
+    </trigger>
+    <trigger class="HelpTrigger">
+      <command>help</command>
+      <command>aide</command>
+    </trigger>
+    <trigger class="JoinOnInviteTrigger" />
+    <trigger class="WelcomeTrigger" />
+    <trigger class="AboutTrigger">
+      <command>about</command>
+    </trigger>
+    <trigger class="CountUsersTrigger">
+      <command>countusers</command>
+    </trigger>
+    <trigger class="UsersTrigger">
+      <command>users</command>
+    </trigger>
+    <trigger class="WhoisTrigger">
+      <command>whois</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="control" package="net.mauhiz.irc.bot.triggers.control">
+    <trigger class="JoinTrigger">
+      <command>join</command>
+      <command>go</command>
+    </trigger>
+    <trigger class="QuitTrigger">
+      <command>quit</command>
+    </trigger>
+    <trigger class="SayTrigger">
+      <command>say</command>
+    </trigger>
+    <trigger class="ActTrigger">
+      <command>act</command>
+      <command>me</command>
+    </trigger>
+    <trigger class="NoticeTrigger">
+      <command>notice</command>
+    </trigger>
+    <trigger class="PartTrigger">
+      <command>part</command>
+      <command>leave</command>
+    </trigger>
+  </triggerpack>
+
+  <triggerpack bundle="admin" package="net.mauhiz.irc.bot.triggers.admin">
+    <trigger class="ActivateTrigger">
+      <command>activate</command>
+    </trigger>
+    <trigger class="DeActivateTrigger">
+      <command>deactivate</command>
+    </trigger>
+  </triggerpack>
+
+  <triggerpack bundle="event" package="net.mauhiz.irc.bot.triggers.event">
+    <trigger class="StopTrigger">
+      <command>reset</command>
+      <command>stop</command>
+    </trigger>
+    <trigger class="StatusTrigger">
+      <command>status</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="gather" package="net.mauhiz.irc.bot.triggers.event.gather">
+    <trigger class="GatherTrigger">
+      <command>start</command>
+      <command>gather</command>
+    </trigger>
+    <trigger class="GatherAndSeekTrigger">
+      <command>startandseek</command>
+    </trigger>
+    <trigger class="AddTrigger">
+      <command>add</command>
+    </trigger>
+    <trigger class="AdminaddTrigger">
+      <command>adminadd</command>
+    </trigger>
+    <trigger class="AdminrmvTrigger">
+      <command>adminrmv</command>
+    </trigger>
+    <trigger class="RmvTrigger">
+      <command>rmv</command>
+      <command>remove</command>
+    </trigger>
+    <trigger class="RollTrigger">
+      <command>roll</command>
+      <command>cagoule</command>
+    </trigger>
+    <trigger class="TagTrigger">
+      <command>tag</command>
+    </trigger>
+    <trigger class="ShakeTrigger">
+      <command>shake</command>
+    </trigger>
+    <trigger class="PickupTrigger">
+      <command>pickup</command>
+      <command>pick</command>
+    </trigger>
+    <trigger class="Seek2Trigger">
+      <command>seek2</command>
+    </trigger>
+    <trigger class="StopSeekTrigger">
+      <command>stopseek2</command>
+    </trigger>
+    <trigger class="TgSeekTrigger">
+      <command>tg</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="pendu" package="net.mauhiz.irc.bot.triggers.event.pendu">
+    <trigger class="PenduTrigger">
+      <command>pendu</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="fun" package="net.mauhiz.irc.bot.triggers.fun">
+    <trigger class="KennyTrigger">
+      <command>kenny</command>
+    </trigger>
+    <trigger class="RollTheDiceTrigger">
+      <command>dice</command>
+    </trigger>
+    <trigger class="RouletteTrigger">
+      <command>roulette</command>
+    </trigger>
+    <trigger class="MargueriteTrigger">
+      <command>marguerite</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="websearch" package="net.mauhiz.irc.bot.triggers.websearch">
+    <trigger class="BashTrigger">
+      <command>bash</command>
+    </trigger>
+    <trigger class="VdmTrigger">
+      <command>vdm</command>
+    </trigger>
+    <trigger class="GoogleTrigger">
+      <command>google</command>
+    </trigger>
+    <trigger class="BabelfishTrigger">
+      <command>translate</command>
+      <command>babelfish</command>
+    </trigger>
+    <trigger class="GametigerTrigger">
+      <command>gt</command>
+      <command>gametiger</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="tournament" package="net.mauhiz.irc.bot.triggers.event.tournament">
+    <trigger class="TournamentTrigger">
+      <command>tn-start</command>
+    </trigger>
+    <trigger class="RegisterTrigger">
+      <command>tn-register</command>
+    </trigger>
+    <trigger class="ListTeamsTrigger">
+      <command>tn-list-teams</command>
+    </trigger>
+    <trigger class="ResultTrigger">
+      <command>tn-result</command>
+    </trigger>
+    <trigger class="StopTrigger">
+      <command>tn-stop</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="memo" package="net.mauhiz.irc.bot.triggers.memo">
+    <trigger class="MemoTrigger">
+      <command>memo</command>
+    </trigger>
+    <trigger class="MemoTrigger">
+      <command>serv</command>
+    </trigger>
+    <trigger class="ListMemosTrigger">
+      <command>listmemos</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="cwwb" package="net.mauhiz.irc.bot.triggers.cwwb">
+    <trigger class="ClanwarWatchTrigger" />
+  </triggerpack>
+  <triggerpack bundle="cs" package="net.mauhiz.irc.bot.triggers.cs">
+    <trigger class="ServStatusTrigger">
+      <command>srvstatus</command>
+    </trigger>
+    <trigger class="TopFraggerTrigger">
+      <command>topfragger</command>
+    </trigger>
+    <trigger class="HltvTrigger">
+      <command>hltv</command>
+    </trigger>
+  </triggerpack>
+  <triggerpack bundle="dispo" package="net.mauhiz.irc.bot.triggers.dispo">
+    <trigger class="DispoTrigger">
+      <command>dispo</command>
+    </trigger>
+    <trigger class="YaquiTrigger">
+      <command>yaqui</command>
+    </trigger>
+  </triggerpack>
 </momobot>
