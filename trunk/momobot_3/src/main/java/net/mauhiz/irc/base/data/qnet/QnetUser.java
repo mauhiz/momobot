@@ -11,7 +11,7 @@ public class QnetUser extends AbstractIrcUser {
     /**
      * @param nick1
      */
-    public QnetUser(final String nick1) {
+    protected QnetUser(String nick1) {
         super(nick1);
         props = new QnetUserProperties();
     }
@@ -35,7 +35,7 @@ public class QnetUser extends AbstractIrcUser {
      * @param auth1
      *            the auth to set
      */
-    public void setAuth(final String auth1) {
+    public void setAuth(String auth1) {
         auth = auth1;
     }
 }

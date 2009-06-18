@@ -10,16 +10,6 @@ import java.util.concurrent.TimeUnit;
 public class SeekWarThreadTimeOut extends Timer {
     
     /**
-     * @param seekwar1
-     * @param timeOutMinutes
-     */
-    SeekWarThreadTimeOut(final SeekWar2 seekwar1, final int timeOutMinutes) {
-        super("SeekWar TimeOut");
-        long timeOut = TimeUnit.MILLISECONDS.convert(timeOutMinutes, TimeUnit.MINUTES);
-        schedule(new Timeout(seekwar1), timeOut);
-    }
-    
-    /**
      * @author mauhiz
      * 
      */
@@ -33,7 +23,7 @@ public class SeekWarThreadTimeOut extends Timer {
         /**
          * @param seekwar2
          */
-        Timeout(final SeekWar2 seekwar2) {
+        Timeout(SeekWar2 seekwar2) {
             seekwar = seekwar2;
         }
         
@@ -44,5 +34,15 @@ public class SeekWarThreadTimeOut extends Timer {
         public void run() {
             seekwar.setStop("TimeOut");
         }
+    }
+    
+    /**
+     * @param seekwar1
+     * @param timeOutMinutes
+     */
+    SeekWarThreadTimeOut(SeekWar2 seekwar1, int timeOutMinutes) {
+        super("SeekWar TimeOut");
+        long timeOut = TimeUnit.MILLISECONDS.convert(timeOutMinutes, TimeUnit.MINUTES);
+        schedule(new Timeout(seekwar1), timeOut);
     }
 }

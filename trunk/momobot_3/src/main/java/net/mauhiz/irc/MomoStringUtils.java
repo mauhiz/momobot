@@ -1,4 +1,4 @@
-package net.mauhiz.irc;
+ï»¿package net.mauhiz.irc;
 
 import java.text.Normalizer;
 
@@ -6,7 +6,6 @@ import net.mauhiz.irc.base.IrcSpecialChars;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.commons.lang.text.StrBuilder;
 
 /**
  * @author mauhiz
@@ -14,10 +13,10 @@ import org.apache.commons.lang.text.StrBuilder;
 public class MomoStringUtils {
     /**
      * @param input
-     *            la string à dépouiller
+     *            la string a depouiller
      * @return la string sans les accents
      */
-    public static String effaceAccents(final String input) {
+    public static String effaceAccents(String input) {
         String temp = Normalizer.normalize(input, Normalizer.Form.NFD);
         return temp.replaceAll("[^\\p{ASCII}]", "");
     }
@@ -32,40 +31,34 @@ public class MomoStringUtils {
      *            de seek, %P, %P = Nombre de joueur, %S = server, %L = level
      * @return la chaine randomisee
      */
-    public static String genereSeekMessage(final String seekmsg, final int nbPlayer, final String server,
-            final String level) {
-        String str = seekmsg;
-        str = str.replace("%P", String.valueOf(nbPlayer));
+    public static String genereSeekMessage(String seekmsg, int nbPlayer, String server, String level) {
+        String str = seekmsg.replace("%P", String.valueOf(nbPlayer));
         str = str.replace("%S", server);
         str = str.replace("%L", level);
         return str;
     }
     /**
      * @param toTest
-     *            le nom à tester
+     *            le nom a tester
      * @return si le nom est un channel ou nom
      */
-    public static boolean isChannelName(final String toTest) {
+    public static boolean isChannelName(String toTest) {
         if (StringUtils.isEmpty(toTest) || StringUtils.indexOfAny(toTest, IrcSpecialChars.Z_NOTCHSTRING) > 0) {
             return false;
         }
         return toTest.charAt(0) == IrcSpecialChars.CHAN_DEFAULT || toTest.charAt(0) == IrcSpecialChars.CHAN_LOCAL;
     }
     /**
-     * méthode pour le wquizz.
+     * methode pour le wquizz.
      * 
      * @param work
      *            ce que je dois nettoyer
      * @return un string propre.
      */
-    public static String nettoieReponse(final String work) {
-        final StrBuilder str = new StrBuilder(effaceAccents(work));
-        str.replaceAll('-', ' ');
-        str.replaceAll('\'', ' ');
-        str.replaceAll('^', ' ');
-        str.replaceAll('¨', ' ');
-        str.trim();
-        String temp = str.toString();
+    public static String nettoieReponse(String work) {
+        String temp = effaceAccents(work).replace('-', ' ');
+        temp = temp.replace('\'', ' ');
+        temp = temp.trim();
         temp = StringUtils.removeStart(temp, "l ");
         temp = StringUtils.removeStart(temp, "la ");
         temp = StringUtils.removeStart(temp, "le ");
@@ -87,12 +80,12 @@ public class MomoStringUtils {
     
     /**
      * @param seq
-     *            une chaine à shaker
+     *            une chaine a shaker
      * @return la chaine randomisee
      */
-    public static String shuffle(final String seq) {
-        final StringBuilder input = new StringBuilder(seq);
-        final StringBuilder output = new StringBuilder(seq.length());
+    public static String shuffle(String seq) {
+        StringBuilder input = new StringBuilder(seq);
+        StringBuilder output = new StringBuilder(seq.length());
         for (int len = input.length(); len > 0; --len) {
             int random = RandomUtils.nextInt(len);
             output.append(input.charAt(random));

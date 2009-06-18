@@ -13,7 +13,7 @@ public class AuthTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
      * @param trigger
      *            le trigger
      */
-    public AuthTrigger(final String trigger) {
+    public AuthTrigger(String trigger) {
         super(trigger);
     }
     
@@ -22,11 +22,11 @@ public class AuthTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg pme, final IIrcControl control) {
-        /* pour l'instant je hard code le pw. La sécu attendra ;x */
+    public void doTrigger(Privmsg pme, IIrcControl control) {
+        /* pour l'instant je hard code le pw. La secu attendra ;x */
         if (getArgs(pme.getMessage()).equals("boulz")) {
             pme.getFrom()/* FIXME .setAdmin(true) */;
-            Privmsg msg = Privmsg.buildPrivateAnswer(pme, "Oui, maître");
+            Privmsg msg = Privmsg.buildPrivateAnswer(pme, "Oui, maitre");
             control.sendMsg(msg);
         }
     }

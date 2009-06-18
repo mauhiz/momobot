@@ -29,7 +29,7 @@ public class Pickup extends ChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Pickup(final IrcChannel channel1) {
+    public Pickup(IrcChannel channel1) {
         super(channel1);
         for (char nom = 'a'; teams.size() < NB_TEAMS; ++nom) {
             teams.add(new Team(SIZE, Character.toString(nom)));
@@ -38,45 +38,45 @@ public class Pickup extends ChannelEvent {
     
     /**
      * @param a
-     *            l'élément à ajouter
+     *            l'element e ajouter
      * @param choix
      *            le choix
      * @return un msg
      */
-    public final String add(final IrcUser a, final String choix) {
+    public String add(IrcUser user, String choix) {
         if (isFull()) {
             return "C'est complet!";
         }
         synchronized (teams) {
-            final Team assignedTeam = assignTeam(choix);
-            final Team currentTeam = getTeam(a);
+            Team assignedTeam = assignTeam(choix);
+            Team currentTeam = getTeam(user);
             if (null == currentTeam) {
-                /* element n'est pas encore présent */
+                /* element n'est pas encore present */
                 if (null == assignedTeam) {
                     /* element n'a pas choisi de team en particulier */
-                    for (final Team tryTeam : teams) {
+                    for (Team tryTeam : teams) {
                         /*
-                         * on essaye de le mettre dans la première équipe qu'on trouve
+                         * on essaye de le mettre dans la premiereequipe qu'on trouve
                          */
-                        if (tryTeam.add(a)) {
-                            return a + " ajouté a la team " + tryTeam + '.';
+                        if (tryTeam.add(user)) {
+                            return user.getNick() + " ajoue a la team " + tryTeam.getNom() + '.';
                         }
                     }
-                    /* on ne doit pas arriver là */
-                    throw new IllegalStateException("J'ai pas réussi à ajouter " + a + " au gather.");
+                    /* on ne doit pas arriver la */
+                    throw new IllegalStateException("J'ai pas reussi a ajouter " + user.getNick() + " au gather.");
                 }
-                /* pas de problème, il a choisi, on l'ajoute */
-                assignedTeam.add(a);
-                return a + " ajouté a la team " + assignedTeam + '.';
+                /* pas de probleme, il a choisi, on l'ajoute */
+                assignedTeam.add(user);
+                return user.getNick() + " ajoute a la team " + assignedTeam.getNom() + '.';
             }
-            /* element est déjà présent et ne veut pas changer d'équipe */
+            /* element est deja present et ne veut pas changer d'equipe */
             if (null == assignedTeam || assignedTeam.equals(currentTeam)) {
-                return "Tu es déjà inscrit dans la team " + currentTeam + '.';
+                return "Tu es deja inscrit dans la team " + currentTeam.getNom() + '.';
             }
-            /* element est déjà présent et veut changer d'équipe */
-            currentTeam.remove(a);
-            assignedTeam.add(a);
-            return a + " déplacé vers la team " + assignedTeam + '.';
+            /* element est deja present et veut changer d'equipe */
+            currentTeam.remove(user);
+            assignedTeam.add(user);
+            return user.getNick() + " deplace vers la team " + assignedTeam.getNom() + '.';
         }
     }
     
@@ -85,14 +85,14 @@ public class Pickup extends ChannelEvent {
      *            le choix
      * @return le numero de la team dans laquelle il est autoassign
      */
-    public final Team assignTeam(final String choix) {
+    public Team assignTeam(String choix) {
         if (choix == null) {
             return null;
         }
         synchronized (teams) {
-            for (final Team team : teams) {
+            for (Team team : teams) {
                 /* le equals est null-safe dans ce sens */
-                if (team.toString().equalsIgnoreCase(choix) && !team.isFull()) {
+                if (team.getNom().equalsIgnoreCase(choix) && !team.isFull()) {
                     return team;
                 }
             }
@@ -102,11 +102,11 @@ public class Pickup extends ChannelEvent {
     
     /**
      * @param a
-     *            l'utilisateur à inscrire
+     *            l'utilisateur e inscrire
      * @return le numero de la team dans laquelle il est inscrit
      */
-    public final Team getTeam(final IrcUser a) {
-        for (final Team team : teams) {
+    public Team getTeam(IrcUser a) {
+        for (Team team : teams) {
             if (team.contains(a)) {
                 return team;
             }
@@ -117,8 +117,8 @@ public class Pickup extends ChannelEvent {
     /**
      * @return si le pickup est full
      */
-    public final boolean isFull() {
-        for (final Team team : teams) {
+    public boolean isFull() {
+        for (Team team : teams) {
             if (!team.isFull()) {
                 return false;
             }
@@ -128,19 +128,19 @@ public class Pickup extends ChannelEvent {
     
     /**
      * @param element
-     *            élément à retirer
+     *            element e retirer
      * @return un msg
      */
-    public final String remove(final IrcUser element) {
+    public String remove(IrcUser element) {
         if (element == null) {
             return "";
         }
-        final Team findTeam = getTeam(element);
+        Team findTeam = getTeam(element);
         if (null == findTeam) {
-            return element + ": tu n'étais pas inscrit.";
+            return element.getNick() + ": tu n'etais pas inscrit.";
         }
         findTeam.remove(element);
-        return element + " retiré de la team " + findTeam + '.';
+        return element.getNick() + " retire de la team " + findTeam.getNom() + '.';
     }
     
     /**
@@ -152,7 +152,7 @@ public class Pickup extends ChannelEvent {
         synchronized (teams) {
             
             // On Ajoute les user dans la liste
-            for (final Team team : teams) {
+            for (Team team : teams) {
                 listeUser.addAll(team);
                 team.clear();
             }
@@ -166,23 +166,24 @@ public class Pickup extends ChannelEvent {
                 indexTeam = ++indexTeam % NB_TEAMS;
             }
         }
-        return "Shake Réussi!";
+        return toString();
     }
     
     /**
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
     @Override
-    public final String toString() {
-        final StringBuilder retour = new StringBuilder();
-        for (final Team team : teams) {
-            retour.append("Team " + team + ": ");
-            for (final IrcUser user : team) {
-                retour.append(user).append(". ");
+    public String toString() {
+        StringBuilder retour = new StringBuilder();
+        for (Team team : teams) {
+            retour.append("Team " + team.getNom() + ": ");
+            for (IrcUser user : team) {
+                retour.append(user.getNick()).append(". ");
             }
         }
         return retour.toString();
     }
+    
     // public String getServ() {
     // return "Serv: " + serv.getIp() + ":" + serv.getPort() + " - Pass: " +
     // serv.pass;

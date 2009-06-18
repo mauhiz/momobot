@@ -11,5 +11,5 @@ public interface IQuitTrigger extends ITrigger {
      * @param im
      * @param control
      */
-    void doTrigger(final Quit im, final IIrcControl control);
+    void doTrigger(Quit im, IIrcControl control);
 }

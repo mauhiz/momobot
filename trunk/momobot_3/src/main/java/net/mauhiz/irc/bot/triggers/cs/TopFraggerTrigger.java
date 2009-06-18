@@ -1,10 +1,14 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
-import net.mauhiz.irc.NetUtils;
+import java.io.IOException;
+
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
+import net.mauhiz.util.NetUtils;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
@@ -14,7 +18,7 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
      * @param trigger
      *            le trigger
      */
-    public TopFraggerTrigger(final String trigger) {
+    public TopFraggerTrigger(String trigger) {
         super(trigger);
     }
     
@@ -23,20 +27,29 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         String args = getArgs(im.getMessage());
-        Server server = new Server(NetUtils.makeISA(args));
-        server.getDetails();
-        Player best = null;
-        int bestScore = Integer.MIN_VALUE;
-        for (Player player : server.getPlayers().values()) {
-            if (player.getFrags() > bestScore) {
-                best = player;
-            }
+        if (StringUtils.isBlank(args)) {
+            Privmsg help = Privmsg.buildPrivateAnswer(im, getTriggerHelp());
+            control.sendMsg(help);
+            return;
         }
+        
+        Server server = new Server(NetUtils.makeISA(args));
+        try {
+            server.getDetails();
+        } catch (IOException ioe) {
+            LOG.warn(ioe, ioe);
+            Privmsg help = Privmsg.buildPrivateAnswer(im, "Could not connect to server");
+            control.sendMsg(help);
+            return;
+        }
+        Player best = findBestPlayer(server);
+        
         String reply;
         if (best == null) {
             reply = "There is no player on this server";
+            
         } else {
             reply = "Best fragger on " + server.getName() + " : " + best.getName() + " with " + best.getFrags()
                     + " frags";
@@ -44,5 +57,19 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
         
         Privmsg msg = Privmsg.buildAnswer(im, reply);
         control.sendMsg(msg);
+    }
+    
+    private Player findBestPlayer(Server server) {
+        Player best = null;
+        int bestScore = Integer.MIN_VALUE;
+        for (Player player : server.getPlayers()) {
+            if (player == null) {
+                continue;
+            } else if (player.getFrags() > bestScore) {
+                best = player;
+                bestScore = player.getFrags();
+            }
+        }
+        return best;
     }
 }

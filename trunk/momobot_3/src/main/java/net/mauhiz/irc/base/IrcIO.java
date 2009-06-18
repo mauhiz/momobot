@@ -3,10 +3,10 @@ package net.mauhiz.irc.base;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-import net.mauhiz.irc.AbstractRunnable;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.User;
+import net.mauhiz.util.AbstractRunnable;
 
 import org.apache.commons.net.SocketClient;
 import org.apache.log4j.Logger;
@@ -35,7 +35,8 @@ public class IrcIO extends SocketClient implements IIrcIO {
      * @param server1
      * @throws IOException
      */
-    IrcIO(final IrcControl ircControl, final IrcServer server1) throws IOException {
+    IrcIO(IrcControl ircControl, IrcServer server1) throws IOException {
+        super();
         control = ircControl;
         status = Status.CONNECTING;
         server = server1;
@@ -48,18 +49,22 @@ public class IrcIO extends SocketClient implements IIrcIO {
     private void connect() throws IOException {
         InetSocketAddress address = server.getAddress();
         super.connect(address.getAddress(), address.getPort());
-        IIrcInput input = new IrcInput(this, super._socket_);
-        input.start();
+        if (super._socket_ == null) {
+            LOG.error("could not connect to " + address);
+            return;
+        }
         output = new IrcOutput(super._socket_);
         output.start();
-        output.sendRawMsg(new Nick(server).toString());
-        output.sendRawMsg(new User(server).toString());
+        IIrcInput input = new IrcInput(this, super._socket_);
+        input.start();
+        output.sendRawMsg(new Nick(server).getIrcForm());
+        output.sendRawMsg(new User(server).getIrcForm());
     }
     /**
      * @see org.apache.commons.net.SocketClient#disconnect()
      */
     @Override
-    public final void disconnect() {
+    public void disconnect() {
         status = Status.DISCONNECTING;
         if (output != null) {
             output.stop();
@@ -93,7 +98,7 @@ public class IrcIO extends SocketClient implements IIrcIO {
     /**
      * @see net.mauhiz.irc.base.IIrcIO#processMsg(java.lang.String)
      */
-    public void processMsg(final String msg) {
+    public void processMsg(String msg) {
         if (msg == null) {
             return;
         }
@@ -103,7 +108,7 @@ public class IrcIO extends SocketClient implements IIrcIO {
     /**
      * @see net.mauhiz.irc.base.IIrcIO#reconnect()
      */
-    public final void reconnect() throws IOException {
+    public void reconnect() throws IOException {
         disconnect();
         connect();
     }
@@ -111,14 +116,24 @@ public class IrcIO extends SocketClient implements IIrcIO {
     /**
      * @see net.mauhiz.irc.base.IIrcIO#sendMsg(java.lang.String)
      */
-    public void sendMsg(final String msg) {
+    public void sendMsg(String msg) {
         output.sendRawMsg(msg);
     }
     
     /**
      * @see net.mauhiz.irc.base.IIrcIO#setStatus(net.mauhiz.irc.base.IrcIO.Status)
      */
-    public void setStatus(final Status status1) {
+    public void setStatus(Status status1) {
         status = status1;
+    }
+    
+    @Override
+    public void waitForConnection() {
+        while (true) {
+            if (status == Status.CONNECTED) {
+                return;
+            }
+            AbstractRunnable.sleep(100);
+        }
     }
 }

@@ -8,11 +8,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.mauhiz.irc.MomoStringUtils;
-import net.mauhiz.irc.NetUtils;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.util.NetUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
@@ -49,7 +49,7 @@ public class SeekWar {
     /**
      * black list pour un msg pv
      */
-    private String[] blackList = {"www", "http", "://", ".com", ".fr", ".eu", ".info", "porn", "sex"};
+    private final String[] blackList = {"www", "http", "://", ".com", ".fr", ".eu", ".info", "porn", "sex"};
     /**
      * channel sur lequel le seek a ete lance
      */
@@ -57,7 +57,7 @@ public class SeekWar {
     /**
      * 
      */
-    private String[] greenList = {"ok", "oui", "go", "k", "ip", "pass", "yes", "lvl", "level", "yep", "moi"};
+    private final String[] greenList = {"ok", "oui", "go", "k", "ip", "pass", "yes", "lvl", "level", "yep", "moi"};
     /**
      * IpPass du srv
      */
@@ -69,7 +69,7 @@ public class SeekWar {
     /**
      * Liste d'ordre croissante des lvl
      */
-    private String[] lvl = {"noob", "low", "mid", "good", "skilled", "high", "roxor"};
+    private final String[] lvl = {"noob", "low", "mid", "good", "skilled", "high", "roxor"};
     /**
      * gather
      */
@@ -93,14 +93,14 @@ public class SeekWar {
     /**
      * Temps de time out : 6min par defaut
      */
-    private long seekTimeOut = TimeUnit.MILLISECONDS.convert(6, TimeUnit.MINUTES);
+    private final long seekTimeOut = TimeUnit.MILLISECONDS.convert(6, TimeUnit.MINUTES);
     /**
-     * si on a splité
+     * si on a splite
      */
     private boolean split;
     
     /**
-     * le temps où je commence.
+     * le temps ou je commence.
      */
     private final StopWatch sw = new StopWatch();
     
@@ -122,16 +122,16 @@ public class SeekWar {
     }
     
     /**
-     * @return String = channel qui a lancé le seek ~ #tsi.fr
+     * @return String = channel qui a lance le seek ~ #tsi.fr
      */
-    public final String getChannel() {
+    public String getChannel() {
         return channel;
     }
     
     /**
-     * @return String = Message de seek complété
+     * @return Message de seek complete
      */
-    public final String getMessageForSeeking() {
+    public String getMessageForSeeking() {
         return MomoStringUtils.genereSeekMessage(seekMessage, numberPlayers, seekServ, seekLevel);
     }
     
@@ -147,7 +147,7 @@ public class SeekWar {
      * @return String = qui a gagner le seek
      */
     
-    public final String getSeekWinner() {
+    public String getSeekWinner() {
         if (userpv.isEmpty()) {
             return "";
         }
@@ -163,7 +163,7 @@ public class SeekWar {
     /**
      * @return false = TJS en vie true = DEAD!
      */
-    public final boolean isTimeOut() {
+    public boolean isTimeOut() {
         LOG.debug("Time seek : " + sw.getTime());
         return sw.getTime() >= seekTimeOut;
     }
@@ -173,13 +173,13 @@ public class SeekWar {
      * @param resultPrivmsg
      * @return list of {@link Privmsg}
      */
-    private List<Privmsg> processIncomingMessage(final Privmsg im, final List<Privmsg> resultPrivmsg) {
+    private List<Privmsg> processIncomingMessage(Privmsg im, List<Privmsg> resultPrivmsg) {
         IrcServer server = im.getServer();
         IrcUser provenance = server.findUser(new Mask(im.getFrom()), true);
         String destination = im.getTo();
         String msg = im.getMessage();
         // Traitement des messages entrant
-        if (im.getServer().getMyNick().equals(destination)) {
+        if (MomoStringUtils.isChannelName(destination)) {
             // C'est un msg PV
             
             // Si c'est "S" on se calme!
@@ -193,7 +193,7 @@ public class SeekWar {
             if ("on".equals(seekServ.toLowerCase())) {
                 
                 if (userpv.contains(provenance)) {
-                    // Le bot a déja été PV par ce type
+                    // Le bot a deja ete PV par ce type
                     if (submitPVMessage(msg, provenance)) {
                         // OK le bot valide le pv <=> SEEK REUSSI
                         // On lui file ip pass
@@ -237,7 +237,7 @@ public class SeekWar {
                 return resultPrivmsg;
                 
             } else if ("off".equalsIgnoreCase(seekServ)) {
-                // Le bot a déja été PV par ce bonhomme
+                // Le bot a deja ete PV par ce bonhomme
                 if (userpv.contains(provenance)) {
                     if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
                         Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
@@ -254,7 +254,7 @@ public class SeekWar {
                 if (submitPVMessage(msg, provenance)) {
                     // Le bot detecte un msg correct
                     // On PV le bonhomme ok > GO
-                    // On affiche le msg (çad l'ip & pass) ds le channel de seek
+                    // On affiche le msg (cad l'ip & pass) ds le channel de seek
                     userpv.add(provenance);
                     if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
                         Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
@@ -309,7 +309,7 @@ public class SeekWar {
      *            String[] non normalise
      * @return un message
      */
-    List<String> split(final String[] cmd) {
+    List<String> split(String[] cmd) {
         List<String> cmdNormalise = new ArrayList<String>();
         String tmpStg = "";
         
@@ -340,7 +340,7 @@ public class SeekWar {
      * @param nbPlayers
      * @return String
      */
-    public String start(final String[] commandSeek, final String chan, final int nbPlayers) {
+    public String start(String[] commandSeek, String chan, int nbPlayers) {
         sw.start();
         channel = chan;
         numberPlayers = nbPlayers;
@@ -370,7 +370,7 @@ public class SeekWar {
                 }
                 sw.stop();
                 sw.reset();
-                return "Paramètre(s) Incorrect";
+                return "Parametre(s) Incorrect";
                 
             case 2 :
                 if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
@@ -388,7 +388,7 @@ public class SeekWar {
                 } else {
                     sw.stop();
                     sw.reset();
-                    return "Paramètre(s) Incorrect";
+                    return "Parametre(s) Incorrect";
                 }
                 
             case 3 :
@@ -409,7 +409,7 @@ public class SeekWar {
                 } else {
                     sw.stop();
                     sw.reset();
-                    return "Paramètre(s) Incorrect";
+                    return "Parametre(s) Incorrect";
                 }
                 
             case 4 :
@@ -424,19 +424,19 @@ public class SeekWar {
                 }
                 sw.stop();
                 sw.reset();
-                return "Paramètre(s) Incorrect";
+                return "Parametre(s) Incorrect";
                 
             default :
                 sw.stop();
                 sw.reset();
-                return "Paramètre(s) Incorrect";
+                return "Parametre(s) Incorrect";
                 
         }
     }
     /**
      * @return une String
      */
-    public final String stopSeek() {
+    public String stopSeek() {
         seekInProgress = false;
         isLaunchedAndQuit = false;
         userpv.clear();
@@ -450,8 +450,8 @@ public class SeekWar {
      *            Message qui vient du channel de seek
      * @return message
      */
-    public final boolean submitChannelMessage(final String stg) {
-        // On doit inverser le seek ex:Si je seek srv ON,le msg de match doit être serv off.
+    public boolean submitChannelMessage(String stg) {
+        // On doit inverser le seek ex:Si je seek srv ON,le msg de match doit etre serv off.
         String seekServ1;
         if ("on".equalsIgnoreCase(seekServ)) {
             seekServ1 = "off";
@@ -501,7 +501,7 @@ public class SeekWar {
                 }
                 
             } else {
-                // on a pas réussi a comprendre son lvl, on lui demande en PV
+                // on a pas reussi a comprendre son lvl, on lui demande en PV
                 return true;
                 
             }
@@ -516,13 +516,13 @@ public class SeekWar {
      *            = nick
      * @return true si le bot pense que le PV est ok
      */
-    private boolean submitPVMessage(final String msg, final IrcUser provenance) {
+    private boolean submitPVMessage(String msg, IrcUser provenance) {
         
         Matcher m = IP_PATTERN.matcher(msg);
         if (m.find()) {
             InetSocketAddress add1 = NetUtils.makeISA(m.group());
             if (add1.getPort() > MIN_SRV_PORT && add1.getPort() < MAX_SRV_PORT) {
-                // On regarde si l'user est déja dans la liste
+                // On regarde si l'user est deja dans la liste
                 if (!userpv.contains(provenance)) {
                     userpv.add(provenance);
                 }
@@ -553,7 +553,7 @@ public class SeekWar {
      * @return String
      */
     
-    public final List<Privmsg> submitSeekMessage(final Privmsg im) {
+    public List<Privmsg> submitSeekMessage(Privmsg im) {
         IrcServer server = im.getServer();
         
         List<Privmsg> resultPrivmsg = new ArrayList<Privmsg>(3);
@@ -562,7 +562,7 @@ public class SeekWar {
         
         if (sw.getTime() > TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS)) {
             if (split) {
-                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) & !sWarning) {
+                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) && !sWarning) {
                     sw.split();
                     seekMessage = "." + seekMessage + ".";
                     for (String seekChan : SEEK_CHANS) {

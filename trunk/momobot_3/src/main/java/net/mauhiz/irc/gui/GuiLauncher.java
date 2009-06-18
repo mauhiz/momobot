@@ -3,6 +3,7 @@ package net.mauhiz.irc.gui;
 import java.io.IOException;
 
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.qnet.QnetServer;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.gui.actions.ConnectAction;
@@ -28,21 +29,23 @@ public class GuiLauncher {
     static IrcServer qnet;
     static {
         qnet = new QnetServer("irc://uk.quakenet.org:6667/");
-        qnet.setMyLogin("mmb");
-        qnet.setMyFullName("momobot le 3eme");
         qnet.setAlias("Quakenet");
-        qnet.setMyNick("momobot3");
+        
+        IrcUser myself = qnet.newUser("momobot3");
+        myself.setUser("mmb");
+        myself.setFullName("momobot le 3eme");
+        qnet.setMyself(myself);
     }
     
     /**
      * @param args
      * @throws IOException
      */
-    public static void main(final String[] args) throws IOException {
-        final GuiTriggerManager gtm = new GuiTriggerManager();
+    public static void main(String[] args) throws IOException {
+        GuiTriggerManager gtm = new GuiTriggerManager();
         Display display = new Display();
-        final Shell shell = new Shell(display);
-        shell.setMinimumSize(800, 600);
+        Shell shell = new Shell(display);
+        shell.setSize(800, 600);
         /* layout */
         GridLayout gridLayout = new GridLayout(3, false);
         shell.setLayout(gridLayout);
@@ -92,7 +95,7 @@ public class GuiLauncher {
         while (!shell.isDisposed()) {
             IIrcMessage msg = gtm.nextMsg();
             if (msg != null) {
-                logInfo.setText(logInfo.getText() + "\r\n" + msg.toString());
+                logInfo.setText(logInfo.getText() + "\r\n" + msg.getIrcForm());
                 continue;
             }
             if (!display.readAndDispatch()) {

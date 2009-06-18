@@ -11,5 +11,5 @@ public interface IJoinTrigger extends ITrigger {
      * @param im
      * @param control
      */
-    void doTrigger(final Join im, final IIrcControl control);
+    void doTrigger(Join im, IIrcControl control);
 }

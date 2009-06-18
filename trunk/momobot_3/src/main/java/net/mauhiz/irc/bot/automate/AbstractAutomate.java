@@ -1,30 +1,32 @@
 package net.mauhiz.irc.bot.automate;
 
-import net.mauhiz.irc.AbstractRunnable;
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.AbstractHook;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.Hooks;
 
 /**
- * Cette classe est horriblement moche. TODO virer cette énum qui sert à rien.
+ * Cette classe est horriblement moche. TODO virer cette enum qui sert a rien.
  * 
  * @author mauhiz
  */
-public abstract class Automate extends AbstractRunnable {
+public abstract class AbstractAutomate extends AbstractRunnable {
     
     /**
      * @author mauhiz
      * 
      */
-    static class AutomateHook extends AbstractHook<IrcUser> {
+    static class AutomateHook {
+        private final IrcUser hook;
         
         /**
          * @param hookable
          */
-        public AutomateHook(final IrcUser hookable) {
-            super(hookable);
+        public AutomateHook(IrcUser user) {
+            Hooks.addHook(user, this);
+            hook = user;
         }
         
         /**
@@ -36,7 +38,7 @@ public abstract class Automate extends AbstractRunnable {
         
     }
     /**
-     * éteint.
+     * eteint.
      */
     protected static final int OFF = 0;
     /**
@@ -47,13 +49,13 @@ public abstract class Automate extends AbstractRunnable {
      * indique que l automate est demarre.
      */
     protected static final int STARTED = 1;
-    protected final IIrcControl control;
+    protected IIrcControl control;
     /**
-     * l'état, off par défaut.
+     * l'etat, off par defaut.
      */
-    private int etat = OFF;
+    protected int etat = OFF;
     /**
-     * L'user associé.
+     * L'user associe.
      */
     private final AutomateHook myHook;
     private final IrcServer server;
@@ -64,18 +66,11 @@ public abstract class Automate extends AbstractRunnable {
      * @param control1
      * @param server1
      */
-    public Automate(final IrcUser user1, final IIrcControl control1, final IrcServer server1) {
+    public AbstractAutomate(IrcUser user1, IIrcControl control1, IrcServer server1) {
         super();
         control = control1;
         server = server1;
         myHook = new AutomateHook(user1);
-    }
-    
-    /**
-     * @return {@link #etat}
-     */
-    public final int getEtat() {
-        return etat;
     }
     
     /**
@@ -88,23 +83,15 @@ public abstract class Automate extends AbstractRunnable {
     /**
      * @return le user
      */
-    protected final IrcUser getUser() {
+    protected IrcUser getUser() {
         return myHook.getUser();
     }
     
     /**
      * @param text
      */
-    protected void sendMsgToUser(final String text) {
+    protected void sendMsgToUser(String text) {
         Privmsg msg = new Privmsg(null, getUser().getNick(), server, text);
         control.sendMsg(msg);
-    }
-    
-    /**
-     * @param etat1
-     *            l'état
-     */
-    public final void setEtat(final int etat1) {
-        etat = etat1;
     }
 }

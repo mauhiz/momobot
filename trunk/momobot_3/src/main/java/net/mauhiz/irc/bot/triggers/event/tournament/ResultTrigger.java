@@ -21,7 +21,7 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      * @param trigger
      *            le trigger
      */
-    public ResultTrigger(final String trigger) {
+    public ResultTrigger(String trigger) {
         super(trigger);
     }
     
@@ -30,7 +30,7 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcServer server = im.getServer();
         IrcChannel chan = server.findChannel(im.getTo());
         ChannelEvent event = chan.getEvt();

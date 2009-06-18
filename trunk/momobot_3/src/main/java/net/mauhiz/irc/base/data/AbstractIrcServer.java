@@ -5,10 +5,13 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.base.IrcSpecialChars;
+import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Kick;
@@ -21,48 +24,46 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Quit;
 import net.mauhiz.irc.base.msg.ServerError;
 import net.mauhiz.irc.base.msg.ServerMsg;
+import net.mauhiz.irc.base.msg.SetTopic;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
-public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> implements IrcCommands, IrcServer {
+public abstract class AbstractIrcServer implements IrcCommands, IrcServer, IrcSpecialChars {
     
     static final Pattern CMD = Pattern.compile("([\\S^:]+) (.*)");
     static final Pattern FROM = Pattern.compile(":([\\S^:]+) (.*)");
-    private static final Logger LOG = Logger.getLogger(AbstractIrcServer.class);
+    protected static final Logger LOG = Logger.getLogger(IrcServer.class);
     static final Pattern TO = Pattern.compile("([\\S^:]+) (.*)");
     private String alias;
     /**
      * a chaque server sa liste de channels.
      */
-    private final Set<IrcChannel> channels = new HashSet<IrcChannel>();
-    
+    private final Set<IrcChannel> channels = new ConcurrentSkipListSet<IrcChannel>();
     private final InetSocketAddress hostPort;
-    private String myFullName;
-    private String myLogin;
-    private String myNick;
+    private IrcUser myself;
     /**
      * a chaque server sa liste d users.
      */
-    private final Set<IrcUser> users = new HashSet<IrcUser>();
+    private final Set<IrcUser> users = new ConcurrentSkipListSet<IrcUser>();
     /**
      * @param uriStr
      */
-    protected AbstractIrcServer(final String uriStr) {
+    protected AbstractIrcServer(String uriStr) {
         super();
         URI uri = URI.create(uriStr);
         hostPort = new InetSocketAddress(uri.getHost(), uri.getPort());
     }
+    
     /**
      * @param raw
      * @return raw IRC msg
      */
-    public IIrcMessage buildFromRaw(final String raw) {
+    public IIrcMessage buildFromRaw(String raw) {
         String work = raw;
         String from = null;
         String to = null;
@@ -88,7 +89,7 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
                 msg = msg.substring(1);
             }
             if (StringUtils.isNumeric(cmd)) {
-                return new ServerMsg(from, to, this, cmd, msg);
+                return newServerMsg(from, to, cmd, msg);
             } else if (NOTICE.equals(cmd)) {
                 return new Notice(from, to, this, msg);
             } else if (PING.equals(cmd)) {
@@ -102,6 +103,10 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
                 msg = StringUtils.substringBefore(msg, " :");
                 return new Part(this, from, to, msg, reason);
             } else if (PRIVMSG.equals(cmd)) {
+                if (msg.charAt(0) == QUOTE_STX) {
+                    msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
+                    return new Action(from, to, this, msg.substring(7));
+                }
                 return new Privmsg(from, to, this, msg);
             } else if (QUIT.equals(cmd)) {
                 return new Quit(from, to, this, msg);
@@ -113,6 +118,8 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
                 return new Kick(this, from, null, to, msg, reason);
             } else if (ERROR.equals(cmd)) {
                 return new ServerError(this, cmd);
+            } else if (TOPIC.equals(cmd)) {
+                return new SetTopic(from, to, this, msg);
             }
         }
         // TODO ERROR :Closing Link: by underworld2.no.quakenet.org (Registration Timeout)
@@ -130,22 +137,21 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
     /**
      * @see net.mauhiz.irc.base.data.IrcServer#findChannel(java.lang.String)
      */
-    public IrcChannel findChannel(final String chanName) {
+    public IrcChannel findChannel(String chanName) {
         return findChannel(chanName, true);
     }
-    
     /**
      * @see net.mauhiz.irc.base.data.IrcServer#findChannel(java.lang.String, boolean)
      */
-    public IrcChannel findChannel(final String chanName, final boolean addIfNotFound) {
+    public IrcChannel findChannel(String chanName, boolean addIfNotFound) {
         // 
         for (IrcChannel chan : channels) {
-            if (chan.toString().equalsIgnoreCase(chanName)) {
+            if (chan.fullName().equalsIgnoreCase(chanName)) {
                 return chan;
             }
         }
         if (addIfNotFound && MomoStringUtils.isChannelName(chanName)) {
-            final String chanLowerCase = chanName.toLowerCase(Locale.FRANCE);
+            String chanLowerCase = chanName.toLowerCase(Locale.FRANCE);
             IrcChannel chan = newChannel(chanLowerCase);
             channels.add(chan);
             return chan;
@@ -157,7 +163,7 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
     /**
      * @see net.mauhiz.irc.base.data.IrcServer#findUser(net.mauhiz.irc.base.data.Mask, boolean)
      */
-    public IrcUser findUser(final Mask mask, final boolean addIfNotFound) {
+    public IrcUser findUser(Mask mask, boolean addIfNotFound) {
         if (mask == null) {
             throw new NullArgumentException("mask");
         }
@@ -185,9 +191,11 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
     /**
      * @see net.mauhiz.irc.base.data.IrcServer#findUser(java.lang.String, boolean)
      */
-    public IrcUser findUser(final String nick, final boolean addIfNotFound) {
+    public IrcUser findUser(String nick, boolean addIfNotFound) {
         if (nick == null) {
             throw new NullArgumentException("nick");
+        } else if (nick.contains("!")) {
+            LOG.warn("function misuse", new IllegalArgumentException());
         }
         for (IrcUser user : users) {
             if (nick.equalsIgnoreCase(user.getNick())) {
@@ -226,7 +234,7 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
     /**
      * @see net.mauhiz.irc.base.data.IrcServer#getChannelsForUser(net.mauhiz.irc.base.data.IrcUser)
      */
-    public Set<IrcChannel> getChannelsForUser(final IrcUser smith) {
+    public Set<IrcChannel> getChannelsForUser(IrcUser smith) {
         Set<IrcChannel> chans = new HashSet<IrcChannel>();
         for (IrcChannel chan : channels) {
             if (chan.contains(smith)) {
@@ -237,24 +245,10 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
     }
     
     /**
-     * @see net.mauhiz.irc.base.data.IrcServer#getMyFullName()
+     * @return the myself
      */
-    public String getMyFullName() {
-        return myFullName;
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#getMyLogin()
-     */
-    public String getMyLogin() {
-        return myLogin;
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#getMyNick()
-     */
-    public String getMyNick() {
-        return myNick;
+    public IrcUser getMyself() {
+        return myself;
     }
     
     /**
@@ -265,57 +259,39 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
     }
     
     /**
-     * @param chanLowerCase
-     * @return Channel instance
+     * this method can be subclassed
      */
-    protected abstract IrcChannel newChannel(final String chanLowerCase);
-    
-    /**
-     * @param nick
-     * @return IrcUser instance
-     */
-    protected abstract IrcUser newUser(final String nick);
+    protected IIrcMessage newServerMsg(String from, String to, String cmd, String msg) {
+        return new ServerMsg(from, to, this, cmd, msg);
+    }
     
     /**
      * @param channel
      */
-    public void remove(final IrcChannel channel) {
+    public void remove(IrcChannel channel) {
         channels.remove(channel);
     }
     
     /**
      * @see net.mauhiz.irc.base.data.IrcServer#remove(net.mauhiz.irc.base.data.IrcUser)
      */
-    public void remove(final IrcUser quitter) {
+    public void remove(IrcUser quitter) {
         users.remove(quitter);
     }
     
     /**
      * @see net.mauhiz.irc.base.data.IrcServer#setAlias(java.lang.String)
      */
-    public void setAlias(final String alias1) {
+    public void setAlias(String alias1) {
         alias = alias1;
     }
     
     /**
-     * @see net.mauhiz.irc.base.data.IrcServer#setMyFullName(java.lang.String)
+     * @param myself
+     *            the myself to set
      */
-    public void setMyFullName(final String myFullName1) {
-        myFullName = myFullName1;
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#setMyLogin(java.lang.String)
-     */
-    public void setMyLogin(final String myLogin1) {
-        myLogin = myLogin1;
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#setMyNick(java.lang.String)
-     */
-    public void setMyNick(final String myNick1) {
-        myNick = myNick1;
+    public void setMyself(IrcUser myself) {
+        this.myself = myself;
     }
     
     /**
@@ -323,13 +299,13 @@ public abstract class AbstractIrcServer extends AbstractHookable<IrcServer> impl
      */
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return getAlias();
     }
     
     /**
      * @see net.mauhiz.irc.base.data.IrcServer#updateNick(net.mauhiz.irc.base.data.IrcUser, java.lang.String)
      */
-    public void updateNick(final IrcUser oldUser, final String newNick) {
+    public void updateNick(IrcUser oldUser, String newNick) {
         if (oldUser == null) {
             /* we did not know him anyways. how so? */
             findUser(newNick, true);

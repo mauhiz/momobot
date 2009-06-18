@@ -1,5 +1,6 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 
 /**
@@ -12,6 +13,11 @@ public interface IIrcMessage {
     String getFrom();
     
     /**
+     * @return message prêt à être utilise sur IRC
+     */
+    String getIrcForm();
+    
+    /**
      * @return server
      */
     IrcServer getServer();
@@ -20,4 +26,9 @@ public interface IIrcMessage {
      * @return to
      */
     String getTo();
+    
+    /**
+     * @param control
+     */
+    void process(IIrcControl control);
 }

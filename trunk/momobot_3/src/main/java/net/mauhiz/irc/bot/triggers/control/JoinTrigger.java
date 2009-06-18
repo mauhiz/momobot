@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.triggers.admin;
+package net.mauhiz.irc.bot.triggers.control;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Join;
@@ -15,7 +15,7 @@ public class JoinTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      * @param trigger
      *            le trigger
      */
-    public JoinTrigger(final String trigger) {
+    public JoinTrigger(String trigger) {
         super(trigger);
     }
     
@@ -24,7 +24,7 @@ public class JoinTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         /* TODO join cross server */
         Join go = new Join(im.getServer(), getArgs(im.getMessage()));
         control.sendMsg(go);

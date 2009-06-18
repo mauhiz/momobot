@@ -1,22 +1,30 @@
 package net.mauhiz.irc.bot.event;
 
-import net.mauhiz.irc.base.data.AbstractHook;
 import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.util.Hooks;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
-public abstract class ChannelEvent extends AbstractHook<IrcChannel> implements IChannelEvent {
+public abstract class ChannelEvent implements IChannelEvent {
+    /**
+     * logger.
+     */
+    protected static final Logger LOG = Logger.getLogger(Gather.class);
+    
     /**
      * running
      */
     private boolean running = true;
+    
     /**
      * @param chan
      *            le channel
      */
-    public ChannelEvent(final IrcChannel chan) {
-        super(chan);
+    public ChannelEvent(IrcChannel chan) {
+        Hooks.addHook(chan, this);
     }
     
     /**
@@ -30,7 +38,7 @@ public abstract class ChannelEvent extends AbstractHook<IrcChannel> implements I
     /**
      * @see net.mauhiz.irc.bot.event.IChannelEvent#stop()
      */
-    public final String stop() {
+    public String stop() {
         running = false;
         return "Fin du " + getClass().getSimpleName() + " !";
     }

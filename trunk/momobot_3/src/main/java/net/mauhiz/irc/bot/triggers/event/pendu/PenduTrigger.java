@@ -10,6 +10,8 @@ import net.mauhiz.irc.bot.event.Pendu;
 import net.mauhiz.irc.bot.triggers.AbstractGourmandTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author mauhiz
  */
@@ -18,16 +20,15 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
      * @param trigger
      *            le trigger
      */
-    public PenduTrigger(final String trigger) {
+    public PenduTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
+    public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcChannel chan = cme.getServer().findChannel(cme.getTo());
         if (chan == null) {
             /* c est un msg prive */
@@ -37,7 +38,7 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
         if (isCommandMsg(cme.getMessage())) {
             String respMsg;
             if (evt != null) {
-                respMsg = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + cme.getTo();
+                respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
             } else {
                 respMsg = "Devinez ce mot: " + new Pendu(chan).getDevinage();
             }
@@ -45,15 +46,17 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
             control.sendMsg(resp);
         }
         if (evt instanceof Pendu) {
-            final Pendu pendu = (Pendu) evt;
+            Pendu pendu = (Pendu) evt;
             String respMsg;
             if (cme.getMessage().length() == 1) {
-                respMsg = pendu.submitLettre(cme.getMessage().toLowerCase(Locale.FRANCE).charAt(0)).toString();
+                respMsg = pendu.submitLettre(cme.getMessage().toLowerCase(Locale.FRANCE).charAt(0));
             } else {
                 respMsg = pendu.submitMot(cme.getMessage()).toString();
             }
-            Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
-            control.sendMsg(resp);
+            if (StringUtils.isNotBlank(respMsg)) {
+                Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
+                control.sendMsg(resp);
+            }
             if (!pendu.isRunning()) {
                 chan.stopEvent();
             }

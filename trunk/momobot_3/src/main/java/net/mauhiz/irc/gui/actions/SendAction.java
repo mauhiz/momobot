@@ -25,7 +25,7 @@ public class SendAction implements SelectionListener {
      * @param server1
      * @param target1
      */
-    public SendAction(final Text bar1, final GuiTriggerManager gtm1, final IrcServer server1, final String target1) {
+    public SendAction(Text bar1, GuiTriggerManager gtm1, IrcServer server1, String target1) {
         gtm = gtm1;
         bar = bar1;
         server = server1;
@@ -35,14 +35,14 @@ public class SendAction implements SelectionListener {
     /**
      * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
      */
-    public void widgetDefaultSelected(final SelectionEvent arg0) {
+    public void widgetDefaultSelected(SelectionEvent arg0) {
         // TODO Auto-generated method stub
     }
     
     /**
      * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
      */
-    public void widgetSelected(final SelectionEvent arg0) {
+    public void widgetSelected(SelectionEvent arg0) {
         String toSend = bar.getText();
         if (StringUtils.isEmpty(toSend)) {
             return;

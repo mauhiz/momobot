@@ -1,4 +1,4 @@
-package net.mauhiz.irc;
+package net.mauhiz.util;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -38,14 +38,14 @@ public class NetUtils {
      *            the byte[] of size 4 representing the IP address.
      * @return a long representation of the IP address.
      */
-    public static long byteTabToLong(final byte[] address) {
+    public static long byteTabToLong(byte[] address) {
         if (address.length != IP_FIELDS) {
             throw new IllegalArgumentException("byte array must be of length " + IP_FIELDS);
         }
         long ipNum = 0;
         long multiplier = 1;
         for (int i = address.length - 1; i >= 0; --i) {
-            final int byteVal = (address[i] + IP_FIELD_RANGE) % IP_FIELD_RANGE;
+            int byteVal = (address[i] + IP_FIELD_RANGE) % IP_FIELD_RANGE;
             ipNum += byteVal * multiplier;
             multiplier *= IP_FIELD_RANGE;
         }
@@ -53,13 +53,13 @@ public class NetUtils {
     }
     
     /**
-     * Une IP vaut 32 bits, un int aussi. Par contre l'entier est signé...
+     * Une IP vaut 32 bits, un int aussi. Par contre l'entier est signe...
      * 
      * @param addr
      *            l'adresse
      * @return ?
      */
-    public static int byteTabToSignedInt(final byte[] addr) {
+    public static int byteTabToSignedInt(byte[] addr) {
         return (int) byteTabToLong(addr);
     }
     
@@ -68,7 +68,7 @@ public class NetUtils {
      *            l'IP
      * @return ?
      */
-    public static InetAddress charTabToIa(final char[] ip) {
+    public static InetAddress charTabToIa(char[] ip) {
         if (ip.length != IP_FIELDS) {
             throw new IllegalArgumentException("short array must be of length " + IP_FIELDS);
         }
@@ -79,7 +79,7 @@ public class NetUtils {
                 name.append((int) ipField);
             }
             return InetAddress.getByName(name.substring(1));
-        } catch (final UnknownHostException uhe) {
+        } catch (UnknownHostException uhe) {
             LOG.warn(uhe, uhe);
         }
         return null;
@@ -90,8 +90,8 @@ public class NetUtils {
      *            l'adresse
      * @return un kikoo
      */
-    public static long iaToLong(final InetAddress address) {
-        final byte[] ip = address.getAddress();
+    public static long iaToLong(InetAddress address) {
+        byte[] ip = address.getAddress();
         long ipNum = 0;
         long multiplier = 1;
         int byteVal;
@@ -109,10 +109,10 @@ public class NetUtils {
      *            l'adresse
      * @return ?
      */
-    public static byte[] intToBytes(final int addr) {
-        final byte[] result = new byte[IP_FIELDS];
+    public static byte[] intToBytes(int addr) {
+        byte[] result = new byte[IP_FIELDS];
         for (int i = 0; i < result.length; ++i) {
-            final int lmask = BYTE_MASK << Byte.SIZE * (IP_FIELDS - i - 1);
+            int lmask = BYTE_MASK << Byte.SIZE * (IP_FIELDS - i - 1);
             result[i] = (byte) ((addr & lmask) >> Byte.SIZE * (IP_FIELDS - i - 1));
         }
         return result;
@@ -126,9 +126,9 @@ public class NetUtils {
      *            the long value representing the IP address.
      * @return A short[] of size 4.
      */
-    public static char[] longToCharTab(final long address1) {
+    public static char[] longToCharTab(long address1) {
         long address = address1;
-        final char[] ip = new char[IP_FIELDS];
+        char[] ip = new char[IP_FIELDS];
         for (int i = IP_FIELDS - 1; i >= 0; --i) {
             ip[i] = (char) (address % IP_FIELD_RANGE);
             address /= IP_FIELD_RANGE;
@@ -141,24 +141,24 @@ public class NetUtils {
      *            une ip
      * @return une inetaddress
      */
-    public static InetAddress longToIa(final long longip) {
+    public static InetAddress longToIa(long longip) {
         return charTabToIa(longToCharTab(longip));
     }
     /**
      * @param str
-     *            la chaine à parser
+     *            la chaine a parser
      * @return ?
      */
-    public static InetSocketAddress makeISA(final String str) {
-        final int index = str.indexOf(':');
+    public static InetSocketAddress makeISA(String str) {
+        int index = str.indexOf(':');
         if (index > -1) {
             try {
-                final InetAddress ip = InetAddress.getByName(str.substring(0, index));
-                final int port = Integer.parseInt(str.substring(index + 1));
+                InetAddress ip = InetAddress.getByName(str.substring(0, index));
+                int port = Integer.parseInt(str.substring(index + 1));
                 return new InetSocketAddress(ip, port);
-            } catch (final IOException ioe) {
+            } catch (IOException ioe) {
                 LOG.warn(ioe, ioe);
-            } catch (final IllegalArgumentException iae) {
+            } catch (IllegalArgumentException iae) {
                 LOG.warn(iae, iae);
             }
         }
@@ -166,11 +166,11 @@ public class NetUtils {
     }
     /**
      * @param uns
-     *            un long non signé
-     * @return un tableau d'octets qui représente un entier non signé
+     *            un long non signe
+     * @return un tableau d'octets qui represente un entier non signe
      */
-    public static byte[] unsIntToByteTab(final long uns) {
-        final byte[] retour = new byte[Integer.SIZE / Byte.SIZE];
+    public static byte[] unsIntToByteTab(long uns) {
+        byte[] retour = new byte[Integer.SIZE / Byte.SIZE];
         int shift = Integer.SIZE;
         
         for (char i = 0; i < retour.length; ++i) {
@@ -181,7 +181,7 @@ public class NetUtils {
     }
     
     /**
-     * constructeur caché.
+     * constructeur cache.
      */
     protected NetUtils() {
         throw new UnsupportedOperationException();

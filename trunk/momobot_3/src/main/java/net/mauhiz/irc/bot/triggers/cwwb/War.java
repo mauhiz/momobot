@@ -38,7 +38,7 @@ public class War {
      * @param pUser
      * @param pSeekMessage
      */
-    public War(final String pUser, final String pSeekMessage) {
+    public War(String pUser, String pSeekMessage) {
         this();
         // Important
         String seekMessage = pSeekMessage.toLowerCase();
@@ -52,11 +52,11 @@ public class War {
         Matcher matcherNbJoueurs = NB_JOUEURS.matcher(seekMessage);
         // Matcher matcherNbJoueursShort = patternNbJoueursShort.matcher(SeekMessage);
         /*
-         * On détecte le serveur
+         * On detecte le serveur
          */
         // TODO : faire une regexp pour ca aussi ?
         // Du style : (serv)(2 caract maxi)(on|0n|ok|0k)
-        // Espace avant le ' on' pour éviter de matcher le 5on5 off
+        // Espace avant le ' on' pour eviter de matcher le 5on5 off
         // Ca ne marche plus pour '5 on 5' OFF
         if (seekMessage.contains(" on") || seekMessage.contains("servon") || seekMessage.contains("servok")
                 || seekMessage.contains("serv ok") || seekMessage.contains("serv:ok")
@@ -70,9 +70,9 @@ public class War {
         }
         
         /*
-         * On détecte le nombre de joueurs
+         * On detecte le nombre de joueurs
          */
-        // TODO : a faire avec des regexp pour les différents nombres de joueurs.
+        // TODO : a faire avec des regexp pour les differents nombres de joueurs.
         // (\d+) ?(vs|o|v|on) ?(\d+)
         // case insensitive
         if (matcherNbJoueurs.find()) {
@@ -84,7 +84,7 @@ public class War {
             // matcherNbJoueurs.group(i)+"'");
             // }
             // } else if(matcherNbJoueursShort.find()){
-            // TODO: tester le code ci dessous
+            // TODO tester le code ci dessous
             // if (matcherNbJoueurs.group(1).compareTo(matcherNbJoueurs.group(3)) == 0) {
             // this.nbjoueurs = Integer.parseInt(matcherNbJoueurs.group(1));
             // }
@@ -107,7 +107,7 @@ public class War {
         }
         
         /*
-         * On détecte le lvl
+         * On detecte le lvl
          */
         if (seekMessage.contains("roxor")) {
             level = Level.ROXOR;
@@ -176,35 +176,35 @@ public class War {
      * @param id
      *            the id to set
      */
-    public void setId(final long id) {
+    public void setId(long id) {
         this.id = id;
     }
     
     /**
      * @param level
      */
-    public void setLevel(final Level level) {
+    public void setLevel(Level level) {
         this.level = level;
     }
     
     /**
      * @param nbjoueurs
      */
-    public void setNbjoueurs(final int nbjoueurs) {
+    public void setNbjoueurs(int nbjoueurs) {
         this.nbjoueurs = nbjoueurs;
     }
     
     /**
      * @param status
      */
-    public void setServer(final ServerStatus status) {
+    public void setServer(ServerStatus status) {
         server = status;
     }
     
     /**
      * @param user
      */
-    public void setUser(final String user) {
+    public void setUser(String user) {
         this.user = user;
     }
     
@@ -212,7 +212,7 @@ public class War {
      * @param when
      *            the when to set
      */
-    public void setWhen(final Calendar when) {
+    public void setWhen(Calendar when) {
         this.when = when;
     }
 }

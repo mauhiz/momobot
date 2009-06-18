@@ -11,8 +11,7 @@ public class FakeUser extends DefaultUser {
     /**
      * @param name
      */
-    public FakeUser(final String name) {
+    public FakeUser(String name) {
         super(name);
     }
-    
 }

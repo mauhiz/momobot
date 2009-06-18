@@ -11,5 +11,5 @@ public interface INoticeTrigger extends ITextTrigger {
      * @param im
      * @param control
      */
-    void doTrigger(final Notice im, final IIrcControl control);
+    void doTrigger(Notice im, IIrcControl control);
 }

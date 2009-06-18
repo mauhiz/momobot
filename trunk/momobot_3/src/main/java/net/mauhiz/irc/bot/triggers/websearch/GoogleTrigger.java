@@ -14,7 +14,7 @@ public class GoogleTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      * @param trigger
      *            le trigger
      */
-    public GoogleTrigger(final String trigger) {
+    public GoogleTrigger(String trigger) {
         super(trigger);
     }
     
@@ -23,9 +23,9 @@ public class GoogleTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        final WebQuery query = new WebQuery("google", getArgs(cme.getMessage()));
-        for (final String next : query.results()) {
+    public void doTrigger(Privmsg cme, IIrcControl control) {
+        WebQuery query = new WebQuery("google", getArgs(cme.getMessage()));
+        for (String next : query.results()) {
             IIrcMessage notice = Privmsg.buildAnswer(cme, next);
             control.sendMsg(notice);
         }

@@ -16,7 +16,7 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      * @param trigger
      *            le trigger
      */
-    public TgSeekTrigger(final String trigger) {
+    public TgSeekTrigger(String trigger) {
         super(trigger);
     }
     /**
@@ -24,32 +24,28 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
-        String reply = "";
+        String reply;
         if (evt == null) {
             reply = "Aucun gather n'est lance.";
-        } else {
-            if (evt instanceof Gather) {
-                if (((Gather) evt).getSeek() != null) {
-                    if (((Gather) evt).getSeek().isSeekInProgress()) {
-                        reply = "Le seek est en cour.";
-                        
-                    } else {
-                        // on reset le seek
-                        ((Gather) evt).setSeekToNull();
-                        reply = "ok je remballe.";
-                    }
-                    
-                } else {
-                    reply = "Pas de seek en cour.";
-                }
+        } else if (evt instanceof Gather) {
+            if (((Gather) evt).getSeek() == null) {
+                reply = "Pas de seek en cour.";
                 
-                Privmsg msg = Privmsg.buildAnswer(im, reply);
-                control.sendMsg(msg);
-                return;
+            } else if (((Gather) evt).getSeek().isSeekInProgress()) {
+                reply = "Le seek est en cours.";
+                
+            } else { // on reset le seek
+                ((Gather) evt).setSeekToNull();
+                reply = "ok je remballe.";
             }
+        } else {
+            return;
         }
+        
+        Privmsg msg = Privmsg.buildAnswer(im, reply);
+        control.sendMsg(msg);
     }
 }

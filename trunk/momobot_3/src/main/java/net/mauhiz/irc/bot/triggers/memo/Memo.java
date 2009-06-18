@@ -43,35 +43,35 @@ public class Memo {
      * @param channel
      *            the channel to set
      */
-    public void setChannel(final String channel) {
+    public void setChannel(String channel) {
         this.channel = channel;
     }
     /**
      * @param id
      *            the id to set
      */
-    public void setId(final long id) {
+    public void setId(long id) {
         this.id = id;
     }
     /**
      * @param key
      *            the key to set
      */
-    public void setKey(final String key) {
+    public void setKey(String key) {
         this.key = key;
     }
     /**
      * @param serverAlias
      *            the serverAlias to set
      */
-    public void setServerAlias(final String serverAlias) {
+    public void setServerAlias(String serverAlias) {
         this.serverAlias = serverAlias;
     }
     /**
      * @param value
      *            the value to set
      */
-    public void setValue(final String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 }

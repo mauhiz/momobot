@@ -1,7 +1,5 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import net.mauhiz.irc.base.IIrcControl;
@@ -14,32 +12,19 @@ import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
+import org.apache.commons.lang.ArrayUtils;
+
 /**
  * @author topper
  * 
  */
 public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    /**
-     * @param string
-     * @return String[] ou a decoupe idTeam et Country
-     */
-    private static List<String> cutList(final String[] string) {
-        if (string.length < 2) {
-            return null;
-        }
-        
-        List<String> strReturn = new ArrayList<String>();
-        for (int i = 2; i < string.length; i++) {
-            strReturn.add(string[i]);
-        }
-        return strReturn;
-    }
     
     /**
      * @param stg
      * @return boolean
      */
-    private static Locale getLocale(final String stg) {
+    private static Locale getLocale(String stg) {
         for (Locale loc : Locale.getAvailableLocales()) {
             if (loc.getCountry().equalsIgnoreCase(stg)) {
                 return loc;
@@ -51,7 +36,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param trigger
      *            le trigger
      */
-    public RegisterTrigger(final String trigger) {
+    public RegisterTrigger(String trigger) {
         super(trigger);
     }
     
@@ -60,7 +45,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcServer server = im.getServer();
         IrcChannel chan = server.findChannel(im.getTo());
         ChannelEvent event = chan.getEvt();
@@ -71,22 +56,23 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         }
         
         if (event instanceof Tournament) {
+            Tournament tn = (Tournament) event;
             String[] args = getArgs(im.getMessage()).split(" ");
-            if (((Tournament) event).isReady()) {
+            if (tn.isReady()) {
                 if (args.length > 3) {
                     // on match le pays
                     Locale loc = getLocale(args[0]);
                     if (loc != null) {
-                        // on match le nom de la team mininum 3 caractères
+                        // on match le nom de la team mininum 3 caracteres
                         if (args[1].length() > 2) {
                             String tag = args[1];
-                            // on découpe la liste
+                            // on decoupe la liste
                             IrcUser ircuser = im.getServer().findUser(new Mask(im.getFrom()), true);
-                            Privmsg msg = Privmsg.buildPrivateAnswer(im, ((Tournament) event).setTeam(ircuser, loc,
-                                    tag, cutList(args)));
+                            String[] nicks = (String[]) ArrayUtils.subarray(args, 2, args.length);
+                            Privmsg msg = Privmsg.buildPrivateAnswer(im, tn.setTeam(ircuser, loc, tag, nicks));
                             
                             // on lance un status
-                            Privmsg msg1 = Privmsg.buildAnswer(im, ((Tournament) event).getStatus());
+                            Privmsg msg1 = Privmsg.buildAnswer(im, tn.getStatus());
                             control.sendMsg(msg);
                             control.sendMsg(msg1);
                             
@@ -96,7 +82,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                         control.sendMsg(msg);
                         return;
                     }
-                    Privmsg msg = Privmsg.buildAnswer(im, "Erreur : Abréviation du pays inconnu ex: FR");
+                    Privmsg msg = Privmsg.buildAnswer(im, "Erreur : Abbreviation du pays inconnu ex: FR");
                     control.sendMsg(msg);
                     return;
                 }
@@ -106,7 +92,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 control.sendMsg(msg);
                 return;
             }
-            Privmsg msg = Privmsg.buildAnswer(im, "Erreur : Tournois déja complet.");
+            Privmsg msg = Privmsg.buildAnswer(im, "Erreur : Tournois deja complet.");
             control.sendMsg(msg);
             return;
             

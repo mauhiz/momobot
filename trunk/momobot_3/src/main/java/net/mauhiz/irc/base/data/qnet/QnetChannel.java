@@ -5,14 +5,13 @@ import net.mauhiz.irc.base.data.AbstractIrcChannel;
 /**
  * @author mauhiz
  */
-public class QnetChannel extends AbstractIrcChannel {
+class QnetChannel extends AbstractIrcChannel {
     
     /**
      * @param chanName
      */
-    public QnetChannel(final String chanName) {
+    public QnetChannel(String chanName) {
         super(chanName);
         props = new QnetChannelProperties();
     }
-    
 }

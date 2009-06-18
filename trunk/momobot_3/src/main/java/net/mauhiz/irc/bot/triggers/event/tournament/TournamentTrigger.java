@@ -16,7 +16,7 @@ public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTr
     /**
      * @param trigger
      */
-    public TournamentTrigger(final String trigger) {
+    public TournamentTrigger(String trigger) {
         super(trigger);
     }
     
@@ -25,16 +25,16 @@ public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTr
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
+    public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcServer server = cme.getServer();
         IrcChannel chan = server.findChannel(cme.getTo());
         ChannelEvent evt = chan.getEvt();
         String respMsg;
         if (evt != null) {
-            respMsg = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + cme.getTo();
+            respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
         } else {
-            // ON crée le tn en fonction des paramètres
-            // On pécho les params
+            // ON cree le tn en fonction des parametres
+            // On pecho les params
             String[] params = getArgs(cme.getMessage()).split(" ");
             
             // Tcheck si les params st ok
@@ -43,7 +43,7 @@ public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTr
                 tn.generateTemplate();
                 respMsg = tn.toString();
             } else {
-                respMsg = "Paramètre(s) invalide(s)";
+                respMsg = "Parametre(s) invalide(s)";
             }
             
             // new Gather(chan).add(user);

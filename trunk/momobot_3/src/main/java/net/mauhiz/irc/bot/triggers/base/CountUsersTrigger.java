@@ -12,20 +12,17 @@ public class CountUsersTrigger extends AbstractTextTrigger implements IPrivmsgTr
     /**
      * @param trigger
      */
-    public CountUsersTrigger(final String trigger) {
+    public CountUsersTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         /* TODO cross server */
-        Privmsg retour = Privmsg.buildPrivateAnswer(im, "Je connais " + im.getServer().countUsers()
-                + " utilisateur(s).");
+        Privmsg retour = Privmsg.buildAnswer(im, "Je connais " + im.getServer().countUsers() + " utilisateur(s).");
         control.sendMsg(retour);
-        
     }
 }

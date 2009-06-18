@@ -11,9 +11,7 @@ public class GatherAndSeek extends Gather {
      * @param channel1
      * @param nbPlayers
      */
-    public GatherAndSeek(final IrcChannel channel1, final int nbPlayers) {
+    public GatherAndSeek(IrcChannel channel1, int nbPlayers) {
         super(channel1, nbPlayers);
-        
     }
-    
 }

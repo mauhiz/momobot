@@ -11,5 +11,5 @@ public interface IInviteTrigger extends ITrigger {
      * @param im
      * @param control
      */
-    void doTrigger(final Invite im, final IIrcControl control);
+    void doTrigger(Invite im, IIrcControl control);
 }

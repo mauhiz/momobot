@@ -10,7 +10,7 @@ import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 import org.apache.commons.lang.math.RandomUtils;
 
 /**
- * Un trigger pour lancer les dés !
+ * Un trigger pour lancer les des !
  * 
  * @author abby
  */
@@ -20,22 +20,19 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
      * 
      * @param trigger
      */
-    public RollTheDiceTrigger(final String trigger) {
+    public RollTheDiceTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         String args = getArgs(im.getMessage());
-        // Récupère le nom du joueur
-        IrcUser user = im.getServer().findUser(new Mask(im.getFrom()), true);
         boolean engueuler = false;
         
-        // 1000 par défaut;
+        // 1000 par defaut;
         int defaultmax = 1000;
         int max;
         try {
@@ -55,13 +52,16 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
             engueuler = true;
         }
         
-        // Un paramètre est incorrect, on s'arrete là avec un message d'erreur.
+        // Recupere le nom du joueur
+        IrcUser user = im.getServer().findUser(new Mask(im.getFrom()), true);
+        
+        // Un parametre est incorrect, on s'arrete la avec un message d'erreur.
         if (engueuler) {
             Privmsg msg = Privmsg
                     .buildAnswer(
                             im,
-                            user
-                                    + ", me prend pas pour un con, je suis quand meme le momobot, et je lance les dés entre 2 et 10000.");
+                            user.getNick()
+                                    + ", me prend pas pour un con, je suis quand meme le momobot, et je lance les des entre 2 et 10000.");
             control.sendMsg(msg);
             return;
         }
@@ -69,23 +69,27 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
         // random de base
         int diceRoll = RandomUtils.nextInt(max) + 1;
         
-        // Petits commentaires futés
-        String commentaire;
-        if (diceRoll == max) {
-            commentaire = "Quelle chance ! ";
-        } else if (diceRoll == 1) {
-            commentaire = "C'est vraiment pas son jour : ";
-        } else if (diceRoll == 1337) {
-            commentaire = "OMG leet lancé ! ";
-        } else if (diceRoll == 666) {
-            commentaire = "Vade Retro, Satan ! ";
-        } else if (diceRoll / (double) max > 0.8) {
-            commentaire = "Pas trop mal, ";
-        } else {
-            commentaire = "";
-        }
-        Privmsg msg = Privmsg.buildAnswer(im, commentaire + user + " a obtenu un " + diceRoll + " (sur " + max + ')');
-        control.sendMsg(msg);
+        // Petits commentaires futes
+        String commentaire = getCommentaire(diceRoll, max);
         
+        Privmsg msg = Privmsg.buildAnswer(im, commentaire + user.getNick() + " a obtenu un " + diceRoll + " (sur "
+                + max + ')');
+        control.sendMsg(msg);
+    }
+    
+    private String getCommentaire(int diceRoll, int max) {
+        if (diceRoll == max) {
+            return "Quelle chance ! ";
+        } else if (diceRoll == 1) {
+            return "C'est vraiment pas son jour : ";
+        } else if (diceRoll == 1337) {
+            return "OMG leet lance ! ";
+        } else if (diceRoll == 666) {
+            return "Vade Retro, Satan ! ";
+        } else if (diceRoll / (double) max > 0.8) {
+            return "Pas trop mal, ";
+        } else {
+            return "";
+        }
     }
 }

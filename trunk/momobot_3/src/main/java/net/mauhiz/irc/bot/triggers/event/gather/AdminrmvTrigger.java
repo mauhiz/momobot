@@ -22,7 +22,7 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param trigger
      *            le trigger
      */
-    public AdminrmvTrigger(final String trigger) {
+    public AdminrmvTrigger(String trigger) {
         super(trigger);
     }
     
@@ -31,7 +31,7 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcServer server = im.getServer();
         IrcChannel chan = server.findChannel(im.getTo());
         ChannelEvent event = chan.getEvt();
@@ -49,7 +49,7 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             for (String who : whos) {
                 IrcUser target = server.findUser(who, false);
                 if (target == null) {
-                    Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan);
+                    Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan.fullName());
                     control.sendMsg(msg);
                     continue;
                 }
@@ -62,7 +62,7 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             for (String who : whos) {
                 IrcUser target = server.findUser(who, false);
                 if (target == null) {
-                    Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan);
+                    Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan.fullName());
                     control.sendMsg(msg);
                     continue;
                 }

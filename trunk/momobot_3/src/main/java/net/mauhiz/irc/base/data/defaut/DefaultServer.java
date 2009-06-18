@@ -13,7 +13,7 @@ public class DefaultServer extends AbstractIrcServer {
     /**
      * @param uriStr
      */
-    public DefaultServer(final String uriStr) {
+    public DefaultServer(String uriStr) {
         super(uriStr);
     }
     
@@ -21,7 +21,7 @@ public class DefaultServer extends AbstractIrcServer {
      * @see net.mauhiz.irc.base.data.AbstractIrcServer#newChannel(java.lang.String)
      */
     @Override
-    protected IrcChannel newChannel(final String chanLowerCase) {
+    public IrcChannel newChannel(String chanLowerCase) {
         return new DefaultChannel(chanLowerCase);
     }
     
@@ -29,7 +29,7 @@ public class DefaultServer extends AbstractIrcServer {
      * @see net.mauhiz.irc.base.data.AbstractIrcServer#newUser(java.lang.String)
      */
     @Override
-    public IrcUser newUser(final String nick) {
+    public IrcUser newUser(String nick) {
         return new DefaultUser(nick);
     }
     

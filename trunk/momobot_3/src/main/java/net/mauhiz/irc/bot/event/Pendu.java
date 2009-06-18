@@ -1,7 +1,6 @@
 package net.mauhiz.irc.bot.event;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -9,11 +8,10 @@ import java.util.TreeSet;
 
 import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.util.FileUtil;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
@@ -24,19 +22,14 @@ public class Pendu extends ChannelEvent {
      */
     private static final List<String> DICO = new LinkedList<String>();
     /**
-     * logger.
-     */
-    private static final Logger LOG = Logger.getLogger(Pendu.class);
-    /**
-     * le caractère underscore.
+     * le caractere underscore.
      */
     private static final char UNDERSCORE = '_';
     static {
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("dico.txt");
         try {
-            final List<String> lignes = IOUtils.readLines(is, "ISO-8859-15");
+            List<String> lignes = FileUtil.readFileInCp("dico.txt", FileUtil.UTF8);
             DICO.addAll(lignes);
-        } catch (final IOException ioe) {
+        } catch (IOException ioe) {
             throw new ExceptionInInitializerError(ioe);
         }
     }
@@ -45,7 +38,7 @@ public class Pendu extends ChannelEvent {
      *            la longueur du mot
      * @return le nombre de vies
      */
-    private static int calibre(final int len) {
+    private static int calibre(int len) {
         switch (len) {
             case 0 :
                 throw new IllegalArgumentException();
@@ -75,8 +68,8 @@ public class Pendu extends ChannelEvent {
      * @return un mot au hasard
      */
     private static String getNextMot() {
-        final String mot = DICO.get(RandomUtils.nextInt(DICO.size()));
-        /* pas de mots composés */
+        String mot = DICO.get(RandomUtils.nextInt(DICO.size()));
+        /* pas de mots composes */
         if (mot.indexOf('-') > 0) {
             return getNextMot();
         }
@@ -88,7 +81,7 @@ public class Pendu extends ChannelEvent {
      */
     private final Set<Character> alreadyTried = new TreeSet<Character>();
     /**
-     * le mot en cours de devinage (négatif).
+     * le mot en cours de devinage (negatif).
      */
     private final StringBuilder devinage = new StringBuilder();
     /**
@@ -112,7 +105,7 @@ public class Pendu extends ChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Pendu(final IrcChannel channel1) {
+    public Pendu(IrcChannel channel1) {
         super(channel1);
         solutionPure = getNextMot();
         solution = MomoStringUtils.effaceAccents(solutionPure);
@@ -127,7 +120,7 @@ public class Pendu extends ChannelEvent {
      *            la lettre
      * @return si la lettre est present ans le mot
      */
-    public final boolean findLetter(final char car) {
+    public boolean findLetter(char car) {
         boolean present = false;
         for (int index = 0; index < solution.length(); ++index) {
             if (car == mot.charAt(index)) {
@@ -142,7 +135,7 @@ public class Pendu extends ChannelEvent {
     /**
      * @return Returns the devinage.
      */
-    public final String getDevinage() {
+    public String getDevinage() {
         return devinage.toString();
     }
     
@@ -151,20 +144,21 @@ public class Pendu extends ChannelEvent {
      *            la lettre
      * @return un message
      */
-    public final StringBuilder submitLettre(final char toSubmit) {
-        final StringBuilder penduMsg = new StringBuilder();
+    public String submitLettre(char toSubmit) {
         if (!Character.isLetter(toSubmit)) {
-            return penduMsg;
+            return "";
         } else if (!alreadyTried.add(Character.valueOf(toSubmit))) {
-            penduMsg.append("La lettre ").append(toSubmit).append(" a déjà été essayée");
+            return "La lettre " + toSubmit + " a deja ete essayee";
         }
+        
+        StringBuilder penduMsg = new StringBuilder();
         penduMsg.append("La lettre ").append(toSubmit).append(" est ");
         if (findLetter(toSubmit)) {
-            penduMsg.append("présente! ");
+            penduMsg.append("presente! ");
             if (devinage.toString().equals(solutionPure)) {
-                /* arrêter le pendu */
+                /* arreter le pendu */
                 stop();
-                penduMsg.append("Bravo! Vous avez trouvé le mot ").append(solutionPure).append(". Il vous restait ")
+                penduMsg.append("Bravo! Vous avez trouve le mot ").append(solutionPure).append(". Il vous restait ")
                         .append(vies).append('.');
             } else {
                 penduMsg.append("-> ").append(devinage);
@@ -173,9 +167,9 @@ public class Pendu extends ChannelEvent {
             penduMsg.append("absente! ");
             switch (--vies) {
                 case 0 :
-                    /* arrêter le pendu */
+                    /* arreter le pendu */
                     stop();
-                    penduMsg.append("Vous avez perdu! le mot était: ").append(solutionPure);
+                    penduMsg.append("Vous avez perdu! le mot etait: ").append(solutionPure);
                     break;
                 case 1 :
                     penduMsg.append("Plus qu'un essai!");
@@ -184,30 +178,30 @@ public class Pendu extends ChannelEvent {
                     penduMsg.append("Encore ").append(vies).append(" essais.");
             }
         }
-        return penduMsg;
+        return penduMsg.toString();
     }
     /**
      * @param test
-     *            le mot à tester
+     *            le mot a tester
      * @return un msg
      */
-    public final StringBuilder submitMot(final String test) {
-        final StringBuilder retour = new StringBuilder();
+    public StringBuilder submitMot(String test) {
+        StringBuilder retour = new StringBuilder();
         if (!StringUtils.isAlpha(test) || test.length() != solution.length()) {
             return retour;
         }
         if (test.equals(solution) || test.equals(solutionPure)) {
-            retour.append("Bravo! Vous avez trouvé le mot ").append(solutionPure);
-            /* arrêter le pendu */
+            retour.append("Bravo! Vous avez trouve le mot ").append(solutionPure);
+            /* arreter le pendu */
             stop();
         } else {
             retour.append("Non, le mot n'est pas: ").append(test).append(". ");
             switch (--vies) {
                 case 0 :
                     stop();
-                    retour.append("Vous avez perdu! le mot était: ").append(solutionPure);
+                    retour.append("Vous avez perdu! le mot etait: ").append(solutionPure);
                     break;
-                /* arrêter le pendu */
+                /* arreter le pendu */
                 case 1 :
                     retour.append("Plus qu'un essai!");
                     break;
@@ -222,7 +216,7 @@ public class Pendu extends ChannelEvent {
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
     @Override
-    public final String toString() {
+    public String toString() {
         return "-> " + devinage;
     }
 }

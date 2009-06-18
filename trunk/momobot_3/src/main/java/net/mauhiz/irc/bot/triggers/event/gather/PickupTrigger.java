@@ -18,7 +18,7 @@ public class PickupTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      * @param trigger
      *            le trigger
      */
-    public PickupTrigger(final String trigger) {
+    public PickupTrigger(String trigger) {
         super(trigger);
     }
     
@@ -27,17 +27,17 @@ public class PickupTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String resp;
-        if (evt != null) {
-            resp = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + chan;
-        } else {
+        if (evt == null) {
             IrcUser user = im.getServer().findUser(new Mask(im.getFrom()), true);
             new Pickup(chan).add(user, null);
             
-            resp = "Pickup lancé par " + user;
+            resp = "Pickup lance par " + user.getNick();
+        } else {
+            resp = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + chan;
         }
         Privmsg msg = Privmsg.buildAnswer(im, resp);
         control.sendMsg(msg);

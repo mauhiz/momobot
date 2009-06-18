@@ -20,28 +20,24 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     /**
      * @param trigger
      */
-    public GatherTrigger(final String trigger) {
+    public GatherTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
+    public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcServer server = cme.getServer();
         IrcChannel chan = server.findChannel(cme.getTo());
         ChannelEvent evt = chan.getEvt();
         String respMsg;
-        if (evt != null) {
-            respMsg = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + cme.getTo();
-        } else {
+        if (evt == null) {
             IrcUser user = server.findUser(new Mask(cme.getFrom()), true);
-            respMsg = "Gather lancé par " + user;
             Gather gather;
             String arg = getArgs(cme.getMessage());
-            if (StringUtils.isNumeric(arg)) {
+            if (StringUtils.isNumeric(arg) && StringUtils.isNotBlank(arg)) {
                 int nbPlayers = Integer.parseInt(arg);
                 if (nbPlayers > 0) {
                     gather = new Gather(chan, nbPlayers);
@@ -52,6 +48,9 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                 gather = new Gather(chan);
             }
             gather.add(user);
+            respMsg = "Gather lance par " + user.getNick();
+        } else {
+            respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
         }
         Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
         control.sendMsg(resp);

@@ -11,5 +11,5 @@ public interface IPartTrigger extends ITrigger {
      * @param im
      * @param control
      */
-    void doTrigger(final Part im, final IIrcControl control);
+    void doTrigger(Part im, IIrcControl control);
 }

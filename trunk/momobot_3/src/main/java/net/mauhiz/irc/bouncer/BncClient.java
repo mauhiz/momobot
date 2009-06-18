@@ -16,7 +16,7 @@ public class BncClient {
      * @param connection1
      * @throws IOException
      */
-    public BncClient(final Socket connection1) throws IOException {
+    public BncClient(Socket connection1) throws IOException {
         connection = connection1;
         connectionTime = System.currentTimeMillis();
         writer = new PrintWriter(connection.getOutputStream());
@@ -33,7 +33,7 @@ public class BncClient {
     /**
      * @param data
      */
-    void sendData(final String data) {
+    void sendData(String data) {
         writer.write(data);
         writer.write("\r\n");
         writer.flush();

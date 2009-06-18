@@ -13,11 +13,11 @@ public class StopSeek2Trigger extends AbstractTextTrigger implements IPrivmsgTri
     /**
      * @param trigger
      */
-    public StopSeek2Trigger(final String trigger) {
+    public StopSeek2Trigger(String trigger) {
         super(trigger);
     }
     
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String reply = "";

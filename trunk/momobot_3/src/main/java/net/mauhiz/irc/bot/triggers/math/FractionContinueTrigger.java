@@ -1,6 +1,5 @@
 package net.mauhiz.irc.bot.triggers.math;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,56 +8,41 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
-import org.apache.log4j.Logger;
-
 /**
- * En voilà un trigger qu'il est useless.
+ * En voila un trigger qu'il est useless.
  * 
  * @author mauhiz
  */
 public class FractionContinueTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    /**
-     * 
-     */
     static final int LIMIT = 10;
-    /**
-     * 
-     */
-    static final Logger LOG = Logger.getLogger(FractionContinueTrigger.class);
     
     /**
-     * TODO : un critère d'arrêt basé sur epsilon.
+     * TODO un critere d'arret base sur epsilon.
      * 
      * @param nombre
      * @return une fraction continue de type [a0; a1, a2, ...]
      */
-    static String computeFractionContinue(final double nombre) {
-        final List<Integer> fraction = new LinkedList<Integer>();
-        int floor;
+    static String computeFractionContinue(double nombre) {
+        List<Integer> fraction = new LinkedList<Integer>();
         double work = nombre;
-        // LOG.debug("limit = " + LIMIT);
-        int count = 0;
-        while (count < LIMIT) {
+        
+        for (int count = 0; count < LIMIT; ++count) {
             // LOG.debug("work = " + work);
-            floor = (int) Math.floor(work);
+            int floor = (int) Math.floor(work);
             if (floor == Integer.MAX_VALUE) {
-                count = LIMIT + 1;
-                break;
+                return displayFraction(fraction, true);
             }
             // LOG.debug("floor = " + floor);
             fraction.add(Integer.valueOf(floor));
-            work = work - floor;
-            // LOG.debug("work = " + work);
-            if (work == 0) {
-                count = LIMIT + 1;
-                break;
+            
+            if (Double.compare(work, floor) == 0) {
+                return displayFraction(fraction, true);
             }
-            work = 1 / work;
-            ++count;
+            
+            work = 1 / (work - floor);
+            // LOG.debug("work = " + work);
         }
-        if (count > LIMIT) {
-            return displayFraction(fraction, true);
-        }
+        
         return displayFraction(fraction, false);
     }
     
@@ -67,20 +51,16 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
      * @param exactMatch
      * @return l'affichage de la fraction continue;
      */
-    static String displayFraction(final List<Integer> fraction, final boolean exactMatch) {
-        final List<Integer> safeCopy = new ArrayList<Integer>(fraction.size());
-        safeCopy.addAll(fraction);
-        final StringBuilder retour = new StringBuilder();
+    static String displayFraction(List<Integer> fraction, boolean exactMatch) {
+        StringBuilder retour = new StringBuilder();
         retour.append("[");
-        if (safeCopy.isEmpty()) {
+        if (fraction.isEmpty()) {
             retour.append("0]");
         } else {
-            retour.append(safeCopy.remove(0));
-            if (safeCopy.isEmpty()) {
-                retour.append(']');
-            } else {
+            retour.append(fraction.get(0));
+            if (fraction.size() > 1) {
                 retour.append("; ");
-                for (final Integer fracItem : safeCopy) {
+                for (Integer fracItem : fraction) {
                     retour.append(fracItem);
                     retour.append(", ");
                 }
@@ -89,8 +69,9 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
                 } else {
                     retour.append("...");
                 }
-                retour.append(']');
+                
             }
+            retour.append(']');
         }
         return retour.toString();
     }
@@ -98,24 +79,23 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
     /**
      * @param trigger
      */
-    public FractionContinueTrigger(final String trigger) {
+    public FractionContinueTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        final String args = getArgs(cme.getMessage());
+    public void doTrigger(Privmsg cme, IIrcControl control) {
+        String args = getArgs(cme.getMessage());
         Privmsg resp;
         try {
-            final double nombre = Double.parseDouble(args);
-            final String fraction = computeFractionContinue(nombre);
+            double nombre = Double.parseDouble(args);
+            String fraction = computeFractionContinue(nombre);
             resp = Privmsg.buildAnswer(cme, "fraction continue de " + nombre + ": " + fraction);
         } catch (NumberFormatException nfe) {
-            resp = Privmsg.buildAnswer(cme, "l'argument doit etre un nombre (reçu : " + args + ")");
+            resp = Privmsg.buildAnswer(cme, "l'argument doit etre un nombre (recu : " + args + ")");
         }
         control.sendMsg(resp);
         

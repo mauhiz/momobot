@@ -20,7 +20,7 @@ public class AddTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
      * @param trigger
      *            le trigger
      */
-    public AddTrigger(final String trigger) {
+    public AddTrigger(String trigger) {
         super(trigger);
     }
     
@@ -29,7 +29,7 @@ public class AddTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcServer server = im.getServer();
         IrcChannel chan = server.findChannel(im.getTo());
         ChannelEvent event = chan.getEvt();

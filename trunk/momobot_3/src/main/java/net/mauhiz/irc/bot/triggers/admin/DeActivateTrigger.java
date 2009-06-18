@@ -12,21 +12,16 @@ import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
 public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrigger, IPrivmsgTrigger {
-    /**
-     * 
-     */
-    private static final Logger LOG = Logger.getLogger(DeActivateTrigger.class);
     
     /**
      * @param trigger
      */
-    public DeActivateTrigger(final String trigger) {
+    public DeActivateTrigger(String trigger) {
         super(trigger);
     }
     
@@ -34,8 +29,8 @@ public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrig
      * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg pme, final IIrcControl control) {
-        final String[] args = StringUtils.split(getArgs(pme.getMessage()));
+    public void doTrigger(Privmsg pme, IIrcControl control) {
+        String[] args = StringUtils.split(getArgs(pme.getMessage()));
         if (ArrayUtils.isEmpty(args)) {
             Privmsg retour = Privmsg.buildPrivateAnswer(pme, "you need to specify Trigger class name");
             Privmsg retour2 = Privmsg.buildPrivateAnswer(pme, "for instance : " + this + " " + getClass().getName());

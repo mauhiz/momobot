@@ -20,7 +20,7 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     /**
      * @return next bashfr quote
      */
-    static final String[] getNextFrQuote() {
+    static String[] getNextFrQuote() {
         GetMethod get = new GetMethod("http://www.bashfr.org/?sort=random2");
         try {
             new HttpClient().executeMethod(get);
@@ -39,16 +39,20 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     }
     
     /**
-     * TODO bash.org est offline en ce moment...
-     * 
      * @return next bash quote
      */
-    static final String[] getNextQuote() {
+    static String[] getNextQuote() {
         GetMethod get = new GetMethod("http://www.bash.org/?random");
         try {
             new HttpClient().executeMethod(get);
             String page = get.getResponseBodyAsString();
+            page = StringUtils.substringAfter(page, "<p class=\"qt\">");
+            page = StringUtils.substringBefore(page, "</p>");
+            page = StringUtils.replaceChars(page, "\r\n", "");
             String[] lignes = new StrTokenizer(page, "<br />").getTokenArray();
+            for (int i = 0; i < lignes.length; ++i) {
+                lignes[i] = StringEscapeUtils.unescapeHtml(lignes[i]);
+            }
             return lignes;
         } catch (IOException e) {
             return new String[]{e.getMessage()};
@@ -58,23 +62,22 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     /**
      * @param trigger
      */
-    public BashTrigger(final String trigger) {
+    public BashTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
-        // String args = getArgs(im.getMessage());
+    public void doTrigger(Privmsg im, IIrcControl control) {
+        String args = getArgs(im.getMessage());
         String[] quote;
-        // if ("fr".equals(args)) {
-        quote = getNextFrQuote();
-        // } else {
-        // quote = getNextQuote();
-        // }
+        if ("fr".equals(args)) {
+            quote = getNextFrQuote();
+        } else {
+            quote = getNextQuote();
+        }
         for (String quoteLine : quote) {
             Privmsg reply = Privmsg.buildAnswer(im, quoteLine);
             control.sendMsg(reply);

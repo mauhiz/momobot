@@ -12,12 +12,12 @@ public enum Color {
     /**
      * code couleur mIRC.
      */
-    private String code;
+    private final String code;
     
     /**
      * @param intCode
      */
-    private Color(final int intCode) {
+    private Color(int intCode) {
         code = StringUtils.leftPad(Integer.toString(intCode), 2, '0');
     }
     

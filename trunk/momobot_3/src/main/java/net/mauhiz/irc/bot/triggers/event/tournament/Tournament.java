@@ -10,21 +10,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import net.mauhiz.irc.MathUtils;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.bot.event.ChannelEvent;
+import net.mauhiz.util.MathUtils;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -37,10 +37,6 @@ public class Tournament extends ChannelEvent {
      * config
      */
     private static final Configuration CFG;
-    /**
-     * logger.
-     */
-    private static final Logger LOG = Logger.getLogger(Tournament.class);
     static {
         try {
             CFG = new PropertiesConfiguration("tournament/tn.properties");
@@ -52,7 +48,7 @@ public class Tournament extends ChannelEvent {
      * @param temp
      * @throws IOException
      */
-    static void uploadFile(final File temp) throws IOException {
+    static void uploadFile(File temp) throws IOException {
         String ftp = CFG.getString("tn.upload.to");
         URI ftpURI = URI.create(ftp);
         if ("ftp".equals(ftpURI.getScheme())) {
@@ -103,18 +99,18 @@ public class Tournament extends ChannelEvent {
     /**
      * 
      */
-    private List<Match> matchList = new ArrayList<Match>();
+    private final List<Match> matchList = new ArrayList<Match>();
     /**
      * 
      */
-    private int numberPlayerPerTeam;
+    private final int numberPlayerPerTeam;
     /**
      * 
      */
-    private int numberTeams;
+    private final int numberTeams;
     
     /**
-     * le temps où je commence.
+     * le temps ou je commence.
      */
     private final StopWatch sw = new StopWatch();
     
@@ -127,17 +123,17 @@ public class Tournament extends ChannelEvent {
      * @param chan
      * @param maps
      */
-    public Tournament(final IrcChannel chan, final String[] maps) {
+    public Tournament(IrcChannel chan, String[] maps) {
         super(chan);
         sw.start();
         numberPlayerPerTeam = CFG.getInt("tn.numberPlayerPerTeam");
         numberTeams = MathUtils.power(2, maps.length); // 2^4=16
-        // On crée les teams
+        // On cree les teams
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Lancement d'un tn sur: " + chan.toString() + " maps: " + StringUtils.join(maps));
+            LOG.debug("Lancement d'un tn sur: " + chan.fullName() + " maps: " + StringUtils.join(maps));
         }
         
-        // On Crée la liste de map
+        // On cree la liste de map
         for (String map : maps) {
             mapList.add(map);
         }
@@ -204,9 +200,9 @@ public class Tournament extends ChannelEvent {
     /**
      * @param phase
      * @param id
-     * @return i <=> numéro du match ou -1 si le match n'existe pas
+     * @return i <=> numero du match ou -1 si le match n'existe pas
      */
-    private int getMatchId(final int phase, final int id) {
+    private int getMatchId(int phase, int id) {
         for (int i = 0; i < matchList.size(); i++) {
             Match match = matchList.get(i);
             
@@ -248,13 +244,13 @@ public class Tournament extends ChannelEvent {
      * @param team
      * @return String
      */
-    private String setNextMatch(final Match oldMatch, final TournamentTeam team) {
+    private String setNextMatch(Match oldMatch, TournamentTeam team) {
         int newphase = oldMatch.getPhase() - 1;
-        // C'était la finale
+        // C'etait la finale
         if (newphase == 0) {
             // Match match = new Match(newphase, 0, mapList.get(0), team, team);
             // matchList.add(match);
-            return "Bravo, team n°" + team.getId() + "=" + team.getNom() + " gagne le tournois! o//";
+            return "Bravo, team #" + team.getId() + "=" + team.getNom() + " gagne le tournois! o//";
             
         }
         int id = team.getId();
@@ -265,7 +261,7 @@ public class Tournament extends ChannelEvent {
             // le match n'existe pas
             Match match = new Match(newphase, newID, mapList.get(mapList.size() - newphase), team);
             matchList.add(match);
-            // "La team " + team.getId() + " en attente du résultat des adversaires. next map = " + match.getMap();
+            // "La team " + team.getId() + " en attente du resultat des adversaires. next map = " + match.getMap();
             return match.toString();
             
         }
@@ -287,7 +283,7 @@ public class Tournament extends ChannelEvent {
      * @return List String
      */
     
-    public List<String> setScore(final IrcUser ircuser, final int idTeam, final int score01, final int score02) {
+    public List<String> setScore(IrcUser ircuser, int idTeam, int score01, int score02) {
         List<String> reply = new ArrayList<String>();
         int score1 = score01;
         int score2 = score02;
@@ -314,9 +310,10 @@ public class Tournament extends ChannelEvent {
                 return reply;
             }
         }
-        reply.add("La team " + teamList.get(idTeam).getId() + " est déja éléminé.");
+        reply.add("La team " + teamList.get(idTeam).getId() + " est deja eliminee.");
         return reply;
     }
+    
     /**
      * @param ircuser
      * @param loc
@@ -325,7 +322,7 @@ public class Tournament extends ChannelEvent {
      *            REM : $tn-register IDTEAM COUNTRY TAG PLAYER1 PLAYER2 PLAYER..
      * @return string
      */
-    public String setTeam(final IrcUser ircuser, final Locale loc, final String tag, final List<String> nicknames) {
+    public String setTeam(IrcUser ircuser, Locale loc, String tag, String[] nicknames) {
         for (TournamentTeam element : teamList) {
             if (element.isOwner(ircuser)) {
                 TournamentTeam team = element;
@@ -335,26 +332,26 @@ public class Tournament extends ChannelEvent {
                 // On clean pour tout remettre
                 team.clear();
                 
-                if (nicknames.size() < team.getCapacity()) {
+                if (nicknames.length < team.getCapacity()) {
                     team.addAll(nicknames);
-                    for (int i = nicknames.size() + 1; i <= team.getCapacity(); i++) {
+                    for (int i = nicknames.length + 1; i <= team.getCapacity(); i++) {
                         team.add("?");
                     }
                 } else {
-                    team.addAll(nicknames.subList(0, team.getCapacity()));
+                    team.addAll((String[]) ArrayUtils.subarray(nicknames, 0, team.getCapacity()));
                 }
                 
                 return team.toString();
             }
         }
         TournamentTeam team = new TournamentTeam(numberPlayerPerTeam, teamList.size(), tag, loc, ircuser);
-        if (nicknames.size() < team.getCapacity()) {
+        if (nicknames.length < team.getCapacity()) {
             team.addAll(nicknames);
-            for (int i = nicknames.size() + 1; i <= team.getCapacity(); i++) {
+            for (int i = nicknames.length + 1; i <= team.getCapacity(); i++) {
                 team.add("?");
             }
         } else {
-            team.addAll(nicknames.subList(0, team.getCapacity()));
+            team.addAll((String[]) ArrayUtils.subarray(nicknames, 0, team.getCapacity()));
         }
         teamList.add(team);
         return team.toString();
@@ -365,37 +362,43 @@ public class Tournament extends ChannelEvent {
      */
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         
-        String matchEnAttente = " Match en cours: ";
-        String matchEnCours = " Match en attente : ";
         Match finale = null;
+        List<Match> enCours = new ArrayList<Match>();
+        List<Match> enAttente = new ArrayList<Match>();
         for (Match element : matchList) {
             if (element.getWinner() == -1) {
                 if (element.isReady()) {
-                    matchEnCours += element.toString();
+                    enCours.add(element);
                 } else {
-                    matchEnAttente += element.toString();
+                    enAttente.add(element);
                 }
             }
             if (element.getPhase() == 1) {
-                
                 finale = element;
             }
         }
-        if (" Match en cours: ".equals(matchEnAttente)) {
-            matchEnAttente = "";
-        }
-        if (" Match en attente : ".equals(matchEnCours)) {
+        
+        String matchEnCours;
+        if (enCours.isEmpty()) {
             matchEnCours = "";
+        } else {
+            matchEnCours = " Match en attente : " + StringUtils.join(enCours, "");
         }
         
-        if (finale != null) {
-            return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs. finale : "
-                    + finale.toString();
+        String matchEnAttente;
+        if (enCours.isEmpty()) {
+            matchEnAttente = "";
+        } else {
+            matchEnAttente = " Match en cours: " + StringUtils.join(enAttente, "");
         }
-        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + matchEnCours
-                + matchEnAttente;
+        
+        if (finale == null) {
+            return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + matchEnCours
+                    + matchEnAttente;
+        }
+        
+        return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs. finale : " + finale;
     }
     
 }

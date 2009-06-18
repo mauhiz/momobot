@@ -7,6 +7,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.ITriggerManager;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.util.AbstractRunnable;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -32,19 +33,17 @@ public class GuiTriggerManager implements ITriggerManager {
     }
     
     /**
-     * @see net.mauhiz.irc.base.ITriggerManager#processMsg(net.mauhiz.irc.base.msg.IIrcMessage,
-     *      net.mauhiz.irc.base.IrcControl)
+     * @see net.mauhiz.irc.base.ITriggerManager#processMsg(IIrcMessage, IrcControl)
      */
     @Override
-    public void processMsg(final IIrcMessage msg, final IrcControl ircControl) {
+    public void processMsg(IIrcMessage msg, IrcControl ircControl) {
         if (msg == null) {
             return;
         }
         try {
             incoming.put(msg);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException(e);
+            AbstractRunnable.handleInterruption(e);
         }
     }
     

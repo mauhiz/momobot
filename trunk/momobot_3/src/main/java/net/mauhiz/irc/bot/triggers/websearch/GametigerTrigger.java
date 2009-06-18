@@ -16,7 +16,7 @@ public class GametigerTrigger extends AbstractTextTrigger implements IPrivmsgTri
      * @param trigger
      *            le trigger
      */
-    public GametigerTrigger(final String trigger) {
+    public GametigerTrigger(String trigger) {
         super(trigger);
     }
     
@@ -25,15 +25,15 @@ public class GametigerTrigger extends AbstractTextTrigger implements IPrivmsgTri
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        final WebQuery query = new WebQuery("gametiger", getArgs(cme.getMessage()));
-        final List<String> resultats = query.results();
+    public void doTrigger(Privmsg cme, IIrcControl control) {
+        WebQuery query = new WebQuery("gametiger", getArgs(cme.getMessage()));
+        List<String> resultats = query.results();
         if (resultats.isEmpty()) {
-            Notice notice = Notice.buildPrivateAnswer(cme, "rien trouvé :/");
+            Notice notice = Notice.buildPrivateAnswer(cme, "rien trouve :/");
             control.sendMsg(notice);
             return;
         }
-        for (final String next : resultats) {
+        for (String next : resultats) {
             Notice notice = Notice.buildPrivateAnswer(cme, next);
             control.sendMsg(notice);
         }

@@ -23,7 +23,7 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param with
      * @return replacement
      */
-    public static String replaceTu(final String input, final String with) {
+    public static String replaceTu(String input, String with) {
         return StringUtils.replaceEach(input, new String[]{"tu es ", "Tu es "}, new String[]{with + " est ",
                 with + " est "});
     }
@@ -32,7 +32,7 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param trigger
      *            le trigger
      */
-    public AdminaddTrigger(final String trigger) {
+    public AdminaddTrigger(String trigger) {
         super(trigger);
     }
     
@@ -41,7 +41,7 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcServer server = im.getServer();
         IrcChannel chan = server.findChannel(im.getTo());
         ChannelEvent event = chan.getEvt();
@@ -71,11 +71,9 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         } else if (event instanceof Pickup) {
             String team = whos[whos.length - 1];
             Pickup pick = (Pickup) event;
-            int max;
+            int max = whos.length;
             if (pick.assignTeam(team) != null) {
-                max = whos.length - 1;
-            } else {
-                max = whos.length;
+                --max;
             }
             for (int i = 0; i < max; ++i) {
                 IrcUser target = server.findUser(whos[i], false);

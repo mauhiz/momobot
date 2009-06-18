@@ -8,12 +8,12 @@ import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
+import net.mauhiz.util.FileUtil;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
@@ -22,43 +22,38 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
     /**
      * encodage.
      */
-    private static final String ENCODE = "utf-8";
+    private static final String ENCODE = FileUtil.UTF8.name();
     /**
-     * logger.
-     */
-    private static final Logger LOG = Logger.getLogger(BabelfishTrigger.class);
-    /**
-     * ma méthode de post.
+     * ma methode de post.
      */
     private static final PostMethod POST = new PostMethod("http://babelfish.altavista.com/tr");
     
     /**
      * @param langue1
-     *            la langue de départ
+     *            la langue de depart
      * @param langue2
      *            la langue de destination
      * @param toTranslate
-     *            le message à traduire
+     *            le message a traduire
      * @return le message traduit
      * @throws IOException
      *             si le site est en mousse
      */
-    public static String result(final String langue1, final String langue2, final String toTranslate)
-            throws IOException {
-        final NameValuePair[] data = {new NameValuePair("trtext", URLEncoder.encode(toTranslate, ENCODE)),
+    public static String result(String langue1, String langue2, String toTranslate) throws IOException {
+        NameValuePair[] data = {new NameValuePair("trtext", URLEncoder.encode(toTranslate, ENCODE)),
                 new NameValuePair("lp", URLEncoder.encode(langue1 + '_' + langue2, ENCODE)),
                 new NameValuePair("tt", "urltext"), new NameValuePair("intl", "tt"), new NameValuePair("doit", "done")};
         POST.setRequestBody(data);
         new HttpClient().executeMethod(POST);
         String page = POST.getResponseBodyAsString();
-        final String bound1 = "<td bgcolor=white class=s><div style=padding:10px;>";
-        final int len = bound1.length();
+        String bound1 = "<td bgcolor=white class=s><div style=padding:10px;>";
+        int len = bound1.length();
         int index = page.indexOf(bound1) + len;
         if (index <= len) {
-            throw new IOException("Échec ://");
+            throw new IOException("echec ://");
         }
         page = page.substring(index);
-        final String bound2 = "</div></td>";
+        String bound2 = "</div></td>";
         index = page.indexOf(bound2);
         return page.substring(0, index);
     }
@@ -67,7 +62,7 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
      * @param trigger
      *            le trigger
      */
-    public BabelfishTrigger(final String trigger) {
+    public BabelfishTrigger(String trigger) {
         super(trigger);
     }
     
@@ -76,17 +71,17 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
+    public void doTrigger(Privmsg cme, IIrcControl control) {
         
         String msg = getArgs(cme.getMessage());
-        final String lang1 = StringUtils.substringBefore(msg, " ");
+        String lang1 = StringUtils.substringBefore(msg, " ");
         msg = StringUtils.substringAfter(msg, " ");
-        final String lang2 = StringUtils.substringBefore(msg, " ");
+        String lang2 = StringUtils.substringBefore(msg, " ");
         msg = StringUtils.substringAfter(msg, " ");
         Notice notice;
         try {
             notice = Notice.buildAnswer(cme, result(lang1, lang2, msg));
-        } catch (final IOException ioe) {
+        } catch (IOException ioe) {
             LOG.error(ioe, ioe);
             notice = Notice.buildPrivateAnswer(cme, "syntaxe : " + this + " lang1[fr/en/..] lang2[fr/en/...] texte");
         }

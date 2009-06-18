@@ -5,30 +5,29 @@ import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 
 /**
- * TODO : le faire.
+ * TODO le faire.
  * 
  * @author mauhiz
  */
-public class AddservAutomate extends Automate {
+public class AddservAutomate extends AbstractAutomate {
     /**
      * @param user1
      *            le user
      * @param control
      * @param server
      */
-    public AddservAutomate(final IrcUser user1, final IIrcControl control, final IrcServer server) {
+    public AddservAutomate(IrcUser user1, IIrcControl control, IrcServer server) {
         super(user1, control, server);
-        setEtat(STARTED);
+        etat = STARTED;
     }
     
     /**
      * @see java.lang.Runnable#run()
      */
-    public final void run() {
-        setRunning(true);
+    public void run() {
         while (isRunning()) {
             pause(SLEEPTIME);
-            switch (getEtat()) {
+            switch (etat) {
                 case STARTED :
                     break;
                 default :

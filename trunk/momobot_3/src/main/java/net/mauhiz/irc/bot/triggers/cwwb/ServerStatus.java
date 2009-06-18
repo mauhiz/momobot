@@ -5,15 +5,15 @@ package net.mauhiz.irc.bot.triggers.cwwb;
 public enum ServerStatus {
     OFF(2), ON(1), UNKOWN(0);
     
-    /** L'attribut qui contient la valeur associé à l'enum */
-    private final int code;
+    /** L'attribut qui contient la valeur associe a l'enum */
+    private int code;
     
     /**
-     * Le constructeur qui associe une valeur à l'enum
+     * Le constructeur qui associe une valeur a l'enum
      * 
      * @param code
      */
-    private ServerStatus(final int code) {
+    private ServerStatus(int code) {
         this.code = code;
     }
     

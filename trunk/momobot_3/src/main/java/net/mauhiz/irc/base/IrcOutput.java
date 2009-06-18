@@ -1,14 +1,16 @@
 package net.mauhiz.irc.base;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import net.mauhiz.irc.AbstractRunnable;
+import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.FileUtil;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
@@ -18,8 +20,8 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
      * antiflood en ms
      */
     private static final long DELAY = 100;
-    private static final Logger LOG = Logger.getLogger(IrcOutput.class);
     private static final int MAX_SIZE = 50;
+    private static final int MAXLEN = 255;
     private final BlockingQueue<String> queue = new LinkedBlockingQueue<String>(MAX_SIZE);
     private final PrintWriter writer;
     
@@ -27,21 +29,20 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
      * @param socket
      * @throws IOException
      */
-    IrcOutput(final Socket socket) throws IOException {
-        writer = new PrintWriter(socket.getOutputStream());
+    IrcOutput(Socket socket) throws IOException {
+        super();
+        writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), FileUtil.ISO8859_15), true);
     }
-    
     /**
      * @see net.mauhiz.irc.base.IIrcOutput#isReady()
      */
     public boolean isReady() {
-        return queue.size() > MAX_SIZE;
+        return isRunning() && queue.size() <= MAX_SIZE;
     }
     /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        setRunning(true);
         while (isRunning()) {
             String toWrite = queue.poll();
             pause(DELAY);
@@ -50,23 +51,26 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
             }
             LOG.info(">> " + toWrite);
             writer.println(toWrite);
-            writer.flush();
         }
         writer.close();
     }
-    
     /**
      * @see net.mauhiz.irc.base.IIrcOutput#sendRawMsg(java.lang.String)
      */
-    public void sendRawMsg(final String raw) {
+    public void sendRawMsg(String raw) {
         if (raw == null) {
             return;
+        } else if (StringUtils.isBlank(raw)) {
+            LOG.warn("Tried to send empty msg", new IllegalArgumentException());
         }
+        
+        String trimmedRaw = raw.length() > MAXLEN ? raw.substring(0, MAXLEN) : raw;
+        
         try {
-            queue.put(raw);
+            queue.put(trimmedRaw);
         } catch (InterruptedException e) {
-            setRunning(false);
-            Thread.currentThread().interrupt();
+            stop();
+            AbstractRunnable.handleInterruption(e);
         }
     }
     
@@ -76,13 +80,5 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
     @Override
     public void start() {
         startAs("Output Thread");
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.IIrcOutput#stop()
-     */
-    @Override
-    public void stop() {
-        setRunning(false);
     }
 }

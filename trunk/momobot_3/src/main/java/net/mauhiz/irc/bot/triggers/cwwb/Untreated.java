@@ -42,7 +42,7 @@ public class Untreated {
      * @param id
      *            the id to set
      */
-    public void setId(final long id) {
+    public void setId(long id) {
         this.id = id;
     }
     
@@ -50,7 +50,7 @@ public class Untreated {
      * @param message
      *            the message to set
      */
-    public void setMessage(final String message) {
+    public void setMessage(String message) {
         this.message = message;
     }
     
@@ -58,7 +58,7 @@ public class Untreated {
      * @param user
      *            the user to set
      */
-    public void setUser(final String user) {
+    public void setUser(String user) {
         this.user = user;
     }
     
@@ -66,7 +66,7 @@ public class Untreated {
      * @param when
      *            the when to set
      */
-    public void setWhen(final Calendar when) {
+    public void setWhen(Calendar when) {
         this.when = when;
     }
 }

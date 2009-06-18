@@ -18,40 +18,39 @@ public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivms
     /**
      * @param trigger
      */
-    public GatherAndSeekTrigger(final String trigger) {
+    public GatherAndSeekTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
+    public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcServer server = cme.getServer();
         IrcChannel chan = server.findChannel(cme.getTo());
         ChannelEvent evt = chan.getEvt();
-        String respMsg = "";
-        if (evt != null) {
-            respMsg = "Un " + evt.getClass().getSimpleName() + " est déjà lancé sur " + cme.getTo();
-        } else {
+        String respMsg;
+        if (evt == null) {
             
+            respMsg = "Erreur : L'argument qui suit doit etre un chiffre entre 1 et 5";
             try {
                 int nbPlayers = Integer.parseInt(getArgs(cme.getMessage()));
-                if (nbPlayers > 0) {
+                if (nbPlayers > 0 && nbPlayers < 5) {
                     IrcUser user = server.findUser(new Mask(cme.getFrom()), true);
-                    respMsg = "Gather lancé par " + user;
+                    respMsg = "Gather lance par " + user.getNick();
                     GatherAndSeek gath = new GatherAndSeek(chan, nbPlayers);
                     for (int i = 0; i < nbPlayers; i++) {
                         IrcUser ircuser = new FakeUser("P" + (i + 1));
                         gath.add(ircuser);
                     }
-                    
                 }
             } catch (NumberFormatException e) {
-                respMsg = "Erreur : L'argument qui suit doit etre un chiffre entre 1 et 5";
-                
+                // invalid arg
             }
+            
+        } else {
+            respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
             
         }
         Privmsg resp = Privmsg.buildAnswer(cme, respMsg);

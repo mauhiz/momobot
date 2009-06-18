@@ -1,22 +1,17 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.bot.event.Team;
+import net.mauhiz.irc.bot.triggers.event.gather.FakeUser;
 
 /**
  * @author topper
  */
-public class TournamentTeam extends ArrayList<String> {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1;
-    /**
-     * 
-     */
-    private final int capacity;
+public class TournamentTeam extends Team {
     /**
      * 
      */
@@ -24,15 +19,11 @@ public class TournamentTeam extends ArrayList<String> {
     /**
      * 
      */
-    private int id;
+    private final int id;
     /**
      * 
      */
-    private String nom;
-    /**
-     * 
-     */
-    private IrcUser owner;
+    private final IrcUser owner;
     
     /**
      * @param size1
@@ -41,21 +32,23 @@ public class TournamentTeam extends ArrayList<String> {
      * @param country1
      * @param ircuser
      */
-    public TournamentTeam(final int size1, final int id1, final String nom1, final Locale country1,
-            final IrcUser ircuser) {
-        super(size1);
-        capacity = size1;
-        nom = nom1;
+    public TournamentTeam(int size1, int id1, String nom1, Locale country1, IrcUser ircuser) {
+        super(size1, nom1);
         country = country1;
         id = id1;
         owner = ircuser;
     }
     
-    /**
-     * @return {@link #capacity}.
-     */
-    public int getCapacity() {
-        return capacity;
+    public boolean add(String ele) {
+        return super.add(new FakeUser(ele));
+    }
+    
+    public boolean addAll(String[] elems) {
+        List<IrcUser> fakes = new ArrayList<IrcUser>(elems.length);
+        for (String elem : elems) {
+            fakes.add(new FakeUser(elem));
+        }
+        return super.addAll(fakes);
     }
     
     /**
@@ -68,22 +61,8 @@ public class TournamentTeam extends ArrayList<String> {
     /**
      * @return id de la team
      */
-    public final int getId() {
+    public int getId() {
         return id;
-    }
-    
-    /**
-     * @return {@link #nom}
-     */
-    public String getNom() {
-        return nom;
-    }
-    
-    /**
-     * @return si la team est complète.
-     */
-    public boolean isFull() {
-        return remainingPlaces() <= 0;
     }
     
     /**
@@ -91,47 +70,27 @@ public class TournamentTeam extends ArrayList<String> {
      * @return if ircuser is Owner
      * 
      */
-    public boolean isOwner(final IrcUser ircuser) {
-        if (owner.equals(ircuser)) {
-            return true;
-        }
-        return false;
+    public boolean isOwner(IrcUser ircuser) {
+        return owner.equals(ircuser);
     }
     
     /**
-     * @return le nombre de places restantes.
-     */
-    public int remainingPlaces() {
-        return capacity - size();
-    }
-    /**
      * @param country1
      */
-    public void setCountry(final Locale country1) {
+    public void setCountry(Locale country1) {
         country = country1;
     }
     
     /**
-     * @param nom1
-     */
-    public void setNom(final String nom1) {
-        nom = nom1;
-    }
-    
-    /**
-     * @return {@link #nom}.
-     * @see Object#toString()
+     * @see net.mauhiz.irc.bot.event.Team#toString()
      */
     @Override
     public String toString() {
-        String listPlayer = "";
-        if (!isEmpty()) {
-            
-            for (String element : this) {
-                listPlayer += element + " ";
-            }
+        StringBuilder listPlayer = new StringBuilder();
+        for (IrcUser element : this) {
+            listPlayer.append(element).append(' ');
         }
-        return "Team n°" + id + " Tag :" + nom + " Pays :" + country + " Player(s) :" + listPlayer;
         
+        return "Team #" + id + " Tag :" + getNom() + " Pays :" + country.getCountry() + " Player(s) :" + listPlayer;
     }
 }

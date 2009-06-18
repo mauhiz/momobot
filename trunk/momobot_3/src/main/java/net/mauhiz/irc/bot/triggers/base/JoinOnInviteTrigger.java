@@ -18,7 +18,7 @@ public class JoinOnInviteTrigger implements IInviteTrigger {
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Invite im, final IIrcControl control) {
+    public void doTrigger(Invite im, IIrcControl control) {
         Join join = new Join(im.getServer(), im.getMessage());
         control.sendMsg(join);
         Notice notice = Notice.buildPrivateAnswer(im, "Allez, c'est bien parce que c'est toi.");

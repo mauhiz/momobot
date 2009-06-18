@@ -23,7 +23,7 @@ public class Sha256Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
      * @return le md5
      * @throws NoSuchAlgorithmException
      */
-    static String computeSha256(final byte[] input) throws NoSuchAlgorithmException {
+    static String computeSha256(byte[] input) throws NoSuchAlgorithmException {
         byte[] output = MessageDigest.getInstance("SHA-256").digest(input);
         return new String(Hex.encodeHex(output));
     }
@@ -31,7 +31,7 @@ public class Sha256Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
     /**
      * @param trigger
      */
-    public Sha256Trigger(final String trigger) {
+    public Sha256Trigger(String trigger) {
         super(trigger);
     }
     
@@ -42,15 +42,15 @@ public class Sha256Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        final String args = getArgs(cme.getMessage());
+    public void doTrigger(Privmsg cme, IIrcControl control) {
+        String args = getArgs(cme.getMessage());
         Privmsg resp;
         if (StringUtils.isEmpty(args)) {
             resp = Privmsg.buildAnswer(cme, "sha-256 de quoi ?");
         } else {
             try {
                 resp = Privmsg.buildAnswer(cme, "sha-256 de " + args + ": " + computeSha256(args.getBytes()));
-            } catch (final NoSuchAlgorithmException nsae) {
+            } catch (NoSuchAlgorithmException nsae) {
                 resp = Privmsg.buildAnswer(cme, "J'ai pas de sha-256. Sry.");
             }
         }

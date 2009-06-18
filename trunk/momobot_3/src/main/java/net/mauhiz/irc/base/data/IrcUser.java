@@ -1,10 +1,12 @@
 package net.mauhiz.irc.base.data;
 
+import java.io.Serializable;
+
 /**
  * @author mauhiz
- * 
  */
-public interface IrcUser extends IHookable<IrcUser> {
+public interface IrcUser extends Serializable, Comparable<IrcUser> {
+    String getFullName();
     
     String getHost();
     
@@ -17,8 +19,13 @@ public interface IrcUser extends IHookable<IrcUser> {
      */
     boolean isService();
     
+    void setFullName(String fullName);
+    
+    void setHost(String string);
+    
     void setNick(String newNick);
     
-    void updateWithMask(Mask mask);
+    void setUser(String string);
     
+    void updateWithMask(Mask mask);
 }

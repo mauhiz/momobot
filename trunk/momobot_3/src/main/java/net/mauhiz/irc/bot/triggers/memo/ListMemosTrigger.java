@@ -13,7 +13,7 @@ public class ListMemosTrigger extends AbstractTextTrigger implements IPrivmsgTri
      * @param trigger
      *            le trigger
      */
-    public ListMemosTrigger(final String trigger) {
+    public ListMemosTrigger(String trigger) {
         super(trigger);
     }
     
@@ -22,7 +22,7 @@ public class ListMemosTrigger extends AbstractTextTrigger implements IPrivmsgTri
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         Privmsg msg = Privmsg.buildAnswer(im, MemoDb.getInstance(im.getServer()).getMemos());
         control.sendMsg(msg);
     }

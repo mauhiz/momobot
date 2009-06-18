@@ -14,7 +14,7 @@ public class YahooTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * @param trigger
      *            le trigger
      */
-    public YahooTrigger(final String trigger) {
+    public YahooTrigger(String trigger) {
         super(trigger);
     }
     
@@ -23,9 +23,9 @@ public class YahooTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        final WebQuery query = new WebQuery("yahoo", getArgs(cme.getMessage()));
-        for (final String next : query.results()) {
+    public void doTrigger(Privmsg cme, IIrcControl control) {
+        WebQuery query = new WebQuery("yahoo", getArgs(cme.getMessage()));
+        for (String next : query.results()) {
             Notice notice = Notice.buildPrivateAnswer(cme, next);
             control.sendMsg(notice);
         }

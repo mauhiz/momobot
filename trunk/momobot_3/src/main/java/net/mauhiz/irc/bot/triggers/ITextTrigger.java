@@ -6,7 +6,7 @@ package net.mauhiz.irc.bot.triggers;
 public interface ITextTrigger extends ITrigger {
     
     /**
-     * @return Un message d'aide; par défaut, le texte du trigger.
+     * @return Un message d'aide; par defaut, le texte du trigger.
      */
     String getTriggerHelp();
     

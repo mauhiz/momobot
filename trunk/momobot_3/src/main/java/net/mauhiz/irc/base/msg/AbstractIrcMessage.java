@@ -2,17 +2,24 @@ package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.data.IrcServer;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Generic IRC Message
  * 
  * @author mauhiz
  */
-public class IrcMessage implements IIrcMessage {
-    String from;
-    IrcServer server;
-    String to;
+public abstract class AbstractIrcMessage implements IIrcMessage {
+    protected String from;
+    protected IrcServer server;
+    protected String to;
     
-    public IrcMessage(final String from1, final String to1, final IrcServer server1) {
+    /**
+     * @param from1
+     * @param to1
+     * @param server1
+     */
+    public AbstractIrcMessage(String from1, String to1, IrcServer server1) {
         from = from1;
         to = to1;
         server = server1;
@@ -37,5 +44,15 @@ public class IrcMessage implements IIrcMessage {
      */
     public String getTo() {
         return to;
+    }
+    
+    /**
+     * debug
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

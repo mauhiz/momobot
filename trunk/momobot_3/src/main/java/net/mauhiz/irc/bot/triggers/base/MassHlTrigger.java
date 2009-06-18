@@ -1,41 +1,38 @@
 package net.mauhiz.irc.bot.triggers.base;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.data.qnet.QnetUser;
 import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author mauhiz
  */
 
 public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    /**
-     * 
-     */
-    private static final Logger LOG = Logger.getLogger(MassHlTrigger.class);
     
     /**
      * @param trigger
      *            le trigger
      */
-    public MassHlTrigger(final String trigger) {
+    public MassHlTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
+    public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcServer server = cme.getServer();
         IrcChannel chan = server.findChannel(cme.getTo());
         if (chan == null) {
@@ -47,28 +44,37 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             return;
         }
         
-        LOG.debug("MassHlTrigger : " + chan + " has " + chan.size() + " users");
-        final StringBuilder msg = new StringBuilder();
-        msg.append("nudges ");
-        IrcUser from = server.findUser(cme.getFrom(), true);
-        for (final IrcUser nextIrcUser : chan) {
+        LOG.debug("MassHlTrigger : " + chan.fullName() + " has " + chan.size() + " users");
+        IrcUser from = server.findUser(new Mask(cme.getFrom()), true);
+        Set<IrcUser> nudgeableUsers = new TreeSet<IrcUser>();
+        for (IrcUser nextIrcUser : chan) {
             if (nextIrcUser instanceof QnetUser && ((QnetUser) nextIrcUser).isService()) {
                 /* no bots */
-                LOG.debug("skipping bot : " + nextIrcUser);
+                LOG.debug("skipping bot : " + nextIrcUser.getNick());
                 continue;
             } else if (nextIrcUser.equals(from)) {
                 /* no caller */
-                LOG.debug("skipping caller : " + nextIrcUser);
+                LOG.debug("skipping caller : " + nextIrcUser.getNick());
                 continue;
-            } else if (nextIrcUser.getNick().equalsIgnoreCase(server.getMyNick())) {
+            } else if (nextIrcUser.equals(server.getMyself())) {
                 /* no self */
-                LOG.debug("skipping myself : " + nextIrcUser);
+                LOG.debug("skipping myself : " + nextIrcUser.getNick());
                 continue;
             }
-            LOG.debug("appending : " + nextIrcUser);
-            msg.append(' ');
-            msg.append(nextIrcUser);
+            nudgeableUsers.add(nextIrcUser);
         }
+        
+        if (nudgeableUsers.isEmpty()) {
+            return;
+        }
+        StringBuilder msg = new StringBuilder();
+        msg.append("nudges");
+        for (IrcUser user : nudgeableUsers) {
+            LOG.debug("appending : " + user.getNick());
+            msg.append(' ');
+            msg.append(user.getNick());
+        }
+        
         Action pmsg = Action.buildAnswer(cme, msg.toString());
         control.sendMsg(pmsg);
     }

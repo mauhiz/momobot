@@ -13,9 +13,9 @@ public final class ColorUtils implements IrcSpecialChars {
      *            the input text.
      * @return the same text, but with all colours removed.
      */
-    public static String removeColors(final String line) {
-        final int length = line.length();
-        final StringBuilder buffer = new StringBuilder();
+    public static String removeColors(String line) {
+        int length = line.length();
+        StringBuilder buffer = new StringBuilder();
         char index = 0;
         while (index < length) {
             char car = line.charAt(index);
@@ -79,7 +79,7 @@ public final class ColorUtils implements IrcSpecialChars {
      *            the input text.
      * @return the same text, but without any bold, underlining, reverse, etc.
      */
-    public static String removeFormatting(final String line) {
+    public static String removeFormatting(String line) {
         return new StrBuilder(line).deleteAll(DELIM_NORMAL).deleteAll(DELIM_BOLD).deleteAll(DELIM_UNDERLINE).deleteAll(
                 DELIM_REVERSE).toString();
     }
@@ -92,7 +92,7 @@ public final class ColorUtils implements IrcSpecialChars {
      *            the input text.
      * @return the same text, but without formatting and colour characters.
      */
-    public static String removeFormattingAndColors(final String line) {
+    public static String removeFormattingAndColors(String line) {
         return removeFormatting(removeColors(line));
     }
     
@@ -105,41 +105,41 @@ public final class ColorUtils implements IrcSpecialChars {
      *            la couleur du fond
      * @return la chaine coloree
      */
-    public static String toBiColor(final String text, final Color frontColor, final Color backColor) {
+    public static String toBiColor(String text, Color frontColor, Color backColor) {
         return DELIM_COLOR + frontColor.toString() + ',' + backColor + text + DELIM_COLOR;
     }
     
     /**
      * @param string
-     *            la chaine à graisser (LOL)
+     *            la chaine a graisser (LOL)
      * @return la string en gras
      */
-    public static String toBold(final String string) {
+    public static String toBold(String string) {
         return DELIM_BOLD + string + DELIM_BOLD;
     }
     
     /**
      * @param text
-     *            la chaine à colorier
+     *            la chaine a colorier
      * @param color
      *            la couleur
      * @return la chaine coloree
      */
-    public static String toColor(final String text, final Color color) {
+    public static String toColor(String text, Color color) {
         return DELIM_COLOR + color.toString() + text + DELIM_COLOR;
     }
     
     /**
      * @param string
-     *            la chaine à souligner
+     *            la chaine a souligner
      * @return la string en gras
      */
-    public static String toUnderline(final String string) {
+    public static String toUnderline(String string) {
         return DELIM_UNDERLINE + string + DELIM_UNDERLINE;
     }
     
     /**
-     * constructeur par défaut.
+     * constructeur par defaut.
      */
     private ColorUtils() {
         super();
