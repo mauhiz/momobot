@@ -17,7 +17,7 @@ public class Md5Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @param trigger
      */
-    public Md5Trigger(final String trigger) {
+    public Md5Trigger(String trigger) {
         super(trigger);
     }
     
@@ -28,8 +28,8 @@ public class Md5Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        final String args = getArgs(cme.getMessage());
+    public void doTrigger(Privmsg cme, IIrcControl control) {
+        String args = getArgs(cme.getMessage());
         String resp;
         if (StringUtils.isEmpty(args)) {
             resp = "md5 de quoi ?";

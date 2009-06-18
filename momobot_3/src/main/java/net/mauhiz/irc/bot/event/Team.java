@@ -4,28 +4,20 @@ import java.util.ArrayList;
 
 import net.mauhiz.irc.base.data.IrcUser;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * @author mauhiz
  */
 public class Team extends ArrayList<IrcUser> {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1;
-    /**
-     * 
-     */
     private final int capacity;
-    /**
-     * 
-     */
     private String nom;
     
     /**
      * @param size1
      * @param nom1
      */
-    public Team(final int size1, final String nom1) {
+    public Team(int size1, String nom1) {
         super(size1);
         capacity = size1;
         nom = nom1;
@@ -35,7 +27,7 @@ public class Team extends ArrayList<IrcUser> {
      * @see java.util.ArrayList#add(java.lang.Object)
      */
     @Override
-    public boolean add(final IrcUser a) {
+    public boolean add(IrcUser a) {
         if (isFull()) {
             throw new IllegalStateException("Team is full!");
         }
@@ -50,7 +42,14 @@ public class Team extends ArrayList<IrcUser> {
     }
     
     /**
-     * @return si la team est complète.
+     * @return {@link #nom}.
+     */
+    public String getNom() {
+        return nom;
+    }
+    
+    /**
+     * @return si la team est complete.
      */
     public boolean isFull() {
         return remainingPlaces() <= 0;
@@ -66,16 +65,17 @@ public class Team extends ArrayList<IrcUser> {
     /**
      * @param nom1
      */
-    public void setNom(final String nom1) {
+    public void setNom(String nom1) {
         nom = nom1;
     }
     
     /**
-     * @return {@link #nom}.
-     * @see Object#toString()
+     * debug only
+     * 
+     * @see java.util.AbstractCollection#toString()
      */
     @Override
     public String toString() {
-        return nom;
+        return ToStringBuilder.reflectionToString(this);
     }
 }

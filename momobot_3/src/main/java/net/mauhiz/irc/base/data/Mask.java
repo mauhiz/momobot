@@ -10,15 +10,15 @@ import org.apache.commons.lang.NullArgumentException;
  */
 public class Mask {
     private static final Pattern HOSTMASK = Pattern.compile("(.*)!(.*)@(.*)");
-    private final String host;
-    private final String nick;
+    private String host;
+    private String nick;
     private final String raw;
-    private final String user;
+    private String user;
     
     /**
      * @param raw1
      */
-    public Mask(final String raw1) {
+    public Mask(String raw1) {
         super();
         if (raw1 == null) {
             throw new NullArgumentException("raw");
@@ -38,7 +38,7 @@ public class Mask {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (!(obj instanceof Mask)) {
@@ -48,10 +48,28 @@ public class Mask {
     }
     
     /**
+     * @return the host
+     */
+    public String getHost() {
+        return host;
+    }
+    
+    /**
      * @return {@link #nick}
      */
     public String getNick() {
         return nick;
+    }
+    
+    public String getRaw() {
+        return raw;
+    }
+    
+    /**
+     * @return the user
+     */
+    public String getUser() {
+        return user;
     }
     
     /**
@@ -60,27 +78,5 @@ public class Mask {
     @Override
     public int hashCode() {
         return raw.hashCode();
-    }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return raw;
-    }
-
-    /**
-     * @return the user
-     */
-    public String getUser() {
-        return user;
-    }
-
-    /**
-     * @return the host
-     */
-    public String getHost() {
-        return host;
     }
 }

@@ -11,4 +11,5 @@ public interface IrcCommands {
     String PING = "PING";
     String PRIVMSG = "PRIVMSG";
     String QUIT = "QUIT";
+    String TOPIC = "TOPIC";
 }

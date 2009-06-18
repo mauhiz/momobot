@@ -1,24 +1,25 @@
 package net.mauhiz.irc.bot.triggers.dispo;
 
+import java.util.Date;
 import java.util.List;
 
-import net.mauhiz.irc.HibernateUtils;
-import net.mauhiz.irc.base.data.AbstractHook;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.util.HibernateUtils;
+import net.mauhiz.util.Hooks;
 
 import org.hibernate.Query;
 
 /**
  * @author mauhiz
  */
-public class DispoDb extends AbstractHook<IrcServer> {
+public final class DispoDb {
     
     /**
      * @param server
      * @return instance
      */
-    public static DispoDb getInstance(final IrcServer server) {
-        DispoDb ret = server.getHookedObject(DispoDb.class);
+    public static DispoDb getInstance(IrcServer server) {
+        DispoDb ret = Hooks.getHook(server, DispoDb.class);
         if (ret == null) {
             return new DispoDb(server);
         }
@@ -28,14 +29,14 @@ public class DispoDb extends AbstractHook<IrcServer> {
     /**
      * @param dispo
      */
-    public static void updateDispo(final Dispo dispo) {
+    public static void updateDispo(Dispo dispo) {
         HibernateUtils.currentSession().getTransaction().begin();
         Query getQry = HibernateUtils
                 .currentSession()
                 .createQuery(
-                        "delete from Dispo where channel = :channel and qauth = :qauth and serverAlias = :serverAlias and when = :when");
+                        "delete from Dispo where channel = :channel and qauth = :qauth and serverAlias = :serverAlias and quand = :quand");
         getQry.setString("channel", dispo.getChannel());
-        getQry.setDate("when", dispo.getWhen());
+        getQry.setDate("quand", dispo.getQuand());
         getQry.setString("qauth", dispo.getQauth());
         getQry.setString("serverAlias", dispo.getServerAlias());
         getQry.executeUpdate();
@@ -43,11 +44,14 @@ public class DispoDb extends AbstractHook<IrcServer> {
         HibernateUtils.currentSession().getTransaction().commit();
     }
     
+    private final IrcServer hook;
+    
     /**
      * @param server
      */
-    public DispoDb(final IrcServer server) {
-        super(server);
+    private DispoDb(IrcServer server) {
+        Hooks.addHook(server, this);
+        hook = server;
     }
     
     /**
@@ -55,11 +59,11 @@ public class DispoDb extends AbstractHook<IrcServer> {
      * @param when
      * @return list of dispo
      */
-    public List<Dispo> getDispo(final String channel, final java.sql.Date when) {
+    public List<Dispo> getDispo(String channel, Date when) {
         Query getQry = HibernateUtils.currentSession().createQuery(
-                "from Dispo where channel = :channel and when = :when and serverAlias = :serverAlias");
+                "from Dispo where channel = :channel and quand = :quand and serverAlias = :serverAlias");
         getQry.setString("channel", channel);
-        getQry.setDate("when", when);
+        getQry.setDate("quand", when);
         getQry.setString("serverAlias", hook.getAlias());
         return getQry.list();
     }

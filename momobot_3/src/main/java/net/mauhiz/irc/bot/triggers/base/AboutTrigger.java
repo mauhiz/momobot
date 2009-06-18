@@ -12,7 +12,7 @@ public class AboutTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     /**
      * @param trigger
      */
-    public AboutTrigger(final String trigger) {
+    public AboutTrigger(String trigger) {
         super(trigger);
     }
     
@@ -21,7 +21,7 @@ public class AboutTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         /* TODO cross server */
         Privmsg retour = Privmsg.buildPrivateAnswer(im,
                 "Je suis le momobot v3, mes sources sont disponibles sur http://code.google.com/p/momobot/");

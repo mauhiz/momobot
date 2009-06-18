@@ -20,7 +20,7 @@ public class ConnectAction implements SelectionListener {
      * @param gtm1
      * @param server1
      */
-    public ConnectAction(final GuiTriggerManager gtm1, final IrcServer server1) {
+    public ConnectAction(GuiTriggerManager gtm1, IrcServer server1) {
         server = server1;
         gtm = gtm1;
     }
@@ -28,14 +28,14 @@ public class ConnectAction implements SelectionListener {
     /**
      * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
      */
-    public void widgetDefaultSelected(final SelectionEvent arg0) {
+    public void widgetDefaultSelected(SelectionEvent arg0) {
         /* nothing */
     }
     
     /**
      * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
      */
-    public void widgetSelected(final SelectionEvent arg0) {
+    public void widgetSelected(SelectionEvent arg0) {
         gtm.getClient().connect(server);
     }
 }

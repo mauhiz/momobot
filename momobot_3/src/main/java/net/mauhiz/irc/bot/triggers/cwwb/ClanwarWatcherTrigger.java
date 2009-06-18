@@ -1,5 +1,4 @@
 package net.mauhiz.irc.bot.triggers.cwwb;
-import net.mauhiz.irc.HibernateUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -7,6 +6,7 @@ import net.mauhiz.irc.base.msg.Quit;
 import net.mauhiz.irc.bot.triggers.IPartTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.IQuitTrigger;
+import net.mauhiz.util.HibernateUtils;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -16,7 +16,7 @@ import org.hibernate.SQLQuery;
  */
 public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQuitTrigger {
     /**
-     * nicks ignorés.
+     * nicks ignores.
      */
     private static final String[] IGNORED_NICKS = {"[CW|FR]", "Q", "S"};
     
@@ -26,31 +26,30 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
         super();
         
         // On vide les tables direct en arrivant
-        // TODO : permettre un paramétrage de cette fonction ?
+        // TODO permettre un parametrage de cette fonction ?
         SQLQuery trunc = HibernateUtils.currentSession().createSQLQuery("truncate table WAR");
         trunc.executeUpdate();
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPartTrigger#doTrigger(net.mauhiz.irc.base.msg.Part,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPartTrigger#doTrigger(Part, IIrcControl)
      */
-    public void doTrigger(final Part im, final IIrcControl control) {
+    public void doTrigger(Part im, IIrcControl control) {
         removeSeekFromUser(im.getFrom());
-        
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         String message = im.getMessage();
-        String sender = im.getFrom();
-        // On ignore les messages trop courts pour être utile
+        // On ignore les messages trop courts pour etre utiles
         if (message.length() <= 3) {
             return;
         }
+        
+        String sender = im.getFrom();
+        
         // On ignore les messages provenant de certains utilisateurs.
         for (String element : IGNORED_NICKS) {
             if (element.equals(sender)) {
@@ -64,10 +63,9 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IQuitTrigger#doTrigger(net.mauhiz.irc.base.msg.Quit,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IQuitTrigger#doTrigger(Quit, IIrcControl)
      */
-    public void doTrigger(final Quit im, final IIrcControl control) {
+    public void doTrigger(Quit im, IIrcControl control) {
         removeSeekFromUser(im.getFrom());
     }
     
@@ -91,7 +89,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
      * @see net.mauhiz.irc.bot.triggers.ITextTrigger#isActivatedBy(java.lang.String)
      */
     @Override
-    public boolean isActivatedBy(final String text) {
+    public boolean isActivatedBy(String text) {
         return true;
     }
     
@@ -99,19 +97,19 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
      * @param sender
      * @param pMessage
      */
-    public void processMessage(final String sender, final String pMessage) {
+    public void processMessage(String sender, String pMessage) {
         String message = pMessage.trim();
         // String lowMsg = message.toLowerCase();
         
-        // TODO : est-ce que l'objet war est bien supprimé a chaque fois ?
+        // TODO est-ce que l'objet war est bien supprime a chaque fois ?
         War war = new War(sender, message);
         
-        // Si le parser n'a pas réussi a trouver une war on arrete
+        // Si le parser n'a pas reussi a trouver une war on arrete
         
         HibernateUtils.currentSession().getTransaction().begin();
         if (war.isNull()) {
             /*
-             * TODO : Rajouter une option debug ou pas : pour faire une version du bot plus légère.
+             * TODO Rajouter une option debug ou pas : pour faire une version du bot plus legere.
              */
             Untreated utt = new Untreated();
             utt.setMessage(message);
@@ -120,7 +118,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
         } else {
             /*
              * Insertion du message dans la bdd. On insert le nouveau seek, en remplacant l'ancien si un seek du meme
-             * joueur existe déjà
+             * joueur existe deja
              */
             Query qry = HibernateUtils.currentSession().createQuery("from War where user = :user");
             qry.setString("user", sender);
@@ -139,7 +137,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
      * 
      * @param user
      */
-    public void removeSeekFromUser(final String user) {
+    public void removeSeekFromUser(String user) {
         SQLQuery qry = HibernateUtils.currentSession().createSQLQuery("delete from War where user = :user");
         qry.setString("user", user);
         qry.executeUpdate();

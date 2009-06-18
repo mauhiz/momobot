@@ -26,6 +26,8 @@ public interface IIrcControl {
      */
     void exit() throws IOException;
     
+    void quit(IrcServer server);
+    
     /**
      * @param msg
      */

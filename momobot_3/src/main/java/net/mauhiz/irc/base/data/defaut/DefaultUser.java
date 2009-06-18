@@ -10,7 +10,7 @@ public class DefaultUser extends AbstractIrcUser {
     /**
      * @param nick1
      */
-    protected DefaultUser(final String nick1) {
+    protected DefaultUser(String nick1) {
         super(nick1);
         props = new UserProperties();
     }

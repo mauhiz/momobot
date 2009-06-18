@@ -1,8 +1,8 @@
 package net.mauhiz.irc.bot.triggers.spam;
 
-import net.mauhiz.irc.AbstractRunnable;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.util.AbstractRunnable;
 
 /**
  * @author mauhiz
@@ -11,23 +11,23 @@ public class SpamRunnable extends AbstractRunnable {
     /**
      * control.
      */
-    private IIrcControl control;
+    private final IIrcControl control;
     /**
      * 
      */
-    private long delayMs;
+    private final long delayMs;
     
     /**
      * 
      */
-    private Privmsg spamMsg;
+    private final Privmsg spamMsg;
     
     /**
      * @param spamMsg1
      * @param control1
      * @param delayMs1
      */
-    public SpamRunnable(final Privmsg spamMsg1, final IIrcControl control1, final long delayMs1) {
+    public SpamRunnable(Privmsg spamMsg1, IIrcControl control1, long delayMs1) {
         super();
         control = control1;
         delayMs = delayMs1;

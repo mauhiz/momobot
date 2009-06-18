@@ -46,7 +46,7 @@ public class WebQuery {
      */
     private final int len;
     /**
-     * le nombre de résultats.
+     * le nombre de resultats.
      */
     private int numResult = 1;
     /**
@@ -54,7 +54,7 @@ public class WebQuery {
      */
     private String query;
     /**
-     * le séparateur de résultats.
+     * le separateur de resultats.
      */
     private String resultSep;
     /**
@@ -72,14 +72,14 @@ public class WebQuery {
      * @param query1
      *            la requete
      */
-    public WebQuery(final String type1, final String query1) {
+    public WebQuery(String type1, String query1) {
         type = type1;
         try {
             query = URLEncoder.encode(query1, "utf-8");
             setUrl();
-        } catch (final UnsupportedEncodingException uee) {
+        } catch (UnsupportedEncodingException uee) {
             LOG.warn(uee, uee);
-        } catch (final URIException urie) {
+        } catch (URIException urie) {
             LOG.warn(urie, urie);
         }
         len = resultSep.length();
@@ -88,14 +88,14 @@ public class WebQuery {
     /**
      * @return un iterateur sur les resultats
      */
-    public final List<String> results() {
-        final List<String> results = new ArrayList<String>(numResult);
-        final GetMethod method = new GetMethod(url.toString());
+    public List<String> results() {
+        List<String> results = new ArrayList<String>(numResult);
+        GetMethod method = new GetMethod(url.toString());
         String page = null;
         try {
             new HttpClient().executeMethod(method);
             page = method.getResponseBodyAsString();
-        } catch (final IOException ioe) {
+        } catch (IOException ioe) {
             LOG.error(ioe, ioe);
         } finally {
             method.releaseConnection();
@@ -133,7 +133,7 @@ public class WebQuery {
                 index = page.indexOf('>');
                 work = page.substring(0, index - 1);
                 if (work.endsWith(" target=_blank")) {
-                    /* Ce résultat est pas bon, faudra en prendre un autre */
+                    /* Ce resultat est pas bon, faudra en prendre un autre */
                     ++numResult;
                 } else {
                     results.add(work);
@@ -141,7 +141,7 @@ public class WebQuery {
                 page = page.substring(index);
             }
         } else if (type.equals(GOOGLE)) {
-            int start = page.indexOf("<h2 class=hd>Résultats de recherche</h2>");
+            int start = page.indexOf("<h2 class=hd>Resultats de recherche</h2>");
             if (start >= 0) {
                 page = page.substring(start);
                 forloop : for (int k = 0; k < numResult; ++k) {

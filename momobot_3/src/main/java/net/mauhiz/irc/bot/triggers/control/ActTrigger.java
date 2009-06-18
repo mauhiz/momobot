@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.triggers.base;
+package net.mauhiz.irc.bot.triggers.control;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Action;
@@ -15,27 +15,29 @@ public class ActTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
      * @param trigger
      *            le trigger
      */
-    public ActTrigger(final String trigger) {
+    public ActTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
-        final String args = getArgs(im.getMessage());
-        final int index = args.indexOf(' ');
+    public void doTrigger(Privmsg im, IIrcControl control) {
+        String args = getArgs(im.getMessage());
+        int index = args.indexOf(' ');
         if (index < 1) {
-            Privmsg msg = Privmsg.buildPrivateAnswer(im, "pas assez de paramètres.");
-            control.sendMsg(msg);
-            msg = Privmsg.buildPrivateAnswer(im, "syntaxe $" + this + " target msg");
+            Privmsg msg = Privmsg.buildPrivateAnswer(im, "pas assez de parametres. " + getTriggerHelp());
             control.sendMsg(msg);
         } else {
             /* FIXME cross-server */
             Action msg = new Action(null, args.substring(0, index), im.getServer(), args.substring(index + 1));
             control.sendMsg(msg);
         }
+    }
+    
+    @Override
+    public String getTriggerHelp() {
+        return "syntaxe $" + getTriggerText() + " target msg";
     }
 }

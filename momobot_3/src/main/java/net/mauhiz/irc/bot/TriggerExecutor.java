@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author mauhiz
  */
-public class TriggerExecutor extends ThreadPoolExecutor {
+public final class TriggerExecutor extends ThreadPoolExecutor {
     private static final int BASE_CAPACITY = 1;
     private static final TriggerExecutor INSTANCE = new TriggerExecutor();
     private static final int MAX_CAPACITY = 100;
@@ -22,6 +22,6 @@ public class TriggerExecutor extends ThreadPoolExecutor {
      * default and only ctor
      */
     private TriggerExecutor() {
-        super(BASE_CAPACITY, MAX_CAPACITY, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(MAX_CAPACITY));
+        super(BASE_CAPACITY, MAX_CAPACITY, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(MAX_CAPACITY));
     }
 }

@@ -3,25 +3,27 @@ package net.mauhiz.irc.base.ident;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
-import net.mauhiz.irc.AbstractRunnable;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.FileUtil;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.SystemUtils;
 
 /**
  * @author mauhiz
  */
 public class IdentServer extends AbstractRunnable implements IIdentServer {
     /**
-     * le port sur lequel on écoute.
+     * le port sur lequel on ecoute.
      */
-    private static final char PORT = 113;
+    private static final int PORT = 113;
     /**
      * Timeout en millisecondes.
      */
@@ -29,37 +31,54 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
     /**
      * le serversocket.
      */
-    private final ServerSocket ss;
+    private ServerSocket ss;
     private final String user;
+    
     /**
      * @param user1
      * @throws IOException
      */
-    public IdentServer(final String user1) throws IOException {
-        user = user1;
-        ss = new ServerSocket(PORT);
-        ss.setSoTimeout(SO_TIMEOUT);
+    public IdentServer(IrcUser user1) throws IOException {
+        super();
+        user = user1.getUser();
+        
+        try {
+            ss = new ServerSocket(PORT);
+            ss.setSoTimeout(SO_TIMEOUT);
+            
+        } catch (BindException be) {
+            if (SystemUtils.IS_OS_LINUX) { // not root => bind denied
+                LOG.info("Could not bind on port: " + PORT + ". Maybe I should be rootz?");
+            } else {
+                throw be;
+            }
+        }
     }
     
     /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        setRunning(true);
+        if (ss == null) {
+            stop();
+            return;
+        }
         try {
-            final Socket socket = ss.accept();
+            Socket socket = ss.accept();
             socket.setSoTimeout(SO_TIMEOUT);
-            final PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-            final String line = new BufferedReader(new InputStreamReader(socket.getInputStream())).readLine();
+            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+            String line = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15))
+                    .readLine();
             if (line != null) {
                 writer.println(line + " : USERID : UNIX : " + user);
             }
-            IOUtils.closeQuietly(writer);
-            stop();
-        } catch (IOException e) {
-            Logger.getLogger(IdentServer.class).error(e);
+            writer.close();
+        } catch (SocketTimeoutException ste) {
+            // nevermind
+        } catch (IOException ioe) {
+            LOG.error(ioe, ioe);
         }
-        setRunning(false);
+        stop();
     }
     
     /**
@@ -70,10 +89,18 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
     }
     
     /**
-     * @see net.mauhiz.irc.base.ident.IIdentServer#stop()
+     * @see net.mauhiz.util.AbstractRunnable#stop()
      */
-    public void stop() throws IOException {
-        ss.close();
-        setRunning(false);
+    @Override
+    public void stop() {
+        if (ss != null) {
+            try {
+                ss.close();
+                
+            } catch (IOException ioe) {
+                LOG.warn(ioe, ioe);
+            }
+        }
+        super.stop();
     }
 }

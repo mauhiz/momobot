@@ -10,19 +10,19 @@ public class Dispo {
     private String channel;
     private long id;
     /**
-     * La première heure (21h00).
+     * La premiere heure (21h00).
      */
     private Present present1;
     /**
-     * La deuxième heure (22h30).
+     * La deuxieme heure (22h30).
      */
     private Present present2;
     /**
      * L'auth Qnet.
      */
     private String qauth;
+    private java.sql.Date quand;
     private String serverAlias;
-    private java.sql.Date when;
     /**
      * @return the channel
      */
@@ -54,65 +54,65 @@ public class Dispo {
         return qauth;
     }
     /**
+     * @return the quand
+     */
+    public java.sql.Date getQuand() {
+        return quand;
+    }
+    /**
      * @return the serverAlias
      */
     public String getServerAlias() {
         return serverAlias;
     }
     /**
-     * @return the when
-     */
-    public java.sql.Date getWhen() {
-        return when;
-    }
-    /**
      * @param channel
      *            the channel to set
      */
-    public void setChannel(final String channel) {
+    public void setChannel(String channel) {
         this.channel = channel;
     }
     /**
      * @param id
      *            the id to set
      */
-    public void setId(final long id) {
+    public void setId(long id) {
         this.id = id;
     }
     /**
      * @param present1
      *            the present1 to set
      */
-    public void setPresent1(final Present present1) {
+    public void setPresent1(Present present1) {
         this.present1 = present1;
     }
     /**
      * @param present2
      *            the present2 to set
      */
-    public void setPresent2(final Present present2) {
+    public void setPresent2(Present present2) {
         this.present2 = present2;
     }
     /**
      * @param qauth
      *            the qauth to set
      */
-    public void setQauth(final String qauth) {
+    public void setQauth(String qauth) {
         this.qauth = qauth;
+    }
+    /**
+     * @param quand
+     *            the quand to set
+     */
+    public void setQuand(java.sql.Date quand) {
+        this.quand = quand;
     }
     /**
      * @param serverAlias
      *            the serverAlias to set
      */
-    public void setServerAlias(final String serverAlias) {
+    public void setServerAlias(String serverAlias) {
         this.serverAlias = serverAlias;
-    }
-    /**
-     * @param when
-     *            the when to set
-     */
-    public void setWhen(final java.sql.Date when) {
-        this.when = when;
     }
     
 }

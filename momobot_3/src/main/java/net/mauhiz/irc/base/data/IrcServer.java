@@ -9,7 +9,7 @@ import net.mauhiz.irc.base.msg.IIrcMessage;
  * @author mauhiz
  * 
  */
-public interface IrcServer extends IHookable<IrcServer> {
+public interface IrcServer {
     
     /**
      * @param test
@@ -27,24 +27,24 @@ public interface IrcServer extends IHookable<IrcServer> {
     
     /**
      * @param chanName
-     * @param b
+     * @param addIfNotFound
      * @return
      */
-    IrcChannel findChannel(String chanName, boolean b);
+    IrcChannel findChannel(String chanName, boolean addIfNotFound);
     
     /**
      * @param mask
-     * @param b
+     * @param addIfNotFound
      * @return
      */
-    IrcUser findUser(Mask mask, boolean b);
+    IrcUser findUser(Mask mask, boolean addIfNotFound);
     
     /**
      * @param target
-     * @param b
+     * @param addIfNotFound
      * @return
      */
-    IrcUser findUser(String target, boolean b);
+    IrcUser findUser(String target, boolean addIfNotFound);
     
     InetSocketAddress getAddress();
     
@@ -58,16 +58,12 @@ public interface IrcServer extends IHookable<IrcServer> {
      */
     Set<IrcChannel> getChannelsForUser(IrcUser smith);
     
-    String getMyFullName();
-    
-    String getMyLogin();
-    
-    String getMyNick();
+    IrcUser getMyself();
     
     /**
      * @param channel
      */
-    void remove(final IrcChannel channel);
+    void remove(IrcChannel channel);
     /**
      * @param quitter
      */
@@ -79,23 +75,17 @@ public interface IrcServer extends IHookable<IrcServer> {
     void setAlias(String alias);
     
     /**
-     * @param fullName
-     */
-    void setMyFullName(String fullName);
-    
-    /**
-     * @param login
-     */
-    void setMyLogin(String login);
-    
-    /**
      * @param username
      */
-    void setMyNick(String username);
+    void setMyself(IrcUser me);
     
     /**
      * @param target
      * @param newNick
      */
     void updateNick(IrcUser target, String newNick);
+
+    public abstract IrcChannel newChannel(String chanLowerCase);
+
+    public abstract IrcUser newUser(String nick);
 }

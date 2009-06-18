@@ -1,14 +1,13 @@
 package net.mauhiz.irc.bot.event;
 
-import net.mauhiz.irc.DateUtils;
 import net.mauhiz.irc.base.Color;
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.util.DateUtil;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
@@ -19,13 +18,9 @@ public class Gather extends ChannelEvent {
      */
     public static final int DEFAULT_SIZE = 5;
     /**
-     * séparateur entre l'affichage des différents membres du gather.
+     * separateur entre l'affichage des differents membres du gather.
      */
     private static final String DISPLAY_SEPARATOR = " - ";
-    /**
-     * logger.
-     */
-    private static final Logger LOG = Logger.getLogger(Gather.class);
     
     /**
      * 
@@ -36,7 +31,7 @@ public class Gather extends ChannelEvent {
     // */
     // private Server serv;
     /**
-     * le temps où je commence.
+     * le temps ou je commence.
      */
     private final StopWatch sw = new StopWatch();
     /**
@@ -48,7 +43,7 @@ public class Gather extends ChannelEvent {
      * @param channel1
      *            le channel
      */
-    public Gather(final IrcChannel channel1) {
+    public Gather(IrcChannel channel1) {
         this(channel1, "eule^", DEFAULT_SIZE);
     }
     
@@ -56,7 +51,7 @@ public class Gather extends ChannelEvent {
      * @param channel1
      * @param nbPlayers
      */
-    public Gather(final IrcChannel channel1, final int nbPlayers) {
+    public Gather(IrcChannel channel1, int nbPlayers) {
         this(channel1, "eule^", nbPlayers);
     }
     
@@ -67,7 +62,7 @@ public class Gather extends ChannelEvent {
      *            le channel
      * @param size
      */
-    public Gather(final IrcChannel channel1, final String tag, final int size) {
+    public Gather(IrcChannel channel1, String tag, int size) {
         super(channel1);
         sw.start();
         team = new Team(size, tag);
@@ -78,20 +73,20 @@ public class Gather extends ChannelEvent {
      *            l'element
      * @return le message d'ajout, jamais <code>null</code>.
      */
-    public final String add(final IrcUser element) {
+    public String add(IrcUser element) {
         if (element == null) {
             throw new IllegalArgumentException("element must not be null");
         }
-        final StringBuilder retour = new StringBuilder();
-        retour.append(element);
+        StringBuilder retour = new StringBuilder();
+        retour.append(element.getNick());
         
         if (team.contains(element)) {
-            retour.append(": tu es déjà inscrit.");
+            retour.append(": tu es deja inscrit.");
         } else if (team.isFull()) {
-            retour.insert(0, "Désolé ").append(", c'est complet");
+            retour.insert(0, "Desole ").append(", c'est complet");
         } else {
             team.add(element);
-            retour.append(" ajouté au gather. ");
+            retour.append(" ajoute au gather. ");
             switch (team.remainingPlaces()) {
                 case 0 :
                     retour.append("C'est complet! Ready to rock 'n $roll");
@@ -110,30 +105,31 @@ public class Gather extends ChannelEvent {
     /**
      * 
      */
-    public final void createSeekWar() {
+    public SeekWar createSeekWar() {
         if (seekWar == null) {
             seekWar = new SeekWar();
         }
+        return seekWar;
     }
     
     /**
      * @return le nombre de joueur dans la team
      */
-    public final int getNumberPlayers() {
+    public int getNumberPlayers() {
         return team.size();
     }
     
     /**
      * @return le seekWar
      */
-    public final SeekWar getSeek() {
+    public SeekWar getSeek() {
         return seekWar;
     }
     
     // /**
     // * @return l'ip du serv
     // */
-    // public final String getServ() {
+    // public String getServ() {
     // if (null == this.serv) {
     // return "serv off :/";
     // }
@@ -149,38 +145,38 @@ public class Gather extends ChannelEvent {
     // /**
     // * @return si on a un serv
     // */
-    // public final boolean haveServ() {
+    // public boolean haveServ() {
     // return this.serv != null;
     // }
     /**
      * @param user
-     *            un type à virer
+     *            un type a virer
      * @return un message
      */
-    public final String remove(final IrcUser user) {
+    public String remove(IrcUser user) {
         if (user == null) {
             return "";
         }
         if (team.remove(user)) {
-            return user + " a été retiré du gather.";
+            return user.getNick() + " a ete retire du gather.";
         }
-        return user + ": tu n'étais pas inscrit tfaçon.";
+        return user.getNick() + ": tu n'etais pas inscrit tfacon.";
     }
     
     /**
      * @return un pauvre mec pris au hasard
      */
-    public final String roll() {
+    public String roll() {
         if (team.isEmpty()) {
             return "Personne n'est inscrit au gather.";
         }
-        return "Plouf, plouf, ce sera " + team.get(RandomUtils.nextInt(team.size())) + " qui ira seek!";
+        return "Plouf, plouf, ce sera " + team.get(RandomUtils.nextInt(team.size())).getNick() + " qui ira seek!";
     }
     
     /**
      * 
      */
-    public final void setSeekToNull() {
+    public void setSeekToNull() {
         seekWar = null;
     }
     
@@ -189,31 +185,30 @@ public class Gather extends ChannelEvent {
      *            le nouveau tag
      * @return un msg
      */
-    public final String setTag(final String string) {
+    public String setTag(String string) {
         team.setNom(string);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Nouveau tag = " + team);
-        }
-        return "Nouveau tag : " + team;
+        LOG.debug("Nouveau tag = " + team.getNom());
+        return "Nouveau tag : " + team.getNom();
     }
     
     /**
      * @return un message
+     * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
     @Override
-    public final String toString() {
-        final StringBuilder temp = new StringBuilder(ColorUtils.toColor("Gather " + team.size() + '/'
-                + team.getCapacity(), Color.BROWN));
+    public String toString() {
+        StringBuilder temp = new StringBuilder(ColorUtils.toColor("Gather " + team.size() + '/' + team.getCapacity(),
+                Color.BROWN));
         temp.append(" (start: ");
-        temp.append(ColorUtils.toColor(DateUtils.getTimeStamp(sw), Color.DARK_GREEN));
+        temp.append(ColorUtils.toColor(DateUtil.getTimeStamp(sw), Color.DARK_GREEN));
         temp.append(") (tag: ");
-        temp.append(ColorUtils.toColor(team.toString(), Color.RED));
+        temp.append(ColorUtils.toColor(team.getNom(), Color.RED));
         temp.append(") ");
         if (team.isEmpty()) {
             return temp.toString();
         }
-        for (final IrcUser ircUser : team) {
-            temp.append(ircUser).append(DISPLAY_SEPARATOR);
+        for (IrcUser ircUser : team) {
+            temp.append(ircUser.getNick()).append(DISPLAY_SEPARATOR);
         }
         return temp.substring(0, temp.length() - DISPLAY_SEPARATOR.length());
     }

@@ -13,7 +13,7 @@ public class ChanPrivmsg extends Privmsg {
      * @param server1
      * @param message1
      */
-    public ChanPrivmsg(final String from1, final IrcChannel toChan, final IrcServer server1, final String message1) {
-        super(from1, toChan.toString(), server1, message1);
+    public ChanPrivmsg(String from1, IrcChannel toChan, IrcServer server1, String message1) {
+        super(from1, toChan.fullName(), server1, message1);
     }
 }

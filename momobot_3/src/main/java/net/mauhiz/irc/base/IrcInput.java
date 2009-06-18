@@ -5,15 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import net.mauhiz.irc.AbstractRunnable;
-
-import org.apache.log4j.Logger;
+import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.FileUtil;
 
 /**
  * @author mauhiz
  */
 public class IrcInput extends AbstractRunnable implements IIrcInput {
-    private static final Logger LOG = Logger.getLogger(IrcInput.class);
     private final IIrcIO io;
     private final BufferedReader reader;
     
@@ -22,9 +20,10 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
      * @param socket
      * @throws IOException
      */
-    IrcInput(final IIrcIO io1, final Socket socket) throws IOException {
+    IrcInput(IIrcIO io1, Socket socket) throws IOException {
+        super();
         io = io1;
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15));
     }
     
     /**
@@ -37,18 +36,18 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
         while (isRunning()) {
             try {
                 String next = reader.readLine();
-                LOG.info("<< " + next);
                 if (next == null) {
                     LOG.warn("disconnected");
                     break;
                 }
+                LOG.info("<< " + next);
                 io.processMsg(next);
             } catch (IOException e) {
-                setRunning(false);
+                LOG.warn("disconnected", e);
+                break;
             }
         }
         io.disconnect();
-        setRunning(false);
     }
     
     /**

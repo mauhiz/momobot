@@ -47,7 +47,8 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param map1
      * @param pTeam1
      */
-    public Match(final int phase1, final int id1, final String map1, final TournamentTeam pTeam1) {
+    public Match(int phase1, int id1, String map1, TournamentTeam pTeam1) {
+        super();
         team1 = pTeam1;
         phase = phase1;
         map = map1;
@@ -69,8 +70,7 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param pTeam2
      *            team 2
      */
-    public Match(final int phase1, final int id1, final String map1, final TournamentTeam pTeam1,
-            final TournamentTeam pTeam2) {
+    public Match(int phase1, int id1, String map1, TournamentTeam pTeam1, TournamentTeam pTeam2) {
         // on met tjs les teams dans le bon sens
         if (pTeam1.getId() > pTeam2.getId()) {
             team2 = pTeam1;
@@ -95,7 +95,7 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param oldmatch
      * @param pTeam2
      */
-    public Match(final Match oldmatch, final TournamentTeam pTeam2) {
+    public Match(Match oldmatch, TournamentTeam pTeam2) {
         if (oldmatch.team1.getId() > pTeam2.getId()) {
             // on switch team1 et team2
             team2 = oldmatch.team1;
@@ -118,26 +118,26 @@ public class Match extends ArrayList<TournamentTeam> {
     /**
      * @return {@link #id}
      */
-    public final int getId() {
+    public int getId() {
         return id;
     }
     /**
      * @return {@link #map}
      */
-    public final String getMap() {
+    public String getMap() {
         return map;
     }
     /**
      * @return {@link #phase}
      */
-    public final int getPhase() {
+    public int getPhase() {
         return phase;
     }
     
     /**
      * @return 2 == team 2 win; 1 == team 1 win ; 0 == draw
      */
-    public final int getWinner() {
+    public int getWinner() {
         if (winner != null) {
             if (score[0] > score[1]) {
                 return 2;
@@ -161,7 +161,7 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param team
      * @return isTeamIn
      */
-    public final boolean isTeamIn(final TournamentTeam team) {
+    public boolean isTeamIn(TournamentTeam team) {
         if (winner == null) {
             if (team1.getId() == team.getId()) {
                 return true;
@@ -179,7 +179,7 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param scoreTeam2
      * @return reponse
      */
-    public final String setScore(final TournamentTeam team, final int scoreTeam1, final int scoreTeam2) {
+    public String setScore(TournamentTeam team, int scoreTeam1, int scoreTeam2) {
         if (team2 == null) {
             return "Erreur : Impossible de mettre le score, la team " + team.getId() + " n'a pas d'adversaire.";
         }
@@ -202,7 +202,7 @@ public class Match extends ArrayList<TournamentTeam> {
      * @see java.util.AbstractCollection#toString()
      */
     @Override
-    public final String toString() {
+    public String toString() {
         // on a un gagnant
         if (winner != null) {
             // on a gagner le tn
@@ -225,11 +225,11 @@ public class Match extends ArrayList<TournamentTeam> {
         if (team2 == null) {
             // pas d'adversaire
             // return "La team " + team1.getId() + "=" + team1.getNom()
-            // + " en attente du résultat des adversaires. next map=" + map;
-            return team1.getNom() + " en attente du résultat des adversaires. Next map=" + map;
+            // + " en attente du resultat des adversaires. next map=" + map;
+            return team1.getNom() + " en attente du resultat des adversaires. Next map=" + map;
         }
-        // le match est en attente de résultat
-        // return "Team n°" + team1.getId() + "=" + team1.getNom() + " vs Team n°" + team2.getId() + "=" +
+        // le match est en attente de resultat
+        // return "Team #" + team1.getId() + "=" + team1.getNom() + " vs Team #" + team2.getId() + "=" +
         // team2.getNom()
         // + ".";
         return team1.getNom() + " vs " + team2.getNom() + ".";

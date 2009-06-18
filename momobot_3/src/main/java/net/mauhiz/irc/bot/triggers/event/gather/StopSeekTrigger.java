@@ -21,7 +21,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param control
      * @param server
      */
-    static void leaveSeekChans(final IIrcControl control, final IrcServer server) {
+    static void leaveSeekChans(IIrcControl control, IrcServer server) {
         String[] channelSeek = SeekWar.SEEK_CHANS;
         for (String element : channelSeek) {
             Part leave = new Part(server, element, null);
@@ -33,7 +33,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param trigger
      *            le trigger
      */
-    public StopSeekTrigger(final String trigger) {
+    public StopSeekTrigger(String trigger) {
         super(trigger);
     }
     /**
@@ -41,7 +41,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
         String reply = "";

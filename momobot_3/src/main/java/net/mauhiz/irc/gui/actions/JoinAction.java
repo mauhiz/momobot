@@ -20,7 +20,7 @@ public class JoinAction implements SelectionListener {
      * @param server1
      * @param channel1
      */
-    public JoinAction(final GuiTriggerManager gtm1, final IrcServer server1, final String channel1) {
+    public JoinAction(GuiTriggerManager gtm1, IrcServer server1, String channel1) {
         server = server1;
         gtm = gtm1;
         channel = channel1;
@@ -29,13 +29,14 @@ public class JoinAction implements SelectionListener {
     /**
      * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
      */
-    public void widgetDefaultSelected(final SelectionEvent arg0) {
+    public void widgetDefaultSelected(SelectionEvent arg0) {
+        // ?
     }
     
     /**
      * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
      */
-    public void widgetSelected(final SelectionEvent arg0) {
+    public void widgetSelected(SelectionEvent arg0) {
         Join msg = new Join(server, channel);
         gtm.getClient().sendMsg(msg);
     }

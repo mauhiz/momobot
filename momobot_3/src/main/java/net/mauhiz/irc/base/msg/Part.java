@@ -1,20 +1,24 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 
 /**
  * @author mauhiz
  */
-public class Part extends IrcMessage {
-    String chan;
-    String reason;
+public class Part extends AbstractIrcMessage {
+    private final String chan;
+    private final String reason;
     
     /**
      * @param ircServer
      * @param msg
      * @param reason1
      */
-    public Part(final IrcServer ircServer, final String msg, final String reason1) {
+    public Part(IrcServer ircServer, String msg, String reason1) {
         this(ircServer, null, null, msg, reason1);
     }
     
@@ -25,7 +29,7 @@ public class Part extends IrcMessage {
      * @param msg1
      * @param reason1
      */
-    public Part(final IrcServer ircServer, final String from1, final String to1, final String msg1, final String reason1) {
+    public Part(IrcServer ircServer, String from1, String to1, String msg1, String reason1) {
         super(from1, to1, ircServer);
         chan = msg1;
         reason = reason1;
@@ -38,18 +42,8 @@ public class Part extends IrcMessage {
         return chan;
     }
     
-    /**
-     * @return {@link #reason}
-     */
-    public String getReason() {
-        return reason;
-    }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
-    public String toString() {
+    public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
         if (super.from != null) {
             sb.append(':');
@@ -67,5 +61,27 @@ public class Part extends IrcMessage {
             sb.append(reason);
         }
         return sb.toString();
+    }
+    
+    /**
+     * @return {@link #reason}
+     */
+    public String getReason() {
+        return reason;
+    }
+    
+    @Override
+    public void process(IIrcControl control) {
+        IrcChannel fromChan = server.findChannel(chan);
+        if (fromChan != null) {
+            Mask mask = new Mask(from);
+            IrcUser leaver = server.findUser(mask, true);
+            fromChan.remove(leaver);
+        }
+    }
+    
+    @Override
+    public String toString() {
+        return "* Parts: " + from;
     }
 }

@@ -16,7 +16,7 @@ public class StopTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
      * @param trigger
      *            le trigger
      */
-    public StopTrigger(final String trigger) {
+    public StopTrigger(String trigger) {
         super(trigger);
     }
     
@@ -25,7 +25,7 @@ public class StopTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
         if (evt != null) {

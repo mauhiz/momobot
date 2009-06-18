@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.triggers.admin;
+package net.mauhiz.irc.bot.triggers.control;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcUser;
@@ -19,7 +19,7 @@ public class QuitTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      * @param trigger
      *            le trigger
      */
-    public QuitTrigger(final String trigger) {
+    public QuitTrigger(String trigger) {
         super(trigger);
     }
     
@@ -28,8 +28,8 @@ public class QuitTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
-        final String args = getArgs(im.getMessage());
+    public void doTrigger(Privmsg im, IIrcControl control) {
+        String args = getArgs(im.getMessage());
         /* TODO quit cross servers */
         Quit quit;
         if (StringUtils.isEmpty(args)) {

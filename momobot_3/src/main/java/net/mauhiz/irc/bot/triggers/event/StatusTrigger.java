@@ -16,7 +16,7 @@ public class StatusTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      * @param trigger
      *            le trigger
      */
-    public StatusTrigger(final String trigger) {
+    public StatusTrigger(String trigger) {
         super(trigger);
     }
     
@@ -25,7 +25,7 @@ public class StatusTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcServer server = im.getServer();
         IrcChannel chan = server.findChannel(im.getTo());
         if (chan == null) {

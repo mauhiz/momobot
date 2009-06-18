@@ -2,14 +2,17 @@ package net.mauhiz.irc.base.data;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import net.mauhiz.irc.bot.event.ChannelEvent;
+import net.mauhiz.util.Hooks;
 
 /**
  * @author mauhiz
  */
-public abstract class AbstractIrcChannel extends AbstractHookable<IrcChannel> implements IrcChannel {
+public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * nom du chan sans le prefixe.
      */
@@ -25,12 +28,12 @@ public abstract class AbstractIrcChannel extends AbstractHookable<IrcChannel> im
     /**
      * users sur le channel
      */
-    protected final Set<IrcUser> users = new HashSet<IrcUser>();
+    protected Map<IrcUser, Set<UserChannelMode>> users = new ConcurrentSkipListMap<IrcUser, Set<UserChannelMode>>();
     
     /**
      * @param chanName
      */
-    protected AbstractIrcChannel(final String chanName) {
+    protected AbstractIrcChannel(String chanName) {
         prefix = Character.valueOf(chanName.charAt(0));
         nom = chanName.substring(1);
     }
@@ -39,42 +42,59 @@ public abstract class AbstractIrcChannel extends AbstractHookable<IrcChannel> im
      * @see net.mauhiz.irc.base.data.IrcChannel#add(net.mauhiz.irc.base.data.IrcUser)
      */
     @Override
-    public void add(final IrcUser truite) {
-        users.add(truite);
+    public void add(IrcUser truite) {
+        users.put(truite, new HashSet<UserChannelMode>());
+    }
+    
+    @Override
+    public int compareTo(IrcChannel o) {
+        return fullName().compareTo(o.fullName());
     }
     
     /**
      * @see net.mauhiz.irc.base.data.IrcChannel#contains(net.mauhiz.irc.base.data.IrcUser)
      */
     @Override
-    public boolean contains(final IrcUser smith) {
-        return users.contains(smith);
+    public boolean contains(IrcUser smith) {
+        return users.containsKey(smith);
     }
     
     /**
      * @see java.util.AbstractSet#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         } else if (!(o instanceof IrcChannel)) {
             return false;
         }
-        return toString().equals(o.toString());
+        return fullName().equals(((IrcChannel) o).fullName());
+    }
+    
+    public String fullName() {
+        return prefix + nom;
     }
     
     /**
      * @return running event
      */
     public ChannelEvent getEvt() {
-        return getHookedObject(ChannelEvent.class);
+        return Hooks.getHook(this, ChannelEvent.class);
+    }
+    
+    /**
+     * @see net.mauhiz.irc.base.data.IrcChannel#getModes(IrcUser)
+     */
+    @Override
+    public Set<UserChannelMode> getModes(IrcUser smith) {
+        return users.get(smith);
     }
     
     /**
      * @return {@link #props}
      */
-    public ChannelProperties getProps() {
+    public ChannelProperties getProperties() {
         return props;
     }
     
@@ -83,7 +103,7 @@ public abstract class AbstractIrcChannel extends AbstractHookable<IrcChannel> im
      */
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return fullName().hashCode();
     }
     
     /**
@@ -91,14 +111,14 @@ public abstract class AbstractIrcChannel extends AbstractHookable<IrcChannel> im
      */
     @Override
     public Iterator<IrcUser> iterator() {
-        return users.iterator();
+        return users.keySet().iterator();
     }
     
     /**
      * @see net.mauhiz.irc.base.data.IrcChannel#remove(net.mauhiz.irc.base.data.IrcUser)
      */
     @Override
-    public void remove(final IrcUser toRemove) {
+    public void remove(IrcUser toRemove) {
         users.remove(toRemove);
     }
     
@@ -118,7 +138,7 @@ public abstract class AbstractIrcChannel extends AbstractHookable<IrcChannel> im
         if (localEvent == null) {
             return "";
         }
-        removeHook(localEvent.getClass());
+        Hooks.remove(localEvent);
         return localEvent.stop();
     }
     
@@ -127,6 +147,6 @@ public abstract class AbstractIrcChannel extends AbstractHookable<IrcChannel> im
      */
     @Override
     public String toString() {
-        return prefix + nom;
+        return fullName();
     }
 }

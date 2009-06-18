@@ -12,7 +12,7 @@ public class QnetServer extends AbstractIrcServer {
     /**
      * @param uriStr
      */
-    public QnetServer(final String uriStr) {
+    public QnetServer(String uriStr) {
         super(uriStr);
     }
     
@@ -20,7 +20,7 @@ public class QnetServer extends AbstractIrcServer {
      * @see net.mauhiz.irc.base.data.AbstractIrcServer#newChannel(java.lang.String)
      */
     @Override
-    protected IrcChannel newChannel(final String chanLowerCase) {
+    public IrcChannel newChannel(String chanLowerCase) {
         return new QnetChannel(chanLowerCase);
     }
     
@@ -28,7 +28,7 @@ public class QnetServer extends AbstractIrcServer {
      * @see net.mauhiz.irc.base.data.AbstractIrcServer#newUser(java.lang.String)
      */
     @Override
-    public IrcUser newUser(final String nick) {
+    public IrcUser newUser(String nick) {
         return new QnetUser(nick);
     }
     

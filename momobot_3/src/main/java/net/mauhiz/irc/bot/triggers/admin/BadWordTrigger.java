@@ -4,8 +4,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.IIrcMessage;
-import net.mauhiz.irc.base.msg.IrcMessage;
 import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -30,31 +30,30 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
     /**
      * @param trigger
      */
-    public BadWordTrigger(final String trigger) {
+    public BadWordTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
-        if (im.getMessage().startsWith(toString())) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
+        if (im.getMessage().startsWith(getTriggerText())) {
             /* mode controle */
             /* TODO admin mode */
             String args = getArgs(im.getMessage());
             Privmsg resp;
             if (StringUtils.isEmpty(args)) {
-                resp = Privmsg.buildPrivateAnswer(im, "Syntaxe: " + toString() + " badword");
+                resp = Privmsg.buildPrivateAnswer(im, "Syntaxe: " + getTriggerText() + " badword");
             } else {
                 BADWORDS.add(args);
-                resp = Privmsg.buildPrivateAnswer(im, "Badword ajouté: " + args);
+                resp = Privmsg.buildPrivateAnswer(im, "Badword ajoute: " + args);
             }
             control.sendMsg(resp);
         } else {
-            for (final String word : new StrTokenizer(im.getMessage()).getTokenArray()) {
-                for (final String badword : BADWORDS) {
+            for (String word : new StrTokenizer(im.getMessage()).getTokenArray()) {
+                for (String badword : BADWORDS) {
                     if (badword.equalsIgnoreCase(word)) {
                         getAngry(im, control, badword);
                     }
@@ -69,14 +68,18 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
      * @param control
      * @param badword
      */
-    private void getAngry(final IrcMessage toReply, final IIrcControl control, final String badword) {
+    private void getAngry(IIrcMessage toReply, IIrcControl control, String badword) {
         IIrcMessage resp;
-        if (true /* TODO verifier que je suis OP */) {
+        IrcChannel targetChan = toReply.getServer().findChannel(toReply.getTo(), false);
+        // IrcUser infringer = toReply.getServer().findUser(new Mask(toReply.getFrom()), false);
+        
+        /* TODO verifier que je suis OP et que c'est un channel */
+        if (targetChan != null /* && targetChan.isOp(infringer) */) {
             /* hinhin, je suis op */
             resp = new Kick(toReply.getServer(), null, null, toReply.getTo(), toReply.getFrom(),
                     "You shall not use bad words such as " + badword);
         } else {
-            /* je rage quand même */
+            /* je rage quand meme */
             resp = Privmsg.buildAnswer(toReply, toReply.getFrom() + " is so rude, he said " + badword + "!!");
         }
         control.sendMsg(resp);

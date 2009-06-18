@@ -19,8 +19,8 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      * @param colorCode
      * @return le code couleur q3
      */
-    private static String computeQ3ColorCode(final String colorCode) {
-        final String q3Code;
+    private static String computeQ3ColorCode(String colorCode) {
+        String q3Code;
         if (Color.BLACK.toString().equals(colorCode)) {
             q3Code = "0";
         } else {
@@ -33,9 +33,9 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      * @param args
      * @return un nick q3
      */
-    private static String createq3nick(final String args) {
-        final StringBuilder q3nick = new StringBuilder();
-        final StrBuilder colorCode = new StrBuilder();
+    private static String createq3nick(String args) {
+        StringBuilder q3nick = new StringBuilder();
+        StrBuilder colorCode = new StrBuilder();
         int inColor = 0;
         for (char c : args.toCharArray()) {
             if (c == DELIM_COLOR) {
@@ -64,7 +64,7 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     /**
      * @param trigger
      */
-    public Q3NickTrigger(final String trigger) {
+    public Q3NickTrigger(String trigger) {
         super(trigger);
     }
     
@@ -73,8 +73,8 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
-        final Privmsg msg = Privmsg.buildAnswer(im, createq3nick(getArgs(im.getMessage())));
+    public void doTrigger(Privmsg im, IIrcControl control) {
+        Privmsg msg = Privmsg.buildAnswer(im, createq3nick(getArgs(im.getMessage())));
         control.sendMsg(msg);
     }
 }

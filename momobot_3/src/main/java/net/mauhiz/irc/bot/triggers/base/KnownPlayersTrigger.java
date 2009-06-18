@@ -1,13 +1,13 @@
 package net.mauhiz.irc.bot.triggers.base;
 
-import java.util.Map;
+import java.util.Map.Entry;
 
-import net.mauhiz.irc.SqlUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IAdminTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
+import net.mauhiz.irc.bot.triggers.cs.PlayerDB;
 
 /**
  * @author mauhiz
@@ -17,7 +17,7 @@ public class KnownPlayersTrigger extends AbstractTextTrigger implements IPrivmsg
      * @param trigger
      *            le trigger
      */
-    public KnownPlayersTrigger(final String trigger) {
+    public KnownPlayersTrigger(String trigger) {
         super(trigger);
     }
     
@@ -26,10 +26,10 @@ public class KnownPlayersTrigger extends AbstractTextTrigger implements IPrivmsg
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg pme, final IIrcControl control) {
-        Privmsg retour = Privmsg.buildPrivateAnswer(pme, "Je connais" + SqlUtils.countPlayers() + " joueur(s).");
+    public void doTrigger(Privmsg pme, IIrcControl control) {
+        Privmsg retour = Privmsg.buildPrivateAnswer(pme, "Je connais" + PlayerDB.countPlayers() + " joueur(s).");
         control.sendMsg(retour);
-        for (final Map.Entry<String, String> item : SqlUtils.getPlayers()) {
+        for (Entry<String, String> item : PlayerDB.getPlayers()) {
             retour = Privmsg.buildPrivateAnswer(pme, item.getValue() + " - " + item.getKey());
             control.sendMsg(retour);
         }

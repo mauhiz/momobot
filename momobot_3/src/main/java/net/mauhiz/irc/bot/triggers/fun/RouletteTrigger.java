@@ -19,7 +19,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     /**
      * @param trigger
      */
-    public RouletteTrigger(final String trigger) {
+    public RouletteTrigger(String trigger) {
         super(trigger);
     }
     
@@ -28,7 +28,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         String from = im.getTo();
         IrcChannel wannabe = im.getServer().findChannel(from);
         if (wannabe == null) {
@@ -45,7 +45,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             uIter.next();
         }
         IrcUser random = uIter.next();
-        Kick kick = new Kick(im.getServer(), null, null, wannabe.toString(), random.getNick(),
+        Kick kick = new Kick(im.getServer(), null, null, wannabe.fullName(), random.getNick(),
                 "I, I know, how I feel when I'm around you");
         control.sendMsg(kick);
     }

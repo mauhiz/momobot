@@ -11,7 +11,7 @@ public abstract class AbstractGourmandTrigger extends AbstractTextTrigger {
     /**
      * @param trigger
      */
-    public AbstractGourmandTrigger(final String trigger) {
+    public AbstractGourmandTrigger(String trigger) {
         super(trigger);
     }
     
@@ -19,7 +19,7 @@ public abstract class AbstractGourmandTrigger extends AbstractTextTrigger {
      * @see net.mauhiz.irc.bot.triggers.AbstractTextTrigger#isActivatedBy(java.lang.String)
      */
     @Override
-    public boolean isActivatedBy(final String msg) {
+    public boolean isActivatedBy(String msg) {
         return true;
     }
     
@@ -27,7 +27,7 @@ public abstract class AbstractGourmandTrigger extends AbstractTextTrigger {
      * @param msg
      * @return si il s'agit bien du trigger.
      */
-    public boolean isCommandMsg(final String msg) {
+    public boolean isCommandMsg(String msg) {
         return super.isActivatedBy(msg);
     }
 }

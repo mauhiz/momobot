@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.triggers.admin;
+package net.mauhiz.irc.bot.triggers.control;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -14,27 +14,29 @@ public class SayTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
      * @param trigger
      *            le trigger
      */
-    public SayTrigger(final String trigger) {
+    public SayTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg pme, final IIrcControl control) {
-        final String args = getArgs(pme.getMessage());
-        final int index = args.indexOf(' ');
+    public void doTrigger(Privmsg pme, IIrcControl control) {
+        String args = getArgs(pme.getMessage());
+        int index = args.indexOf(' ');
         if (index < 1) {
-            Privmsg msg = Privmsg.buildAnswer(pme, "pas assez de paramètres.");
-            control.sendMsg(msg);
-            msg = Privmsg.buildAnswer(pme, "syntaxe " + this + " target msg");
+            Privmsg msg = Privmsg.buildAnswer(pme, "pas assez de parametres. " + getTriggerHelp());
             control.sendMsg(msg);
         } else {
             /* TODO say cross-server ? */
             Privmsg msg = new Privmsg(null, args.substring(0, index), pme.getServer(), args.substring(index + 1));
             control.sendMsg(msg);
         }
+    }
+    
+    @Override
+    public String getTriggerHelp() {
+        return "syntaxe $" + getTriggerText() + " target msg";
     }
 }

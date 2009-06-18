@@ -2,9 +2,9 @@ package net.mauhiz.irc.bot.triggers.memo;
 
 import java.util.List;
 
-import net.mauhiz.irc.HibernateUtils;
-import net.mauhiz.irc.base.data.AbstractHook;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.util.HibernateUtils;
+import net.mauhiz.util.Hooks;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -12,24 +12,27 @@ import org.hibernate.Query;
 /**
  * @author mauhiz
  */
-public class MemoDb extends AbstractHook<IrcServer> {
+public class MemoDb {
     /**
      * @param server
      * @return instance
      */
-    public static MemoDb getInstance(final IrcServer server) {
-        MemoDb ret = server.getHookedObject(MemoDb.class);
+    public static MemoDb getInstance(IrcServer server) {
+        MemoDb ret = Hooks.getHook(server, MemoDb.class);
         if (ret == null) {
             return new MemoDb(server);
         }
         return ret;
     }
     
+    private final IrcServer hook;
+    
     /**
      * @param server1
      */
-    public MemoDb(final IrcServer server1) {
-        super(server1);
+    public MemoDb(IrcServer server1) {
+        Hooks.addHook(server1, this);
+        hook = server1;
     }
     
     /**
@@ -37,8 +40,8 @@ public class MemoDb extends AbstractHook<IrcServer> {
      */
     public int countMemos() {
         Query countQry = HibernateUtils.currentSession().createQuery(
-                "select count(1) from Memo where serverAlias = :serverAlias");
-        countQry.setString("server.getAlias()", hook.getAlias());
+                "select count(*) from Memo where serverAlias = :serverAlias");
+        countQry.setString("serverAlias", hook.getAlias());
         Integer uniqueResult = (Integer) countQry.uniqueResult();
         if (uniqueResult == null) {
             return 0;
@@ -48,13 +51,13 @@ public class MemoDb extends AbstractHook<IrcServer> {
     
     /**
      * @param key
-     *            la clé
-     * @return le mémo associé
+     *            la cle
+     * @return le memo associe
      */
-    public String getMemo(final String key) {
+    public String getMemo(String key) {
         String result = getValue(key);
         if (result == null) {
-            return "Pas de mémo pour '" + key + "'";
+            return "Pas de memo pour '" + key + "'";
         }
         return result;
     }
@@ -71,15 +74,15 @@ public class MemoDb extends AbstractHook<IrcServer> {
             return "Pas de memo pour l'instant";
         }
         
-        return "mémos : " + StringUtils.join(results, ' ');
+        return "memos : " + StringUtils.join(results, ' ');
     }
     
     /**
      * @param key
-     *            la clé
-     * @return le mémo associé
+     *            la cle
+     * @return le memo associe
      */
-    public String getValue(final String key) {
+    public String getValue(String key) {
         Query getQry = HibernateUtils.currentSession().createQuery(
                 "select value from Memo where serverAlias = :serverAlias and key = :key");
         getQry.setString("serverAlias", hook.getAlias());
@@ -89,14 +92,14 @@ public class MemoDb extends AbstractHook<IrcServer> {
     
     /**
      * @param key
-     *            la clé
+     *            la cle
      * @param value
-     *            le mémo à set
+     *            le memo a set
      * @return un msg
      */
-    public String setMemo(final String key, final String value) {
+    public String setMemo(String key, String value) {
         String oldValue = getValue(key);
-        final StringBuilder msg = new StringBuilder("Mémo '").append(key).append("' ");
+        StringBuilder msg = new StringBuilder("Memo '").append(key).append("' ");
         HibernateUtils.currentSession().getTransaction().begin();
         if (oldValue == null) {
             Memo memo = new Memo();
@@ -104,7 +107,7 @@ public class MemoDb extends AbstractHook<IrcServer> {
             memo.setKey(key);
             memo.setValue(value);
             HibernateUtils.currentSession().save(memo);
-            msg.append("enregistré");
+            msg.append("enregistre");
         } else {
             /* TODO mise a jour */
             Query getQry = HibernateUtils.currentSession().createQuery(
@@ -114,10 +117,10 @@ public class MemoDb extends AbstractHook<IrcServer> {
             getQry.setString("value", value);
             int updated = getQry.executeUpdate();
             if (updated == 1) {
-                msg.append("mis à jour");
+                msg.append("mis a jour");
             } else {
                 HibernateUtils.currentSession().getTransaction().rollback();
-                return "Erreur, mémo non enregistré";
+                return "Erreur, memo non enregistre";
             }
         }
         

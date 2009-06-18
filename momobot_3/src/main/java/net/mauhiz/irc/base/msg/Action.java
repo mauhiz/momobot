@@ -15,7 +15,7 @@ public class Action extends Privmsg implements IrcSpecialChars {
      * @param msg
      * @return new msg
      */
-    public static Action buildAnswer(final IrcMessage toReply, final String msg) {
+    public static Action buildAnswer(IIrcMessage toReply, String msg) {
         String oldDest = toReply.getTo();
         if (MomoStringUtils.isChannelName(oldDest)) {
             return new Action(null, oldDest, toReply.getServer(), msg);
@@ -28,7 +28,7 @@ public class Action extends Privmsg implements IrcSpecialChars {
      * @param msg
      * @return new msg
      */
-    public static Action buildPrivateAnswer(final IrcMessage toReply, final String msg) {
+    public static Action buildPrivateAnswer(IIrcMessage toReply, String msg) {
         Mask from = new Mask(toReply.getFrom());
         return new Action(null, from.getNick(), toReply.getServer(), msg);
     }
@@ -39,7 +39,7 @@ public class Action extends Privmsg implements IrcSpecialChars {
      * @param server1
      * @param message1
      */
-    public Action(final String from1, final String to1, final IrcServer server1, final String message1) {
+    public Action(String from1, String to1, IrcServer server1, String message1) {
         super(from1, to1, server1, message1);
     }
     
@@ -48,6 +48,6 @@ public class Action extends Privmsg implements IrcSpecialChars {
      */
     @Override
     public String getMessage() {
-        return QUOTE_STX + super.getMessage() + QUOTE_STX;
+        return QUOTE_STX + "ACTION " + super.getMessage() + QUOTE_STX;
     }
 }

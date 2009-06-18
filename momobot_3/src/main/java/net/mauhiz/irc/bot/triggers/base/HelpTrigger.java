@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.base;
 
-import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcControl;
@@ -19,48 +20,61 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     /**
      * Commandes :.
      */
-    private static final String COMMANDES = "Commandes :";
+    private static final String COMMANDES = "Commandes: ";
     
     /**
      * @param trigger
      *            le trigger
      */
-    public HelpTrigger(final String trigger) {
+    public HelpTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.INoticeTrigger#doTrigger(net.mauhiz.irc.base.msg.Notice,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.INoticeTrigger#doTrigger(Notice, IIrcControl)
      */
     @Override
-    public void doTrigger(final Notice im, final IIrcControl control) {
-        StringBuilder msg = new StringBuilder();
-        msg.append(COMMANDES);
-        for (Iterator<ITrigger> it = getTriggers(control); it.hasNext();) {
-            ITrigger trig = it.next();
+    public void doTrigger(Notice im, IIrcControl control) {
+        StringBuilder msg = new StringBuilder(COMMANDES);
+        SortedSet<String> cmds = new TreeSet<String>();
+        // on fait en 2x pour trier les commandes
+        for (ITrigger trig : getTriggers(control)) {
             if (trig instanceof INoticeTrigger) {
-                msg.append(trig).append(' ');
+                cmds.add(((INoticeTrigger) trig).getTriggerText());
             }
+        }
+        for (String trig : cmds) {
+            if (msg.length() >= 200) {
+                Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
+                control.sendMsg(resp);
+                msg = new StringBuilder(COMMANDES);
+            }
+            msg.append(trig).append(' ');
         }
         Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
         control.sendMsg(resp);
         
     }
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
-        StringBuilder msg = new StringBuilder();
-        msg.append(COMMANDES);
-        /* TODO : ordre alphabetique ? */
-        for (Iterator<ITrigger> it = getTriggers(control); it.hasNext();) {
-            ITrigger trig = it.next();
+    public void doTrigger(Privmsg im, IIrcControl control) {
+        StringBuilder msg = new StringBuilder(COMMANDES);
+        SortedSet<String> cmds = new TreeSet<String>();
+        // on fait en 2x pour trier les commandes
+        for (ITrigger trig : getTriggers(control)) {
             if (trig instanceof IPrivmsgTrigger) {
-                msg.append(trig).append(' ');
+                cmds.add(((IPrivmsgTrigger) trig).getTriggerText());
             }
+        }
+        for (String trig : cmds) {
+            if (msg.length() >= 200) {
+                Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
+                control.sendMsg(resp);
+                msg = new StringBuilder(COMMANDES);
+            }
+            msg.append(trig).append(' ');
         }
         Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
         control.sendMsg(resp);
@@ -70,7 +84,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      * @param control
      * @return triggers view
      */
-    private Iterator<ITrigger> getTriggers(final IIrcControl control) {
+    private Iterable<ITrigger> getTriggers(IIrcControl control) {
         IrcControl realControl = (IrcControl) control;
         MmbTriggerManager manager = (MmbTriggerManager) realControl.getManager();
         return manager.getTriggers();

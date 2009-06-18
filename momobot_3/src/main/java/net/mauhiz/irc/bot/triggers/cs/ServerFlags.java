@@ -6,7 +6,7 @@ package net.mauhiz.irc.bot.triggers.cs;
  */
 public interface ServerFlags {
     /**
-     * indique que le serveur est dédié.
+     * indique que le serveur est dedie.
      */
     char DEDICATED = 'd';
     /**
@@ -25,10 +25,12 @@ public interface ServerFlags {
      * indique que le serveur est listen.
      */
     char LISTEN = 'l';
+    char S2C_CHALLENGE = 'A';
     /**
      * moteur source.
      */
     char SOURCE = 'I';
+    
     /**
      * indique que le serveur est sous windows.
      */

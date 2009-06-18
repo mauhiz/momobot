@@ -18,9 +18,9 @@ public class BouncerTriggerManager implements ITriggerManager, Runnable {
      *      net.mauhiz.irc.base.IrcControl)
      */
     @Override
-    public void processMsg(final IIrcMessage msg, final IrcControl ircControl) {
+    public void processMsg(IIrcMessage msg, IrcControl ircControl) {
         for (BncClient client : currentlyConnected) {
-            client.sendData(msg.toString());
+            client.sendData(msg.getIrcForm());
         }
     }
     

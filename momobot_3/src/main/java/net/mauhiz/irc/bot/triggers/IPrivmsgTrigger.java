@@ -11,5 +11,5 @@ public interface IPrivmsgTrigger extends ITextTrigger {
      * @param im
      * @param control
      */
-    void doTrigger(final Privmsg im, final IIrcControl control);
+    void doTrigger(Privmsg im, IIrcControl control);
 }

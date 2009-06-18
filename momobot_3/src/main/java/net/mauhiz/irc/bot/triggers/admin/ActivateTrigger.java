@@ -12,31 +12,25 @@ import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
 public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigger, IPrivmsgTrigger {
-    /**
-     * 
-     */
-    private static final Logger LOG = Logger.getLogger(ActivateTrigger.class);
     
     /**
      * @param trigger
      */
-    public ActivateTrigger(final String trigger) {
+    public ActivateTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg pme, final IIrcControl control) {
-        final String[] args = StringUtils.split(getArgs(pme.getMessage()));
+    public void doTrigger(Privmsg pme, IIrcControl control) {
+        String[] args = StringUtils.split(getArgs(pme.getMessage()));
         if (ArrayUtils.isEmpty(args)) {
             Privmsg retour = Privmsg.buildPrivateAnswer(pme, "you need to specify Trigger class name");
             control.sendMsg(retour);

@@ -1,6 +1,8 @@
 package net.mauhiz.irc.bot.triggers.base;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.bot.triggers.IJoinTrigger;
@@ -10,16 +12,15 @@ import net.mauhiz.irc.bot.triggers.IJoinTrigger;
  */
 public class WelcomeTrigger implements IJoinTrigger {
     /**
-     * @see net.mauhiz.irc.bot.triggers.IJoinTrigger#doTrigger(net.mauhiz.irc.base.msg.Join,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IJoinTrigger#doTrigger(Join, IIrcControl)
      */
     @Override
-    public void doTrigger(final Join im, final IIrcControl control) {
-        // if
-        // (MomoBot.AUTOJOIN.contains(channel.getNom().toLowerCase(Locale.US)))
-        // {
-        Notice notice = Notice.buildAnswer(im, "Bienvenue sur " + im.getChan());
-        control.sendMsg(notice);
-        // }
+    public void doTrigger(Join im, IIrcControl control) {
+        Mask mask = new Mask(im.getFrom());
+        IrcUser joiner = im.getServer().findUser(mask, true);
+        if (!joiner.equals(im.getServer().getMyself())) {
+            Notice notice = Notice.buildAnswer(im, "Bienvenue sur " + im.getChan());
+            control.sendMsg(notice);
+        }
     }
 }

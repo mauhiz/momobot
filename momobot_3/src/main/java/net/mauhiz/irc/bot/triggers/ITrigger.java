@@ -7,4 +7,5 @@ package net.mauhiz.irc.bot.triggers;
  * 
  */
 public interface ITrigger {
+    // no default method
 }

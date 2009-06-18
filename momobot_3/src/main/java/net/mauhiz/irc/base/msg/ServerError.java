@@ -1,23 +1,29 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 
 /**
  * @author mauhiz
  */
-public class ServerError extends IrcMessage {
+public class ServerError extends AbstractIrcMessage {
     /**
      * contenu de l erreur
      */
-    private String msg;
+    private final String msg;
     
     /**
      * @param server1
      * @param msg1
      */
-    public ServerError(final IrcServer server1, final String msg1) {
+    public ServerError(IrcServer server1, String msg1) {
         super(null, null, server1);
         msg = msg1;
+    }
+    
+    @Override
+    public String getIrcForm() {
+        return "ERROR :" + msg;
     }
     
     /**
@@ -27,11 +33,13 @@ public class ServerError extends IrcMessage {
         return msg;
     }
     
-    /**
-     * @see java.lang.Object#toString()
-     */
+    @Override
+    public void process(IIrcControl control) {
+        control.quit(server);
+    }
+    
     @Override
     public String toString() {
-        return "ERROR :" + msg;
+        return getIrcForm();
     }
 }

@@ -1,14 +1,17 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
 
 /**
  * @author mauhiz
  */
-public class Kick extends IrcMessage {
-    String chan;
-    String reason;
-    String target;
+public class Kick extends AbstractIrcMessage {
+    private final String chan;
+    private final String reason;
+    private final String target;
     
     /**
      * @param from1
@@ -18,8 +21,7 @@ public class Kick extends IrcMessage {
      * @param target1
      * @param reason1
      */
-    public Kick(final IrcServer ircServer, final String from1, final String to1, final String chan1,
-            final String target1, final String reason1) {
+    public Kick(IrcServer ircServer, String from1, String to1, String chan1, String target1, String reason1) {
         super(from1, to1, ircServer);
         chan = chan1;
         target = target1;
@@ -33,25 +35,8 @@ public class Kick extends IrcMessage {
         return chan;
     }
     
-    /**
-     * @return {@link #reason}
-     */
-    public String getReason() {
-        return reason;
-    }
-    
-    /**
-     * @return {@link #target}
-     */
-    public String getTarget() {
-        return target;
-    }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
-    public String toString() {
+    public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
         if (super.from != null) {
             sb.append(':');
@@ -71,5 +56,28 @@ public class Kick extends IrcMessage {
             sb.append(reason);
         }
         return sb.toString();
+    }
+    
+    /**
+     * @return {@link #reason}
+     */
+    public String getReason() {
+        return reason;
+    }
+    
+    /**
+     * @return {@link #target}
+     */
+    public String getTarget() {
+        return target;
+    }
+    
+    @Override
+    public void process(IIrcControl control) {
+        IrcChannel fromChan = server.findChannel(chan);
+        if (fromChan != null) {
+            IrcUser kicked = server.findUser(target, true);
+            fromChan.remove(kicked);
+        }
     }
 }

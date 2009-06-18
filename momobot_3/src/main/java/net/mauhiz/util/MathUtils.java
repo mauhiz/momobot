@@ -1,4 +1,4 @@
-package net.mauhiz.irc;
+package net.mauhiz.util;
 
 /**
  * @author mauhiz
@@ -10,7 +10,7 @@ public class MathUtils {
      *            >= 0
      * @return a^b
      */
-    public static long longPower(final long a, final long b) {
+    public static long longPower(long a, long b) {
         if (b < 0L) {
             throw new ArithmeticException("Use Math.pow because negative powers are not integers");
         } else if (b == 0L) {
@@ -37,7 +37,7 @@ public class MathUtils {
      *            >= 0
      * @return a^b
      */
-    public static int power(final int a, final int b) {
+    public static int power(int a, int b) {
         long result = longPower(a, b);
         if (result < Integer.MAX_VALUE) {
             return (int) result;
@@ -52,14 +52,14 @@ public class MathUtils {
      *            int > 0
      * @return a^b
      */
-    private static long recursiveLongPower(final long a, final long b) {
+    private static long recursiveLongPower(long a, long b) {
         if (b == 1L) {
             /* point d arret */
             return a;
             /* si b est pair */
         } else if ((b & 1L) == 0L) {
             /* x^10 = (x^5)^2 */
-            final long squareRoot = recursiveLongPower(a, b >> 1);
+            long squareRoot = recursiveLongPower(a, b >> 1);
             if (squareRoot > Integer.MAX_VALUE) {
                 throw new ArithmeticException("a^b > Long.MAX_VALUE. use Math.pow with floating point precision");
             }

@@ -8,14 +8,14 @@ import net.mauhiz.irc.base.data.IrcUser;
  * @author Topper
  */
 public class SeekUserHistory extends ArrayList<String> {
-    private static final long serialVersisonUID = 1;
+    private static final long serialVersionUID = 1;
     private int id;
-    private IrcUser user;
+    private final IrcUser user;
     
     /**
      * @param user1
      */
-    public SeekUserHistory(final IrcUser user1) {
+    public SeekUserHistory(IrcUser user1) {
         this(user1, 1);
     }
     
@@ -23,7 +23,7 @@ public class SeekUserHistory extends ArrayList<String> {
      * @param user1
      * @param id1
      */
-    public SeekUserHistory(final IrcUser user1, final int id1) {
+    public SeekUserHistory(IrcUser user1, int id1) {
         user = user1;
         id = id1;
     }
@@ -45,7 +45,7 @@ public class SeekUserHistory extends ArrayList<String> {
     /**
      * @param id1
      */
-    public void setId(final int id1) {
+    public void setId(int id1) {
         id = id1;
     }
 }

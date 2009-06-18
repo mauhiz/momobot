@@ -20,7 +20,7 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
      * @param trigger
      *            le trigger
      */
-    public ListTeamsTrigger(final String trigger) {
+    public ListTeamsTrigger(String trigger) {
         super(trigger);
     }
     
@@ -29,7 +29,7 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         IrcServer server = im.getServer();
         IrcChannel chan = server.findChannel(im.getTo());
         ChannelEvent event = chan.getEvt();

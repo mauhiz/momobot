@@ -1,13 +1,13 @@
 package net.mauhiz.irc;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.io.IOUtils;
+import net.mauhiz.util.FileUtil;
+
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 
@@ -29,25 +29,25 @@ public class Morse {
     private static final Map<String, Character> REVERSE_MORSE = new TreeMap<String, Character>();
     
     /**
-     * les lettres doivent être séparées par un espace.
+     * les lettres doivent etre separees par un espace.
      * 
      * @param work
-     *            la chaîne en Morse
+     *            la chaine en Morse
      * @return la chaine en lettres
      */
-    public static String fromMorse(final String work) {
+    public static String fromMorse(String work) {
         if (REVERSE_MORSE.isEmpty()) {
             loadMorse();
         }
-        final StringBuilder output = new StringBuilder();
-        for (final String element : new StrTokenizer(work).getTokenArray()) {
+        StringBuilder output = new StringBuilder();
+        for (String element : new StrTokenizer(work).getTokenArray()) {
             output.append(REVERSE_MORSE.get(element));
         }
         return output.toString();
     }
     
     /**
-     * La map morse est formé ainsi...
+     * La map morse est forme ainsi...
      * 
      * <pre>
      * A .-\r\n
@@ -55,10 +55,9 @@ public class Morse {
      */
     private static void loadMorse() {
         try {
-            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("morse_map.txt");
-            final List<String> lignes = IOUtils.readLines(is, "ASCII");
+            List<String> lignes = FileUtil.readFileInCp("morse_map.txt", FileUtil.ISO8859_15);
             /*
-             * si on est arrivés jusque là le fichier existe, donc on peut nettoyer nos maps.
+             * si on est arrives jusque la le fichier existe, donc on peut nettoyer nos maps.
              */
             if (!CODE_MORSE.isEmpty()) {
                 CODE_MORSE.clear();
@@ -68,29 +67,28 @@ public class Morse {
             }
             Character chara;
             String traitPoint;
-            for (final String ligne : lignes) {
+            for (String ligne : lignes) {
                 chara = Character.valueOf(ligne.charAt(0));
                 traitPoint = ligne.substring(2);
                 CODE_MORSE.put(chara, traitPoint);
                 REVERSE_MORSE.put(traitPoint, chara);
             }
-        } catch (final IOException ioe) {
+        } catch (IOException ioe) {
             LOG.warn(ioe, ioe);
         }
     }
-    
     /**
      * @param work
-     *            la chaîne à convertir en Morse
+     *            la chaine a convertir en Morse
      * @return la chaine en Morse
      */
-    public static String toMorse(final String work) {
+    public static String toMorse(String work) {
         if (CODE_MORSE.isEmpty()) {
             loadMorse();
         }
-        final StringBuilder output = new StringBuilder();
-        final String upper = work.toUpperCase(Locale.FRANCE);
-        for (final char element : upper.toCharArray()) {
+        StringBuilder output = new StringBuilder();
+        String upper = work.toUpperCase(Locale.FRANCE);
+        for (char element : upper.toCharArray()) {
             output.append(CODE_MORSE.get(Character.valueOf(element)));
         }
         return output.toString();

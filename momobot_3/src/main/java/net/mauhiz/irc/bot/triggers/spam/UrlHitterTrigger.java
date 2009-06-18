@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.triggers.fun;
+package net.mauhiz.irc.bot.triggers.spam;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ public class UrlHitterTrigger extends AbstractTextTrigger implements IPrivmsgTri
     /**
      * @param trigger
      */
-    public UrlHitterTrigger(final String trigger) {
+    public UrlHitterTrigger(String trigger) {
         super(trigger);
     }
     
@@ -29,7 +29,7 @@ public class UrlHitterTrigger extends AbstractTextTrigger implements IPrivmsgTri
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg im, final IIrcControl control) {
+    public void doTrigger(Privmsg im, IIrcControl control) {
         String urlStr = getArgs(im.getMessage());
         HttpClient client = new HttpClient();
         HttpMethod get = new GetMethod(urlStr);

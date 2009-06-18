@@ -7,12 +7,12 @@ import net.mauhiz.irc.base.data.ChannelProperties;
  * @author mauhiz
  * 
  */
-public class DefaultChannel extends AbstractIrcChannel {
+class DefaultChannel extends AbstractIrcChannel {
     
     /**
      * @param chanName
      */
-    public DefaultChannel(final String chanName) {
+    public DefaultChannel(String chanName) {
         super(chanName);
         props = new ChannelProperties();
     }

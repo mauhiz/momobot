@@ -2,7 +2,6 @@ package net.mauhiz.irc.bot.triggers.math;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
-import net.mauhiz.irc.base.msg.IrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -20,7 +19,7 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param base
      * @return si la base est acceptable
      */
-    private static boolean checkBase(final IrcMessage toReply, final IIrcControl control, final int base) {
+    private static boolean checkBase(IIrcMessage toReply, IIrcControl control, int base) {
         if (base < Character.MIN_RADIX) {
             Notice not = Notice.buildPrivateAnswer(toReply, "La base " + base + " est trop petite");
             control.sendMsg(not);
@@ -34,7 +33,7 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     /**
      * @param trigger
      */
-    public BaseConvTrigger(final String trigger) {
+    public BaseConvTrigger(String trigger) {
         super(trigger);
     }
     
@@ -43,28 +42,28 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        final String args = getArgs(cme.getMessage());
+    public void doTrigger(Privmsg cme, IIrcControl control) {
+        String args = getArgs(cme.getMessage());
         if (args.trim().isEmpty()) {
             showUsage(control, cme);
             return;
         }
-        final StrTokenizer tok = new StrTokenizer(args);
-        final String nombre = tok.nextToken();
-        final int base1 = Integer.parseInt(tok.nextToken());
+        StrTokenizer tok = new StrTokenizer(args);
+        String nombre = tok.nextToken();
+        int base1 = Integer.parseInt(tok.nextToken());
         if (!checkBase(cme, control, base1)) {
             return;
         }
         IIrcMessage resp;
         try {
-            final int intNombre = Integer.parseInt(nombre, base1);
-            final int base2 = Integer.parseInt(tok.nextToken());
+            int intNombre = Integer.parseInt(nombre, base1);
+            int base2 = Integer.parseInt(tok.nextToken());
             if (!checkBase(cme, control, base2)) {
                 return;
             }
-            final String resultat = Integer.toString(intNombre, base2);
+            String resultat = Integer.toString(intNombre, base2);
             resp = Privmsg.buildAnswer(cme, nombre + " en base " + base1 + " = " + resultat + " en base " + base2);
-        } catch (final NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             resp = Notice.buildPrivateAnswer(cme, "Le nombre " + nombre + " est illisible en base " + base1);
         }
         control.sendMsg(resp);
@@ -74,10 +73,11 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param control
      * @param toReply
      */
-    private void showUsage(final IIrcControl control, final IrcMessage toReply) {
-        Notice notice = Notice.buildPrivateAnswer(toReply, "Syntaxe : " + toString() + " nombre base_from base_to");
+    private void showUsage(IIrcControl control, IIrcMessage toReply) {
+        Notice notice = Notice.buildPrivateAnswer(toReply, "Syntaxe : " + getTriggerText()
+                + " nombre base_from base_to");
         control.sendMsg(notice);
-        notice = Notice.buildPrivateAnswer(toReply, "Exemple : " + toString() + " ff 16 10");
+        notice = Notice.buildPrivateAnswer(toReply, "Exemple : " + getTriggerText() + " ff 16 10");
         control.sendMsg(notice);
     }
 }

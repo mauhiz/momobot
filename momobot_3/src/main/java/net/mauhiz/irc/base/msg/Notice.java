@@ -1,6 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
@@ -10,13 +11,13 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @author mauhiz
  */
-public class Notice extends IrcMessage {
+public class Notice extends AbstractIrcMessage {
     /**
      * @param toReply
      * @param msg
      * @return answer
      */
-    public static Notice buildAnswer(final IrcMessage toReply, final String msg) {
+    public static Notice buildAnswer(IIrcMessage toReply, String msg) {
         String oldDest = toReply.getTo();
         if (MomoStringUtils.isChannelName(oldDest)) {
             return new Notice(null, oldDest, toReply.getServer(), msg);
@@ -29,7 +30,7 @@ public class Notice extends IrcMessage {
      * @param msg
      * @return private answer
      */
-    public static Notice buildPrivateAnswer(final IrcMessage toReply, final String msg) {
+    public static Notice buildPrivateAnswer(IIrcMessage toReply, String msg) {
         return new Notice(null, toReply.getFrom(), toReply.getServer(), msg);
     }
     
@@ -41,23 +42,13 @@ public class Notice extends IrcMessage {
      * @param ircServer
      * @param msg1
      */
-    public Notice(final String from1, final String to1, final IrcServer ircServer, final String msg1) {
+    public Notice(String from1, String to1, IrcServer ircServer, String msg1) {
         super(from1, to1, ircServer);
         message = msg1;
     }
     
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
-    public String toString() {
+    public String getIrcForm() {
         if (StringUtils.isEmpty(message)) {
             return null;
         }
@@ -85,5 +76,25 @@ public class Notice extends IrcMessage {
         sb.append(':');
         sb.append(message);
         return sb.toString();
+    }
+    
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
+    
+    @Override
+    public void process(IIrcControl control) {
+        // nothing to do here
+    }
+    
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "-" + from + "- " + message;
     }
 }

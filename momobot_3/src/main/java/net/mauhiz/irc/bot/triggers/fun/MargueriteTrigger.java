@@ -14,22 +14,21 @@ public class MargueriteTrigger extends AbstractTextTrigger implements IPrivmsgTr
     /**
      * 
      */
-    private static final String[] MARGUERITE = {"un peu", "beaucoup", "passionément", "à la folie", "pas du tout",};
+    private static final String[] MARGUERITE = {"un peu", "beaucoup", "passionement", "a la folie", "pas du tout",};
     
     /**
      * @param trigger
      */
-    public MargueriteTrigger(final String trigger) {
+    public MargueriteTrigger(String trigger) {
         super(trigger);
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
-    public void doTrigger(final Privmsg cme, final IIrcControl control) {
-        final String nom = getArgs(cme.getMessage());
+    public void doTrigger(Privmsg cme, IIrcControl control) {
+        String nom = getArgs(cme.getMessage());
         Privmsg msg = Privmsg.buildAnswer(cme, generateResponse(nom));
         control.sendMsg(msg);
     }
@@ -38,8 +37,7 @@ public class MargueriteTrigger extends AbstractTextTrigger implements IPrivmsgTr
      * @param nom
      * @return un messsage
      */
-    protected String generateResponse(final String nom) {
-        return new StringBuilder(nom).append(" t'aime ").append(MARGUERITE[RandomUtils.nextInt(5)]).append('.')
-                .toString();
+    protected String generateResponse(String nom) {
+        return nom + " t'aime " + MARGUERITE[RandomUtils.nextInt(5)] + '.';
     }
 }

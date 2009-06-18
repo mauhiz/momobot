@@ -44,4 +44,7 @@ public interface IIrcIO {
      * @param status
      */
     void setStatus(Status status);
+    
+    void waitForConnection();
+    
 }

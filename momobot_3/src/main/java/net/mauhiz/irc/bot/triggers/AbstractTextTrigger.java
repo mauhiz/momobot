@@ -13,7 +13,7 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     /**
      * logger.
      */
-    private static final Logger LOG = Logger.getLogger(AbstractTextTrigger.class);
+    protected static final Logger LOG = Logger.getLogger(ITextTrigger.class);
     /**
      * le texte du trigger.
      */
@@ -23,7 +23,7 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
      * @param trigger
      *            le trigger
      */
-    public AbstractTextTrigger(final String trigger) {
+    public AbstractTextTrigger(String trigger) {
         triggerText = trigger;
     }
     
@@ -31,13 +31,13 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof AbstractTextTrigger)) {
+        } else if (!(obj instanceof ITextTrigger)) {
             return false;
         }
-        return getClass().equals(obj.getClass()) && triggerText.equals(((AbstractTextTrigger) obj).triggerText);
+        return getClass().equals(obj.getClass()) && triggerText.equals(((ITextTrigger) obj).getTriggerText());
     }
     
     /**
@@ -45,7 +45,7 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
      *            le message
      * @return les params du msg
      */
-    public final String getArgs(final String message) {
+    public String getArgs(String message) {
         return StringUtils.substringAfter(message, triggerText).trim();
     }
     
@@ -74,12 +74,12 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     /**
      * @see net.mauhiz.irc.bot.triggers.ITextTrigger#isActivatedBy(java.lang.String)
      */
-    public boolean isActivatedBy(final String msg) {
+    public boolean isActivatedBy(String msg) {
         if (msg == null) {
             return false;
         }
         String lcMsg = msg.toLowerCase(Locale.FRANCE);
-        boolean activated = lcMsg.equals(triggerText) || lcMsg.startsWith(triggerText + " ");
+        boolean activated = lcMsg.equals(triggerText) || lcMsg.startsWith(triggerText + ' ');
         if (activated) {
             LOG.debug("Trigger " + getClass().getSimpleName() + " activated");
         }

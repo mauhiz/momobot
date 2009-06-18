@@ -1,6 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
@@ -10,13 +11,13 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @author mauhiz
  */
-public class Privmsg extends IrcMessage {
+public class Privmsg extends AbstractIrcMessage {
     /**
      * @param toReply
      * @param msg
      * @return new msg
      */
-    public static Privmsg buildAnswer(final IrcMessage toReply, final String msg) {
+    public static Privmsg buildAnswer(IIrcMessage toReply, String msg) {
         String oldDest = toReply.getTo();
         if (MomoStringUtils.isChannelName(oldDest)) {
             return new Privmsg(null, oldDest, toReply.getServer(), msg);
@@ -29,7 +30,7 @@ public class Privmsg extends IrcMessage {
      * @param msg
      * @return new msg
      */
-    public static Privmsg buildPrivateAnswer(final IrcMessage toReply, final String msg) {
+    public static Privmsg buildPrivateAnswer(IIrcMessage toReply, String msg) {
         String from = toReply.getFrom();
         Mask mask = new Mask(from);
         return new Privmsg(null, mask.getNick(), toReply.getServer(), msg);
@@ -48,23 +49,13 @@ public class Privmsg extends IrcMessage {
      * @param server1
      * @param message1
      */
-    public Privmsg(final String from1, final String to1, final IrcServer server1, final String message1) {
+    public Privmsg(String from1, String to1, IrcServer server1, String message1) {
         super(from1, to1, server1);
         message = message1;
     }
     
-    /**
-     * @return le message
-     */
-    public String getMessage() {
-        return message;
-    }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
-    public String toString() {
+    public String getIrcForm() {
         if (StringUtils.isEmpty(message)) {
             return null;
         }
@@ -90,7 +81,24 @@ public class Privmsg extends IrcMessage {
             sb.append(' ');
         }
         sb.append(':');
-        sb.append(getMessage());
+        sb.append(getMessage()); // important pour les sous classes (CTCP, ACTION...)
         return sb.toString();
+    }
+    
+    /**
+     * @return le message
+     */
+    public String getMessage() {
+        return message;
+    }
+    
+    @Override
+    public void process(IIrcControl control) {
+        // nothing to do
+    }
+    
+    @Override
+    public String toString() {
+        return "<" + from + "> " + message;
     }
 }
