@@ -1,5 +1,5 @@
 #FindBugs User Preferences
-#Wed Oct 15 13:59:57 CEST 2008
+#Sun May 31 15:41:48 CEST 2009
 detectorAppendingToAnObjectOutputStream=AppendingToAnObjectOutputStream|true
 detectorBadAppletConstructor=BadAppletConstructor|true
 detectorBadResultSetAccess=BadResultSetAccess|true
@@ -14,9 +14,10 @@ detectorCloneIdiom=CloneIdiom|true
 detectorComparatorIdiom=ComparatorIdiom|true
 detectorConfusedInheritance=ConfusedInheritance|true
 detectorConfusionBetweenInheritedAndOuterMethod=ConfusionBetweenInheritedAndOuterMethod|true
-detectorCrossSiteScripting=CrossSiteScripting|true
+detectorCrossSiteScripting=CrossSiteScripting|false
 detectorDoInsideDoPrivileged=DoInsideDoPrivileged|true
 detectorDontCatchIllegalMonitorStateException=DontCatchIllegalMonitorStateException|true
+detectorDontIgnoreResultOfPutIfAbsent=DontIgnoreResultOfPutIfAbsent|true
 detectorDontUseEnum=DontUseEnum|true
 detectorDroppedException=DroppedException|true
 detectorDumbMethodInvocations=DumbMethodInvocations|true
@@ -82,6 +83,7 @@ detectorInvalidJUnitTest=InvalidJUnitTest|true
 detectorIteratorIdioms=IteratorIdioms|true
 detectorLazyInit=LazyInit|true
 detectorLoadOfKnownNullValue=LoadOfKnownNullValue|true
+detectorLostLoggerDueToWeakReference=LostLoggerDueToWeakReference|true
 detectorMethodReturnCheck=MethodReturnCheck|true
 detectorMultithreadedInstanceAccess=MultithreadedInstanceAccess|true
 detectorMutableLock=MutableLock|true
@@ -92,6 +94,7 @@ detectorOverridingEqualsNotSymmetrical=OverridingEqualsNotSymmetrical|true
 detectorPreferZeroLengthArrays=PreferZeroLengthArrays|true
 detectorPublicSemaphores=PublicSemaphores|false
 detectorQuestionableBooleanAssignment=QuestionableBooleanAssignment|true
+detectorReadOfInstanceFieldInMethodInvokedByConstructorInSuperclass=ReadOfInstanceFieldInMethodInvokedByConstructorInSuperclass|true
 detectorReadReturnShouldBeChecked=ReadReturnShouldBeChecked|true
 detectorRedundantInterfaces=RedundantInterfaces|false
 detectorRepeatedConditionals=RepeatedConditionals|true
@@ -120,5 +123,5 @@ detectorXMLFactoryBypass=XMLFactoryBypass|true
 detector_threshold=3
 effort=max
 filter_settings=Low|BAD_PRACTICE,CORRECTNESS,EXPERIMENTAL,MT_CORRECTNESS,PERFORMANCE,SECURITY,STYLE|false
-filter_settings_neg=MALICIOUS_CODE,I18N|
-run_at_full_build=true
+filter_settings_neg=MALICIOUS_CODE,NOISE,I18N|
+run_at_full_build=false
