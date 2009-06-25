@@ -3,7 +3,7 @@ package net.mauhiz.irc.bot.triggers.event.tournament;
 import java.io.File;
 import java.io.IOException;
 
-import net.mauhiz.irc.base.data.defaut.DefaultChannel;
+import net.mauhiz.irc.AbstractServerTest;
 
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ import org.junit.Test;
  * @author mauhiz
  * 
  */
-public class TournamentTest {
+public class TournamentTest extends AbstractServerTest {
     
     /**
      * Test method for {@link net.mauhiz.irc.bot.triggers.event.tournament.Tournament#generateTemplate()}.
@@ -20,7 +20,7 @@ public class TournamentTest {
      */
     @Test
     public void testCreateTemplateFile() throws Exception {
-        Tournament t = new Tournament(new DefaultChannel("#tsi.fr"), new String[]{"de_nuke", "de_tuscan"});
+        Tournament t = new Tournament(QNET.newChannel("#tsi.fr"), new String[]{"de_nuke", "de_tuscan"});
         t.createTemplateFile();
     }
     
