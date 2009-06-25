@@ -28,20 +28,12 @@
             <ruleset>String and StringBuffer Rules</ruleset>
         </rule>
         <rule>
-            <name>ArrayIsStoredDirectly</name>
-            <ruleset>Security Code Guidelines</ruleset>
-        </rule>
-        <rule>
             <name>AssignmentInOperand</name>
             <ruleset>Controversial Rules</ruleset>
         </rule>
         <rule>
             <name>AssignmentToNonFinalStatic</name>
             <ruleset>Design Rules</ruleset>
-        </rule>
-        <rule>
-            <name>AtLeastOneConstructor</name>
-            <ruleset>Controversial Rules</ruleset>
         </rule>
         <rule>
             <name>AvoidAccessibilityAlteration</name>
@@ -100,16 +92,8 @@
             <ruleset>Naming Rules</ruleset>
         </rule>
         <rule>
-            <name>AvoidFinalLocalVariable</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
             <name>AvoidInstanceofChecksInCatchClause</name>
             <ruleset>Design Rules</ruleset>
-        </rule>
-        <rule>
-            <name>AvoidInstantiatingObjectsInLoops</name>
-            <ruleset>Optimization Rules</ruleset>
         </rule>
         <rule>
             <name>AvoidMultipleUnaryOperators</name>
@@ -164,20 +148,12 @@
             <ruleset>Basic Rules</ruleset>
         </rule>
         <rule>
-            <name>AvoidUsingShortType</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
             <name>AvoidUsingVolatile</name>
             <ruleset>Controversial Rules</ruleset>
         </rule>
         <rule>
             <name>BadComparison</name>
             <ruleset>Design Rules</ruleset>
-        </rule>
-        <rule>
-            <name>BeanMembersShouldSerialize</name>
-            <ruleset>JavaBean Rules</ruleset>
         </rule>
         <rule>
             <name>BigIntegerInstantiation</name>
@@ -272,10 +248,6 @@
             <ruleset>Design Rules</ruleset>
         </rule>
         <rule>
-            <name>DefaultPackage</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
             <name>DoNotCallGarbageCollectionExplicitly</name>
             <ruleset>Controversial Rules</ruleset>
         </rule>
@@ -290,10 +262,6 @@
         <rule>
             <name>DoNotThrowExceptionInFinally</name>
             <ruleset>Strict Exception Rules</ruleset>
-        </rule>
-        <rule>
-            <name>DoNotUseThreads</name>
-            <ruleset>J2EE Rules</ruleset>
         </rule>
         <rule>
             <name>DontImportJavaLang</name>
@@ -328,8 +296,8 @@
             <ruleset>Basic Rules</ruleset>
         </rule>
         <rule>
-            <name>EmptyMethodInAbstractClassShouldBeAbstract</name>
-            <ruleset>Design Rules</ruleset>
+            <name>EmptyInitializer</name>
+            <ruleset>Basic Rules</ruleset>
         </rule>
         <rule>
             <name>EmptyStatementNotInLoop</name>
@@ -484,24 +452,8 @@
             <ruleset>JUnit Rules</ruleset>
         </rule>
         <rule>
-            <name>JUnitTestsShouldIncludeAssert</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
             <name>JUnitUseExpected</name>
             <ruleset>Migration Rules</ruleset>
-        </rule>
-        <rule>
-            <name>LocalHomeNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>LocalInterfaceSessionNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>LocalVariableCouldBeFinal</name>
-            <ruleset>Optimization Rules</ruleset>
         </rule>
         <rule>
             <name>LoggerIsNotStaticFinal</name>
@@ -512,28 +464,12 @@
             <ruleset>Migration Rules</ruleset>
         </rule>
         <rule>
-            <name>LongVariable</name>
-            <ruleset>Naming Rules</ruleset>
-        </rule>
-        <rule>
             <name>LooseCoupling</name>
             <ruleset>Type Resolution Rules</ruleset>
         </rule>
         <rule>
-            <name>MDBAndSessionBeanNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>MethodArgumentCouldBeFinal</name>
-            <ruleset>Optimization Rules</ruleset>
-        </rule>
-        <rule>
             <name>MethodNamingConventions</name>
             <ruleset>Naming Rules</ruleset>
-        </rule>
-        <rule>
-            <name>MethodReturnsInternalArray</name>
-            <ruleset>Security Code Guidelines</ruleset>
         </rule>
         <rule>
             <name>MethodWithSameNameAsEnclosingClass</name>
@@ -596,14 +532,6 @@
             <ruleset>Code Size Rules</ruleset>
         </rule>
         <rule>
-            <name>NullAssignment</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
-            <name>OnlyOneReturn</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
             <name>OptimizableToArrayCall</name>
             <ruleset>Design Rules</ruleset>
         </rule>
@@ -632,14 +560,6 @@
             <ruleset>Jakarta Commons Logging Rules</ruleset>
         </rule>
         <rule>
-            <name>RemoteInterfaceNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>RemoteSessionInterfaceNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
             <name>ReplaceEnumerationWithIterator</name>
             <ruleset>Migration Rules</ruleset>
         </rule>
@@ -665,10 +585,6 @@
         </rule>
         <rule>
             <name>ShortMethodName</name>
-            <ruleset>Naming Rules</ruleset>
-        </rule>
-        <rule>
-            <name>ShortVariable</name>
             <ruleset>Naming Rules</ruleset>
         </rule>
         <rule>
@@ -702,10 +618,6 @@
         <rule>
             <name>SingularField</name>
             <ruleset>Design Rules</ruleset>
-        </rule>
-        <rule>
-            <name>StaticEJBFieldShouldBeFinal</name>
-            <ruleset>J2EE Rules</ruleset>
         </rule>
         <rule>
             <name>StringBufferInstantiationWithChar</name>
@@ -750,10 +662,6 @@
         <rule>
             <name>TestClassWithoutTestCases</name>
             <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>TooFewBranchesForASwitchStatement</name>
-            <ruleset>Design Rules</ruleset>
         </rule>
         <rule>
             <name>TooManyFields</name>
@@ -908,10 +816,6 @@
             <ruleset>J2EE Rules</ruleset>
         </rule>
         <rule>
-            <name>UseSingleton</name>
-            <ruleset>Design Rules</ruleset>
-        </rule>
-        <rule>
             <name>UseStringBufferForStringAppends</name>
             <ruleset>Optimization Rules</ruleset>
         </rule>
@@ -929,4 +833,5 @@
         </rule>
     </rules>
     <includeDerivedFiles>false</includeDerivedFiles>
+    <violationsAsErrors>true</violationsAsErrors>
 </pmd>
