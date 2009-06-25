@@ -2,6 +2,8 @@ package net.mauhiz.irc;
 
 import junit.framework.Assert;
 
+import net.mauhiz.util.MathUtils;
+
 import org.junit.Test;
 
 /**

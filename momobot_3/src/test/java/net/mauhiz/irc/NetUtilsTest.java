@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
+import net.mauhiz.util.NetUtils;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,7 +35,7 @@ public class NetUtilsTest {
     private static final String STR_CLASS_C_MASK = "192.168.0.255";
     
     /**
-     * Test method for {@link net.mauhiz.irc.NetUtils#byteTabToSignedInt(byte[])}.
+     * Test method for {@link net.mauhiz.util.NetUtils#byteTabToSignedInt(byte[])}.
      */
     @Test
     public void testBytesToInt() {
@@ -42,7 +44,7 @@ public class NetUtilsTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.NetUtils#charTabToIa(char[])}.
+     * Test method for {@link net.mauhiz.util.NetUtils#charTabToIa(char[])}.
      */
     @Test
     public void testIntTabToIp() {
@@ -50,7 +52,7 @@ public class NetUtilsTest {
         Assert.assertEquals(STR_CLASS_C_MASK, localhost.getHostAddress());
     }
     /**
-     * Test method for {@link net.mauhiz.irc.NetUtils#intToBytes(int)}.
+     * Test method for {@link net.mauhiz.util.NetUtils#intToBytes(int)}.
      */
     @Test
     public void testIntToBytes() {
@@ -62,7 +64,7 @@ public class NetUtilsTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.NetUtils#iaToLong(InetAddress)}.
+     * Test method for {@link net.mauhiz.util.NetUtils#iaToLong(InetAddress)}.
      * 
      * @throws UnknownHostException
      */
@@ -72,7 +74,7 @@ public class NetUtilsTest {
         Assert.assertEquals(LONG_CLASS_C_MASK, NetUtils.iaToLong(localhost));
     }
     /**
-     * Test method for {@link net.mauhiz.irc.NetUtils#longToCharTab(long)}.
+     * Test method for {@link net.mauhiz.util.NetUtils#longToCharTab(long)}.
      */
     @Test
     public void testLongToIntTab() {
@@ -84,7 +86,7 @@ public class NetUtilsTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.NetUtils#makeISA(java.lang.String)}.
+     * Test method for {@link net.mauhiz.util.NetUtils#makeISA(java.lang.String)}.
      */
     @Test
     public void testMakeISA() {
