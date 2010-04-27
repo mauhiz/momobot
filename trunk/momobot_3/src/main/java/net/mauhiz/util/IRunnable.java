@@ -2,8 +2,6 @@ package net.mauhiz.util;
 
 /**
  * @author mauhiz
- * 
- * @param <R>
  */
 public interface IRunnable extends Runnable {
     
@@ -27,8 +25,6 @@ public interface IRunnable extends Runnable {
     
     /**
      * arrete le runnable.
-     * 
-     * @param running1
      */
     void stop();
 }
