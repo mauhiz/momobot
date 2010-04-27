@@ -22,7 +22,7 @@ public abstract class AbstractAutomate extends AbstractRunnable {
         private final IrcUser hook;
         
         /**
-         * @param hookable
+         * @param user
          */
         public AutomateHook(IrcUser user) {
             Hooks.addHook(user, this);

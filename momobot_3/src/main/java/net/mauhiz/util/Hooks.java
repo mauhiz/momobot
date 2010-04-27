@@ -21,7 +21,7 @@ public class Hooks<S> {
      * @param <S>
      * @param <J>
      * @param esse
-     * @param hookClass
+     * @param jambon
      */
     public static <S, J> void addHook(S esse, J jambon) {
         Hooks<S> hTable = getHooks(esse);

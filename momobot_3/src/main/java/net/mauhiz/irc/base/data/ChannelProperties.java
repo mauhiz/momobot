@@ -19,8 +19,8 @@ public class ChannelProperties {
     private Topic topic;
     
     /**
-     * @param bans
-     *            the bans to set
+     * @param ban
+     *            the ban to set
      */
     public void addBan(Mask ban) {
         bans.add(ban);

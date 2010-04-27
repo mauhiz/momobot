@@ -61,8 +61,7 @@ public class PlayerDB {
     }
     
     /**
-     * @throws SQLException
-     *             en cas de foirage.
+     * Charge la liste des joueurs CS
      */
     public static void loadPlayerDB() {
         SQLQuery sqlq = HibernateUtils.currentSession().createSQLQuery(
