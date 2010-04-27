@@ -235,12 +235,8 @@ public class Server {
     }
     
     /**
-     * @param steamid
-     *            le steamId
-     * @param nick
-     *            le nick
-     * @param frags
-     *            les frags
+     * @param index
+     * @param player
      */
     public void setPlayer(int index, Player player) {
         if (index > players.size()) {
