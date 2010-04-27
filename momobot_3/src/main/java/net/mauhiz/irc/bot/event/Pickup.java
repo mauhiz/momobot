@@ -37,7 +37,7 @@ public class Pickup extends ChannelEvent {
     }
     
     /**
-     * @param a
+     * @param user
      *            l'element e ajouter
      * @param choix
      *            le choix
