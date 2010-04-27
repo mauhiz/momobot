@@ -201,8 +201,9 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
                 LOG.warn("Unhandled server reply : " + this);
         }
     }
+    
     /**
-     * @see net.mauhiz.irc.base.msg.IrcMessage#toString()
+     * @see net.mauhiz.irc.base.msg.AbstractIrcMessage#toString()
      */
     @Override
     public String toString() {

@@ -75,7 +75,7 @@ public interface IrcServer {
     void setAlias(String alias);
     
     /**
-     * @param username
+     * @param me
      */
     void setMyself(IrcUser me);
     
@@ -84,8 +84,8 @@ public interface IrcServer {
      * @param newNick
      */
     void updateNick(IrcUser target, String newNick);
-
+    
     public abstract IrcChannel newChannel(String chanLowerCase);
-
+    
     public abstract IrcUser newUser(String nick);
 }
