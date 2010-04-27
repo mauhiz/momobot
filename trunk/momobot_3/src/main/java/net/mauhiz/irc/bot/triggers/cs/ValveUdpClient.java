@@ -57,7 +57,7 @@ class ValveUdpClient extends DatagramSocketClient {
     }
     
     /**
-     * @return les infos
+     * effectue un Challenge
      * @throws IOException
      *             houla, ca va mal
      */
@@ -66,7 +66,7 @@ class ValveUdpClient extends DatagramSocketClient {
     }
     
     /**
-     * @return les infos
+     * fetch les infos
      * @throws IOException
      *             houla, ca va mal
      */
@@ -75,7 +75,7 @@ class ValveUdpClient extends DatagramSocketClient {
     }
     
     /**
-     * @return les infos
+     * fetch le ping
      * @throws IOException
      *             houla, ca va mal
      */
@@ -84,7 +84,7 @@ class ValveUdpClient extends DatagramSocketClient {
     }
     
     /**
-     * @return les infos
+     * fetch les players
      * @throws IOException
      *             houla, ca va mal
      */
@@ -93,7 +93,7 @@ class ValveUdpClient extends DatagramSocketClient {
     }
     
     /**
-     * @return les infos
+     * fetch les cvars
      * @throws IOException
      *             houla, ca va mal
      */
