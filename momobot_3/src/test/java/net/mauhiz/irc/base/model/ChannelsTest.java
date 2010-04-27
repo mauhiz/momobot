@@ -5,6 +5,7 @@ import java.util.Set;
 import junit.framework.Assert;
 import net.mauhiz.irc.AbstractServerTest;
 import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 
 import org.junit.Test;
