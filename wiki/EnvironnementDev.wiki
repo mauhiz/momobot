@@ -1,3 +1,5 @@
 * Eclipse
+
 * plugin Maven : IAM
-* GUI : un kernel win 32
+
+* pour le GUI : un kernel win 32
