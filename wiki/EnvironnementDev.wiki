@@ -1,17 +1,18 @@
-* Eclipse
+Composants requis pour participer au développement de momobot :
 
-* plugin Maven : IAM
+ * Eclipse
+
+ * plugin Maven : IAM
  
+  --> Pour en savoir plus sur Maven : 
 
-** Pour en savoir plus sur Maven : 
+http://maven.apache.org/eclipse-plugin.html
 
-*** http://maven.apache.org/eclipse-plugin.html
+http://code.google.com/p/q4e/wiki/Installation
 
-*** http://code.google.com/p/q4e/wiki/Installation
+http://www.eclipse.org/iam/ 
 
-*** http://www.eclipse.org/iam/ 
-
-** Installation du plugin Maven pour Eclipse 3.5 :
+  --> Installation du plugin Maven pour Eclipse 3.5 :
 
 Go to Help - Software Updates - Available Software
 
@@ -19,4 +20,4 @@ Click on Manage Sites - Add and add the Eclipse IAM update site at http://q4e.go
 
 Dans Core Features, cocher IAM. Lancer l'installation. Les autres packages requis seront automatiquement installés.
 
-* pour le GUI : un kernel win 32
+ * pour le GUI : un kernel win 32
