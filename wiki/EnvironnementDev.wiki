@@ -1,6 +1,14 @@
 Composants requis pour participer au développement de momobot :
 
- * Eclipse
+
+ * JDK
+
+ * Eclipse 
+
+Eclipse est un environnement de développement gratuit, multiplateforme, prenant en charge un grand nombre de langages de programmation tels que le C, le PHP, ou encore le Java.
+
+Vous pouvez télécharger la dernière version d'Eclipse sur http://www.eclipse.org/downloads/
+
 
  * plugin Maven : IAM
  
