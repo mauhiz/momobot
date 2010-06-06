@@ -4,7 +4,7 @@ import ircbot.Channel;
 import ircbot.IrcUser;
 import ircbot.QnetUser;
 import ircbot.ATrigger;
-import java.util.Iterator;
+//import java.util.Iterator;
 import momobot.MomoBot;
 
 /**

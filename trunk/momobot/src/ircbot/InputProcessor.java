@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.net.Socket;
-import java.util.StringTokenizer;
+//import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 import utils.MyRunnable;
-import utils.Utils;
+//import utils.Utils;
 
 /**
  * A Thread which reads lines from the IRC server. It then passes these lines to
