@@ -31,7 +31,6 @@ public class SeekWar2 extends ChannelEvent {
     private static final String DEFAULT_LVL;
     private static final boolean DEFAULT_SERV;
     public static final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.){3}\\d{1,3}\\:\\d{1,5}");
-    private static boolean isExpired;
     private static final String[] LEVELS;
     /**
      * port mini
@@ -56,8 +55,48 @@ public class SeekWar2 extends ChannelEvent {
             throw new ExceptionInInitializerError(e);
         }
     }
+    /**
+     * @param st
+     * @return
+     */
+    public static boolean isMatchAgreeMessage(final String st) {
+        if ((st.contains("ok") || st.contains("k") || st.contains("go") || st.contains("ac") || st.contains("oui")
+                || st.contains("ui") || st.contains("yes") || st.contains("y"))
+                && !isMatchUrl(st)) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * @param st
+     * @return
+     */
+    public static boolean isMatchIp(final String st) {
+        Matcher m = IP_PATTERN.matcher(st);
+        if (m.find()) {
+            InetSocketAddress add1 = NetUtils.makeISA(m.group());
+            if (add1.getPort() > MIN_SRV_PORT) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * @param st
+     * @return
+     */
+    public static boolean isMatchUrl(final String st) {
+        if (st.contains("http://") || st.contains("www.")) {
+            return true;
+        }
+        return false;
+    }
     private final IrcChannel channel;
     private final IIrcControl control;
+    
+    /**
+     * contient false si la war est encore d'actualité, true sinon
+     */
     private boolean expired;
     private String ipPw;
     private final IrcServer ircServer;
@@ -65,8 +104,11 @@ public class SeekWar2 extends ChannelEvent {
     private final List<SeekUserHistory> listIrcSeekUser = new ArrayList<SeekUserHistory>();
     private final int nbPlayers;
     private boolean serv;
+    
     private final StopWatch sw = new StopWatch();
+    
     private final SeekWarThreadTimeOut threadTimeOut;
+    
     private SeekUserHistory winner;
     
     /**
@@ -79,7 +121,8 @@ public class SeekWar2 extends ChannelEvent {
      * 
      * @param param
      */
-    public SeekWar2(IrcChannel chan, IIrcControl control1, IrcServer ircServer1, int nbPlayers1, String param) {
+    public SeekWar2(final IrcChannel chan, final IIrcControl control1, final IrcServer ircServer1,
+            final int nbPlayers1, final String param) {
         super(chan);
         channel = chan;
         control = control1;
@@ -90,6 +133,7 @@ public class SeekWar2 extends ChannelEvent {
         threadTimeOut = new SeekWarThreadTimeOut(this, SEEK_TIMEOUT);
         
         // on traite les parametres entrants
+        // FIXME : Qu'est-ce que c'est que ste Regex ?
         Pattern pat = Pattern.compile("(abc)");
         Matcher match = pat.matcher(param);
         boolean b = match.matches();
@@ -156,7 +200,7 @@ public class SeekWar2 extends ChannelEvent {
      * @param user
      * @param privmsg
      */
-    private void doJob(SeekUserHistory user, Privmsg privmsg) {
+    private void doJob(final SeekUserHistory user, final Privmsg privmsg) {
         String st;
         switch (user.getId()) {
             
@@ -351,43 +395,17 @@ public class SeekWar2 extends ChannelEvent {
      * @param privmsg
      * @return ID de l'user
      */
-    private int isIncomingUserTraitment(Privmsg privmsg) {
+    private int isIncomingUserTraitment(final Privmsg privmsg) {
         return -1;
     }
     
     /**
+     * Vérifie si le match décrit par le paramètre st est du même lvl que le marche recherché par l'objet SeekWar
+     * 
      * @param st
-     * @return
+     * @return true si les deux niveaux sont équivalents, false sinon.
      */
-    private boolean isMatchAgreeMessage(String st) {
-        if ((st.contains("ok") || st.contains("k") || st.contains("go") || st.contains("ac") || st.contains("oui")
-                || st.contains("ui") || st.contains("yes") || st.contains("y"))
-                && !isMatchUrl(st)) {
-            return true;
-        }
-        return false;
-    }
-    
-    /**
-     * @param st
-     * @return
-     */
-    private boolean isMatchIp(String st) {
-        Matcher m = IP_PATTERN.matcher(st);
-        if (m.find()) {
-            InetSocketAddress add1 = NetUtils.makeISA(m.group());
-            if (add1.getPort() > MIN_SRV_PORT) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * @param st
-     * @return
-     */
-    private boolean isMatchLevel(String st) {
+    private boolean isMatchLevel(final String st) {
         String lvl = level.toLowerCase();
         String st1 = st.toLowerCase();
         for (int i = 0; i < LEVELS.length; i++) {
@@ -417,7 +435,7 @@ public class SeekWar2 extends ChannelEvent {
      * @param st
      * @return
      */
-    private boolean isMatchLVLMessage(String st) {
+    private boolean isMatchLVLMessage(final String st) {
         if ((st.contains("lvl") || st.contains("level")) && !isMatchUrl(st)) {
             return true;
         }
@@ -428,7 +446,7 @@ public class SeekWar2 extends ChannelEvent {
      * @param str
      * @return
      */
-    private boolean isMatchMessageChannel(String str) {
+    private boolean isMatchMessageChannel(final String str) {
         String st = str.toLowerCase();
         if (st.contains("dispo") || st.contains("tn") || st.contains("last")) {
             return false;
@@ -457,7 +475,7 @@ public class SeekWar2 extends ChannelEvent {
      * @param st
      * @return
      */
-    private boolean isMatchServer(String st) {
+    private boolean isMatchServer(final String st) {
         String st1 = st.toLowerCase();
         if (DEFAULT_SERV) {
             return true;
@@ -469,21 +487,10 @@ public class SeekWar2 extends ChannelEvent {
     }
     
     /**
-     * @param st
-     * @return
-     */
-    private boolean isMatchUrl(String st) {
-        if (st.contains("http://") || st.contains("www.")) {
-            return true;
-        }
-        return false;
-    }
-    
-    /**
      * @param user
      * @return
      */
-    private boolean isUserAleadyIn(SeekUserHistory user) {
+    private boolean isUserAleadyIn(final SeekUserHistory user) {
         for (SeekUserHistory element : listIrcSeekUser) {
             if (element.equals(user)) {
                 return true;
@@ -505,6 +512,9 @@ public class SeekWar2 extends ChannelEvent {
         }
     }
     
+    /**
+     * Annule la recherche de la war
+     */
     private void setExpired() {
         threadTimeOut.cancel();
         expired = true;
@@ -513,7 +523,7 @@ public class SeekWar2 extends ChannelEvent {
     /**
      * @param reason
      */
-    public void setStop(String reason) {
+    public void setStop(final String reason) {
         // on leave les channels de seek
         for (String element : SEEK_CHANNELS) {
             Part leave = new Part(ircServer, element, null);
@@ -531,7 +541,7 @@ public class SeekWar2 extends ChannelEvent {
     /**
      * @param privmsg
      */
-    private void submitChannelMessage(Privmsg privmsg) {
+    private void submitChannelMessage(final Privmsg privmsg) {
         
         // Si le msg match => on regarde si l'user existe deja
         if (isMatchMessageChannel(privmsg.getMessage())) {
@@ -550,7 +560,7 @@ public class SeekWar2 extends ChannelEvent {
     /**
      * @param privmsg
      */
-    public void submitIncommingMessage(Privmsg privmsg) {
+    public void submitIncommingMessage(final Privmsg privmsg) {
         if (privmsg == null) {
             return;
         }
@@ -566,7 +576,7 @@ public class SeekWar2 extends ChannelEvent {
     /**
      * @param privmsg
      */
-    private void submitPVMessage(Privmsg privmsg) {
+    private void submitPVMessage(final Privmsg privmsg) {
         // test l'user
         IrcUser user = privmsg.getServer().findUser(new Mask(privmsg.getFrom()), true);
         for (SeekUserHistory element : listIrcSeekUser) {
