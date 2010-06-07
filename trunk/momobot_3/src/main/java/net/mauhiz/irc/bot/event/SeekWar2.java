@@ -26,10 +26,18 @@ import org.apache.commons.lang.time.StopWatch;
  * @author Topper
  */
 public class SeekWar2 extends ChannelEvent {
+    
+    // TODO : si c'est une blackliste d'utilisateur, il faut la stocker dans le même type de liste que la
+    // listIrcSeekUser (par exemple)
     private static final String[] BLACKLIST;
+    
     private static final String DEFAULT_IP_PW;
     private static final String DEFAULT_LVL;
     private static final boolean DEFAULT_SERV;
+    
+    /**
+     * Pattern permettant de repérer ce qui peut ressembler à une adresse IP et un port dans une chaîne
+     */
     public static final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.){3}\\d{1,3}\\:\\d{1,5}");
     private static final String[] LEVELS;
     /**
@@ -69,7 +77,7 @@ public class SeekWar2 extends ChannelEvent {
     }
     /**
      * @param st
-     * @return
+     * @return true si le paramètre contient une adresse ip valide, false sinon
      */
     public static boolean isMatchIp(final String st) {
         Matcher m = IP_PATTERN.matcher(st);
@@ -82,8 +90,20 @@ public class SeekWar2 extends ChannelEvent {
         return false;
     }
     /**
+     * Vérifie si la chaîne st est un message utilisateur indiquant le lvl de la war
+     * 
      * @param st
-     * @return
+     * @return true si il le but du message est d'indiquer le level, false sinon
+     */
+    public static boolean isMatchLVLMessage(final String st) {
+        if ((st.contains("lvl") || st.contains("level")) && !isMatchUrl(st)) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * @param st
+     * @return true si le paramètre st contient une URL, false sinon
      */
     public static boolean isMatchUrl(final String st) {
         if (st.contains("http://") || st.contains("www.")) {
@@ -92,8 +112,8 @@ public class SeekWar2 extends ChannelEvent {
         return false;
     }
     private final IrcChannel channel;
-    private final IIrcControl control;
     
+    private final IIrcControl control;
     /**
      * contient false si la war est encore d'actualité, true sinon
      */
@@ -101,8 +121,13 @@ public class SeekWar2 extends ChannelEvent {
     private String ipPw;
     private final IrcServer ircServer;
     private String level;
+    
+    /**
+     * Liste des utilisateurs qui sont déjà rentrés en contact avec le bot lorsqu'il était en train de seeker
+     */
     private final List<SeekUserHistory> listIrcSeekUser = new ArrayList<SeekUserHistory>();
     private final int nbPlayers;
+    
     private boolean serv;
     
     private final StopWatch sw = new StopWatch();
@@ -432,17 +457,6 @@ public class SeekWar2 extends ChannelEvent {
     }
     
     /**
-     * @param st
-     * @return
-     */
-    private boolean isMatchLVLMessage(final String st) {
-        if ((st.contains("lvl") || st.contains("level")) && !isMatchUrl(st)) {
-            return true;
-        }
-        return false;
-    }
-    
-    /**
      * @param str
      * @return
      */
@@ -487,8 +501,11 @@ public class SeekWar2 extends ChannelEvent {
     }
     
     /**
+     * Vérifie si un utilisateur est déjà présent dans la liste des utilisateurs ayant contacté le bot dans le but de
+     * répondre au seek
+     * 
      * @param user
-     * @return
+     * @return true si l'utilisateur est déjà entré en contact avec le bot, false sinon
      */
     private boolean isUserAleadyIn(final SeekUserHistory user) {
         for (SeekUserHistory element : listIrcSeekUser) {
@@ -588,6 +605,9 @@ public class SeekWar2 extends ChannelEvent {
         }
         // sinon on cree l'user et on forward
         SeekUserHistory ircuser = new SeekUserHistory(user);
+        
+        // TODO : faut-il systématiquement ajouter l'utilisateur s'il PV le bot en état de seek, mais que le PV n'a rien
+        // à voir avec le seek .. ?
         listIrcSeekUser.add(ircuser);
     }
     

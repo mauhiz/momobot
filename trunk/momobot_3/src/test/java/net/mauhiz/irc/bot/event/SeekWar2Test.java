@@ -27,6 +27,9 @@ public class SeekWar2Test {
         // Exemple classique
         Assert.assertTrue(SeekWar2.isMatchIp("192.168.0.15:27015"));
         
+        // Attension ya un piège là...
+        Assert.assertFalse(SeekWar2.isMatchIp("300.168.0.15:27015"));
+        
         // Avec 5 chiffres aux lieux de 4
         Assert.assertFalse(SeekWar2.isMatchIp("192.168.0.15.1:27015"));
         
