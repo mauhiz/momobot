@@ -7,6 +7,8 @@ import net.mauhiz.irc.base.data.IrcUser;
 /**
  * @author Topper
  */
+
+// TODO : renommer cette classe, ou la fusionner avec les classes utilisateur existantes....
 public class SeekUserHistory extends ArrayList<String> {
     private static final long serialVersionUID = 1;
     private int id;
@@ -15,7 +17,7 @@ public class SeekUserHistory extends ArrayList<String> {
     /**
      * @param user1
      */
-    public SeekUserHistory(IrcUser user1) {
+    public SeekUserHistory(final IrcUser user1) {
         this(user1, 1);
     }
     
@@ -23,12 +25,14 @@ public class SeekUserHistory extends ArrayList<String> {
      * @param user1
      * @param id1
      */
-    public SeekUserHistory(IrcUser user1, int id1) {
+    public SeekUserHistory(final IrcUser user1, final int id1) {
         user = user1;
         id = id1;
     }
     
     /**
+     * Renvoie un entier identifiant de manière unique un utilisateur
+     * 
      * @return {@link #id}
      */
     public int getId() {
@@ -45,7 +49,7 @@ public class SeekUserHistory extends ArrayList<String> {
     /**
      * @param id1
      */
-    public void setId(int id1) {
+    public void setId(final int id1) {
         id = id1;
     }
 }
