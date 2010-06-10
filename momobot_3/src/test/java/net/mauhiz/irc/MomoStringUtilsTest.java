@@ -31,6 +31,11 @@ public class MomoStringUtilsTest {
         String input = "âäàçéèëïîñôöqù ";
         String output = MomoStringUtils.effaceAccents(input);
         Assert.assertEquals("aaaceeeiinooqu ", output);
+        
+        input = "�ho";
+        output = MomoStringUtils.effaceAccents(input);
+        Assert.assertEquals("eho", output);
+        
     }
     
     /** "192.168.0.5:27015 pass:dtcdtc" */
