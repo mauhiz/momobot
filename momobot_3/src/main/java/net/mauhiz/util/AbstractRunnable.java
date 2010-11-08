@@ -9,7 +9,7 @@ public abstract class AbstractRunnable implements IRunnable {
     /**
      * logger.
      */
-    protected static final Logger LOG = Logger.getLogger(AbstractRunnable.class);
+    private static final Logger LOG = Logger.getLogger(AbstractRunnable.class);
     public static void handleInterruption(InterruptedException ie) {
         LOG.error(ie, ie);
         Thread.currentThread().interrupt();

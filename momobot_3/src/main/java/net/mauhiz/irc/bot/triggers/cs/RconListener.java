@@ -7,11 +7,13 @@ import java.net.InetAddress;
 import net.mauhiz.util.AbstractRunnable;
 
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
 class RconListener extends AbstractRunnable {
+    private static final Logger LOGGER = Logger.getLogger(RconListener.class);
     /**
      * port mini
      */
@@ -56,7 +58,7 @@ class RconListener extends AbstractRunnable {
                 rc.getSocket().receive(receivePacket);
                 processLine(receivePacket);
             } catch (IOException ioe) {
-                LOG.error(ioe, ioe);
+                LOGGER.error(ioe, ioe);
                 break;
             }
         }

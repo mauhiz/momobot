@@ -125,6 +125,7 @@ public class IrcControl implements IIrcControl {
                 LOG.info("Not sending empty msg", new IllegalArgumentException());
             }
         }
+        LOG.info(msg);
         io.sendMsg(msg.getIrcForm());
         if (msg instanceof Quit) {
             quit(server);
