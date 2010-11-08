@@ -15,11 +15,14 @@ import net.mauhiz.util.AbstractRunnable;
 import net.mauhiz.util.FileUtil;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
 public class IdentServer extends AbstractRunnable implements IIdentServer {
+    
+    private static final Logger LOGGER = Logger.getLogger(IdentServer.class);
     /**
      * le port sur lequel on ecoute.
      */
@@ -48,7 +51,7 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
             
         } catch (BindException be) {
             if (SystemUtils.IS_OS_LINUX) { // not root => bind denied
-                LOG.info("Could not bind on port: " + PORT + ". Maybe I should be rootz?");
+                LOGGER.info("Could not bind on port: " + PORT + ". Maybe I should be rootz?");
             } else {
                 throw be;
             }
@@ -76,7 +79,7 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
         } catch (SocketTimeoutException ste) {
             // nevermind
         } catch (IOException ioe) {
-            LOG.error(ioe, ioe);
+            LOGGER.error(ioe, ioe);
         }
         stop();
     }
@@ -98,7 +101,7 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
                 ss.close();
                 
             } catch (IOException ioe) {
-                LOG.warn(ioe, ioe);
+                LOGGER.warn(ioe, ioe);
             }
         }
         super.stop();

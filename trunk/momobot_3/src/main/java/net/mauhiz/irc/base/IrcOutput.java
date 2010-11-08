@@ -11,6 +11,7 @@ import net.mauhiz.util.AbstractRunnable;
 import net.mauhiz.util.FileUtil;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
@@ -20,6 +21,7 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
      * antiflood en ms
      */
     private static final long DELAY = 100;
+    private static final Logger LOGGER = Logger.getLogger(IrcOutput.class);
     private static final int MAX_SIZE = 50;
     private static final int MAXLEN = 255;
     private final BlockingQueue<String> queue = new LinkedBlockingQueue<String>(MAX_SIZE);
@@ -49,7 +51,7 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
             if (toWrite == null) {
                 continue;
             }
-            LOG.info(">> " + toWrite);
+            LOGGER.debug(">> " + toWrite);
             writer.println(toWrite);
         }
         writer.close();
@@ -61,7 +63,7 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
         if (raw == null) {
             return;
         } else if (StringUtils.isBlank(raw)) {
-            LOG.warn("Tried to send empty msg", new IllegalArgumentException());
+            LOGGER.warn("Tried to send empty msg", new IllegalArgumentException());
         }
         
         String trimmedRaw = raw.length() > MAXLEN ? raw.substring(0, MAXLEN) : raw;

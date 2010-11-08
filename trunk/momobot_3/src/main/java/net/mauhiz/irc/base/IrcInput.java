@@ -8,10 +8,14 @@ import java.net.Socket;
 import net.mauhiz.util.AbstractRunnable;
 import net.mauhiz.util.FileUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author mauhiz
  */
 public class IrcInput extends AbstractRunnable implements IIrcInput {
+    private static final Logger LOGGER = Logger.getLogger(IrcInput.class);
+    
     private final IIrcIO io;
     private final BufferedReader reader;
     
@@ -35,15 +39,15 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
         }
         while (isRunning()) {
             try {
-                String next = reader.readLine();
-                if (next == null) {
-                    LOG.warn("disconnected");
+                String nextRaw = reader.readLine();
+                if (nextRaw == null) {
+                    LOGGER.warn("disconnected");
                     break;
                 }
-                LOG.info("<< " + next);
-                io.processMsg(next);
+                LOGGER.debug("<< " + nextRaw);
+                io.processMsg(nextRaw);
             } catch (IOException e) {
-                LOG.warn("disconnected", e);
+                LOGGER.warn("disconnected", e);
                 break;
             }
         }
