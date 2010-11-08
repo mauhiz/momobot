@@ -74,7 +74,7 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
             IrcUser next = getServer().findUser(prefixedName, true);
             chan.add(next);
         }
-        LOG.info("Names Reply on " + chan + ": " + StringUtils.join(prefixedNames, ' '));
+        LOG.debug("Names Reply on " + chan + ": " + StringUtils.join(prefixedNames, ' '));
     }
     private void handleWhoisChannels() {
         String nick = StringUtils.substringBefore(msg, " ");
@@ -179,7 +179,8 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
                 handleWhoisChannels();
                 break;
             case RPL_WHOISSERVER :
-                LOG.warn("TODO : whois server");
+                LOG.warn("TODO whois server : " + msg);
+                // msg = mauhiz *.quakenet.org :QuakeNet IRC Server
                 break;
             case RPL_WHOISAUTH :
                 handleWhoisQnet();

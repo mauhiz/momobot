@@ -581,7 +581,7 @@ public class SeekWar2 extends ChannelEvent {
         if (privmsg == null) {
             return;
         }
-        if (MomoStringUtils.isChannelName(privmsg.getFrom())) {
+        if (privmsg.isToChannel()) {
             // c'est un msg d'un channel :: On match son msg
             submitChannelMessage(privmsg);
         } else {

@@ -25,6 +25,11 @@ public class Pong extends AbstractIrcMessage {
     
     @Override
     public void process(IIrcControl control) {
-        throw new UnsupportedOperationException("I should not received PONG msg");
+        throw new UnsupportedOperationException("I should not receive PONG msg");
+    }
+    
+    @Override
+    public String toString() {
+        return "Answering PING: " + pingId;
     }
 }

@@ -15,6 +15,7 @@ import net.mauhiz.util.AbstractRunnable;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
@@ -24,6 +25,7 @@ public class WhoisRequest extends AbstractRunnable {
      * tous les whois en cours.
      */
     private static final Map<String, WhoisRequest> ALL_WHOIS = new HashMap<String, WhoisRequest>();
+    private static final Logger LOGGER = Logger.getLogger(WhoisRequest.class);
     
     /**
      * le temps d'attente entre deux boucles.
@@ -121,11 +123,13 @@ public class WhoisRequest extends AbstractRunnable {
             respMsg = "Could not whois " + target;
             // le user s'est deconnecte on dirait.
         }
-        IIrcMessage resp = new Privmsg(null, reportTo, server, respMsg);
-        control.sendMsg(resp);
+        if (reportTo != null) {
+            IIrcMessage resp = new Privmsg(null, reportTo, server, respMsg);
+            control.sendMsg(resp);
+        }
         sw.split();
         success = ok;
-        LOG.debug("[whois ended][done=" + ok + "]");
+        LOGGER.debug("[whois ended][done=" + ok + "]");
         ALL_WHOIS.remove(target);
     }
     

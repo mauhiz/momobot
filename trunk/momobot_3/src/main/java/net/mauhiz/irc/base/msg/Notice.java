@@ -1,6 +1,5 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
@@ -18,9 +17,8 @@ public class Notice extends AbstractIrcMessage {
      * @return answer
      */
     public static Notice buildAnswer(IIrcMessage toReply, String msg) {
-        String oldDest = toReply.getTo();
-        if (MomoStringUtils.isChannelName(oldDest)) {
-            return new Notice(null, oldDest, toReply.getServer(), msg);
+        if (toReply.isToChannel()) {
+            return new Notice(null, toReply.getTo(), toReply.getServer(), msg);
         }
         return buildPrivateAnswer(toReply, msg);
     }
@@ -60,7 +58,7 @@ public class Notice extends AbstractIrcMessage {
         }
         sb.append("NOTICE ");
         if (super.to != null) {
-            if (super.from == null && !MomoStringUtils.isChannelName(super.to)) {
+            if (super.from == null && !isToChannel()) {
                 try {
                     Mask m = new Mask(super.to);
                     IrcUser dest = super.server.findUser(m, true);
@@ -95,6 +93,9 @@ public class Notice extends AbstractIrcMessage {
      */
     @Override
     public String toString() {
+        if (from == null) {
+            return "Noticing: " + message;
+        }
         return "-" + from + "- " + message;
     }
 }

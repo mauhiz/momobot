@@ -30,4 +30,9 @@ public class Whois extends AbstractIrcMessage {
     public void process(IIrcControl control) {
         throw new UnsupportedOperationException("I should not receive WHOIS msg");
     }
+    
+    @Override
+    public String toString() {
+        return "Whoising " + target;
+    }
 }
