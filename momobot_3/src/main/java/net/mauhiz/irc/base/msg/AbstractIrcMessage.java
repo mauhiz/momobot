@@ -1,5 +1,6 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.data.IrcServer;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -44,6 +45,10 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
      */
     public String getTo() {
         return to;
+    }
+    
+    public boolean isToChannel() {
+        return MomoStringUtils.isChannelName(to);
     }
     
     /**

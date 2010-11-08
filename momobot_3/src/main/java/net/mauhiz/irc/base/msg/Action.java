@@ -1,6 +1,5 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.Mask;
@@ -16,9 +15,8 @@ public class Action extends Privmsg implements IrcSpecialChars {
      * @return new msg
      */
     public static Action buildAnswer(IIrcMessage toReply, String msg) {
-        String oldDest = toReply.getTo();
-        if (MomoStringUtils.isChannelName(oldDest)) {
-            return new Action(null, oldDest, toReply.getServer(), msg);
+        if (toReply.isToChannel()) {
+            return new Action(null, toReply.getTo(), toReply.getServer(), msg);
         }
         return buildPrivateAnswer(toReply, msg);
     }

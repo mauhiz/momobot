@@ -90,6 +90,9 @@ public class Join extends AbstractIrcMessage {
      */
     @Override
     public String toString() {
-        return "* Joins: " + from;
+        if (from == null) { // self
+            return "Joining " + chan;
+        }
+        return "* Joins " + chan + " : " + from;
     }
 }

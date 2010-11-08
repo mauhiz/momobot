@@ -176,10 +176,10 @@ public class SeekWar {
     private List<Privmsg> processIncomingMessage(Privmsg im, List<Privmsg> resultPrivmsg) {
         IrcServer server = im.getServer();
         IrcUser provenance = server.findUser(new Mask(im.getFrom()), true);
-        String destination = im.getTo();
+        
         String msg = im.getMessage();
         // Traitement des messages entrant
-        if (MomoStringUtils.isChannelName(destination)) {
+        if (!im.isToChannel()) {
             // C'est un msg PV
             
             // Si c'est "S" on se calme!

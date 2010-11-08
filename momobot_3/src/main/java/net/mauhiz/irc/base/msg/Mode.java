@@ -1,12 +1,15 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.MomoStringUtils;
+import java.util.Set;
+
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.UserChannelMode;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -14,6 +17,7 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class Mode extends AbstractIrcMessage {
+    private static final Logger LOG = Logger.getLogger(Mode.class);
     private final String message;
     
     /**
@@ -70,14 +74,40 @@ public class Mode extends AbstractIrcMessage {
         char modifier = modeInfo.charAt(0);
         String modes = modeInfo.substring(1);
         
-        if (MomoStringUtils.isChannelName(to)) {
+        if (isToChannel()) {
             IrcChannel chan = server.findChannel(to);
             if (toks.length == 1) {
                 // pure channel mode
                 chan.getProperties().process(modifier, modes);
             } else {
                 // setting mode on people
-                Logger.getLogger(Mode.class).info("TODO process mode : " + modes);
+                String target = toks[1];
+                
+                if (toks.length > 2) {
+                    LOG.warn("TODO handle multiple users : " + ArrayUtils.toString(toks));
+                }
+                
+                IrcUser targetUser = server.findUser(target, false);
+                
+                if (target == null) {
+                    return; // let's skip this unknown user
+                }
+                Set<UserChannelMode> userModes = chan.getModes(targetUser);
+                
+                if (modes.length() > 1) {
+                    LOG.warn("TODO handle multiple modes : " + modes);
+                }
+                
+                UserChannelMode newMode = UserChannelMode.fromCmd(modes.charAt(0));
+                
+                if (modifier == '+') {
+                    userModes.add(newMode);
+                    
+                } else {
+                    userModes.remove(newMode);
+                }
+                
+                LOG.debug("userModes : " + userModes);
             }
         } else {
             

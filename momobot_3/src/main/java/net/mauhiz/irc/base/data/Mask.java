@@ -30,7 +30,7 @@ public class Mask {
             user = m.group(2);
             host = m.group(3);
         } else {
-            throw new IllegalArgumentException("Invalid mask: " + raw);
+            host = raw;
         }
     }
     
@@ -78,5 +78,10 @@ public class Mask {
     @Override
     public int hashCode() {
         return raw.hashCode();
+    }
+    
+    @Override
+    public String toString() {
+        return raw;
     }
 }

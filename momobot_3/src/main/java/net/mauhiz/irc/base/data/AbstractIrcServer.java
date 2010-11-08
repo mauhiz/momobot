@@ -144,7 +144,7 @@ public abstract class AbstractIrcServer implements IrcCommands, IrcServer, IrcSp
      * @see net.mauhiz.irc.base.data.IrcServer#findChannel(java.lang.String, boolean)
      */
     public IrcChannel findChannel(String chanName, boolean addIfNotFound) {
-        // 
+        //
         for (IrcChannel chan : channels) {
             if (chan.fullName().equalsIgnoreCase(chanName)) {
                 return chan;
@@ -169,7 +169,7 @@ public abstract class AbstractIrcServer implements IrcCommands, IrcServer, IrcSp
         }
         String nick = mask.getNick();
         if (nick == null) {
-            throw new NullArgumentException("nick");
+            throw new IllegalArgumentException("Invalid mask (no nick): " + mask);
         }
         for (IrcUser user : users) {
             if (nick.equalsIgnoreCase(user.getNick())) {
@@ -194,8 +194,8 @@ public abstract class AbstractIrcServer implements IrcCommands, IrcServer, IrcSp
     public IrcUser findUser(String nick, boolean addIfNotFound) {
         if (nick == null) {
             throw new NullArgumentException("nick");
-        } else if (nick.contains("!")) {
-            LOG.warn("function misuse", new IllegalArgumentException());
+        } else if (nick.contains("!") || nick.contains(" ")) { // TODO better regexp
+            throw new IllegalArgumentException("invalid nick : " + nick);
         }
         for (IrcUser user : users) {
             if (nick.equalsIgnoreCase(user.getNick())) {

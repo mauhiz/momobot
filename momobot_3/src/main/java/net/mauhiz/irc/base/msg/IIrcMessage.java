@@ -27,6 +27,8 @@ public interface IIrcMessage {
      */
     String getTo();
     
+    boolean isToChannel();
+    
     /**
      * @param control
      */
