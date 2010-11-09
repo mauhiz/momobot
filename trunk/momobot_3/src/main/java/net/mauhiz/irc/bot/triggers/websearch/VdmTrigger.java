@@ -47,8 +47,9 @@ public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         String vdm = getNextVdm();
-        while (vdm.length() > 200) {
-            int spc = StringUtils.indexOf(vdm, ' ', 190);
+        int maxLen = im.getServer().getLineMaxLength() - 50; // TODO make precise computation of overhead in PRIVMSG
+        while (vdm.length() > maxLen) {
+            int spc = StringUtils.indexOf(vdm, ' ', maxLen);
             Privmsg reply = Privmsg.buildAnswer(im, vdm.substring(0, spc));
             control.sendMsg(reply);
             vdm = vdm.substring(spc + 1);

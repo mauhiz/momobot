@@ -43,8 +43,9 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
                 cmds.add(((INoticeTrigger) trig).getTriggerText());
             }
         }
+        int maxLen = im.getServer().getLineMaxLength() - 50; // TODO make precise computation of overhead in NOTICE
         for (String trig : cmds) {
-            if (msg.length() >= 200) {
+            if (msg.length() >= maxLen) { // flush
                 Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
                 control.sendMsg(resp);
                 msg = new StringBuilder(COMMANDES);
@@ -53,8 +54,8 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         }
         Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
         control.sendMsg(resp);
-        
     }
+    
     /**
      * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -68,8 +69,9 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
                 cmds.add(((IPrivmsgTrigger) trig).getTriggerText());
             }
         }
+        int maxLen = im.getServer().getLineMaxLength(); // TODO make precise computation of overhead in PRIVMSG
         for (String trig : cmds) {
-            if (msg.length() >= 200) {
+            if (msg.length() >= maxLen) {
                 Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
                 control.sendMsg(resp);
                 msg = new StringBuilder(COMMANDES);
