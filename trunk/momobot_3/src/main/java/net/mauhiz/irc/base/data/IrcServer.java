@@ -60,10 +60,15 @@ public interface IrcServer {
     
     IrcUser getMyself();
     
+    IrcChannel newChannel(String chanLowerCase);
+    
+    IrcUser newUser(String nick);
+    
     /**
      * @param channel
      */
     void remove(IrcChannel channel);
+    
     /**
      * @param quitter
      */
@@ -84,8 +89,4 @@ public interface IrcServer {
      * @param newNick
      */
     void updateNick(IrcUser target, String newNick);
-    
-    public abstract IrcChannel newChannel(String chanLowerCase);
-    
-    public abstract IrcUser newUser(String nick);
 }
