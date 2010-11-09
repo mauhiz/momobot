@@ -16,6 +16,11 @@ public class QnetServer extends AbstractIrcServer {
         super(uriStr);
     }
     
+    @Override
+    public int getLineMaxLength() {
+        return 255; // confirmed
+    }
+    
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcServer#newChannel(java.lang.String)
      */
@@ -31,5 +36,4 @@ public class QnetServer extends AbstractIrcServer {
     public IrcUser newUser(String nick) {
         return new QnetUser(nick);
     }
-    
 }

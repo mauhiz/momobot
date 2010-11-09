@@ -57,8 +57,8 @@ public class IrcIO extends SocketClient implements IIrcIO {
         output.start();
         IIrcInput input = new IrcInput(this, super._socket_);
         input.start();
-        output.sendRawMsg(new Nick(server).getIrcForm());
-        output.sendRawMsg(new User(server).getIrcForm());
+        sendMsg(new Nick(server).getIrcForm());
+        sendMsg(new User(server).getIrcForm());
     }
     /**
      * @see org.apache.commons.net.SocketClient#disconnect()
@@ -114,10 +114,13 @@ public class IrcIO extends SocketClient implements IIrcIO {
     }
     
     /**
-     * @see net.mauhiz.irc.base.IIrcIO#sendMsg(java.lang.String)
+     * @see net.mauhiz.irc.base.IIrcIO#sendMsg(String)
      */
     public void sendMsg(String msg) {
-        output.sendRawMsg(msg);
+        int maxLen = server.getLineMaxLength();
+        String trimmedMsg = msg.length() > maxLen ? msg.substring(0, maxLen) : msg;
+        
+        output.sendRawMsg(trimmedMsg);
     }
     
     /**

@@ -23,7 +23,6 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
     private static final long DELAY = 100;
     private static final Logger LOGGER = Logger.getLogger(IrcOutput.class);
     private static final int MAX_SIZE = 50;
-    private static final int MAXLEN = 255;
     private final BlockingQueue<String> queue = new LinkedBlockingQueue<String>(MAX_SIZE);
     private final PrintWriter writer;
     
@@ -66,10 +65,8 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
             LOGGER.warn("Tried to send empty msg", new IllegalArgumentException());
         }
         
-        String trimmedRaw = raw.length() > MAXLEN ? raw.substring(0, MAXLEN) : raw;
-        
         try {
-            queue.put(trimmedRaw);
+            queue.put(raw);
         } catch (InterruptedException e) {
             stop();
             AbstractRunnable.handleInterruption(e);

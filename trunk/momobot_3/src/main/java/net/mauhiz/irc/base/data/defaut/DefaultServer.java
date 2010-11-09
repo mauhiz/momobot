@@ -17,6 +17,11 @@ public class DefaultServer extends AbstractIrcServer {
         super(uriStr);
     }
     
+    @Override
+    public int getLineMaxLength() {
+        return 127; // TODO confirm?
+    }
+    
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcServer#newChannel(java.lang.String)
      */
@@ -32,5 +37,4 @@ public class DefaultServer extends AbstractIrcServer {
     public IrcUser newUser(String nick) {
         return new DefaultUser(nick);
     }
-    
 }

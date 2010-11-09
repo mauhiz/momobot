@@ -58,6 +58,8 @@ public interface IrcServer {
      */
     Set<IrcChannel> getChannelsForUser(IrcUser smith);
     
+    int getLineMaxLength();
+    
     IrcUser getMyself();
     
     IrcChannel newChannel(String chanLowerCase);
