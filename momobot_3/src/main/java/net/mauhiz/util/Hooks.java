@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * S = esse<br>
- * J = jambon
+ * @param <S>
+ *            esse
  * 
  * @author mauhiz
  */
@@ -20,6 +20,7 @@ public class Hooks<S> {
     /**
      * @param <S>
      * @param <J>
+     *            jambon
      * @param esse
      * @param jambon
      */

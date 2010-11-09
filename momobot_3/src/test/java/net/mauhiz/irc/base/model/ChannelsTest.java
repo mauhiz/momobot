@@ -5,7 +5,6 @@ import java.util.Set;
 import junit.framework.Assert;
 import net.mauhiz.irc.AbstractServerTest;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 
 import org.junit.Test;
@@ -17,7 +16,7 @@ import org.junit.Test;
 public class ChannelsTest extends AbstractServerTest {
     
     /**
-     * Test method for {@link IrcServer#getChannelsForUser(IrcUser)}.
+     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#getChannelsForUser(IrcUser)}.
      */
     @Test
     public void testGetChannels() {
