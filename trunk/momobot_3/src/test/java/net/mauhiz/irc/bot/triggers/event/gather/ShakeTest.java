@@ -13,7 +13,7 @@ import org.junit.Test;
  * 
  */
 public class ShakeTest extends AbstractServerTest {
-    private static final Logger logger = Logger.getLogger(ShakeTest.class);
+    private static final Logger LOGGER = Logger.getLogger(ShakeTest.class);
     
     /**
      * exemple de test
@@ -40,6 +40,6 @@ public class ShakeTest extends AbstractServerTest {
         p.add(g, "b");
         p.add(h, "b");
         p.shake();
-        logger.info(p);
+        LOGGER.info(p);
     }
 }
