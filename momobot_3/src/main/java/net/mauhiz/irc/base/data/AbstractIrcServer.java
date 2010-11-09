@@ -105,7 +105,7 @@ public abstract class AbstractIrcServer implements IrcCommands, IrcServer, IrcSp
             } else if (PRIVMSG.equals(cmd)) {
                 if (msg.charAt(0) == QUOTE_STX) {
                     msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
-                    return new Action(from, to, this, msg.substring(7));
+                    return new Action(from, to, this, msg.substring(PRIVMSG.length()));
                 }
                 return new Privmsg(from, to, this, msg);
             } else if (QUIT.equals(cmd)) {
