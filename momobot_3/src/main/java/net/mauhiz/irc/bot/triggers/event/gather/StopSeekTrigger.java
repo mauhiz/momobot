@@ -44,19 +44,19 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = im.getServer().findChannel(im.getTo());
         ChannelEvent evt = chan.getEvt();
-        String reply = "";
+        String reply;
         if (evt == null) {
             reply = "Aucun gather n'est lance.";
         } else {
             if (evt instanceof Gather) {
-                if (((Gather) evt).getSeek() != null) {
+                if (((Gather) evt).getSeek() == null) {
+                    reply = "Le seek n'est pas lance.";
+                } else {
                     // if (((Gather) evt).getSeek().isSeekInProgress()) {
                     reply = "Seek arrete.";
                     leaveSeekChans(control, im.getServer());
                     ((Gather) evt).setSeekToNull();
                     // }
-                } else {
-                    reply = "Le seek n'est pas lance.";
                 }
                 
             } else {
