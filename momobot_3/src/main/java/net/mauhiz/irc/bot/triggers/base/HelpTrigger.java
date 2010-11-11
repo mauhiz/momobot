@@ -12,15 +12,12 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.INoticeTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.ITrigger;
+import net.mauhiz.util.Messages;
 
 /**
  * @author mauhiz
  */
 public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger, INoticeTrigger {
-    /**
-     * Commandes :.
-     */
-    private static final String COMMANDES = "Commandes: ";
     
     /**
      * @param trigger
@@ -35,7 +32,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      */
     @Override
     public void doTrigger(Notice im, IIrcControl control) {
-        StringBuilder msg = new StringBuilder(COMMANDES);
+        StringBuilder msg = new StringBuilder(getHeader());
         SortedSet<String> cmds = new TreeSet<String>();
         // on fait en 2x pour trier les commandes
         for (ITrigger trig : getTriggers(control)) {
@@ -48,7 +45,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
             if (msg.length() >= maxLen) { // flush
                 Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
                 control.sendMsg(resp);
-                msg = new StringBuilder(COMMANDES);
+                msg = new StringBuilder(getHeader());
             }
             msg.append(trig).append(' ');
         }
@@ -61,7 +58,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        StringBuilder msg = new StringBuilder(COMMANDES);
+        StringBuilder msg = new StringBuilder(getHeader());
         SortedSet<String> cmds = new TreeSet<String>();
         // on fait en 2x pour trier les commandes
         for (ITrigger trig : getTriggers(control)) {
@@ -74,12 +71,16 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
             if (msg.length() >= maxLen) {
                 Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
                 control.sendMsg(resp);
-                msg = new StringBuilder(COMMANDES);
+                msg = new StringBuilder(getHeader());
             }
             msg.append(trig).append(' ');
         }
         Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
         control.sendMsg(resp);
+    }
+    
+    private String getHeader() {
+        return Messages.get(getClass(), "help"); //$NON-NLS-1$
     }
     
     /**
