@@ -8,12 +8,12 @@ import java.util.Date;
  */
 public class Topic {
     private String byWhom;
-    private Date lastModif;
+    private long lastModif;
     private String value;
     
     public Topic(String byWhom, Date lastModif, String value) {
         this.byWhom = byWhom;
-        this.lastModif = lastModif;
+        this.lastModif = lastModif.getTime();
         this.value = value;
     }
     /**
@@ -26,7 +26,7 @@ public class Topic {
      * @return the lastModif
      */
     public Date getLastModif() {
-        return lastModif;
+        return new Date(lastModif);
     }
     /**
      * @return the value
@@ -46,7 +46,7 @@ public class Topic {
      *            the lastModif to set
      */
     public void setLastModif(Date lastModif) {
-        this.lastModif = lastModif;
+        this.lastModif = lastModif.getTime();
     }
     /**
      * @param value
