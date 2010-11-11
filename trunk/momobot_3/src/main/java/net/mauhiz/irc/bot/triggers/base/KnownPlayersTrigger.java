@@ -8,6 +8,7 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IAdminTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.cs.PlayerDB;
+import net.mauhiz.util.Messages;
 
 /**
  * @author mauhiz
@@ -22,15 +23,15 @@ public class KnownPlayersTrigger extends AbstractTextTrigger implements IPrivmsg
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
+     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {
-        Privmsg retour = Privmsg.buildPrivateAnswer(pme, "Je connais" + PlayerDB.countPlayers() + " joueur(s).");
+        String msg = Messages.get(getClass(), "known.players", Integer.valueOf(PlayerDB.countPlayers())); //$NON-NLS-1$
+        Privmsg retour = Privmsg.buildPrivateAnswer(pme, msg);
         control.sendMsg(retour);
         for (Entry<String, String> item : PlayerDB.getPlayers()) {
-            retour = Privmsg.buildPrivateAnswer(pme, item.getValue() + " - " + item.getKey());
+            retour = Privmsg.buildPrivateAnswer(pme, item.getValue() + " - " + item.getKey()); //$NON-NLS-1$
             control.sendMsg(retour);
         }
     }

@@ -5,6 +5,7 @@ import net.mauhiz.irc.base.msg.Invite;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.bot.triggers.IInviteTrigger;
+import net.mauhiz.util.Messages;
 
 /**
  * @author mauhiz
@@ -21,7 +22,7 @@ public class JoinOnInviteTrigger implements IInviteTrigger {
     public void doTrigger(Invite im, IIrcControl control) {
         Join join = new Join(im.getServer(), im.getMessage());
         control.sendMsg(join);
-        Notice notice = Notice.buildPrivateAnswer(im, "Allez, c'est bien parce que c'est toi.");
+        Notice notice = Notice.buildPrivateAnswer(im, Messages.get(getClass(), "join.on.invite")); //$NON-NLS-1$
         control.sendMsg(notice);
     }
 }
