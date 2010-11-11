@@ -116,7 +116,7 @@ public class IrcIO extends SocketClient implements IIrcIO {
     /**
      * @see net.mauhiz.irc.base.IIrcIO#sendMsg(String)
      */
-    public void sendMsg(String msg) {
+    public final void sendMsg(String msg) {
         int maxLen = server.getLineMaxLength();
         String trimmedMsg = msg.length() > maxLen ? msg.substring(0, maxLen) : msg;
         
