@@ -44,7 +44,7 @@ public class ServerMsgTest extends AbstractServerTest {
         ServerMsg msg = new ServerMsg("port80b.se.quakenet.org", "momobot3", QNET, "330",
                 "Krauser2 mauhiz :is authed as");
         msg.process(null);
-        QnetUser user = (QnetUser) QNET.findUser("Krauser2", false);
+        QnetUser user = QNET.findUser("Krauser2", false);
         Assert.assertEquals("mauhiz", user.getAuth());
     }
 }
