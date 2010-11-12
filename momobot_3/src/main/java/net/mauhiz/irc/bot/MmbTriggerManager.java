@@ -6,7 +6,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.ITriggerManager;
-import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Invite;
 import net.mauhiz.irc.base.msg.Join;
@@ -160,10 +159,10 @@ public class MmbTriggerManager implements ITriggerManager {
     }
     
     /**
-     * @see net.mauhiz.irc.base.ITriggerManager#processMsg(IIrcMessage, IrcControl)
+     * @see net.mauhiz.irc.base.ITriggerManager#processMsg(IIrcMessage, IIrcControl)
      */
     @Override
-    public void processMsg(IIrcMessage msg, IrcControl control) {
+    public void processMsg(IIrcMessage msg, IIrcControl control) {
         if (msg == null) {
             LOG.warn("received null msg");
             return;

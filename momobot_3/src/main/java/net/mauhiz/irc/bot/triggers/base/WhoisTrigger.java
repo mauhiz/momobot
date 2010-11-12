@@ -3,7 +3,7 @@ package net.mauhiz.irc.bot.triggers.base;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.model.WhoisRequest;
+import net.mauhiz.irc.base.data.WhoisRequest;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -32,7 +32,8 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     public void doTrigger(Join im, IIrcControl control) {
         // if (MomoBot.AUTOJOIN.contains(im.getChan().toLowerCase(Locale.US))) {
         IrcUser user = im.getServer().findUser(new Mask(im.getFrom()), true);
-        new WhoisRequest(user.getNick(), im.getServer(), control).startAs("Whois Request");
+        WhoisRequest wr = new WhoisRequest(user.getNick(), im.getServer(), control);
+        wr.startAs("Whois Request");
         // }
     }
     
@@ -41,6 +42,8 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {
-        new WhoisRequest(getArgs(pme.getMessage()), pme.getServer(), control, pme.getFrom()).startAs("Whois Request");
+        WhoisRequest wr = new WhoisRequest(getArgs(pme.getMessage()), pme.getServer(), control);
+        wr.setReportTo(pme.getFrom());
+        wr.startAs("Whois Request");
     }
 }

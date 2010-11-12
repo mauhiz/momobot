@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Locale;
 
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.fake.FakeUser;
 import net.mauhiz.irc.bot.event.Team;
-import net.mauhiz.irc.bot.triggers.event.gather.FakeUser;
 
 /**
  * @author topper

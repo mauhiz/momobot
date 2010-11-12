@@ -5,8 +5,6 @@ import java.util.List;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -47,8 +45,7 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                 int score1 = Integer.parseInt(args[1]);
                 int score2 = Integer.parseInt(args[2]);
                 Tournament tn = (Tournament) event;
-                IrcUser ircuser = im.getServer().findUser(new Mask(im.getFrom()), true);
-                List<String> str = tn.setScore(ircuser, id, score1, score2);
+                List<String> str = tn.setScore(id, score1, score2);
                 for (String element : str) {
                     Privmsg msg = Privmsg.buildAnswer(im, element);
                     control.sendMsg(msg);

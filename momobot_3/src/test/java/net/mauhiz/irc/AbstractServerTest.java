@@ -8,11 +8,10 @@ import net.mauhiz.irc.base.data.qnet.QnetUser;
  * 
  * @author mauhiz
  */
-public class AbstractServerTest {
+public abstract class AbstractServerTest {
+    protected final QnetServer QNET = new QnetServer("irc://uk.quakenet.org:6667/");
     
-    protected static final QnetServer QNET = new QnetServer("irc://uk.quakenet.org:6667/");
-    
-    static {
+    public AbstractServerTest() {
         QNET.setAlias("QuakeNet");
         
         QnetUser myself = QNET.newUser("momobot3");

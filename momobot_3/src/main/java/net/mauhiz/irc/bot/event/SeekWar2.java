@@ -3,6 +3,7 @@ package net.mauhiz.irc.bot.event;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +28,7 @@ import org.apache.commons.lang.time.StopWatch;
  */
 public class SeekWar2 extends ChannelEvent {
     
-    // TODO : si c'est une blackliste d'utilisateur, il faut la stocker dans le même type de liste que la
+    // TODO : si c'est une blackliste d'utilisateur, il faut la stocker dans le mï¿½me type de liste que la
     // listIrcSeekUser (par exemple)
     private static final String[] BLACKLIST;
     
@@ -36,7 +37,7 @@ public class SeekWar2 extends ChannelEvent {
     private static final boolean DEFAULT_SERV;
     
     /**
-     * Pattern permettant de repérer ce qui peut ressembler à une adresse IP et un port dans une chaîne
+     * Pattern permettant de repï¿½rer ce qui peut ressembler ï¿½ une adresse IP et un port dans une chaï¿½ne
      */
     public static final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.){3}\\d{1,3}\\:\\d{1,5}");
     private static final String[] LEVELS;
@@ -77,20 +78,20 @@ public class SeekWar2 extends ChannelEvent {
     }
     /**
      * @param st
-     * @return true si le paramètre contient une adresse ip valide, false sinon
+     * @return true si le paramï¿½tre contient une adresse ip valide, false sinon
      */
     public static boolean isMatchIp(final String st) {
         Matcher m = IP_PATTERN.matcher(st);
         if (m.find()) {
             InetSocketAddress add1 = NetUtils.makeISA(m.group());
-            if (add1.getPort() > MIN_SRV_PORT) {
+            if (add1 != null && add1.getPort() > MIN_SRV_PORT) {
                 return true;
             }
         }
         return false;
     }
     /**
-     * Vérifie si la chaîne st est un message utilisateur indiquant le lvl de la war
+     * Vï¿½rifie si la chaï¿½ne st est un message utilisateur indiquant le lvl de la war
      * 
      * @param st
      * @return true si il le but du message est d'indiquer le level, false sinon
@@ -103,7 +104,7 @@ public class SeekWar2 extends ChannelEvent {
     }
     /**
      * @param st
-     * @return true si le paramètre st contient une URL, false sinon
+     * @return true si le paramï¿½tre st contient une URL, false sinon
      */
     public static boolean isMatchUrl(final String st) {
         if (st.contains("http://") || st.contains("www.")) {
@@ -115,7 +116,7 @@ public class SeekWar2 extends ChannelEvent {
     
     private final IIrcControl control;
     /**
-     * contient false si la war est encore d'actualité, true sinon
+     * contient false si la war est encore d'actualitï¿½, true sinon
      */
     private boolean expired;
     private String ipPw;
@@ -123,7 +124,7 @@ public class SeekWar2 extends ChannelEvent {
     private String level;
     
     /**
-     * Liste des utilisateurs qui sont déjà rentrés en contact avec le bot lorsqu'il était en train de seeker
+     * Liste des utilisateurs qui sont dï¿½jï¿½ rentrï¿½s en contact avec le bot lorsqu'il ï¿½tait en train de seeker
      */
     private final List<SeekUserHistory> listIrcSeekUser = new ArrayList<SeekUserHistory>();
     private final int nbPlayers;
@@ -173,17 +174,13 @@ public class SeekWar2 extends ChannelEvent {
                 case 1 :
                     resp = "Lancement d'un seek = " + match.group();
                     LOG.debug(resp);
-                    if ("on".equals(match.group().toLowerCase())) {
-                        serv = true;
-                    } else {
-                        serv = false;
-                    }
+                    serv = "on".equals(match.group().toLowerCase(Locale.FRENCH));
                     break;
                 
                 case 2 :
                     LOG.debug("Lancement d'un seek = " + match.toString());
                     level = match.group(1);
-                    serv = "on".equals(match.group().toLowerCase());
+                    serv = "on".equals(match.group().toLowerCase(Locale.FRENCH));
                     break;
                 
                 case 3 :
@@ -191,7 +188,7 @@ public class SeekWar2 extends ChannelEvent {
                     LOG.debug(resp);
                     ipPw = match.group(2);
                     level = match.group(1);
-                    serv = "on".equals(match.group().toLowerCase());
+                    serv = "on".equals(match.group().toLowerCase(Locale.FRENCH));
                     // FIXME /!\ DEBILE
                     break;
                 
@@ -230,7 +227,7 @@ public class SeekWar2 extends ChannelEvent {
         switch (user.getId()) {
             
             case 1 :
-                st = privmsg.getMessage().toLowerCase();
+                st = privmsg.getMessage().toLowerCase(Locale.FRENCH);
                 user.add(st);
                 if (isMatchIp(st)) {
                     user.setId(100);
@@ -269,7 +266,7 @@ public class SeekWar2 extends ChannelEvent {
                 }
                 break;
             case 2 :
-                st = privmsg.getMessage().toLowerCase();
+                st = privmsg.getMessage().toLowerCase(Locale.FRENCH);
                 user.add(st);
                 if (isMatchIp(st)) {
                     user.setId(100);
@@ -290,7 +287,7 @@ public class SeekWar2 extends ChannelEvent {
                 }
                 break;
             case 3 :
-                st = privmsg.getMessage().toLowerCase();
+                st = privmsg.getMessage().toLowerCase(Locale.FRENCH);
                 user.add(st);
                 if (isMatchIp(st)) {
                     user.setId(100);
@@ -303,7 +300,7 @@ public class SeekWar2 extends ChannelEvent {
                 }
                 break;
             case 4 :
-                st = privmsg.getMessage().toLowerCase();
+                st = privmsg.getMessage().toLowerCase(Locale.FRENCH);
                 user.add(st);
                 if (isMatchIp(st)) {
                     user.setId(100);
@@ -313,7 +310,7 @@ public class SeekWar2 extends ChannelEvent {
                 }
                 break;
             case 5 :
-                st = privmsg.getMessage().toLowerCase();
+                st = privmsg.getMessage().toLowerCase(Locale.FRENCH);
                 user.add(st);
                 if (isMatchIp(st)) {
                     user.setId(100);
@@ -329,7 +326,7 @@ public class SeekWar2 extends ChannelEvent {
                 }
                 break;
             case 6 :
-                st = privmsg.getMessage().toLowerCase();
+                st = privmsg.getMessage().toLowerCase(Locale.FRENCH);
                 user.add(st);
                 if (isMatchIp(st)) {
                     user.setId(100);
@@ -365,7 +362,7 @@ public class SeekWar2 extends ChannelEvent {
             case 67 :
 
             case 95 :
-                st = privmsg.getMessage().toLowerCase();
+                st = privmsg.getMessage().toLowerCase(Locale.FRENCH);
                 user.add(st);
                 if (isMatchIp(st)) {
                     // Seek FINI
@@ -381,7 +378,7 @@ public class SeekWar2 extends ChannelEvent {
                 }
                 break;
             case 96 :
-                st = privmsg.getMessage().toLowerCase();
+                st = privmsg.getMessage().toLowerCase(Locale.FRENCH);
                 user.add(st);
                 if (isMatchIp(st)) {
                     user.setId(100);
@@ -425,27 +422,27 @@ public class SeekWar2 extends ChannelEvent {
     }
     
     /**
-     * Vérifie si le match décrit par le paramètre st est du même lvl que le marche recherché par l'objet SeekWar
+     * Vï¿½rifie si le match dï¿½crit par le paramï¿½tre st est du mï¿½me lvl que le marche recherchï¿½ par l'objet SeekWar
      * 
      * @param st
-     * @return true si les deux niveaux sont équivalents, false sinon.
+     * @return true si les deux niveaux sont ï¿½quivalents, false sinon.
      */
     private boolean isMatchLevel(final String st) {
-        String lvl = level.toLowerCase();
-        String st1 = st.toLowerCase();
+        String lvl = level.toLowerCase(Locale.FRENCH);
+        String st1 = st.toLowerCase(Locale.FRENCH);
         for (int i = 0; i < LEVELS.length; i++) {
-            if (lvl.equals(LEVELS[i].toLowerCase())) {
+            if (lvl.equals(LEVELS[i].toLowerCase(Locale.FRENCH))) {
                 // on match le lvl dans la liste
-                if (st1.equals(LEVELS[i].toLowerCase())) {
+                if (st1.equals(LEVELS[i].toLowerCase(Locale.FRENCH))) {
                     return true;
                 }
                 if (i < LEVELS.length - 1) {
-                    if (st1.equals(LEVELS[i + 1].toLowerCase())) {
+                    if (st1.equals(LEVELS[i + 1].toLowerCase(Locale.FRENCH))) {
                         return true;
                     }
                 }
                 if (i > 0) {
-                    if (st1.equals(LEVELS[i - 1].toLowerCase())) {
+                    if (st1.equals(LEVELS[i - 1].toLowerCase(Locale.FRENCH))) {
                         return true;
                     }
                 }
@@ -461,7 +458,7 @@ public class SeekWar2 extends ChannelEvent {
      * @return
      */
     private boolean isMatchMessageChannel(final String str) {
-        String st = str.toLowerCase();
+        String st = str.toLowerCase(Locale.FRENCH);
         if (st.contains("dispo") || st.contains("tn") || st.contains("last")) {
             return false;
         }
@@ -490,7 +487,7 @@ public class SeekWar2 extends ChannelEvent {
      * @return
      */
     private boolean isMatchServer(final String st) {
-        String st1 = st.toLowerCase();
+        String st1 = st.toLowerCase(Locale.FRENCH);
         if (DEFAULT_SERV) {
             return true;
         }
@@ -501,11 +498,11 @@ public class SeekWar2 extends ChannelEvent {
     }
     
     /**
-     * Vérifie si un utilisateur est déjà présent dans la liste des utilisateurs ayant contacté le bot dans le but de
-     * répondre au seek
+     * Vï¿½rifie si un utilisateur est dï¿½jï¿½ prï¿½sent dans la liste des utilisateurs ayant contactï¿½ le bot dans le but de
+     * rï¿½pondre au seek
      * 
      * @param user
-     * @return true si l'utilisateur est déjà entré en contact avec le bot, false sinon
+     * @return true si l'utilisateur est dï¿½jï¿½ entrï¿½ en contact avec le bot, false sinon
      */
     private boolean isUserAleadyIn(final SeekUserHistory user) {
         for (SeekUserHistory element : listIrcSeekUser) {
@@ -606,8 +603,8 @@ public class SeekWar2 extends ChannelEvent {
         // sinon on cree l'user et on forward
         SeekUserHistory ircuser = new SeekUserHistory(user);
         
-        // TODO : faut-il systématiquement ajouter l'utilisateur s'il PV le bot en état de seek, mais que le PV n'a rien
-        // à voir avec le seek .. ?
+        // TODO : faut-il systï¿½matiquement ajouter l'utilisateur s'il PV le bot en ï¿½tat de seek, mais que le PV n'a rien
+        // ï¿½ voir avec le seek .. ?
         listIrcSeekUser.add(ircuser);
     }
     

@@ -27,16 +27,17 @@ public class SeekWar2Test {
         // Exemple classique
         Assert.assertTrue(SeekWar2.isMatchIp("192.168.0.15:27015"));
         
-        // Attension ya un piège là...
+        // Attension ya un piï¿½ge lï¿½...
         Assert.assertFalse(SeekWar2.isMatchIp("300.168.0.15:27015"));
         
         // Avec 5 chiffres aux lieux de 4
+        // FIXME ca va matcher sur "168.0.15.1:27015" vu la regexp...
         Assert.assertFalse(SeekWar2.isMatchIp("192.168.0.15.1:27015"));
         
         // Avec 3 chiffres au lieux de 3
         Assert.assertFalse(SeekWar2.isMatchIp("192.1680.15:27015"));
         
-        // Avec un caractère alphabétique
+        // Avec un caractï¿½re alphabï¿½tique
         Assert.assertFalse(SeekWar2.isMatchIp("192.168.a.15:27015"));
         
     }

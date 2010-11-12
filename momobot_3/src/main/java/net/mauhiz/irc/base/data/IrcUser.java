@@ -1,11 +1,10 @@
 package net.mauhiz.irc.base.data;
 
-import java.io.Serializable;
 
 /**
  * @author mauhiz
  */
-public interface IrcUser extends Serializable, Comparable<IrcUser> {
+public interface IrcUser extends Comparable<IrcUser> {
     String getFullName();
     
     String getHost();

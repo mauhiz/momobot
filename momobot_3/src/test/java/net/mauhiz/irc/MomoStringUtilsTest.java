@@ -32,7 +32,7 @@ public class MomoStringUtilsTest {
         String output = MomoStringUtils.effaceAccents(input);
         Assert.assertEquals("aaaceeeiinooqu ", output);
         
-        input = "ého";
+        input = "Ã©ho";
         output = MomoStringUtils.effaceAccents(input);
         Assert.assertEquals("eho", output);
         

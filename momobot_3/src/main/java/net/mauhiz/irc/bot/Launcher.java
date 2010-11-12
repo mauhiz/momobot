@@ -2,7 +2,7 @@ package net.mauhiz.irc.bot;
 
 import java.nio.charset.Charset;
 
-import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
@@ -69,7 +69,7 @@ public class Launcher {
         LOG.debug("fullName=" + fullName);
         
         MmbTriggerManager mtm = new MmbTriggerManager();
-        IIrcControl control = new IrcControl(mtm);
+        IIrcClientControl control = new IrcControl(mtm);
         
         String[] serverNames = config.getStringArray(profileCriteria + "/autoconnect/@server");
         for (String serverName : serverNames) {

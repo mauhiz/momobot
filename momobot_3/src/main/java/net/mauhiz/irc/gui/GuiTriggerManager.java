@@ -15,13 +15,13 @@ import org.eclipse.swt.widgets.Display;
  * @author mauhiz
  */
 public class GuiTriggerManager implements ITriggerManager {
-    IIrcControl client = new IrcControl(this);
+    IrcControl client = new IrcControl(this);
     BlockingQueue<IIrcMessage> incoming = new LinkedBlockingQueue<IIrcMessage>();
     
     /**
      * @return the client
      */
-    public IIrcControl getClient() {
+    public IrcControl getClient() {
         return client;
     }
     
@@ -33,10 +33,10 @@ public class GuiTriggerManager implements ITriggerManager {
     }
     
     /**
-     * @see net.mauhiz.irc.base.ITriggerManager#processMsg(IIrcMessage, IrcControl)
+     * @see net.mauhiz.irc.base.ITriggerManager#processMsg(IIrcMessage, IIrcControl)
      */
     @Override
-    public void processMsg(IIrcMessage msg, IrcControl ircControl) {
+    public void processMsg(IIrcMessage msg, IIrcControl ircControl) {
         if (msg == null) {
             return;
         }

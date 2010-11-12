@@ -1,21 +1,13 @@
 package net.mauhiz.irc.base.data;
 
-import java.net.InetSocketAddress;
+import java.util.Collection;
 import java.util.Set;
-
-import net.mauhiz.irc.base.msg.IIrcMessage;
 
 /**
  * @author mauhiz
  * 
  */
-public interface IrcServer {
-    
-    /**
-     * @param test
-     * @return
-     */
-    IIrcMessage buildFromRaw(String test);
+public interface IrcServer extends IrcPeer {
     
     int countUsers();
     
@@ -46,8 +38,6 @@ public interface IrcServer {
      */
     IrcUser findUser(String target, boolean addIfNotFound);
     
-    InetSocketAddress getAddress();
-    
     String getAlias();
     
     Iterable<IrcChannel> getChannels();
@@ -58,9 +48,9 @@ public interface IrcServer {
      */
     Set<IrcChannel> getChannelsForUser(IrcUser smith);
     
-    int getLineMaxLength();
-    
     IrcUser getMyself();
+    
+    Collection<String> getServiceNicks();
     
     IrcChannel newChannel(String chanLowerCase);
     

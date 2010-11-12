@@ -1,7 +1,5 @@
 package net.mauhiz.irc.gui;
 
-import java.io.IOException;
-
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.qnet.QnetServer;
@@ -39,9 +37,8 @@ public class GuiLauncher {
     
     /**
      * @param args
-     * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         GuiTriggerManager gtm = new GuiTriggerManager();
         Display display = new Display();
         Shell shell = new Shell(display);

@@ -24,7 +24,7 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
      * @param socket
      * @throws IOException
      */
-    IrcInput(IIrcIO io1, Socket socket) throws IOException {
+    protected IrcInput(IIrcIO io1, Socket socket) throws IOException {
         super();
         io = io1;
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15));

@@ -1,6 +1,5 @@
 package net.mauhiz.util;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -156,10 +155,12 @@ public class NetUtils {
                 InetAddress ip = InetAddress.getByName(str.substring(0, index));
                 int port = Integer.parseInt(str.substring(index + 1));
                 return new InetSocketAddress(ip, port);
-            } catch (IOException ioe) {
-                LOG.warn(ioe, ioe);
+                
+            } catch (UnknownHostException uhe) {
+                LOG.debug(uhe, uhe);
+                
             } catch (IllegalArgumentException iae) {
-                LOG.warn(iae, iae);
+                LOG.debug(iae, iae);
             }
         }
         return null;

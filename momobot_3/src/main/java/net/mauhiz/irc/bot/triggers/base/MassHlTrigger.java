@@ -8,7 +8,6 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
-import net.mauhiz.irc.base.data.qnet.QnetUser;
 import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -48,7 +47,7 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         IrcUser from = server.findUser(new Mask(cme.getFrom()), true);
         Set<IrcUser> nudgeableUsers = new TreeSet<IrcUser>();
         for (IrcUser nextIrcUser : chan) {
-            if (nextIrcUser instanceof QnetUser && ((QnetUser) nextIrcUser).isService()) {
+            if (nextIrcUser.isService()) {
                 /* no bots */
                 LOG.debug("skipping bot : " + nextIrcUser.getNick());
                 continue;

@@ -5,6 +5,6 @@ import net.mauhiz.irc.base.data.UserProperties;
 /**
  * @author mauhiz
  */
-public class QnetUserProperties extends UserProperties {
+class QnetUserProperties extends UserProperties {
     // TODO
 }

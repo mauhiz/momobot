@@ -1,9 +1,9 @@
 package net.mauhiz.irc.bot.automate;
 
 import net.mauhiz.irc.base.IrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.WhoisRequest;
+import net.mauhiz.irc.base.data.qnet.QnetServer;
 import net.mauhiz.irc.base.data.qnet.QnetUser;
-import net.mauhiz.irc.base.model.WhoisRequest;
 import net.mauhiz.irc.bot.triggers.cs.PlayerDB;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +25,7 @@ public class RegisterAutomate extends AbstractAutomate {
     /**
      * mon SteamID.
      */
-    private String steamid;
+    private String steamId;
     
     /**
      * @param user1
@@ -33,9 +33,19 @@ public class RegisterAutomate extends AbstractAutomate {
      * @param control1
      * @param server1
      */
-    public RegisterAutomate(QnetUser user1, IrcControl control1, IrcServer server1) {
+    public RegisterAutomate(QnetUser user1, IrcControl control1, QnetServer server1) {
         super(user1, control1, server1);
         etat = STARTED;
+    }
+    
+    @Override
+    public QnetServer getServer() {
+        return (QnetServer) super.getServer();
+    }
+    
+    @Override
+    protected QnetUser getUser() {
+        return (QnetUser) super.getUser();
     }
     
     /**
@@ -56,13 +66,13 @@ public class RegisterAutomate extends AbstractAutomate {
                     if (whois != null && whois.isRunning()) {
                         continue;
                     }
-                    if (StringUtils.isEmpty(((QnetUser) getUser()).getAuth())) {
+                    if (StringUtils.isEmpty(getUser().getAuth())) {
                         sendMsgToUser("Tu es authe sur Qnet.");
                         sendMsgToUser("Il faut etre auth pour utiliser la commande $register.");
                         return;
                     }
-                    sendMsgToUser("Ton auth Qnet est: " + ((QnetUser) getUser()).getAuth());
-                    if (PlayerDB.authIsKnown(((QnetUser) getUser()).getAuth())) {
+                    sendMsgToUser("Ton auth Qnet est: " + getUser().getAuth());
+                    if (PlayerDB.authIsKnown(getUser().getAuth())) {
                         sendMsgToUser("Cet auth est deja associe a une steamid");
                         sendMsgToUser("Pour changer de steamid, commencez par $unregister");
                         return;
@@ -71,10 +81,10 @@ public class RegisterAutomate extends AbstractAutomate {
                     etat = STEAMING;
                     break;
                 case STEAMING :
-                    if (StringUtils.isEmpty(steamid)) {
+                    if (StringUtils.isEmpty(steamId)) {
                         continue;
                     }
-                    if (PlayerDB.steamidIsKnown(steamid)) {
+                    if (PlayerDB.steamidIsKnown(steamId)) {
                         sendMsgToUser("Ce steamid est deja associe a un auth");
                         sendMsgToUser("Veuillez contacter le mastah du bot");
                         return;
@@ -92,7 +102,7 @@ public class RegisterAutomate extends AbstractAutomate {
      * @param steamid1
      *            le steamid
      */
-    public void setSteamID(String steamid1) {
-        steamid = steamid1;
+    public void setSteamId(String steamid1) {
+        steamId = steamid1;
     }
 }

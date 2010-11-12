@@ -70,12 +70,16 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
             Socket socket = ss.accept();
             socket.setSoTimeout(SO_TIMEOUT);
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-            String line = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15))
-                    .readLine();
-            if (line != null) {
-                writer.println(line + " : USERID : UNIX : " + user);
+            
+            try {
+                String line = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15))
+                        .readLine();
+                if (line != null) {
+                    writer.println(line + " : USERID : UNIX : " + user);
+                }
+            } finally {
+                writer.close();
             }
-            writer.close();
         } catch (SocketTimeoutException ste) {
             // nevermind
         } catch (IOException ioe) {

@@ -1,5 +1,8 @@
 package net.mauhiz.irc.base.data.defaut;
 
+import java.util.Collections;
+import java.util.Set;
+
 import net.mauhiz.irc.base.data.AbstractIrcServer;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
@@ -20,6 +23,11 @@ public class DefaultServer extends AbstractIrcServer {
     @Override
     public int getLineMaxLength() {
         return 127; // TODO confirm?
+    }
+    
+    @Override
+    public Set<String> getServiceNicks() {
+        return Collections.emptySet();
     }
     
     /**
