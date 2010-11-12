@@ -19,7 +19,6 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
@@ -71,15 +70,14 @@ public class Tournament extends ChannelEvent {
             
             String remoteFileName = remotePath.substring(slash);
             LOG.debug("storing to " + remoteFileName);
-            InputStream is = null;
+            InputStream is = new FileInputStream(temp);
             try {
-                is = new FileInputStream(temp);
                 boolean success = client.storeFile(ftpURI.getPath(), is);
                 if (!success) {
                     LOG.warn("Could not upload to " + ftpURI);
                 }
             } finally {
-                IOUtils.closeQuietly(is);
+                is.close();
             }
             
         } else {
@@ -158,17 +156,19 @@ public class Tournament extends ChannelEvent {
         File temp = new File(CFG.getString("tn.tempfile.name"));
         
         ve.init();
-        PrintWriter writer = null;
+        PrintWriter writer = new PrintWriter(temp);
+        
         try {
-            writer = new PrintWriter(temp);
-            
             Template plate = ve.getTemplate(CFG.getString("tn.vm"));
             plate.initDocument();
             plate.merge(context, writer);
             writer.flush();
-            LOG.debug(FileUtils.readFileToString(temp));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(FileUtils.readFileToString(temp));
+            }
+            
         } finally {
-            IOUtils.closeQuietly(writer);
+            writer.close();
         }
         return temp;
     }
@@ -177,14 +177,15 @@ public class Tournament extends ChannelEvent {
      * genere et upload le template
      */
     public void generateTemplate() {
-        File temp = null;
         try {
-            temp = createTemplateFile();
-            uploadFile(temp);
+            File temp = createTemplateFile();
+            try {
+                uploadFile(temp);
+            } finally {
+                FileUtils.deleteQuietly(temp);
+            }
         } catch (Exception ioe) {
             LOG.error(ioe, ioe);
-        } finally {
-            FileUtils.deleteQuietly(temp);
         }
     }
     /**
@@ -273,7 +274,6 @@ public class Tournament extends ChannelEvent {
         
     }
     /**
-     * @param ircuser
      * @param idTeam
      *            qui a win
      * @param score01
@@ -283,7 +283,7 @@ public class Tournament extends ChannelEvent {
      * @return List String
      */
     
-    public List<String> setScore(IrcUser ircuser, int idTeam, int score01, int score02) {
+    public List<String> setScore(int idTeam, int score01, int score02) {
         List<String> reply = new ArrayList<String>();
         int score1 = score01;
         int score2 = score02;

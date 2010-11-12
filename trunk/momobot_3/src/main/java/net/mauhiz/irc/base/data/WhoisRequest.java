@@ -1,19 +1,15 @@
-package net.mauhiz.irc.base.model;
+package net.mauhiz.irc.base.data;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.qnet.QnetUser;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Whois;
 import net.mauhiz.util.AbstractRunnable;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
@@ -45,7 +41,7 @@ public class WhoisRequest extends AbstractRunnable {
     private final IIrcControl control;
     private boolean purgatory;
     private String reportTo;
-    private final IrcServer server;
+    protected final IrcServer server;
     
     /**
      * fait attendre la reponse.
@@ -55,7 +51,7 @@ public class WhoisRequest extends AbstractRunnable {
     /**
      * ma cible.
      */
-    private final String target;
+    protected final String target;
     
     /**
      * whois silencieux.
@@ -72,15 +68,12 @@ public class WhoisRequest extends AbstractRunnable {
         control = control1;
     }
     
-    /**
-     * @param nick
-     * @param server1
-     * @param control1
-     * @param reportTo1
-     */
-    public WhoisRequest(String nick, IrcServer server1, IIrcControl control1, String reportTo1) {
-        this(nick, server1, control1);
-        reportTo = reportTo1;
+    public long getElapsedTime() {
+        return sw.getTime();
+    }
+    
+    public String getReportTo() {
+        return reportTo;
     }
     
     /**
@@ -88,11 +81,6 @@ public class WhoisRequest extends AbstractRunnable {
      */
     public void run() {
         /* whois deja en cours */
-        if (target.equalsIgnoreCase("L") || target.equalsIgnoreCase("Q")) {
-            /* le whois des bots de Qnet timeout */
-            return;
-        }
-        
         IrcUser user = server.findUser(target, false);
         if (user == null) {
             /* user inconnu */
@@ -101,17 +89,20 @@ public class WhoisRequest extends AbstractRunnable {
         /* frequence maximale de whois */
         WhoisRequest oldWr = ALL_WHOIS.get(target);
         /* whois en cours */
-        if (oldWr != null && oldWr.sw.getTime() < TIMEOUT) {
+        if (oldWr != null && oldWr.getElapsedTime() < TIMEOUT) {
             /* whois precedent en cours */
             return;
             /* else : echec du whois precedent : retry */
         }
         
-        waitForResult(user);
-        
+        waitForResult();
     }
     
-    private void setSuccess(boolean ok) {
+    public void setReportTo(String reportTo) {
+        this.reportTo = reportTo;
+    }
+    
+    public void setSuccess(boolean ok) {
         stop();
         String respMsg;
         if (ok) {
@@ -133,7 +124,7 @@ public class WhoisRequest extends AbstractRunnable {
         ALL_WHOIS.remove(target);
     }
     
-    private void waitForResult(IrcUser user) {
+    private void waitForResult() {
         sw.start();
         
         ALL_WHOIS.put(target, this);
@@ -148,16 +139,7 @@ public class WhoisRequest extends AbstractRunnable {
                     return;
                 }
             }
-            /* on suppose que le Whois a donc reussi => l'user existe. */
-            if (!(user instanceof QnetUser)) {
-                return;
-            }
-            QnetUser quser = (QnetUser) user;
-            if (StringUtils.isEmpty(quser.getAuth())) {
-                /* no auth */
-                return;
-            }
-            // "L'auth Qnet de " + target + " est " + quser.getAuth()) //
+            
             /* debug */
             pause(TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS));
         }

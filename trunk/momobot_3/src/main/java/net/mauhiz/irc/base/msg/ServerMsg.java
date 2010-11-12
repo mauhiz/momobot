@@ -5,8 +5,8 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.qnet.QnetUser;
-import net.mauhiz.irc.base.model.WhoisRequest;
+import net.mauhiz.irc.base.data.WhoisRequest;
+import net.mauhiz.irc.base.data.qnet.QnetServer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,7 +47,7 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
     
     @Override
     public String getIrcForm() {
-        return code + " " + msg;
+        return ":" + from + " " + code + " " + to + " :" + msg;
     }
     
     /**
@@ -76,6 +76,7 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
         }
         LOG.debug("Names Reply on " + chan + ": " + StringUtils.join(prefixedNames, ' '));
     }
+    
     private void handleWhoisChannels() {
         String nick = StringUtils.substringBefore(msg, " ");
         IrcUser ircUser = server.findUser(nick, true);
@@ -93,14 +94,6 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
         }
     }
     
-    private void handleWhoisQnet() {
-        String nick = StringUtils.substringBefore(msg, " ");
-        QnetUser ircUser = (QnetUser) server.findUser(nick, true);
-        
-        String remaining = StringUtils.substringAfter(msg, " ");
-        String auth = StringUtils.substringBefore(remaining, " :");
-        ircUser.setAuth(auth);
-    }
     private void handleWhoisUser() {
         String nick = StringUtils.substringBefore(msg, " ");
         IrcUser ircUser = server.findUser(nick, true);
@@ -182,8 +175,8 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
                 LOG.warn("TODO whois server : " + msg);
                 // msg = mauhiz *.quakenet.org :QuakeNet IRC Server
                 break;
-            case RPL_WHOISAUTH :
-                handleWhoisQnet();
+            case RPL_WHOISAUTH : // this message is specific to Qnet Servers
+                ((QnetServer) server).handleWhois(msg);
                 break;
             case RPL_ENDOFWHOIS :
                 String nick = StringUtils.substringBefore(msg, " ");

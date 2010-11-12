@@ -3,6 +3,7 @@ package net.mauhiz.irc.bot.event;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -190,7 +191,7 @@ public class SeekWar {
             }
             
             // On continue de traiter le message PV
-            if ("on".equals(seekServ.toLowerCase())) {
+            if ("on".equals(seekServ.toLowerCase(Locale.FRENCH))) {
                 
                 if (userpv.contains(provenance)) {
                     // Le bot a deja ete PV par ce type
@@ -198,7 +199,8 @@ public class SeekWar {
                         // OK le bot valide le pv <=> SEEK REUSSI
                         // On lui file ip pass
                         // + GOGOGO
-                        if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
+                        if (msg.toLowerCase(Locale.FRENCH).contains("lvl")
+                                || msg.toLowerCase(Locale.FRENCH).contains("level")) {
                             
                             Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
                             resultPrivmsg.add(msg1);
@@ -239,7 +241,8 @@ public class SeekWar {
             } else if ("off".equalsIgnoreCase(seekServ)) {
                 // Le bot a deja ete PV par ce bonhomme
                 if (userpv.contains(provenance)) {
-                    if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
+                    if (msg.toLowerCase(Locale.FRENCH).contains("lvl")
+                            || msg.toLowerCase(Locale.FRENCH).contains("level")) {
                         Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
                         resultPrivmsg.add(msg1);
                         Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go?");
@@ -256,7 +259,8 @@ public class SeekWar {
                     // On PV le bonhomme ok > GO
                     // On affiche le msg (cad l'ip & pass) ds le channel de seek
                     userpv.add(provenance);
-                    if (msg.toLowerCase().contains("lvl") || msg.toLowerCase().contains("level")) {
+                    if (msg.toLowerCase(Locale.FRENCH).contains("lvl")
+                            || msg.toLowerCase(Locale.FRENCH).contains("level")) {
                         Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
                         resultPrivmsg.add(msg1);
                         Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go?");
@@ -469,18 +473,18 @@ public class SeekWar {
         }
         boolean numbermatch = false;
         for (String element : listMatch) {
-            if (stg.toLowerCase().contains(element)) {
+            if (stg.toLowerCase(Locale.FRENCH).contains(element)) {
                 numbermatch = true;
                 break;
             }
             
         }
-        if (numbermatch && stg.toLowerCase().contains(seekServ1)) {
+        if (numbermatch && stg.toLowerCase(Locale.FRENCH).contains(seekServ1)) {
             
             int i = -1;
             // On regarde si le seekLevel match avec la liste de lvl
             for (int j = 0; j < lvl.length; j++) {
-                if (lvl[j].equals(seekLevel.toLowerCase())) {
+                if (lvl[j].equals(seekLevel.toLowerCase(Locale.FRENCH))) {
                     i = j;
                 }
             }
@@ -530,7 +534,7 @@ public class SeekWar {
             }
         }
         
-        String lowerMsg = msg.toLowerCase();
+        String lowerMsg = msg.toLowerCase(Locale.FRENCH);
         for (String element : blackList) {
             if (lowerMsg.contains(element)) {
                 return false;

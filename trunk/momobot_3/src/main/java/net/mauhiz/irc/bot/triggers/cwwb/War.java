@@ -1,5 +1,6 @@
 package net.mauhiz.irc.bot.triggers.cwwb;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +42,7 @@ public class War {
     public War(String pUser, String pSeekMessage) {
         this();
         // Important
-        String seekMessage = pSeekMessage.toLowerCase();
+        String seekMessage = pSeekMessage.toLowerCase(Locale.FRENCH);
         if (seekMessage.contains("dispo") || seekMessage.contains("tn") || seekMessage.contains("last")
                 || seekMessage.contains("binome") || seekMessage.contains("cherche team")) {
             return;

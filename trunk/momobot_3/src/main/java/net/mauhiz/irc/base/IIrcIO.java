@@ -2,8 +2,7 @@ package net.mauhiz.irc.base;
 
 import java.io.IOException;
 
-import net.mauhiz.irc.base.IrcIO.Status;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcPeer;
 
 /**
  * @author mauhiz
@@ -18,22 +17,17 @@ public interface IIrcIO {
     /**
      * @return server
      */
-    IrcServer getServer();
+    IrcPeer getPeer();
     
     /**
      * @return status
      */
-    Status getStatus();
+    IOStatus getStatus();
     
     /**
      * @param msg
      */
     void processMsg(String msg);
-    
-    /**
-     * @throws IOException
-     */
-    void reconnect() throws IOException;
     
     /**
      * @param msg
@@ -43,8 +37,5 @@ public interface IIrcIO {
     /**
      * @param status
      */
-    void setStatus(Status status);
-    
-    void waitForConnection();
-    
+    void setStatus(IOStatus status);
 }

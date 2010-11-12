@@ -6,7 +6,7 @@ import net.mauhiz.irc.base.data.UserProperties;
 /**
  * @author mauhiz
  */
-public class DefaultUser extends AbstractIrcUser {
+class DefaultUser extends AbstractIrcUser {
     /**
      * @param nick1
      */

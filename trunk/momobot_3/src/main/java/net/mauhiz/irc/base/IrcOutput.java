@@ -30,7 +30,7 @@ public class IrcOutput extends AbstractRunnable implements IIrcOutput {
      * @param socket
      * @throws IOException
      */
-    IrcOutput(Socket socket) throws IOException {
+    protected IrcOutput(Socket socket) throws IOException {
         super();
         writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), FileUtil.ISO8859_15), true);
     }

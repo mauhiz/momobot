@@ -110,7 +110,7 @@ public class Mode extends AbstractIrcMessage {
                 LOG.debug("userModes : " + userModes);
             }
         } else {
-            
+            // TODO
         }
     }
     

@@ -1,5 +1,6 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 
@@ -35,7 +36,9 @@ public class ServerError extends AbstractIrcMessage {
     
     @Override
     public void process(IIrcControl control) {
-        control.quit(server);
+        if (control instanceof IIrcClientControl) {
+            ((IIrcClientControl) control).quit(server);
+        }
     }
     
     @Override

@@ -2,6 +2,7 @@ package net.mauhiz.irc.base;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Nick;
@@ -14,126 +15,74 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class IrcIO extends SocketClient implements IIrcIO {
-    /**
-     * @author mauhiz
-     */
-    enum Status {
-        CONNECTED, CONNECTING, DISCONNECTED, DISCONNECTING;
+public class IrcIO extends AbstractIrcIO {
+    static class IrcClient extends SocketClient {
+        Socket getSocket() {
+            return _socket_;
+        }
     }
-    /**
-     * logger
-     */
+    
     private static final Logger LOG = Logger.getLogger(IrcIO.class);
-    private final IIrcControl control;
-    private IIrcOutput output;
-    private final IrcServer server;
-    private Status status = Status.DISCONNECTED;
+    private final IrcClient sclient = new IrcClient();
     
     /**
      * @param ircControl
      * @param server1
-     * @throws IOException
      */
-    IrcIO(IrcControl ircControl, IrcServer server1) throws IOException {
-        super();
-        control = ircControl;
-        status = Status.CONNECTING;
-        server = server1;
-        connect();
+    protected IrcIO(IrcControl ircControl, IrcServer server1) {
+        super(ircControl, server1);
     }
-    
     /**
      * @throws IOException
      */
-    private void connect() throws IOException {
-        InetSocketAddress address = server.getAddress();
-        super.connect(address.getAddress(), address.getPort());
-        if (super._socket_ == null) {
+    public void connect() throws IOException {
+        InetSocketAddress address = peer.getAddress();
+        sclient.connect(address.getAddress(), address.getPort());
+        if (sclient.getSocket() == null) {
             LOG.error("could not connect to " + address);
             return;
         }
-        output = new IrcOutput(super._socket_);
+        output = new IrcOutput(sclient.getSocket());
         output.start();
-        IIrcInput input = new IrcInput(this, super._socket_);
+        IIrcInput input = new IrcInput(this, sclient.getSocket());
         input.start();
-        sendMsg(new Nick(server).getIrcForm());
-        sendMsg(new User(server).getIrcForm());
+        sendMsg(new Nick(getPeer()).getIrcForm());
+        sendMsg(new User(getPeer()).getIrcForm());
     }
+    
     /**
      * @see org.apache.commons.net.SocketClient#disconnect()
      */
     @Override
     public void disconnect() {
-        status = Status.DISCONNECTING;
+        status = IOStatus.DISCONNECTING;
         if (output != null) {
             output.stop();
             AbstractRunnable.sleep(2000);
         }
-        if (isConnected()) {
+        if (sclient.isConnected()) {
             try {
-                super.disconnect();
+                sclient.disconnect();
             } catch (IOException ioe) {
                 LOG.error(ioe, ioe);
             }
         }
-        status = Status.DISCONNECTED;
+        status = IOStatus.DISCONNECTED;
     }
     
-    /**
-     * @see net.mauhiz.irc.base.IIrcIO#getServer()
-     */
     @Override
-    public IrcServer getServer() {
-        return server;
+    public IrcServer getPeer() {
+        return (IrcServer) peer;
     }
     
-    /**
-     * @see net.mauhiz.irc.base.IIrcIO#getStatus()
-     */
-    public Status getStatus() {
-        return status;
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.IIrcIO#processMsg(java.lang.String)
-     */
-    public void processMsg(String msg) {
-        if (msg == null) {
-            return;
-        }
-        control.decodeIrcRawMsg(msg, this);
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.IIrcIO#reconnect()
-     */
     public void reconnect() throws IOException {
         disconnect();
         connect();
     }
     
-    /**
-     * @see net.mauhiz.irc.base.IIrcIO#sendMsg(String)
-     */
-    public final void sendMsg(String msg) {
-        int maxLen = server.getLineMaxLength();
-        String trimmedMsg = msg.length() > maxLen ? msg.substring(0, maxLen) : msg;
-        
-        output.sendRawMsg(trimmedMsg);
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.IIrcIO#setStatus(net.mauhiz.irc.base.IrcIO.Status)
-     */
-    public void setStatus(Status status1) {
-        status = status1;
-    }
-    
-    @Override
     public void waitForConnection() {
         while (true) {
-            if (status == Status.CONNECTED) {
+            if (status == IOStatus.CONNECTED) {
                 return;
             }
             AbstractRunnable.sleep(100);
