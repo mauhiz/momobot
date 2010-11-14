@@ -189,7 +189,22 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
                 LOG.warn("I should register before sending commands!");
                 break;
             case RPL_WHOISIDLE :
-                LOG.warn("I have been idle : " + StringUtils.substringAfter(msg, " "));
+                LOG.debug("User has been idle : " + StringUtils.substringAfter(msg, " "));
+                break;
+            case RPL_WHOISOPERATOR :
+                String opNick = StringUtils.substringBefore(msg, " ");
+                WhoisRequest.end(opNick, true);
+                
+                String opText = StringUtils.substringAfter(msg, ":");
+                LOG.debug(opNick + " " + opText);
+                break;
+            case ERR_NICKNAMEINUSE :
+                String nickInUse = StringUtils.substringBefore(msg, " ");
+                LOG.warn(nickInUse + " is already in use");
+                
+                // TODO use alternate nicknames from config ?
+                String newNick = nickInUse + "_";
+                control.sendMsg(new Nick(server, null, newNick));
                 break;
             default :
                 LOG.warn("Unhandled server reply : " + this);
