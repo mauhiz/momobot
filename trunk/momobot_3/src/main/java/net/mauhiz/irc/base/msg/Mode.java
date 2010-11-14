@@ -66,7 +66,8 @@ public class Mode extends AbstractIrcMessage {
     
     @Override
     public void process(IIrcControl control) {
-        IrcUser by = server.findUser(new Mask(from), true);
+        Mask fromMask = new Mask(from);
+        IrcUser by = fromMask.getNick() == null ? null : server.findUser(fromMask, true);
         
         String[] toks = StringUtils.split(message, ' ');
         String modeInfo = toks[0];

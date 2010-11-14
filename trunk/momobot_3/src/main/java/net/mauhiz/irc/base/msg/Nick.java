@@ -63,6 +63,9 @@ public class Nick extends AbstractIrcMessage {
      */
     @Override
     public String toString() {
+        if (from == null) {
+            return "* Setting new nickname " + newNick;
+        }
         return "* " + from + " is now known as " + newNick;
     }
 }

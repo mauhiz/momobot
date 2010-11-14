@@ -14,7 +14,6 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.util.AbstractRunnable;
 import net.mauhiz.util.FileUtil;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -39,40 +38,27 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
     
     /**
      * @param user1
-     * @throws IOException
      */
-    public IdentServer(IrcUser user1) throws IOException {
+    public IdentServer(IrcUser user1) {
         super();
         user = user1.getUser();
-        
-        try {
-            ss = new ServerSocket(PORT);
-            ss.setSoTimeout(SO_TIMEOUT);
-            
-        } catch (BindException be) {
-            if (SystemUtils.IS_OS_LINUX) { // not root => bind denied
-                LOGGER.info("Could not bind on port: " + PORT + ". Maybe I should be rootz?");
-            } else {
-                throw be;
-            }
-        }
     }
     
     /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        if (ss == null) {
-            stop();
-            return;
-        }
+        
         try {
+            ss = new ServerSocket(PORT);
+            ss.setSoTimeout(SO_TIMEOUT);
+            
             Socket socket = ss.accept();
             socket.setSoTimeout(SO_TIMEOUT);
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
             
             try {
-                String line = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15))
+                String line = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ASCII))
                         .readLine();
                 if (line != null) {
                     writer.println(line + " : USERID : UNIX : " + user);
@@ -80,6 +66,10 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
             } finally {
                 writer.close();
             }
+            
+        } catch (BindException be) {
+            LOGGER.error("Could not bind on port: " + PORT, be);
+            
         } catch (SocketTimeoutException ste) {
             // nevermind
         } catch (IOException ioe) {
