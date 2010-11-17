@@ -23,7 +23,7 @@ public class AccountStore {
     public Account getFor(String login, String password) {
         synchronized (ACCOUNTS) {
             for (Account acc : ACCOUNTS) {
-                if (acc.username.equals(login) && acc.password.equals(password)) {
+                if (acc.getUsername().equals(login) && acc.getPassword().equals(password)) {
                     return acc;
                 }
             }

@@ -19,14 +19,14 @@ public class DummyAccountStore extends AccountStore {
     protected void load() {
         synchronized (ACCOUNTS) {
             Account acc = new Account();
-            acc.username = "mauhiz";
-            acc.password = "mauhiz";
+            acc.setUsername("mauhiz");
+            acc.setPassword("mauhiz");
             /* beware */
-            acc.server = QNET;
+            acc.setServer(QNET);
             /* cette technique ne marche que pour 1 seul account */
-            IrcUser myself = acc.server.getMyself();
-            myself.setUser(acc.username);
-            myself.setNick(acc.username);
+            IrcUser myself = acc.getServer().getMyself();
+            myself.setUser(acc.getUsername());
+            myself.setNick(acc.getUsername());
             ACCOUNTS.add(acc);
         }
     }
