@@ -97,8 +97,8 @@ public class BncClientIO extends AbstractIrcIO {
                 Account acc = server.getAccountStore().getFor(login, password);
                 if (acc != null) {
                     account = acc;
-                    acc.relatedManager.currentlyConnected.add(this);
-                    LOG.info(acc.username + " logged in successfully from " + getHostName());
+                    acc.getRelatedManager().currentlyConnected.add(this);
+                    LOG.info(acc.getUsername() + " logged in successfully from " + getHostName());
                     return;
                 }
                 

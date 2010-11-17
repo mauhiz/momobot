@@ -37,8 +37,8 @@ public class BncServerConnection extends AbstractRunnable {
     
     private void connectAccounts() { // TODO implement limit
         for (Account acc : accountStore.getAccounts()) {
-            IrcControl control = new IrcControl(acc.relatedManager);
-            control.connect(acc.server);
+            IrcControl control = new IrcControl(acc.getRelatedManager());
+            control.connect(acc.getServer());
         }
     }
     
