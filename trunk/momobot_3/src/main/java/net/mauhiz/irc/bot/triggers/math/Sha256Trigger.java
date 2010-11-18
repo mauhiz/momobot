@@ -7,6 +7,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
+import net.mauhiz.util.FileUtil;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
@@ -49,7 +50,8 @@ public class Sha256Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
             resp = Privmsg.buildAnswer(cme, "sha-256 de quoi ?");
         } else {
             try {
-                resp = Privmsg.buildAnswer(cme, "sha-256 de " + args + ": " + computeSha256(args.getBytes()));
+                resp = Privmsg.buildAnswer(cme,
+                        "sha-256 de " + args + ": " + computeSha256(args.getBytes(FileUtil.ISO8859_15)));
             } catch (NoSuchAlgorithmException nsae) {
                 resp = Privmsg.buildAnswer(cme, "J'ai pas de sha-256. Sry.");
             }
