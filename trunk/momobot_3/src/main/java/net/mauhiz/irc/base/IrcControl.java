@@ -81,7 +81,7 @@ public class IrcControl extends AbstractIrcControl implements IIrcClientControl 
         IrcServer server = msg.getServer();
         IIrcIO io = serverToIo.get(server);
         if (io == null) {
-            throw new IllegalArgumentException("not connected to " + server.getAlias());
+            throw new IllegalStateException("not connected to " + server.getAlias());
         }
         if (msg instanceof Privmsg) {
             if (StringUtils.isEmpty(((Privmsg) msg).getMessage())) {
