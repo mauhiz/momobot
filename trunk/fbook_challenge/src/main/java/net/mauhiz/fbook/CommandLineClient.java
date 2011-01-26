@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 public abstract class CommandLineClient {
 	public static final File PROJECT_FOLDER = new File("C:\\Documents and Settings\\user1\\workspace\\fbook_challenge");
 
-	protected abstract String getName();
+	public abstract String getName();
 
 	protected abstract void process(BufferedReader input, PrintWriter output) throws IOException;
 

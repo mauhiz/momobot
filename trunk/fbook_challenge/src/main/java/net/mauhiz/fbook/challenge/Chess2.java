@@ -207,7 +207,7 @@ public class Chess2 extends FbookChallenge {
 	}
 
 	@Override
-	protected String getName() {
+	public String getName() {
 		return "chess2";
 	}
 

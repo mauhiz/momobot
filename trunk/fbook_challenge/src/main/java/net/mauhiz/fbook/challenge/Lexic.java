@@ -79,7 +79,7 @@ public class Lexic extends FbookChallenge {
 	}
 
 	@Override
-	protected String getName() {
+	public String getName() {
 		return "lexic";
 	}
 

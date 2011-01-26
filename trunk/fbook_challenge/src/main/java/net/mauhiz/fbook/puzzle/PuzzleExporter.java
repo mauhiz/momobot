@@ -20,7 +20,7 @@ public class PuzzleExporter {
 	/**
 	 * @param startingClasses the first one contains the main
 	 */
-	public static void export(String name, Class<?>[] startingClasses) throws IOException {
+	public static File export(String name, Class<?>[] startingClasses) throws IOException {
 		FileUtils.forceMkdir(SCRIPT_FOLDER);
 		
 		File tmpFolder = new File(SCRIPT_FOLDER, "tmp-" + name);
@@ -73,6 +73,8 @@ public class PuzzleExporter {
 		} finally {
 			tarOutput.close();
 		}
+		
+		return zip;
 	}
 	
 	public static final File SCRIPT_FOLDER = new File(CommandLineClient.PROJECT_FOLDER, "src/main/scripts");
