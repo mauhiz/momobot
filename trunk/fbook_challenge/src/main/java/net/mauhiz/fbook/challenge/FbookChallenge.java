@@ -12,11 +12,19 @@ import net.mauhiz.fbook.CommandLineClient;
 public abstract class FbookChallenge extends CommandLineClient {
 	@Override
 	protected final void process(BufferedReader input, PrintWriter output) throws IOException {
-		int numTestCases = Integer.parseInt(input.readLine());
+		String firstLine = input.readLine();
+		if (firstLine == null) {
+			throw new IllegalStateException("Input too short!");
+		}
+		int numTestCases = Integer.parseInt(firstLine);
 
 		for (int lineIndex = 1; lineIndex <= numTestCases; lineIndex++) {
-			String result = doProblem(input.readLine().split(" "));
-			
+			String line = input.readLine();
+			if (line == null) {
+				throw new IllegalStateException("Input too short!");
+			}
+			String result = doProblem(line.split(" "));
+
 			output.print(result);
 			if (lineIndex != numTestCases) {
 				output.println();

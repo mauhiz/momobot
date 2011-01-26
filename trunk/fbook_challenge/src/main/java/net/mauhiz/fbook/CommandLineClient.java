@@ -10,7 +10,7 @@ import java.io.PrintWriter;
  * @author mauhiz
  */
 public abstract class CommandLineClient {
-	public static final File project_folder = new File("C:\\Documents and Settings\\user1\\workspace\\fbook_challenge");
+	public static final File PROJECT_FOLDER = new File("C:\\Documents and Settings\\user1\\workspace\\fbook_challenge");
 
 	protected abstract String getName();
 
@@ -51,7 +51,7 @@ public abstract class CommandLineClient {
 	}
 
 	protected void runDefault() throws IOException {
-		File rsFolder = new File(project_folder, "src/main/resources/");
+		File rsFolder = new File(PROJECT_FOLDER, "src/main/resources/");
 		File in = new File(rsFolder, getName() + ".txt");
 		File out = new File(rsFolder, getName() + ".out.txt");
 
@@ -59,8 +59,8 @@ public abstract class CommandLineClient {
 	}
 
 	private void runOnFiles(File in, File out) throws IOException {
-		if (out.exists()) {
-			out.delete();
+		if (out.exists() && !out.delete()) {
+			throw new IOException("Could not delete file: " + out);
 		}
 
 		PrintWriter writer = new PrintWriter(out);
@@ -74,7 +74,7 @@ public abstract class CommandLineClient {
 	}
 
 	public boolean runTest() throws IOException {
-		File rsFolder = new File(project_folder, "src/test/resources/");
+		File rsFolder = new File(PROJECT_FOLDER, "src/test/resources/");
 		File in = new File(rsFolder, getName() + "_test.txt");
 		File solution = new File(rsFolder, getName() + "_solution.txt");
 		File out = new File(rsFolder, getName() + "_test.out.txt");

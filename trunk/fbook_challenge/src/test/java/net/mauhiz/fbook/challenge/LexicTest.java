@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
-import net.mauhiz.fbook.challenge.Lexic;
-
 import org.junit.Test;
 
 public class LexicTest {
