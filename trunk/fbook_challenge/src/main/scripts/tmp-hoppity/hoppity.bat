@@ -1,0 +1,1 @@
+"%JRE_HOME%/bin/java" -classpath .;./bin net.mauhiz.fbook.Hoppity %1
