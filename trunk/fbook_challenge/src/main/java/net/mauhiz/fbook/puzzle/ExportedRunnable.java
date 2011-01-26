@@ -6,10 +6,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
+import net.mauhiz.fbook.CommandLineClient;
+
 /**
  * @author mauhiz
  */
-public abstract class ExportedRunnable extends FbookPuzzle {
+public abstract class ExportedRunnable extends CommandLineClient {
 	
 	protected static final Logger LOG = Logger.getLogger("fbook");
 

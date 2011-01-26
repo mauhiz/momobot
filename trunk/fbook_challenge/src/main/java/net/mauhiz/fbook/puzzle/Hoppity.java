@@ -3,7 +3,7 @@ package net.mauhiz.fbook.puzzle;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class Hoppity extends ExportedRunnable {
+public class Hoppity extends SingleLinePuzzle {
 
 	public static void main(String... args) throws IOException {
 		new Hoppity().run(args);

@@ -3,7 +3,7 @@ package net.mauhiz.fbook.puzzle;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class MeepMeep extends ExportedRunnable {
+public class MeepMeep extends SingleLinePuzzle {
 
 	public static void main(String... args) throws IOException {
 		new MeepMeep().run(args);
