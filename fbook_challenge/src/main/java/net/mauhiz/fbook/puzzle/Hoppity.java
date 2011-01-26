@@ -10,7 +10,7 @@ public class Hoppity extends ExportedRunnable {
 	}
 
 	@Override
-	protected String getName() {
+	public String getName() {
 		return "hoppity";
 	}
 	

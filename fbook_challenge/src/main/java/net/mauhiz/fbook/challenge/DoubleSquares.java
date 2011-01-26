@@ -31,7 +31,7 @@ public class DoubleSquares extends FbookChallenge {
 	}
 
 	@Override
-	protected String getName() {
+	public String getName() {
 		return "double_squares";
 	}
 

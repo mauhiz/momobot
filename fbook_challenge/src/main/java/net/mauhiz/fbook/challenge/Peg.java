@@ -136,7 +136,7 @@ public class Peg extends FbookChallenge {
 	}
 
 	@Override
-	protected String getName() {
+	public String getName() {
 		return "peg";
 	}
 }
