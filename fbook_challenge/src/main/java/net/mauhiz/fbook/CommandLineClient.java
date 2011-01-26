@@ -1,0 +1,86 @@
+package net.mauhiz.fbook;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+/**
+ * @author mauhiz
+ */
+public abstract class CommandLineClient {
+	public static final File project_folder = new File("C:\\Documents and Settings\\user1\\workspace\\fbook_challenge");
+
+	protected abstract String getName();
+
+	protected abstract void process(BufferedReader input, PrintWriter output) throws IOException;
+
+	private void run(File input, PrintWriter output) throws IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(input));
+
+		try {
+			process(reader, output);
+
+		} finally {
+			reader.close();
+		}
+	}
+
+	protected void run(String... args) throws IOException {
+		if (args.length == 0) {
+			runDefault();
+
+		} else {
+			File in = new File(args[0]);
+
+			if (args.length == 1) {
+				PrintWriter pw = new PrintWriter(System.out);
+				try {
+					run(in, pw);
+				} finally {
+					pw.close();
+				}
+				
+
+			} else {
+				File out = new File(args[1]);
+				runOnFiles(in, out);
+			}
+		}
+	}
+
+	protected void runDefault() throws IOException {
+		File rsFolder = new File(project_folder, "src/main/resources/");
+		File in = new File(rsFolder, getName() + ".txt");
+		File out = new File(rsFolder, getName() + ".out.txt");
+
+		runOnFiles(in, out);
+	}
+
+	private void runOnFiles(File in, File out) throws IOException {
+		if (out.exists()) {
+			out.delete();
+		}
+
+		PrintWriter writer = new PrintWriter(out);
+
+		try {
+			run(in, writer);
+
+		} finally {
+			writer.close();
+		}
+	}
+
+	public boolean runTest() throws IOException {
+		File rsFolder = new File(project_folder, "src/test/resources/");
+		File in = new File(rsFolder, getName() + "_test.txt");
+		File solution = new File(rsFolder, getName() + "_solution.txt");
+		File out = new File(rsFolder, getName() + "_test.out.txt");
+
+		runOnFiles(in, out);
+
+		return FileComparator.isContentEquals(solution, out);
+	}
+}
