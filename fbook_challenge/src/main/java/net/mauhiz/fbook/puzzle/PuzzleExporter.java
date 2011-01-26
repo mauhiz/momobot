@@ -21,9 +21,9 @@ public class PuzzleExporter {
 	 * @param startingClasses the first one contains the main
 	 */
 	public static void export(String name, Class<?>[] startingClasses) throws IOException {
-		FileUtils.forceMkdir(scFolder);
+		FileUtils.forceMkdir(SCRIPT_FOLDER);
 		
-		File tmpFolder = new File(scFolder, "tmp-" + name);
+		File tmpFolder = new File(SCRIPT_FOLDER, "tmp-" + name);
 		if (tmpFolder.exists()) {
 			FileUtils.cleanDirectory(tmpFolder);
 		}
@@ -39,7 +39,7 @@ public class PuzzleExporter {
 		filesToKeep.add(uRunn);
 
 		// add all useful classes
-		File classesDir = new File(CommandLineClient.project_folder, "target/classes");
+		File classesDir = new File(CommandLineClient.PROJECT_FOLDER, "target/classes");
 		File bin = new File(tmpFolder, "bin");
 
 		for (Class<?> usefulClass : getUsefulClasses(startingClasses)) {
@@ -57,7 +57,7 @@ public class PuzzleExporter {
 		}
 		
 		// pack it tighlty
-		File zip = new File(scFolder, name + ".tar");
+		File zip = new File(SCRIPT_FOLDER, name + ".tar");
 		TarArchiveOutputStream tarOutput = new TarArchiveOutputStream(new FileOutputStream(zip));
 		
 		try {
@@ -75,7 +75,7 @@ public class PuzzleExporter {
 		}
 	}
 	
-	public static final File scFolder = new File(CommandLineClient.project_folder, "src/main/scripts");
+	public static final File SCRIPT_FOLDER = new File(CommandLineClient.PROJECT_FOLDER, "src/main/scripts");
 
 	public static File generateUnixRunnable(File tmpFolder, String name, Class<?> main) throws IOException {
 		File runn = new File(tmpFolder, name);

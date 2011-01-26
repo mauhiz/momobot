@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
-import net.mauhiz.fbook.challenge.Chess2;
-
 import org.junit.Test;
 
 public class Chess2Test {

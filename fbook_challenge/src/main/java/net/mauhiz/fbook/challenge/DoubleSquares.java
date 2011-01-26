@@ -22,7 +22,7 @@ For each value of X, you should output the number of ways to write X as the sum 
  */
 public class DoubleSquares extends FbookChallenge {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String... args) throws IOException {
 		new DoubleSquares().run(args);
 	}
 
