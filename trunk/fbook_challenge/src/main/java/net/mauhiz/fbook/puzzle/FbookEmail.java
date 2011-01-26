@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import net.mauhiz.fbook.CommandLineClient;
 
@@ -19,6 +20,8 @@ import org.apache.commons.mail.MultiPartEmail;
  * @author mauhiz
  */
 public class FbookEmail {
+	
+	private static final Logger LOG = Logger.getLogger("out");
 
 	private static MultiPartEmail newGmail(String user, String pw) throws EmailException {
 		MultiPartEmail email = new MultiPartEmail();
@@ -68,6 +71,7 @@ public class FbookEmail {
 					email.attach(attachment);
 	
 					email.send();
+					LOG.info("Application sent for problem: " + email.getSubject());
 				}
 			}
 		}
