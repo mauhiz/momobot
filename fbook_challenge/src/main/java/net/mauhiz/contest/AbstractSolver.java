@@ -58,7 +58,7 @@ public abstract class AbstractSolver {
 		runOnFiles(in, out);
 	}
 
-	private void runOnFiles(File in, File out) throws IOException {
+	void runOnFiles(File in, File out) throws IOException {
 		if (out.exists() && !out.delete()) {
 			throw new IOException("Could not delete file: " + out);
 		}
@@ -71,16 +71,5 @@ public abstract class AbstractSolver {
 		} finally {
 			writer.close();
 		}
-	}
-
-	public boolean runTest() throws IOException {
-		File rsFolder = new File(PROJECT_FOLDER, "src/test/resources/");
-		File in = new File(rsFolder, getName() + "_test.txt");
-		File solution = new File(rsFolder, getName() + "_solution.txt");
-		File out = new File(rsFolder, getName() + "_test.out.txt");
-
-		runOnFiles(in, out);
-
-		return FileComparator.isContentEquals(solution, out);
 	}
 }

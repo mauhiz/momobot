@@ -3,8 +3,6 @@ package net.mauhiz.contest.codejam;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import net.mauhiz.contest.MultipleSolver;
-
 /**
  * 
  * Problem
@@ -52,17 +50,11 @@ Large dataset
  * @author mauhiz
  *
  */
-public class AlienNumbers extends MultipleSolver {
+public class AlienNumbers extends CodejamMultipleChunkSolver {
 
 	public static void main(String... args) throws IOException {
 		new AlienNumbers().run(args);
 	}
-
-	
-	/**
-	 * test case counter
-	 */
-	private int i = 0;
 
 	@Override
 	public String getName() {
@@ -70,12 +62,11 @@ public class AlienNumbers extends MultipleSolver {
 	}
 
 	@Override
-	protected String doProblem(String[] chunks) {
+	protected String doJamProblem(String[] chunks) {
 		char[] toConvert = chunks[0].toCharArray();
 		char[] sourceLanguage = chunks[1].toCharArray();
 		char[] targetLanguage = chunks[2].toCharArray();
-		String result = convert(toConvert, sourceLanguage, targetLanguage);
-		return "Case #" + ++i + ": " + result;
+		return convert(toConvert, sourceLanguage, targetLanguage);
 	}
 	
 	static String convert(char[] toConvert, char[] sourceLanguage, char[] targetLanguage) {

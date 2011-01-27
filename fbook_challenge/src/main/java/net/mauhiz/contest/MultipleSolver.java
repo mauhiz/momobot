@@ -22,7 +22,7 @@ public abstract class MultipleSolver extends AbstractSolver {
 			if (line == null) {
 				throw new IllegalStateException("Input too short!");
 			}
-			String result = doProblem(line.split(" "));
+			String result = doProblem(line);
 
 			output.print(result);
 			if (lineIndex != numTestCases) {
@@ -31,5 +31,5 @@ public abstract class MultipleSolver extends AbstractSolver {
 		}
 	}
 	
-	protected abstract String doProblem(String[] chunks) ;
+	protected abstract String doProblem(String problemLine) ;
 }
