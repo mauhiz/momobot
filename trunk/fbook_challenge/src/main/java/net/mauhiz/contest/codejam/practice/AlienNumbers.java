@@ -1,7 +1,9 @@
-package net.mauhiz.contest.codejam;
+package net.mauhiz.contest.codejam.practice;
 
 import java.io.IOException;
 import java.math.BigInteger;
+
+import net.mauhiz.contest.codejam.CodejamLineChunkSolver;
 
 /**
  * 
@@ -52,27 +54,10 @@ Large dataset
  */
 public class AlienNumbers extends CodejamLineChunkSolver {
 
-	public static void main(String... args) throws IOException {
-		new AlienNumbers().run(args);
-	}
-
-	@Override
-	public String getName() {
-		return "alien_numbers";
-	}
-
-	@Override
-	protected String doJamProblem(String[] chunks) {
-		char[] toConvert = chunks[0].toCharArray();
-		char[] sourceLanguage = chunks[1].toCharArray();
-		char[] targetLanguage = chunks[2].toCharArray();
-		return convert(toConvert, sourceLanguage, targetLanguage);
-	}
-	
 	static String convert(char[] toConvert, char[] sourceLanguage, char[] targetLanguage) {
 		// convert source to BigInteger
 		BigInteger source = BigInteger.valueOf(0);
-		
+
 		BigInteger sourceRadix = BigInteger.valueOf(sourceLanguage.length);
 		BigInteger pow = BigInteger.valueOf(1);
 		for (int i = toConvert.length - 1; i >= 0; i--) {
@@ -80,7 +65,7 @@ public class AlienNumbers extends CodejamLineChunkSolver {
 			source = source.add(pow.multiply(BigInteger.valueOf(digit)));
 			pow = pow.multiply(sourceRadix);
 		}
-		
+
 		// convert BigInteger to target language
 		BigInteger targetRadix = BigInteger.valueOf(targetLanguage.length);
 		StringBuilder result = new StringBuilder();
@@ -94,18 +79,35 @@ public class AlienNumbers extends CodejamLineChunkSolver {
 			}
 			source = source.divide(targetRadix);
 		}
-		
+
 		return result.toString();
 	}
-	
+
 	static int indexOf(char[] data, char sought) {
-		for (int i =0; i < data.length; i++) {
+		for (int i = 0; i < data.length; i++) {
 			if (sought == data[i]) {
 				return i;
 			}
 		}
-		
+
 		throw new IllegalArgumentException(sought + ": invalid digit");
+	}
+
+	public static void main(String... args) throws IOException {
+		new AlienNumbers().run(args);
+	}
+
+	@Override
+	protected String doJamProblem(String[] chunks) {
+		char[] toConvert = chunks[0].toCharArray();
+		char[] sourceLanguage = chunks[1].toCharArray();
+		char[] targetLanguage = chunks[2].toCharArray();
+		return convert(toConvert, sourceLanguage, targetLanguage);
+	}
+
+	@Override
+	public String getName() {
+		return "alien_numbers";
 	}
 
 }

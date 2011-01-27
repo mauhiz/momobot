@@ -1,10 +1,12 @@
-package net.mauhiz.contest.codejam;
+package net.mauhiz.contest.codejam.africa2010;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import net.mauhiz.contest.codejam.CodejamLineChunkSolver;
 
 /**
  * @author mauhiz

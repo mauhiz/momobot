@@ -4,26 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  * @author mauhiz
  */
 public abstract class LineSolver extends MultipleSolver {
-	@Override
-	protected final void process(BufferedReader input, PrintWriter output, int numTestCases) throws IOException {
-		for (int lineIndex = 1; lineIndex <= numTestCases; lineIndex++) {
-			String line = input.readLine();
-			if (line == null) {
-				throw new IllegalStateException("Input too short!");
-			}
-			String result = doProblem(line);
+	protected abstract String doProblem(String problemLine);
 
-			output.print(result);
-			if (lineIndex != numTestCases) {
-				output.println();
-			}
+	@Override
+	protected final void processSingle(BufferedReader input, PrintWriter output, int problemIndex) throws IOException {
+		output.print(doProblem(input.readLine()));
+
+		if (problemIndex == numTestCases) {
+			output.println();
 		}
+
 	}
-	
-	protected abstract String doProblem(String problemLine) ;
 }

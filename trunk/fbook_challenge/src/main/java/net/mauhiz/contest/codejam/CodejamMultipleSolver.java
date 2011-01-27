@@ -11,15 +11,14 @@ import net.mauhiz.contest.MultipleSolver;
  */
 public abstract class CodejamMultipleSolver extends MultipleSolver {
 
-	@Override
-	protected final void process(BufferedReader input, PrintWriter output, int numTestCases) throws IOException {
-		for (int problemIndex = 1; problemIndex <= numTestCases; problemIndex++) {
-			output.print("Case #" + problemIndex + ": " + doJamProblem(input));
-			if (problemIndex != numTestCases) {
-				output.println();
-			}
-		}
-	}
-
 	protected abstract String doJamProblem(BufferedReader input) throws IOException;
+
+	@Override
+	protected final void processSingle(BufferedReader input, PrintWriter output, int problemIndex) throws IOException {
+		output.print("Case #" + problemIndex + ": " + doJamProblem(input));
+		if (problemIndex == numTestCases) {
+			output.println();
+		}
+
+	}
 }

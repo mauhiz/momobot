@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author mauhiz
@@ -12,11 +14,18 @@ import java.io.PrintWriter;
 public abstract class AbstractSolver {
 	public static final File PROJECT_FOLDER = new File("C:\\Documents and Settings\\user1\\workspace\\fbook_challenge");
 
+	protected final Logger log = Logger.getLogger("solver");
+
+	{
+		log.setLevel(Level.ALL);
+	}
+
 	public abstract String getName();
 
 	protected abstract void process(BufferedReader input, PrintWriter output) throws IOException;
 
 	private void run(File input, PrintWriter output) throws IOException {
+		long start = System.currentTimeMillis();
 		BufferedReader reader = new BufferedReader(new FileReader(input));
 
 		try {
@@ -25,6 +34,7 @@ public abstract class AbstractSolver {
 		} finally {
 			reader.close();
 		}
+		log.info("Solving completed in " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	protected void run(String... args) throws IOException {
@@ -35,13 +45,14 @@ public abstract class AbstractSolver {
 			File in = new File(args[0]);
 
 			if (args.length == 1) {
+				log.setLevel(Level.OFF);
 				PrintWriter pw = new PrintWriter(System.out);
+
 				try {
 					run(in, pw);
 				} finally {
 					pw.close();
 				}
-				
 
 			} else {
 				File out = new File(args[1]);
