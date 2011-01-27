@@ -1,1 +1,0 @@
-java -classpath .:./bin net.mauhiz.fbook.Hoppity $1
