@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.mauhiz.contest.MultipleChunkSolver;
+import net.mauhiz.contest.LineChunkSolver;
 
 /**
 Studious Student
@@ -35,7 +35,7 @@ Constraints
  * @author mauhiz
  *
  */
-public class Lexic extends MultipleChunkSolver {
+public class Lexic extends LineChunkSolver {
 
 	@Override
 	protected String doProblem(String[] toks) {

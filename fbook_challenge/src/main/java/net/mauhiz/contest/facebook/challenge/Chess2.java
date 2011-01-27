@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.mauhiz.contest.MultipleChunkSolver;
+import net.mauhiz.contest.LineChunkSolver;
 
-public class Chess2 extends MultipleChunkSolver {
+public class Chess2 extends LineChunkSolver {
 	static boolean canRookReach(Pieces[][] board, Point currentPos, Point targetPos) {
 		if (targetPos.x == currentPos.x) {
 			int minY = Math.min(currentPos.y, targetPos.y);
