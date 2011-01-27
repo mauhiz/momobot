@@ -2,10 +2,11 @@ package net.mauhiz.contest.facebook.challenge;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import net.mauhiz.contest.LineChunkSolver;
+import net.mauhiz.contest.util.ListPermutationGenerator;
 
 /**
 Studious Student
@@ -43,41 +44,28 @@ public class Lexic extends LineChunkSolver {
 		for (int i = 1; i < toks.length; i++) {
 			words.add(toks[i]);
 		}
-		Collections.sort(words);
-		result = "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
-		perm1(words);
+
+		String result = null;
+		Iterator<List<String>> perms = new ListPermutationGenerator<String>(words);
+
+		while (perms.hasNext()) {
+			List<String> perm = perms.next();
+			String j = join(perm);
+
+			if (result == null || result.compareTo(j) > 0) {
+				result = j;
+			}
+		}
+
 		return result;
 	}
 
-	private String result;
-
-	// print N! permutation of the characters of the string s (in order)
-	private void perm1(List<String> s) {
-		perm1("", s);
-	}
-
-	private void perm1(String upto, List<String> s) {
-		int N = s.size();
-		if (N == 0) { // finished emptying it
-			if (upto.compareTo(result) < 0) {
-				result = upto;
-			}
-		} else {
-			for (int i = 0; i < N; i++) {
-				perm1(upto + s.get(i), subList(s, 0, i, i + 1, N));
-			}
+	public static String join(List<String> items) {
+		StringBuilder sb = new StringBuilder(items.size() * 10);
+		for (String item : items) {
+			sb.append(item);
 		}
-	}
-
-	private List<String> subList(List<String> source, int start1, int end1, int start2, int end2) {
-		List<String> res = new ArrayList<String>(end1 - start1 + end2 - start2 + 1);
-		for (int i = start1; i < end1; i++) {
-			res.add(source.get(i));
-		}
-		for (int i = start2; i < end2; i++) {
-			res.add(source.get(i));
-		}
-		return res;
+		return sb.toString();
 	}
 
 	@Override

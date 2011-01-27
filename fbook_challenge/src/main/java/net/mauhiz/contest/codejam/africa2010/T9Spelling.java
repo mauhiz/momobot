@@ -1,8 +1,10 @@
-package net.mauhiz.contest.codejam;
+package net.mauhiz.contest.codejam.africa2010;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.mauhiz.contest.codejam.CodejamLineSolver;
 
 /**
  * @author mauhiz

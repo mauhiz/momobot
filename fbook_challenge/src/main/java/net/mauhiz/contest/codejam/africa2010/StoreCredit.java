@@ -1,7 +1,9 @@
-package net.mauhiz.contest.codejam;
+package net.mauhiz.contest.codejam.africa2010;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+
+import net.mauhiz.contest.codejam.CodejamMultipleSolver;
 
 /**
  * @author mauhiz
