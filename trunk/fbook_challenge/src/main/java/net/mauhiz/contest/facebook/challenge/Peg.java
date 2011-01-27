@@ -2,7 +2,7 @@ package net.mauhiz.contest.facebook.challenge;
 
 import java.io.IOException;
 
-import net.mauhiz.contest.MultipleSolver;
+import net.mauhiz.contest.MultipleChunkSolver;
 
 /**
 Peg Game
@@ -63,7 +63,7 @@ the output will not be impacted by small errors).
  * @author mauhiz
  *
  */
-public class Peg extends MultipleSolver {
+public class Peg extends MultipleChunkSolver {
 
 	@Override
 	protected String doProblem(String[] toks) {

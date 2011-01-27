@@ -2,15 +2,14 @@ package net.mauhiz.contest.fbook.challenge;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
+import net.mauhiz.contest.AbstractTester;
 import net.mauhiz.contest.facebook.challenge.DoubleSquares;
 
 import org.junit.Test;
 
-public class DoubleSquaresTest {
+public class DoubleSquaresTest extends AbstractTester {
 	@Test
 	public void doTest() throws IOException {
-		Assert.assertTrue(new DoubleSquares().runTest());
+		runTest(new DoubleSquares());
 	}
 }

@@ -6,9 +6,9 @@ import net.mauhiz.contest.AbstractTester;
 
 import org.junit.Test;
 
-public class AlienNumbersTest extends AbstractTester {
+public class T9SpellingTest extends AbstractTester {
 	@Test
 	public void doTest() throws IOException {
-		runTest(new AlienNumbers());
+		runTest(new T9Spelling());
 	}
 }
