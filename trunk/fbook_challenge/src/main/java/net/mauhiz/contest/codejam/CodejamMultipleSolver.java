@@ -1,5 +1,9 @@
 package net.mauhiz.contest.codejam;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import net.mauhiz.contest.MultipleSolver;
 
 /**
@@ -7,15 +11,15 @@ import net.mauhiz.contest.MultipleSolver;
  */
 public abstract class CodejamMultipleSolver extends MultipleSolver {
 
-	/**
-	 * test case counter
-	 */
-	private int i = 0;
-
 	@Override
-	protected final String doProblem(String problemLine) {
-		return "Case #" + ++i + ": " + doJamProblem(problemLine);
+	protected final void process(BufferedReader input, PrintWriter output, int numTestCases) throws IOException {
+		for (int problemIndex = 1; problemIndex <= numTestCases; problemIndex++) {
+			output.print("Case #" + problemIndex + ": " + doJamProblem(input));
+			if (problemIndex != numTestCases) {
+				output.println();
+			}
+		}
 	}
 
-	protected abstract String doJamProblem(String problemLine);
+	protected abstract String doJamProblem(BufferedReader input) throws IOException;
 }

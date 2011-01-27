@@ -10,26 +10,14 @@ import java.io.PrintWriter;
  */
 public abstract class MultipleSolver extends AbstractSolver {
 	@Override
-	protected final void process(BufferedReader input, PrintWriter output) throws IOException {
+	protected void process(BufferedReader input, PrintWriter output) throws IOException {
 		String firstLine = input.readLine();
 		if (firstLine == null) {
 			throw new IllegalStateException("Input too short!");
 		}
 		int numTestCases = Integer.parseInt(firstLine);
-
-		for (int lineIndex = 1; lineIndex <= numTestCases; lineIndex++) {
-			String line = input.readLine();
-			if (line == null) {
-				throw new IllegalStateException("Input too short!");
-			}
-			String result = doProblem(line);
-
-			output.print(result);
-			if (lineIndex != numTestCases) {
-				output.println();
-			}
-		}
+		process(input, output, numTestCases);
 	}
 	
-	protected abstract String doProblem(String problemLine) ;
+	protected abstract void process(BufferedReader input, PrintWriter output, int numTestCases) throws IOException;
 }

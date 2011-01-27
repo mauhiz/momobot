@@ -2,7 +2,7 @@ package net.mauhiz.contest.facebook.challenge;
 
 import java.io.IOException;
 
-import net.mauhiz.contest.MultipleChunkSolver;
+import net.mauhiz.contest.LineChunkSolver;
 
 /**
  * A double-square number is an integer X which can be expressed as the sum of two perfect squares.
@@ -22,7 +22,7 @@ For each value of X, you should output the number of ways to write X as the sum 
  * @author mauhiz
  *
  */
-public class DoubleSquares extends MultipleChunkSolver {
+public class DoubleSquares extends LineChunkSolver {
 
 	public static void main(String... args) throws IOException {
 		new DoubleSquares().run(args);

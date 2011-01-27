@@ -4,7 +4,7 @@ package net.mauhiz.contest;
 /**
  * @author mauhiz
  */
-public abstract class MultipleChunkSolver extends MultipleSolver {
+public abstract class LineChunkSolver extends LineSolver {
 
 	@Override
 	protected String doProblem(String problemLine) {

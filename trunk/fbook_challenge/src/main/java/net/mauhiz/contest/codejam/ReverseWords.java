@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author mauhiz
  */
-public class ReverseWords extends CodejamMultipleChunkSolver {
+public class ReverseWords extends CodejamLineChunkSolver {
 
 	public static void main(String... args) throws IOException {
 		new ReverseWords().run(args);

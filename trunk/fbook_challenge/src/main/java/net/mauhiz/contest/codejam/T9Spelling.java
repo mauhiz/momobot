@@ -8,7 +8,7 @@ import java.util.Map;
  * @author mauhiz
  *
  */
-public class T9Spelling extends CodejamMultipleSolver {
+public class T9Spelling extends CodejamLineSolver {
 
 	static class T9Sequence {
 		char[] sequence;

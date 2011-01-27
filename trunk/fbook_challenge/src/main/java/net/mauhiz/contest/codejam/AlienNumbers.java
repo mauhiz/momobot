@@ -50,7 +50,7 @@ Large dataset
  * @author mauhiz
  *
  */
-public class AlienNumbers extends CodejamMultipleChunkSolver {
+public class AlienNumbers extends CodejamLineChunkSolver {
 
 	public static void main(String... args) throws IOException {
 		new AlienNumbers().run(args);
