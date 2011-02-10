@@ -17,23 +17,36 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class PuzzleExporter {
+	public static final File BUILD_FOLDER = new File(AbstractSolver.PROJECT_FOLDER, "target");
+
+	private static void addSuperClasses(Collection<Class<?>> cls, Class<?> class1) {
+		if (class1 == null || !cls.add(class1)) { // this part of the tree was already done
+			return;
+		}
+
+		for (Class<?> iface : class1.getInterfaces()) {
+			addSuperClasses(cls, iface);
+		}
+
+		addSuperClasses(cls, class1.getSuperclass());
+	}
+
 	/**
 	 * @param startingClasses the first one contains the main
 	 */
 	public static File export(String name, Class<?>[] startingClasses) throws IOException {
 		FileUtils.forceMkdir(BUILD_FOLDER);
-		
+
 		File tmpFolder = new File(BUILD_FOLDER, name);
 		if (tmpFolder.exists()) {
 			FileUtils.cleanDirectory(tmpFolder);
 		}
-		
+
 		// a windows runnable, may come handy
 		generateWindowsRunnable(tmpFolder, name, startingClasses[0]);
-		
-		
+
 		List<File> filesToKeep = new ArrayList<File>();
-		
+
 		// put the unix runnable
 		File uRunn = generateUnixRunnable(tmpFolder, name, startingClasses[0]);
 		filesToKeep.add(uRunn);
@@ -44,22 +57,30 @@ public class PuzzleExporter {
 
 		for (Class<?> usefulClass : getUsefulClasses(startingClasses)) {
 			String canName = usefulClass.getCanonicalName();
-			if (canName != null && canName.indexOf('$') < 0) { // skip internal classes
-				String path = StringUtils.replace(canName, ".", "/") + ".class";
-				File clsFile = new File(classesDir, path);
-				
+			if (canName == null) {
+				continue;
+			}
+			String pack = usefulClass.getPackage().getName();
+			String packDirPath = StringUtils.replace(pack, ".", "/");
+			File packDir = new File(classesDir, packDirPath);
+
+			if (packDir.exists()) {
+				String clsInPackageName = StringUtils.substringAfter(canName, pack + ".");
+				String clsFileName = StringUtils.replace(clsInPackageName, ".", "$") + ".class";
+				File clsFile = new File(packDir, clsFileName);
+
 				if (clsFile.isFile()) { // if not : part of the JDK, ignore
-					File target =  new File(bin, path);
+					File target = new File(bin, packDirPath + "/" + clsFileName);
 					FileUtils.copyFile(clsFile, target);
 					filesToKeep.add(target);
 				}
 			}
 		}
-		
+
 		// pack it tighlty
 		File zip = new File(BUILD_FOLDER, name + ".tar");
 		TarArchiveOutputStream tarOutput = new TarArchiveOutputStream(new FileOutputStream(zip));
-		
+
 		try {
 			for (File file : filesToKeep) {
 				String entName = StringUtils.substringAfter(file.getAbsolutePath(), tmpFolder.getAbsolutePath());
@@ -73,11 +94,9 @@ public class PuzzleExporter {
 		} finally {
 			tarOutput.close();
 		}
-		
+
 		return zip;
 	}
-	
-	public static final File BUILD_FOLDER = new File(AbstractSolver.PROJECT_FOLDER, "src/main/target/");
 
 	public static File generateUnixRunnable(File tmpFolder, String name, Class<?> main) throws IOException {
 		File runn = new File(tmpFolder, name);
@@ -89,7 +108,7 @@ public class PuzzleExporter {
 
 		return runn;
 	}
-	
+
 	public static File generateWindowsRunnable(File tmpFolder, String name, Class<?> main) throws IOException {
 		File runn = new File(tmpFolder, name + ".bat");
 		if (runn.exists()) {
@@ -107,17 +126,5 @@ public class PuzzleExporter {
 			addSuperClasses(cls, clz);
 		}
 		return cls;
-	}
-
-	private static void addSuperClasses(Collection<Class<?>> cls, Class<?> class1) {
-		if (class1 == null || !cls.add(class1)) { // this part of the tree was already done
-			return;
-		}
-
-		for (Class<?> iface : class1.getInterfaces()) {
-			addSuperClasses(cls, iface);
-		}
-
-		addSuperClasses(cls, class1.getSuperclass());
 	}
 }
