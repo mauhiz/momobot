@@ -24,7 +24,7 @@ public abstract class AbstractSolver {
 
 	protected abstract void process(BufferedReader input, PrintWriter output) throws IOException;
 
-	private void run(File input, PrintWriter output) throws IOException {
+	protected void run(File input, PrintWriter output) throws IOException {
 		long start = System.currentTimeMillis();
 		BufferedReader reader = new BufferedReader(new FileReader(input));
 
@@ -39,7 +39,7 @@ public abstract class AbstractSolver {
 
 	protected void run(String... args) throws IOException {
 		if (args.length == 0) {
-			runDefault();
+			runDefault(); // run without arguments
 
 		} else {
 			File in = new File(args[0]);
@@ -69,7 +69,7 @@ public abstract class AbstractSolver {
 		runOnFiles(in, out);
 	}
 
-	void runOnFiles(File in, File out) throws IOException {
+	protected void runOnFiles(File in, File out) throws IOException {
 		if (out.exists() && !out.delete()) {
 			throw new IOException("Could not delete file: " + out);
 		}

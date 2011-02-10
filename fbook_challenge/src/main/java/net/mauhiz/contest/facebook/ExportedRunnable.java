@@ -12,29 +12,20 @@ import net.mauhiz.contest.AbstractSolver;
  * @author mauhiz
  */
 public abstract class ExportedRunnable extends AbstractSolver {
-	
+
 	protected static final Logger LOG = Logger.getLogger("fbook");
 
-	@Override
-	protected void run(String... args) throws IOException {
-		if (args.length == 0) {
-			generatePack();
-		} else {
-			super.run(args);
-		}
-	}
-	
 	public File generatePack() {
 		try {
 			// external dependencies - do not use direct references
-			Class<?> exported = Class.forName("net.mauhiz.contest.fbook.PuzzleExporter");
+			Class<?> exported = Class.forName("net.mauhiz.contest.facebook.PuzzleExporter");
 			Method m = exported.getMethod("export", String.class, Class[].class);
 			Object result = m.invoke(null, getName(), getStartingClasses());
-			
+
 			if (result instanceof File) {
 				return (File) result;
 			}
-			
+
 		} catch (ClassNotFoundException e) {
 			LOG.severe(e.getLocalizedMessage());
 		} catch (NoSuchMethodException e) {
@@ -44,11 +35,20 @@ public abstract class ExportedRunnable extends AbstractSolver {
 		} catch (InvocationTargetException e) {
 			LOG.severe(e.getTargetException().getLocalizedMessage());
 		}
-		
+
 		return null;
 	}
 
 	protected Class<?>[] getStartingClasses() {
 		return new Class<?>[] { getClass() };
+	}
+
+	@Override
+	protected void run(String... args) throws IOException {
+		if (args.length == 0) {
+			generatePack();
+		} else {
+			super.run(args);
+		}
 	}
 }
