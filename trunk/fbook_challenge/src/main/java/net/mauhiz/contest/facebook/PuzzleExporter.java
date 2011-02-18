@@ -4,32 +4,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import net.mauhiz.contest.AbstractSolver;
+import net.mauhiz.contest.Exporter;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
-public class PuzzleExporter {
-	public static final File BUILD_FOLDER = new File(AbstractSolver.PROJECT_FOLDER, "target");
-
-	private static void addSuperClasses(Collection<Class<?>> cls, Class<?> class1) {
-		if (class1 == null || !cls.add(class1)) { // this part of the tree was already done
-			return;
-		}
-
-		for (Class<?> iface : class1.getInterfaces()) {
-			addSuperClasses(cls, iface);
-		}
-
-		addSuperClasses(cls, class1.getSuperclass());
-	}
+public class PuzzleExporter extends Exporter {
 
 	/**
 	 * @param startingClasses the first one contains the main
@@ -54,28 +38,7 @@ public class PuzzleExporter {
 		// add all useful classes
 		File classesDir = new File(BUILD_FOLDER, "classes");
 		File bin = new File(tmpFolder, "bin");
-
-		for (Class<?> usefulClass : getUsefulClasses(startingClasses)) {
-			String canName = usefulClass.getCanonicalName();
-			if (canName == null) {
-				continue;
-			}
-			String pack = usefulClass.getPackage().getName();
-			String packDirPath = StringUtils.replace(pack, ".", "/");
-			File packDir = new File(classesDir, packDirPath);
-
-			if (packDir.exists()) {
-				String clsInPackageName = StringUtils.substringAfter(canName, pack + ".");
-				String clsFileName = StringUtils.replace(clsInPackageName, ".", "$") + ".class";
-				File clsFile = new File(packDir, clsFileName);
-
-				if (clsFile.isFile()) { // if not : part of the JDK, ignore
-					File target = new File(bin, packDirPath + "/" + clsFileName);
-					FileUtils.copyFile(clsFile, target);
-					filesToKeep.add(target);
-				}
-			}
-		}
+		filesToKeep.addAll(copyUsefulClassFiles(startingClasses, classesDir, bin));
 
 		// pack it tighlty
 		File zip = new File(BUILD_FOLDER, name + ".tar");
@@ -120,11 +83,4 @@ public class PuzzleExporter {
 		return runn;
 	}
 
-	private static Collection<Class<?>> getUsefulClasses(Class<?>[] startingClasses) {
-		Set<Class<?>> cls = new HashSet<Class<?>>();
-		for (Class<?> clz : startingClasses) {
-			addSuperClasses(cls, clz);
-		}
-		return cls;
-	}
 }
