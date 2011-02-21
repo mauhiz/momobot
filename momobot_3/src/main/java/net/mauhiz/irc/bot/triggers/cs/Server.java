@@ -240,7 +240,7 @@ public class Server {
      */
     public void setPlayer(int index, Player player) {
         if (index > players.size()) {
-            for (int i = players.size(); i < index; ++i) {
+            for (int i = players.size(); i < index; i++) {
                 players.add(null);
             }
         }

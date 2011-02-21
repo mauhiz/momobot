@@ -32,10 +32,10 @@ public class UsersTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             chanNames = new String[]{im.getTo()};
         }
         
-        for (int i = 0; i < chanNames.length; ++i) {
-            IrcChannel channel = im.getServer().findChannel(chanNames[i], false);
+        for (String chanName : chanNames) {
+            IrcChannel channel = im.getServer().findChannel(chanName, false);
             if (channel == null) { // TODO /NAMES
-                String chanMsg = "I am not on " + chanNames[i];
+                String chanMsg = "I am not on " + chanName;
                 control.sendMsg(Privmsg.buildAnswer(im, chanMsg));
                 
             } else {

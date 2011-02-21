@@ -110,7 +110,7 @@ public class NetUtils {
      */
     public static byte[] intToBytes(int addr) {
         byte[] result = new byte[IP_FIELDS];
-        for (int i = 0; i < result.length; ++i) {
+        for (int i = 0; i < result.length; i++) {
             int lmask = BYTE_MASK << Byte.SIZE * (IP_FIELDS - i - 1);
             result[i] = (byte) ((addr & lmask) >> Byte.SIZE * (IP_FIELDS - i - 1));
         }
@@ -174,7 +174,7 @@ public class NetUtils {
         byte[] retour = new byte[Integer.SIZE / Byte.SIZE];
         int shift = Integer.SIZE;
         
-        for (char i = 0; i < retour.length; ++i) {
+        for (char i = 0; i < retour.length; i++) {
             shift -= Byte.SIZE;
             retour[i] = (byte) (uns >> shift & BYTE_MASK);
         }

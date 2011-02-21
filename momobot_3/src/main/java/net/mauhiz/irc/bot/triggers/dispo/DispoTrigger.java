@@ -69,7 +69,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             Dispo dispo = new Dispo();
             dispo.setChannel(cme.getTo());
             Present[] heures = new Present[HEURES.length];
-            for (int i = 0; i < HEURES.length && i < args.length - 1; ++i) {
+            for (int i = 0; i < HEURES.length && i < args.length - 1; i++) {
                 String nextArg = args[i + 1];
                 if (nextArg.equalsIgnoreCase("oui")) {
                     heures[i] = Present.LA;

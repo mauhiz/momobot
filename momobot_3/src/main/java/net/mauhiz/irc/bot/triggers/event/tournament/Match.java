@@ -71,6 +71,7 @@ public class Match extends ArrayList<TournamentTeam> {
      *            team 2
      */
     public Match(int phase1, int id1, String map1, TournamentTeam pTeam1, TournamentTeam pTeam2) {
+        super();
         // on met tjs les teams dans le bon sens
         if (pTeam1.getId() > pTeam2.getId()) {
             team2 = pTeam1;
@@ -96,6 +97,7 @@ public class Match extends ArrayList<TournamentTeam> {
      * @param pTeam2
      */
     public Match(Match oldmatch, TournamentTeam pTeam2) {
+        super();
         if (oldmatch.team1.getId() > pTeam2.getId()) {
             // on switch team1 et team2
             team2 = oldmatch.team1;
@@ -208,7 +210,7 @@ public class Match extends ArrayList<TournamentTeam> {
             // on a gagner le tn
             String gagnant = "";
             if (phase == 1) {
-                gagnant = " " + winner.toString() + " gagne le tournois.";
+                gagnant = " " + winner.toString() + " gagne le tournoi.";
             }
             
             if (team1.getId() == winner.getId()) {

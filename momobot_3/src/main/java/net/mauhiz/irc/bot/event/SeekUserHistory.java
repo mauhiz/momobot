@@ -26,12 +26,13 @@ public class SeekUserHistory extends ArrayList<String> {
      * @param id1
      */
     public SeekUserHistory(final IrcUser user1, final int id1) {
+        super();
         user = user1;
         id = id1;
     }
     
     /**
-     * Renvoie un entier identifiant de manière unique un utilisateur
+     * Renvoie un entier identifiant de maniï¿½re unique un utilisateur
      * 
      * @return {@link #id}
      */

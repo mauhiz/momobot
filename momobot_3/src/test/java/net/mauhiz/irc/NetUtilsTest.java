@@ -48,8 +48,8 @@ public class NetUtilsTest {
      */
     @Test
     public void testIntTabToIp() {
-        InetAddress localhost = NetUtils.charTabToIa(CHARS_CLASS_C_MASK);
-        Assert.assertEquals(STR_CLASS_C_MASK, localhost.getHostAddress());
+        InetAddress classC = NetUtils.charTabToIa(CHARS_CLASS_C_MASK);
+        Assert.assertEquals(STR_CLASS_C_MASK, classC.getHostAddress());
     }
     /**
      * Test method for {@link net.mauhiz.util.NetUtils#intToBytes(int)}.
@@ -58,7 +58,7 @@ public class NetUtilsTest {
     public void testIntToBytes() {
         byte[] toBytes = NetUtils.intToBytes(INT_CLASS_C_MASK);
         Assert.assertEquals(BYTES_CLASS_C_MASK.length, toBytes.length);
-        for (int i = 0; i < BYTES_CLASS_C_MASK.length; ++i) {
+        for (int i = 0; i < BYTES_CLASS_C_MASK.length; i++) {
             Assert.assertEquals(BYTES_CLASS_C_MASK[i], toBytes[i]);
         }
     }
@@ -80,7 +80,7 @@ public class NetUtilsTest {
     public void testLongToIntTab() {
         char[] maskc = NetUtils.longToCharTab(LONG_CLASS_C_MASK);
         Assert.assertEquals(CHARS_CLASS_C_MASK.length, maskc.length);
-        for (int i = 0; i < CHARS_CLASS_C_MASK.length; ++i) {
+        for (int i = 0; i < CHARS_CLASS_C_MASK.length; i++) {
             Assert.assertEquals(CHARS_CLASS_C_MASK[i], maskc[i]);
         }
     }

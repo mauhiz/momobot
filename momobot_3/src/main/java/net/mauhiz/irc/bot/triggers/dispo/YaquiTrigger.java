@@ -101,7 +101,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         Calendar date;
         if ("semaine".equals(msg)) {
             date = Calendar.getInstance(Locale.FRANCE);
-            for (int i = date.getMinimum(Calendar.DAY_OF_WEEK); i < date.getMaximum(Calendar.DAY_OF_WEEK); ++i) {
+            for (int i = date.getMinimum(Calendar.DAY_OF_WEEK); i < date.getMaximum(Calendar.DAY_OF_WEEK); i++) {
                 Privmsg resp = Privmsg.buildAnswer(cme, doTrigger(cme, date));
                 control.sendMsg(resp);
                 date.setTimeInMillis(date.getTimeInMillis() + DateUtils.MILLIS_PER_DAY);
