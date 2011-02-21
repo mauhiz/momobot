@@ -24,6 +24,7 @@ public class SeekWarThreadTimeOut extends Timer {
          * @param seekwar2
          */
         Timeout(SeekWar2 seekwar2) {
+            super();
             seekwar = seekwar2;
         }
         

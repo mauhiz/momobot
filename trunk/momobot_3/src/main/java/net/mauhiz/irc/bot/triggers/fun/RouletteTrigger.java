@@ -41,7 +41,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         }
         int index = RandomUtils.nextInt(wannabe.size());
         Iterator<IrcUser> uIter = wannabe.iterator();
-        for (int i = 0; i < index; ++i) {
+        for (int i = 0; i < index; i++) {
             uIter.next();
         }
         IrcUser random = uIter.next();

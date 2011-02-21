@@ -75,7 +75,7 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             if (pick.assignTeam(team) != null) {
                 --max;
             }
-            for (int i = 0; i < max; ++i) {
+            for (int i = 0; i < max; i++) {
                 IrcUser target = server.findUser(whos[i], false);
                 if (target == null) {
                     Privmsg msg = Privmsg.buildAnswer(im, whos[i] + " n'est pas sur " + chan);

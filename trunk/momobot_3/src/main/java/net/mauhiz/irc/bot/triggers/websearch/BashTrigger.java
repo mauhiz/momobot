@@ -29,7 +29,7 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             page = StringUtils.substringBefore(page, "</div>");
             page = StringUtils.replaceChars(page, "\r\n", "");
             String[] lignes = new StrTokenizer(page, "<br />").getTokenArray();
-            for (int i = 0; i < lignes.length; ++i) {
+            for (int i = 0; i < lignes.length; i++) {
                 lignes[i] = StringEscapeUtils.unescapeHtml(lignes[i]);
             }
             return lignes;
@@ -50,7 +50,7 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             page = StringUtils.substringBefore(page, "</p>");
             page = StringUtils.replaceChars(page, "\r\n", "");
             String[] lignes = new StrTokenizer(page, "<br />").getTokenArray();
-            for (int i = 0; i < lignes.length; ++i) {
+            for (int i = 0; i < lignes.length; i++) {
                 lignes[i] = StringEscapeUtils.unescapeHtml(lignes[i]);
             }
             return lignes;

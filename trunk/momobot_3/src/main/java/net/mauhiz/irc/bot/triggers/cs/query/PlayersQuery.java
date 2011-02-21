@@ -27,7 +27,7 @@ public class PlayersQuery extends AbstractQuery implements ServerFlags {
         }
         int nbPlayers = result.get();
         server.setPlayerCount(nbPlayers);
-        for (int i = 0; i < nbPlayers; ++i) {
+        for (int i = 0; i < nbPlayers; i++) {
             if (result.remaining() == 0) {
                 break;
             }

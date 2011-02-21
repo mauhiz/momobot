@@ -9,26 +9,26 @@ import org.junit.Test;
 
 public class ValveUdpClientTest {
     
-    private static void testArr(byte[] arr) {
-        for (int i = 0; i < arr.length; ++i) {
-            Assert.assertEquals((byte) 0xff, arr[i]);
+    private static void isArrOk(byte[] arr) {
+        for (byte element : arr) {
+            Assert.assertEquals((byte) 0xff, element);
         }
     }
     
     @Test
     public void testMoinsUn() {
         // byte[] m1 = ValveUdpClient.MOINS_UN.getBytes(FileUtil.ASCII);
-        //        
+        //
         // Assert.assertEquals(4, ValveUdpClient.MOINS_UN.length());
         // Assert.assertEquals(4, ByteBuffer.wrap(ValveUdpClient.MOINS_UN.getBytes(FileUtil.ASCII)).array().length);
-        // for (int i = 0; i < m1.length; ++i) {
-        // Assert.assertEquals(0xff, m1[i]);
+        // for (byte m : m1) {
+        // Assert.assertEquals(0xff, m);
         // }
         
         byte[] tbb = ByteBuffer.allocate(Integer.SIZE / Byte.SIZE).putInt(-1).array();
-        testArr(tbb);
+        isArrOk(tbb);
         
         byte[] m1 = new String(tbb, FileUtil.ISO8859_15).getBytes(FileUtil.ISO8859_15);
-        testArr(m1);
+        isArrOk(m1);
     }
 }

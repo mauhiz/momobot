@@ -25,7 +25,7 @@ public class RulesQuery extends AbstractQuery implements ServerFlags {
             return;
         }
         int nbRules = result.getShort(); // skip short number of rules
-        for (int i = 0; i < nbRules; ++i) {
+        for (int i = 0; i < nbRules; i++) {
             if (result.remaining() == 0) {
                 break;
             }

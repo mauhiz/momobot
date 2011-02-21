@@ -122,7 +122,7 @@ public class Pendu extends ChannelEvent {
      */
     public boolean findLetter(char car) {
         boolean present = false;
-        for (int index = 0; index < solution.length(); ++index) {
+        for (int index = 0; index < solution.length(); index++) {
             if (car == mot.charAt(index)) {
                 present = true;
                 devinage.setCharAt(index, solutionPure.charAt(index));
