@@ -82,6 +82,6 @@ public class Rule {
     }
     
     static boolean isPromotionZone(Player pl, Point here) {
-        return pl == Player.BLACK ? here.x >= 6 : here.x <= 2;
+        return pl == Player.BLACK ? here.y >= 6 : here.y <= 2;
     }
 }
