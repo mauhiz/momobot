@@ -140,9 +140,8 @@ public class Tournament extends ChannelEvent {
     
     /**
      * @return template File.
-     * @throws Exception
      */
-    File createTemplateFile() throws Exception {
+    File createTemplateFile() throws IOException {
         VelocityContext context = new VelocityContext();
         StringBuilder maps = new StringBuilder();
         for (String map : mapList) {
