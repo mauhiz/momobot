@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.mauhiz.irc.gui.actions;
 
 import net.mauhiz.irc.base.data.IrcServer;
