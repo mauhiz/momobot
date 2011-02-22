@@ -1,32 +1,31 @@
 package net.mauhiz.irc.bot.triggers.websearch;
 
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.util.Arrays;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
-import net.mauhiz.util.FileUtil;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  * @author mauhiz
  */
 public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
-     * encodage.
-     */
-    private static final String ENCODE = FileUtil.UTF8.name();
-    /**
      * ma methode de post.
      */
-    private static final PostMethod POST = new PostMethod("http://babelfish.altavista.com/tr");
+    private static final HttpPost POST = new HttpPost("http://babelfish.altavista.com/tr");
     
     /**
      * @param langue1
@@ -40,12 +39,14 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
      *             si le site est en mousse
      */
     public static String result(String langue1, String langue2, String toTranslate) throws IOException {
-        NameValuePair[] data = {new NameValuePair("trtext", URLEncoder.encode(toTranslate, ENCODE)),
-                new NameValuePair("lp", URLEncoder.encode(langue1 + '_' + langue2, ENCODE)),
-                new NameValuePair("tt", "urltext"), new NameValuePair("intl", "tt"), new NameValuePair("doit", "done")};
-        POST.setRequestBody(data);
-        new HttpClient().executeMethod(POST);
-        String page = POST.getResponseBodyAsString();
+        NameValuePair[] data = {new BasicNameValuePair("trtext", toTranslate),
+                new BasicNameValuePair("lp", langue1 + '_' + langue2), new BasicNameValuePair("tt", "urltext"),
+                new BasicNameValuePair("intl", "tt"), new BasicNameValuePair("doit", "done")};
+        
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(Arrays.asList(data));
+        POST.setEntity(entity);
+        HttpResponse resp = new DefaultHttpClient().execute(POST);
+        String page = IOUtils.toString(resp.getEntity().getContent());
         String bound1 = "<td bgcolor=white class=s><div style=padding:10px;>";
         int len = bound1.length();
         int index = page.indexOf(bound1) + len;

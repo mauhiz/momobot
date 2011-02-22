@@ -2,14 +2,14 @@ package net.mauhiz.irc.bot.triggers.websearch;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpURL;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.GetMethod;
+import net.mauhiz.util.NetUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -64,7 +64,7 @@ public class WebQuery {
     /**
      * url.
      */
-    private HttpURL url;
+    private URI url;
     
     /**
      * @param type1
@@ -75,11 +75,11 @@ public class WebQuery {
     public WebQuery(String type1, String query1) {
         type = type1;
         try {
-            query = URLEncoder.encode(query1, "utf-8");
+            query = URLEncoder.encode(query1, "UTF-8");
             setUrl();
         } catch (UnsupportedEncodingException uee) {
             LOG.warn(uee, uee);
-        } catch (URIException urie) {
+        } catch (URISyntaxException urie) {
             LOG.warn(urie, urie);
         }
         len = resultSep.length();
@@ -89,20 +89,19 @@ public class WebQuery {
      * @return un iterateur sur les resultats
      */
     public List<String> results() {
-        List<String> results = new ArrayList<String>(numResult);
-        GetMethod method = new GetMethod(url.toString());
-        String page = null;
+        String page;
         try {
-            new HttpClient().executeMethod(method);
-            page = method.getResponseBodyAsString();
+            page = NetUtils.doHttpGet(url);
         } catch (IOException ioe) {
             LOG.error(ioe, ioe);
-        } finally {
-            method.releaseConnection();
-        }
-        if (null == page || StringUtils.isBlank(page)) {
             return null;
         }
+        
+        if (StringUtils.isBlank(page)) {
+            return null;
+        }
+        
+        List<String> results = new ArrayList<String>(numResult);
         int index;
         String work;
         if (type.equals(GAMETIGER)) {
@@ -167,21 +166,20 @@ public class WebQuery {
     }
     
     /**
-     * @throws URIException
+     * @throws URISyntaxException
      */
-    private void setUrl() throws URIException {
+    private void setUrl() throws URISyntaxException {
         if (type.equals(GAMETIGER)) {
             resultSep = "/search?address=";
-            url = new HttpURL("gametiger.net", HttpURL.DEFAULT_PORT, "/search", "game=cstrike&player=" + query);
+            url = new URI("http", "gametiger.net", "/search", "game=cstrike&player=" + query, null);
         } else if (type.equals(GOOGLE)) {
             resultSep = "<a href=\"";
             numResult = 2;
-            url = new HttpURL("www.google.fr", HttpURL.DEFAULT_PORT, "/search", "hl=fr&ie=UTF-8&oe=UTF-8&num="
-                    + numResult + "&q=" + query);
+            url = new URI("http", "www.google.fr", "/search", "hl=fr&ie=UTF-8&oe=UTF-8&num=" + numResult + "&q="
+                    + query, null);
         } else if (type.equals(YAHOO)) {
             resultSep = "<a class=yschttl  href=\"";
-            url = new HttpURL("fr.search.yahoo.com", HttpURL.DEFAULT_PORT, "/search", "ie=UTF-8&num=" + numResult
-                    + "&p=" + query);
+            url = new URI("http", "fr.search.yahoo.com", "/search", "ie=UTF-8&num=" + numResult + "&p=" + query, null);
         }
     }
 }

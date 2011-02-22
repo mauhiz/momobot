@@ -1,14 +1,14 @@
 package net.mauhiz.irc.bot.triggers.websearch;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
+import net.mauhiz.util.NetUtils;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -18,19 +18,21 @@ import org.apache.commons.lang.StringUtils;
 public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     
     /**
-     * @return next bash quote
+     * @return next VDM
      */
     static String getNextVdm() {
-        GetMethod get = new GetMethod("http://www.viedemerde.fr/aleatoire");
         try {
-            new HttpClient().executeMethod(get);
-            String page = get.getResponseBodyAsString();
+            String page = NetUtils.doHttpGet("http://www.viedemerde.fr/aleatoire");
             page = StringUtils.substringAfter(page, "<div class=\"post\"><p>");
             page = StringUtils.substringBefore(page, "</p>");
             page = StringUtils.replaceChars(page, "\r\n", "");
             return StringEscapeUtils.unescapeHtml(page);
+            
         } catch (IOException e) {
             return e.getMessage();
+            
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
         }
     }
     
