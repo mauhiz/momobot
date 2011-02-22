@@ -6,6 +6,7 @@
   <version>1.0-SNAPSHOT</version>
   <description>momo bot</description>
   <url>http://eule.mauhiz.net/momobot/</url>
+  <packaging>jar</packaging>
   <developers>
     <developer>
       <id>mauhiz</id>
