@@ -1,9 +1,16 @@
 package net.mauhiz.util;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 
 /**
@@ -84,6 +91,16 @@ public class NetUtils {
         return null;
     }
     
+    public static String doHttpGet(String url) throws IOException, URISyntaxException {
+        return doHttpGet(new URI(url));
+    }
+    
+    public static String doHttpGet(URI url) throws IOException {
+        HttpGet get = new HttpGet(url);
+        HttpResponse resp = new DefaultHttpClient().execute(get);
+        return IOUtils.toString(resp.getEntity().getContent());
+    }
+    
     /**
      * @param address
      *            l'adresse
@@ -116,7 +133,6 @@ public class NetUtils {
         }
         return result;
     }
-    
     /**
      * A convenient method that accepts an IP address represented as a long and returns an integer array of size 4
      * representing the same IP address.
@@ -134,7 +150,6 @@ public class NetUtils {
         }
         return ip;
     }
-    
     /**
      * @param longip
      *            une ip
@@ -143,6 +158,7 @@ public class NetUtils {
     public static InetAddress longToIa(long longip) {
         return charTabToIa(longToCharTab(longip));
     }
+    
     /**
      * @param str
      *            la chaine a parser
@@ -165,6 +181,7 @@ public class NetUtils {
         }
         return null;
     }
+    
     /**
      * @param uns
      *            un long non signe

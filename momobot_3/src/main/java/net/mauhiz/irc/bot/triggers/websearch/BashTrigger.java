@@ -1,14 +1,14 @@
 package net.mauhiz.irc.bot.triggers.websearch;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
+import net.mauhiz.util.NetUtils;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrTokenizer;
@@ -21,10 +21,8 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
      * @return next bashfr quote
      */
     static String[] getNextFrQuote() {
-        GetMethod get = new GetMethod("http://www.bashfr.org/?sort=random2");
         try {
-            new HttpClient().executeMethod(get);
-            String page = get.getResponseBodyAsString();
+            String page = NetUtils.doHttpGet("http://www.bashfr.org/?sort=random2");
             page = StringUtils.substringAfter(page, " class=\"com\"></span><br />");
             page = StringUtils.substringBefore(page, "</div>");
             page = StringUtils.replaceChars(page, "\r\n", "");
@@ -35,6 +33,9 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             return lignes;
         } catch (IOException e) {
             return new String[]{e.getMessage()};
+            
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
         }
     }
     
@@ -42,10 +43,8 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
      * @return next bash quote
      */
     static String[] getNextQuote() {
-        GetMethod get = new GetMethod("http://www.bash.org/?random");
         try {
-            new HttpClient().executeMethod(get);
-            String page = get.getResponseBodyAsString();
+            String page = NetUtils.doHttpGet("http://www.bash.org/?random");
             page = StringUtils.substringAfter(page, "<p class=\"qt\">");
             page = StringUtils.substringBefore(page, "</p>");
             page = StringUtils.replaceChars(page, "\r\n", "");
@@ -56,6 +55,9 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             return lignes;
         } catch (IOException e) {
             return new String[]{e.getMessage()};
+            
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
         }
     }
     
