@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author mauhiz
  */
 public class ExitAction implements SelectionListener {
-    Shell shell;
+    private final Shell shell;
     
     /**
      * @param shell1
