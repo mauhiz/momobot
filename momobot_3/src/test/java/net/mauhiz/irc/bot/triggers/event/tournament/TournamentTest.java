@@ -15,11 +15,9 @@ public class TournamentTest extends AbstractServerTest {
     
     /**
      * Test method for {@link net.mauhiz.irc.bot.triggers.event.tournament.Tournament#generateTemplate()}.
-     * 
-     * @throws Exception
      */
     @Test
-    public void testCreateTemplateFile() throws Exception {
+    public void testCreateTemplateFile() throws IOException {
         Tournament t = new Tournament(QNET.newChannel("#tsi.fr"), new String[]{"de_nuke", "de_tuscan"});
         t.createTemplateFile();
     }
