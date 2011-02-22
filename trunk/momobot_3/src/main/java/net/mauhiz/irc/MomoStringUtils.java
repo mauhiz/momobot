@@ -1,4 +1,4 @@
-﻿package net.mauhiz.irc;
+package net.mauhiz.irc;
 
 import java.text.Normalizer;
 
