@@ -10,6 +10,8 @@ import net.mauhiz.shogi.model.Player;
 import net.mauhiz.shogi.model.Rule;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,13 +40,15 @@ public class Shogui {
         Display display = new Display();
         Shell shell = new Shell(display);
         
-        shell.setSize(800, 600);
+        shell.setSize(400, 400);
+        shell.setMinimumSize(400, 400);
         
         /* menu */
         INSTANCE.setShell(shell);
         INSTANCE.initMenu();
         
         shell.open();
+        shell.pack();
         // SWT loop
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) {
@@ -60,7 +64,6 @@ public class Shogui {
     
     public static void redraw() {
         INSTANCE.refreshBoard();
-        INSTANCE.shell.redraw();
     }
     
     public static void selectPiece(Piece inPocket) {
@@ -80,7 +83,7 @@ public class Shogui {
     }
     private final Board b = new Board();
     
-    private final Button[][] buttons = new Button[Board.SIZE][Board.SIZE];
+    final Button[][] buttons = new Button[Board.SIZE][Board.SIZE];
     private final SelectionListener[][] listeners = new SelectionListener[Board.SIZE][Board.SIZE];
     private Piece selectedPiece;
     private Point selectedSquare;
@@ -89,12 +92,16 @@ public class Shogui {
     
     private void disableButton(int i, int j) {
         Button button = buttons[i][j];
+        Color fore = button.getForeground();
+        Color back = button.getBackground();
         SelectionListener action = listeners[i][j];
         if (action != null) {
             button.removeSelectionListener(action);
         }
         listeners[i][j] = null;
         button.setEnabled(false);
+        button.setForeground(fore);
+        button.setBackground(back);
     }
     
     private void displayPockets() {
@@ -121,44 +128,58 @@ public class Shogui {
                     }
                 }
                 selectedSquare = null;
-                redraw();
+                refreshBoard();
             }
         } else if (selectedPiece != null) {
             if (b.drop(b.getTurn(), selectedPiece, to)) {
                 selectedPiece = null;
-                redraw();
+                refreshBoard();
             }
         }
     }
     
     private void enableButton(int i, int j, SelectionListener action) {
         Button button = buttons[i][j];
+        Color fore = button.getForeground();
+        Color back = button.getBackground();
         button.addSelectionListener(action);
         listeners[i][j] = action;
         button.setEnabled(true);
+        button.setForeground(fore);
+        button.setBackground(back);
     }
     
     private void initBoard() {
-        Color gray = shell.getDisplay().getSystemColor(SWT.COLOR_GRAY);
-        
-        for (int i = 0; i < Board.SIZE; i++) {
-            for (int j = 0; j < Board.SIZE; j++) {
-                int x = j;
-                int y = Board.SIZE - i - 1;
-                Button button = new Button(shell, SWT.PUSH);
-                buttons[x][y] = button;
-                
-                disableButton(x, y);
-                button.setBackground(gray);
-                button.setSize(30, 30);
-            }
-        }
         
         /* layout */
         GridLayout gridLayout = new GridLayout(Board.SIZE, true);
         shell.setLayout(gridLayout);
         gridLayout.horizontalSpacing = 0;
         gridLayout.verticalSpacing = 0;
+        
+        Color gray = shell.getDisplay().getSystemColor(SWT.COLOR_GRAY);
+        
+        for (int i = 0; i < Board.SIZE; i++) {
+            for (int j = 0; j < Board.SIZE; j++) {
+                int x = j;
+                int y = Board.SIZE - i - 1;
+                Button button = new Button(shell, SWT.PUSH | SWT.FLAT);
+                buttons[x][y] = button;
+                button.setBackground(gray);
+            }
+        }
+        
+        shell.addPaintListener(new PaintListener() {
+            
+            @Override
+            public void paintControl(PaintEvent arg0) {
+                for (int i = 0; i < Board.SIZE; i++) {
+                    for (int j = 0; j < Board.SIZE; j++) {
+                        buttons[i][j].setSize(30, 30);
+                    }
+                }
+            }
+        });
     }
     
     private void initMenu() {
@@ -180,8 +201,10 @@ public class Shogui {
     }
     
     private void refreshBoard() {
-        Color black = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
-        Color white = shell.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+        Display display = shell.getDisplay();
+        Color black = display.getSystemColor(SWT.COLOR_BLACK);
+        Color white = display.getSystemColor(SWT.COLOR_WHITE);
+        shell.setRedraw(false);
         
         for (int i = 0; i < Board.SIZE; i++) {
             for (int j = 0; j < Board.SIZE; j++) {
@@ -213,8 +236,6 @@ public class Shogui {
                     button.setText(op.getSymbol());
                     button.setForeground(op.player == Player.BLACK ? black : white);
                 }
-                
-                button.setSize(30, 30); // TODO fix those fn buttons' size
             }
         }
         if (selectedSquare != null) {
@@ -222,6 +243,7 @@ public class Shogui {
         }
         
         displayPockets();
+        shell.setRedraw(true);
     }
     
     private void setShell(Shell shell) {
