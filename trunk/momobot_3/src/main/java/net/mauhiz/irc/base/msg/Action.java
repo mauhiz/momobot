@@ -42,6 +42,6 @@ public class Action extends Ctcp {
 
     @Override
     protected String getCommand() {
-        return "ACTION";
+        return ACTION;
     }
 }

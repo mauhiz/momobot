@@ -3,10 +3,30 @@ package net.mauhiz.irc.base.msg;
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.data.IrcServer;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author mauhiz
  */
 public abstract class Ctcp extends Privmsg implements IrcSpecialChars {
+    protected static final String ACTION = "ACTION";
+    protected static final String DCC = "DCC";
+
+    public static Ctcp decode(String from, String to, IrcServer server, String msg) {
+        String command = StringUtils.substringBefore(msg, " ");
+        String ctcpContent = StringUtils.substringAfter(msg, " ");
+
+        if (ACTION.equals(command)) {
+            return new Action(from, to, server, ctcpContent);
+
+        } else if (DCC.equals(command)) {
+            if (ctcpContent.startsWith("CHAT CHAT ")) {
+                return new DccChatRequest(from, to, server, ctcpContent);
+            }
+        }
+
+        return null;
+    }
 
     /**
      * @param from1

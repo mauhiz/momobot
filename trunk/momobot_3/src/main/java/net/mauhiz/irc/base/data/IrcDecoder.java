@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.mauhiz.irc.base.IrcSpecialChars;
-import net.mauhiz.irc.base.msg.Action;
+import net.mauhiz.irc.base.msg.Ctcp;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Kick;
@@ -27,18 +27,18 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChars {
-    
+
     static final Pattern CMD = Pattern.compile("([\\S^:]+) (.*)");
     static final Pattern FROM = Pattern.compile(":([\\S^:]+) (.*)");
     private static final Logger LOG = Logger.getLogger(IrcDecoder.class);
     static final Pattern TO = Pattern.compile("([\\S^:]+) (.*)");
-    
+
     protected InetSocketAddress hostPort;
-    
+
     protected IrcDecoder() {
         super();
     }
-    
+
     /**
      * @param raw
      * @return raw IRC msg
@@ -85,7 +85,7 @@ public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChar
             } else if (PRIVMSG.equals(cmd)) {
                 if (msg.charAt(0) == QUOTE_STX) {
                     msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
-                    return new Action(from, to, getServer(), msg.substring(PRIVMSG.length()));
+                    return Ctcp.decode(from, to, getServer(), msg.substring(PRIVMSG.length()));
                 }
                 return new Privmsg(from, to, getServer(), msg);
             } else if (QUIT.equals(cmd)) {
@@ -106,16 +106,16 @@ public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChar
         LOG.warn("Unknown message on server " + getServer().getAlias() + ": " + raw);
         return null;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcPeer#getAddress()
      */
     public InetSocketAddress getAddress() {
         return hostPort;
     }
-    
+
     protected abstract IrcServer getServer();
-    
+
     /**
      * this method can be subclassed
      */
