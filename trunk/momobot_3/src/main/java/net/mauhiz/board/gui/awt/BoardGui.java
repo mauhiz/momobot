@@ -15,33 +15,51 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.mauhiz.board.Board;
 import net.mauhiz.board.Square;
-import net.mauhiz.board.SquareView;
+import net.mauhiz.board.gui.BoardController;
+import net.mauhiz.board.gui.IBoardGui;
 
-public abstract class BoardGui extends Frame {
+public abstract class BoardGui extends Frame implements IBoardGui {
 
     protected final Map<Square, Button> buttons = new HashMap<Square, Button>();
     protected final Map<Square, ActionListener> listeners = new HashMap<Square, ActionListener>();
 
     protected Panel panel;
 
-    public abstract void cancelSelection();
+    public void addCancelAction(Square square, BoardController controller) {
+        enableSquare(square, new CancelAction(controller));
+    }
 
-    protected void clearBoard() {
-        if (buttons.isEmpty()) {
-            return;
-        }
+    public void addMoveAction(Square square, BoardController controller) {
+        enableSquare(square, new MoveAction(controller, square));
+    }
 
-        for (Square square : new SquareView(getBoardSize())) {
-            Button button = buttons.get(square);
-            if (button != null) {
-                remove(button);
-            }
+    public void addSelectAction(Square square, BoardController controller) {
+        enableSquare(square, new SelectAction(controller, square));
+    }
+
+    public void afterInit() {
+        pack();
+    }
+
+    public void appendSquare(Square square, Dimension size) {
+        int x = square.x;
+        int y = size.height - square.y - 1;
+        Button button = new Button();
+        buttons.put(Square.getInstance(x, y), button);
+        button.setBackground(Color.GRAY);
+        button.setSize(30, 30);
+        panel.add(button);
+    }
+
+    public void clear() {
+        for (Button button : buttons.values()) {
+            remove(button);
         }
     }
 
-    protected void disableButton(Square square) {
+    @Override
+    public void disableSquare(Square square) {
         Button button = buttons.get(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
@@ -54,7 +72,7 @@ public abstract class BoardGui extends Frame {
         button.setBackground(back);
     }
 
-    protected void enableButton(Square square, ActionListener action) {
+    protected void enableSquare(Square square, ActionListener action) {
         Button button = buttons.get(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
@@ -65,18 +83,30 @@ public abstract class BoardGui extends Frame {
         button.setBackground(back);
     }
 
-    protected abstract Board getBoard();
-
-    public Dimension getBoardSize() {
-        return getBoard().getSize();
-    }
-
     public Button getButton(Square at) {
         return buttons.get(at);
     }
 
-    protected void init() {
+    protected abstract BoardController newController();
 
+    public void initDisplay() {
+        initMenu();
+
+        panel = new Panel();
+        add(panel);
+        setVisible(true);
+    }
+
+    public void initLayout(Dimension size) {
+
+        /* layout */
+        GridLayout gridLayout = new GridLayout(size.width, size.height, 0, 0);
+        panel.setLayout(gridLayout);
+    }
+
+    protected void initMenu() {
+
+        /* menu */
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
 
@@ -90,41 +120,10 @@ public abstract class BoardGui extends Frame {
 
         menuBar.add(fileMenu);
         setMenuBar(menuBar);
-
-        panel = new Panel();
-        add(panel);
-        setVisible(true);
     }
-
-    protected void initBoard() {
-        clearBoard();
-        final Dimension size = getBoardSize();
-
-        /* layout */
-        GridLayout gridLayout = new GridLayout(size.width, size.height, 0, 0);
-        panel.setLayout(gridLayout);
-
-        for (Square square : new SquareView(size)) {
-            int x = square.x;
-            int y = size.height - square.y - 1;
-            Button button = new Button();
-            buttons.put(Square.getInstance(x, y), button);
-            button.setBackground(Color.GRAY);
-            button.setSize(30, 30);
-            panel.add(button);
-        }
-        pack();
-    }
-
-    public abstract void movePiece(Square to);
 
     public void newGame() {
-        getBoard().newGame();
-        initBoard();
-        refreshBoard();
+        BoardController controller = newController();
+        controller.init();
     }
-
-    protected abstract void refreshBoard();
-
-    public abstract void selectPiece(Square at);
 }

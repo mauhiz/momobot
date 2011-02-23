@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import net.mauhiz.board.Square;
+import net.mauhiz.board.gui.BoardController;
 
 /**
  * @author mauhiz
@@ -11,9 +12,9 @@ import net.mauhiz.board.Square;
 public class SelectAction implements ActionListener {
 
     private final Square at;
-    private final BoardGui gui;
+    private final BoardController gui;
 
-    public SelectAction(BoardGui gui, Square at) {
+    public SelectAction(BoardController gui, Square at) {
         this.gui = gui;
         this.at = at;
     }
