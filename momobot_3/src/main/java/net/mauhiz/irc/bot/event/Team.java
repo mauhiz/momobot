@@ -40,7 +40,7 @@ public class Team implements Iterable<IrcUser> {
         members.clear();
     }
 
-    public boolean contains(Object o) {
+    public boolean contains(IrcUser o) {
         return members.contains(o);
     }
 
