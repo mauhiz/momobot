@@ -3,7 +3,6 @@ package net.mauhiz.irc.bot.triggers.admin;
 import java.util.Arrays;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.MmbTriggerManager;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -17,14 +16,14 @@ import org.apache.commons.lang.StringUtils;
  * @author mauhiz
  */
 public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrigger, IPrivmsgTrigger {
-    
+
     /**
      * @param trigger
      */
     public DeActivateTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -39,8 +38,8 @@ public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrig
         } else {
             String className = args[0];
             LOG.info("Deactivating trigger class: " + className);
-            MmbTriggerManager manager = (MmbTriggerManager) ((IrcControl) control).getManager();
-            
+            MmbTriggerManager manager = (MmbTriggerManager) control.getManager();
+
             if (args.length == 1) {
                 /* remove inconditionnel */
                 manager.removeTrigger(className, null);
