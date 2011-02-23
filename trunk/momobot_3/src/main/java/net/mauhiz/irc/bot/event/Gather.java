@@ -6,7 +6,6 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.util.DateUtil;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang.time.StopWatch;
 
 /**
@@ -21,7 +20,7 @@ public class Gather extends ChannelEvent {
      * separateur entre l'affichage des differents membres du gather.
      */
     private static final String DISPLAY_SEPARATOR = " - ";
-    
+
     /**
      * 
      */
@@ -38,7 +37,7 @@ public class Gather extends ChannelEvent {
      * l'ensemble de joueurs. Ne sera jamais <code>null</code>
      */
     private final Team team;
-    
+
     /**
      * @param channel1
      *            le channel
@@ -46,7 +45,7 @@ public class Gather extends ChannelEvent {
     public Gather(IrcChannel channel1) {
         this(channel1, "eule^", DEFAULT_SIZE);
     }
-    
+
     /**
      * @param channel1
      * @param nbPlayers
@@ -54,7 +53,7 @@ public class Gather extends ChannelEvent {
     public Gather(IrcChannel channel1, int nbPlayers) {
         this(channel1, "eule^", nbPlayers);
     }
-    
+
     /**
      * @param tag
      *            le tag
@@ -67,7 +66,7 @@ public class Gather extends ChannelEvent {
         sw.start();
         team = new Team(size, tag);
     }
-    
+
     /**
      * @param element
      *            l'element
@@ -79,7 +78,7 @@ public class Gather extends ChannelEvent {
         }
         StringBuilder retour = new StringBuilder();
         retour.append(element.getNick());
-        
+
         if (team.contains(element)) {
             retour.append(": tu es deja inscrit.");
         } else if (team.isFull()) {
@@ -88,20 +87,20 @@ public class Gather extends ChannelEvent {
             team.add(element);
             retour.append(" ajoute au gather. ");
             switch (team.remainingPlaces()) {
-                case 0 :
+                case 0:
                     retour.append("C'est complet! Ready to rock 'n $roll");
                     break;
-                case 1 :
+                case 1:
                     retour.append("Reste une seule place!");
                     break;
-                default :
+                default:
                     retour.append("Reste ").append(team.remainingPlaces()).append(" places.");
                     break;
             }
         }
         return retour.toString();
     }
-    
+
     /**
      * 
      */
@@ -111,21 +110,21 @@ public class Gather extends ChannelEvent {
         }
         return seekWar;
     }
-    
+
     /**
      * @return le nombre de joueur dans la team
      */
     public int getNumberPlayers() {
         return team.size();
     }
-    
+
     /**
      * @return le seekWar
      */
     public SeekWar getSeek() {
         return seekWar;
     }
-    
+
     // /**
     // * @return l'ip du serv
     // */
@@ -162,7 +161,7 @@ public class Gather extends ChannelEvent {
         }
         return user.getNick() + ": tu n'etais pas inscrit tfacon.";
     }
-    
+
     /**
      * @return un pauvre mec pris au hasard
      */
@@ -170,16 +169,16 @@ public class Gather extends ChannelEvent {
         if (team.isEmpty()) {
             return "Personne n'est inscrit au gather.";
         }
-        return "Plouf, plouf, ce sera " + team.get(RandomUtils.nextInt(team.size())).getNick() + " qui ira seek!";
+        return "Plouf, plouf, ce sera " + team.randomPlayer().getNick() + " qui ira seek!";
     }
-    
+
     /**
      * 
      */
     public void setSeekToNull() {
         seekWar = null;
     }
-    
+
     /**
      * @param string
      *            le nouveau tag
@@ -190,7 +189,7 @@ public class Gather extends ChannelEvent {
         LOG.debug("Nouveau tag = " + team.getNom());
         return "Nouveau tag : " + team.getNom();
     }
-    
+
     /**
      * @return un message
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
