@@ -3,7 +3,6 @@ package net.mauhiz.board.chess.model;
 import static java.lang.Math.abs;
 import net.mauhiz.board.Board;
 import net.mauhiz.board.OwnedPiece;
-import net.mauhiz.board.Piece;
 import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
 
@@ -41,10 +40,6 @@ public class ChessRule {
             default:
                 throw new IllegalStateException();
         }
-    }
-
-    static boolean canJump(Piece p) {
-        return ChessPiece.KNIGHT.equals(p);
     }
 
     public static boolean canPromote(OwnedPiece op, Square to) {
