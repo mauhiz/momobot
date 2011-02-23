@@ -23,7 +23,7 @@ public class Pickup extends ChannelEvent {
      * les teams.
      */
     private final List<Team> teams = new ArrayList<Team>(NB_TEAMS);
-    
+
     // private Server serv = null;
     /**
      * @param channel1
@@ -35,7 +35,7 @@ public class Pickup extends ChannelEvent {
             teams.add(new Team(SIZE, Character.toString(nom)));
         }
     }
-    
+
     /**
      * @param user
      *            l'element e ajouter
@@ -79,7 +79,7 @@ public class Pickup extends ChannelEvent {
             return user.getNick() + " deplace vers la team " + assignedTeam.getNom() + '.';
         }
     }
-    
+
     /**
      * @param choix
      *            le choix
@@ -99,7 +99,7 @@ public class Pickup extends ChannelEvent {
             return null;
         }
     }
-    
+
     /**
      * @param a
      *            l'utilisateur e inscrire
@@ -113,7 +113,7 @@ public class Pickup extends ChannelEvent {
         }
         return null;
     }
-    
+
     /**
      * @return si le pickup est full
      */
@@ -125,7 +125,7 @@ public class Pickup extends ChannelEvent {
         }
         return true;
     }
-    
+
     /**
      * @param element
      *            element e retirer
@@ -142,23 +142,23 @@ public class Pickup extends ChannelEvent {
         findTeam.remove(element);
         return element.getNick() + " retire de la team " + findTeam.getNom() + '.';
     }
-    
+
     /**
      * @return un $status
      */
     public String shake() {
         List<IrcUser> listeUser = new ArrayList<IrcUser>(NB_TEAMS * SIZE);
-        
+
         synchronized (teams) {
-            
+
             // On Ajoute les user dans la liste
             for (Team team : teams) {
-                listeUser.addAll(team);
+                listeUser.addAll(team.members());
                 team.clear();
             }
-            
+
             Collections.shuffle(listeUser);
-            
+
             // On re-remplit les teams
             int indexTeam = 0;
             for (IrcUser next : listeUser) {
@@ -168,7 +168,7 @@ public class Pickup extends ChannelEvent {
         }
         return toString();
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
@@ -183,7 +183,7 @@ public class Pickup extends ChannelEvent {
         }
         return retour.toString();
     }
-    
+
     // public String getServ() {
     // return "Serv: " + serv.getIp() + ":" + serv.getPort() + " - Pass: " +
     // serv.pass;

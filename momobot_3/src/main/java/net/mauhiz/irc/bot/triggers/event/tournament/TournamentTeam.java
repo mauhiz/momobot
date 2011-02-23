@@ -1,7 +1,5 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import net.mauhiz.irc.base.data.IrcUser;
@@ -24,7 +22,7 @@ public class TournamentTeam extends Team {
      * 
      */
     private final IrcUser owner;
-    
+
     /**
      * @param size1
      * @param id1
@@ -38,33 +36,31 @@ public class TournamentTeam extends Team {
         id = id1;
         owner = ircuser;
     }
-    
+
     public boolean add(String ele) {
         return super.add(new FakeUser(ele));
     }
-    
-    public boolean addAll(String[] elems) {
-        List<IrcUser> fakes = new ArrayList<IrcUser>(elems.length);
+
+    public void addAll(String[] elems) {
         for (String elem : elems) {
-            fakes.add(new FakeUser(elem));
+            add(elem);
         }
-        return super.addAll(fakes);
     }
-    
+
     /**
      * @return country
      */
     public Locale getCountry() {
         return country;
     }
-    
+
     /**
      * @return id de la team
      */
     public int getId() {
         return id;
     }
-    
+
     /**
      * @param ircuser
      * @return if ircuser is Owner
@@ -73,14 +69,14 @@ public class TournamentTeam extends Team {
     public boolean isOwner(IrcUser ircuser) {
         return owner.equals(ircuser);
     }
-    
+
     /**
      * @param country1
      */
     public void setCountry(Locale country1) {
         country = country1;
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.event.Team#toString()
      */
@@ -90,7 +86,7 @@ public class TournamentTeam extends Team {
         for (IrcUser element : this) {
             listPlayer.append(element).append(' ');
         }
-        
+
         return "Team #" + id + " Tag :" + getNom() + " Pays :" + country.getCountry() + " Player(s) :" + listPlayer;
     }
 }

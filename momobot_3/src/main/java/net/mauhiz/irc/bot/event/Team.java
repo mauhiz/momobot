@@ -1,78 +1,110 @@
 package net.mauhiz.irc.bot.event;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import net.mauhiz.irc.base.data.IrcUser;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.math.RandomUtils;
 
 /**
  * @author mauhiz
  */
-public class Team extends ArrayList<IrcUser> {
+public class Team implements Iterable<IrcUser> {
     private final int capacity;
+    private final List<IrcUser> members;
     private String nom;
-    
+
     /**
      * @param size1
      * @param nom1
      */
     public Team(int size1, String nom1) {
-        super(size1);
+        super();
         capacity = size1;
         nom = nom1;
+        members = new ArrayList<IrcUser>(size1);
     }
-    
-    /**
-     * @see java.util.ArrayList#add(java.lang.Object)
-     */
-    @Override
+
     public boolean add(IrcUser a) {
         if (isFull()) {
             throw new IllegalStateException("Team is full!");
         }
-        return super.add(a);
+        return members.add(a);
     }
-    
+
+    public void clear() {
+        members.clear();
+    }
+
+    public boolean contains(Object o) {
+        return members.contains(o);
+    }
+
     /**
      * @return {@link #capacity}.
      */
     public int getCapacity() {
         return capacity;
     }
-    
+
     /**
      * @return {@link #nom}.
      */
     public String getNom() {
         return nom;
     }
-    
+
+    public boolean isEmpty() {
+        return members.isEmpty();
+    }
+
     /**
      * @return si la team est complete.
      */
     public boolean isFull() {
         return remainingPlaces() <= 0;
     }
-    
+
+    public Iterator<IrcUser> iterator() {
+        return members.iterator();
+    }
+
+    public Collection<IrcUser> members() {
+        return members;
+    }
+
+    public IrcUser randomPlayer() {
+        return members.get(RandomUtils.nextInt(size()));
+    }
+
     /**
      * @return le nombre de places restantes.
      */
     public int remainingPlaces() {
         return capacity - size();
     }
-    
+
+    public boolean remove(IrcUser o) {
+        return members.remove(o);
+    }
+
     /**
      * @param nom1
      */
     public void setNom(String nom1) {
         nom = nom1;
     }
-    
+
+    public int size() {
+        return members.size();
+    }
+
     /**
      * debug only
-     * 
-     * @see java.util.AbstractCollection#toString()
      */
     @Override
     public String toString() {
