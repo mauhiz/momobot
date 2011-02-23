@@ -3,7 +3,6 @@ package net.mauhiz.irc.bot.triggers.admin;
 import java.util.Arrays;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.bot.MmbTriggerManager;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -17,14 +16,14 @@ import org.apache.commons.lang.StringUtils;
  * @author mauhiz
  */
 public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigger, IPrivmsgTrigger {
-    
+
     /**
      * @param trigger
      */
     public ActivateTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -39,8 +38,8 @@ public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigge
         } else {
             String className = args[0];
             LOG.info("Activate trigger class = " + className);
-            ((MmbTriggerManager) ((IrcControl) control).getManager()).loadTrigClass(className, "", Arrays.copyOfRange(
-                    args, 1, args.length));
+            ((MmbTriggerManager) control.getManager()).loadTrigClass(className, "",
+                    Arrays.copyOfRange(args, 1, args.length));
         }
     }
 }
