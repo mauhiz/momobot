@@ -22,7 +22,7 @@ public class CheckersOwnedPiece implements OwnedPiece {
     }
 
     public String getSymbol() {
-        return promoted ? piece.getName() : "8";
+        return promoted ? "8" : piece.getName();
     }
 
     public boolean isPromoted() {

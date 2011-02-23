@@ -14,12 +14,26 @@ import net.mauhiz.board.SquareView;
 /**
  * @author mauhiz
  */
-// TODO promotion
 public class CheckersBoard extends Board {
     public static final int SIZE = 10;
 
+    static Square getSkippedSquare(Square from, Square to) {
+        if (isCornerSkip(from, to)) {
+            return Square.getInstance((from.x + to.x) / 2, (from.y + to.y) / 2);
+        }
+        return null;
+    }
+
+    static boolean isCornerSkip(Square from, Square to) {
+        return abs(getXmove(from, to)) == 2 && abs(getYmove(from, to)) == 2;
+    }
+
+    static boolean isForward(Square from, Square to, CheckersPlayer player) {
+        return getYmove(from, to) * (player == CheckersPlayer.BLACK ? 1 : -1) > 0;
+    }
+
     static boolean isFrontCorner(Square from, Square to, CheckersPlayer pl) {
-        return abs(getXmove(from, to)) == 1 && getYmove(from, to) == (pl == CheckersPlayer.BLACK ? 1 : -1);
+        return isCorner(from, to) && isForward(from, to, pl);
     }
 
     private final Map<Square, CheckersOwnedPiece> piecesMap = new HashMap<Square, CheckersOwnedPiece>();
@@ -55,7 +69,10 @@ public class CheckersBoard extends Board {
             piecesMap.remove(from);
             piecesMap.put(to, toMove);
 
-            // TODO capture
+            // capture
+            piecesMap.remove(getSkippedSquare(from, to));
+
+            // TODO can capture again with same piece if capture
             turn = turn.next();
             return true;
         }

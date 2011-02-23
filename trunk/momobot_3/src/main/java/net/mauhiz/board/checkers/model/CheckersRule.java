@@ -1,6 +1,7 @@
 package net.mauhiz.board.checkers.model;
 
 import net.mauhiz.board.Board;
+import net.mauhiz.board.OwnedPiece;
 import net.mauhiz.board.Square;
 
 public class CheckersRule {
@@ -13,24 +14,23 @@ public class CheckersRule {
      * @return
      */
     public static boolean canGo(Board b, CheckersOwnedPiece op, Square from, Square to) {
-        if (b.isFriendlyPieceOn(op.getPlayer(), to)) {
+        if (b.getOwnedPieceAt(to) != null) {
             return false;
         }
 
-        if (op.isPromoted()) {
-            switch (op.getPiece()) {
-                case PAWN: // TODO
-                default:
-                    throw new IllegalStateException();
+        if (CheckersBoard.isCornerSkip(from, to)) {
+            // capture
+            Square skipped = CheckersBoard.getSkippedSquare(from, to);
+            OwnedPiece captured = b.getOwnedPieceAt(skipped);
+            if (captured == null || captured.getPlayer() == op.getPlayer()) {
+                return false;
             }
+
+        } else if (!Board.isCorner(from, to)) {
+            return false;
         }
 
-        switch (op.getPiece()) {
-            case PAWN: // TODO
-
-            default:
-                throw new IllegalStateException();
-        }
+        return CheckersBoard.isForward(from, to, op.getPlayer()) || op.isPromoted();
     }
 
     public static boolean canPromote(CheckersOwnedPiece op, Square to) {
