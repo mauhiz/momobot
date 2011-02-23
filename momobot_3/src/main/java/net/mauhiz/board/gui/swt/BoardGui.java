@@ -7,7 +7,6 @@ import java.util.Map;
 import net.mauhiz.board.Board;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.SquareView;
-import net.mauhiz.irc.gui.actions.ExitAction;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
