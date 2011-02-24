@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import net.mauhiz.board.Square;
 import net.mauhiz.board.SquareView;
+import net.mauhiz.board.chess.model.Castle;
 import net.mauhiz.board.chess.model.ChessBoard;
 import net.mauhiz.board.chess.model.ChessBoard.Status;
 import net.mauhiz.board.chess.model.ChessMove;
@@ -77,11 +78,12 @@ public class PgnReader {
     }
 
     public static ChessMove readSingleMove(ChessBoard board, String pgnMove, ChessPlayer player) {
-        ChessMove cm = new ChessMove();
-        cm.player = player;
+
+        ChessMove cm;
         Matcher castle = CASTLE.matcher(pgnMove);
         if (castle.matches()) {
-            boolean white = cm.player == ChessPlayer.WHITE;
+            cm = new Castle();
+            boolean white = player == ChessPlayer.WHITE;
             boolean great = castle.group(1) != null;
             cm.from = Square.getInstance(4, white ? 0 : 7);
             cm.to = Square.getInstance(great ? 2 : 6, white ? 0 : 7);
@@ -92,11 +94,12 @@ public class PgnReader {
             Matcher m = SAN_MOVE.matcher(pgnMove);
             if (m.matches()) {
 
+                cm = new ChessMove();
                 int i = 0;
                 String movedPiece = m.group(++i);
                 cm.moved = ChessPiece.fromName(movedPiece == null ? "P" : movedPiece);
                 String fromPosition = m.group(++i);
-                cm.capture = m.group(++i) != null;
+                cm.setCapture(m.group(++i) != null);
                 char toX = m.group(++i).charAt(0);
                 char toY = m.group(++i).charAt(0);
                 cm.to = positionToSquare(toX, toY);
@@ -107,8 +110,12 @@ public class PgnReader {
                 }
                 String statusLine = m.group(++i);
                 cm.status = readStatus(statusLine);
+            } else {
+                return null;
             }
         }
+
+        cm.player = player;
         return cm;
     }
 

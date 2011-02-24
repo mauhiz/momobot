@@ -23,7 +23,7 @@ public class ChessRule {
         switch (op.getPiece()) {
         case PAWN:
             if (b.getOwnedPieceAt(to) == null) {
-                return isPawnMove(from, to, op.getPlayer());
+                return isPawnMove(from, to, op.getPlayer()) || b.canEnPassant(from, to, op.getPlayer());
             }
             return ChessBoard.isFrontCorner(from, to, op.getPlayer());
         case KNIGHT:
