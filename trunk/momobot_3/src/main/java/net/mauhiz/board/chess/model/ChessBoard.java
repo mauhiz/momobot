@@ -35,6 +35,16 @@ public class ChessBoard extends Board {
     private final Map<Square, ChessOwnedPiece> piecesMap = new HashMap<Square, ChessOwnedPiece>();
     private ChessPlayer turn = ChessPlayer.WHITE;
 
+    public boolean canCastle(Square from, Square to, ChessPlayer player) {
+        // TODO use move history (and status?)
+        if (isCheck(player)) {
+            return false;
+        }
+
+        return from.x == 4 && (to.x == 2 || to.x == 6) && from.y == to.y
+                && from.y == (player == ChessPlayer.WHITE ? 0 : 7) && !isObstruction(from, to);
+    }
+
     public Square findKingSquare(Player pl) {
         // locate the king
         for (Square square : new SquareView(getSize())) {
