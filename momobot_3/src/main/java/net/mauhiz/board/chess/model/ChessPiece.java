@@ -11,6 +11,15 @@ public enum ChessPiece implements Piece {
     },
     PAWN, QUEEN, ROOK;
 
+    public static ChessPiece fromName(String name) {
+        for (ChessPiece piece : values()) {
+            if (piece.getName().equals(name)) {
+                return piece;
+            }
+        }
+        return null;
+    }
+
     public String getName() {
         return name().substring(0, 1);
     }

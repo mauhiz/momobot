@@ -20,11 +20,11 @@ public abstract class BoardController {
         display.clear();
     }
 
-    public Board getBoard() {
+    protected Board getBoard() {
         return board;
     }
 
-    public Dimension getBoardSize() {
+    protected Dimension getBoardSize() {
         return getBoard().getSize();
     }
 
@@ -42,10 +42,10 @@ public abstract class BoardController {
         getBoard().newGame();
         final Dimension size = getBoardSize();
 
-        display.initLayout(size);
+        getDisplay().initLayout(size);
 
         for (Square square : getSquares()) {
-            display.appendSquare(square, size);
+            getDisplay().appendSquare(square, size);
         }
 
         refresh();
