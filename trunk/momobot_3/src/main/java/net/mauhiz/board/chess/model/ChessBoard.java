@@ -37,12 +37,24 @@ public class ChessBoard extends Board {
 
     public boolean canCastle(Square from, Square to, ChessPlayer player) {
         // TODO use move history (and status?)
-        if (isCheck(player)) {
-            return false;
-        }
 
-        return from.x == 4 && (to.x == 2 || to.x == 6) && from.y == to.y
-                && from.y == (player == ChessPlayer.WHITE ? 0 : 7) && !isObstruction(from, to);
+        return from.x == 4 && abs(getXmove(from, to)) == 2 && getYmove(from, to) == 0
+                && from.y == (player == ChessPlayer.WHITE ? 0 : 7) && !isObstruction(from, to) && !isCheck(player);
+    }
+
+    public boolean canEnPassant(Square from, Square to, ChessPlayer player) {
+
+        if (isFrontCorner(from, to, player)) {
+            Square enPassant = Square.getInstance(to.x, from.y);
+            ChessOwnedPiece couic = getOwnedPieceAt(enPassant);
+            if (couic == null || couic.getPiece() != ChessPiece.PAWN || couic.getPlayer() == player) {
+                return false;
+            }
+
+            // TODO use move history
+            return true;
+        }
+        return false;
     }
 
     public Square findKingSquare(Player pl) {
@@ -105,7 +117,20 @@ public class ChessBoard extends Board {
 
         if (ChessRule.canGo(this, toMove, from, to)) {
             piecesMap.remove(from);
-            piecesMap.put(to, toMove);
+            ChessOwnedPiece captured = piecesMap.put(to, toMove);
+
+            // castle
+            if (toMove.getPiece() == ChessPiece.KING && abs(getXmove(from, to)) == 2) {
+                // move the rook too
+                Square rookFrom = Square.getInstance(getXmove(from, to) > 0 ? 7 : 0, from.y);
+                Square rookTo = Square.getInstance(to.x - getXmove(from, to) / 2, rookFrom.y);
+
+                piecesMap.put(rookTo, piecesMap.remove(rookFrom));
+
+            } else if (toMove.getPiece() == ChessPiece.PAWN && isFrontCorner(from, to, pl) && captured == null) {
+                Square enPassant = Square.getInstance(to.x, from.y);
+                piecesMap.remove(enPassant);
+            }
 
             turn = turn.next();
             return true;
