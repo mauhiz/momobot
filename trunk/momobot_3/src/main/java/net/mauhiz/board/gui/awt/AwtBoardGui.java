@@ -16,14 +16,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mauhiz.board.Square;
+import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.BoardController;
-import net.mauhiz.board.gui.IBoardGui;
 
-public abstract class BoardGui extends Frame implements IBoardGui {
+public abstract class AwtBoardGui extends AbstractBoardGui {
 
-    protected final Map<Square, Button> buttons = new HashMap<Square, Button>();
-    protected final Map<Square, ActionListener> listeners = new HashMap<Square, ActionListener>();
+    private final Map<Square, Button> buttons = new HashMap<Square, Button>();
+    protected Frame frame = new Frame();
 
+    private final Map<Square, ActionListener> listeners = new HashMap<Square, ActionListener>();
     protected Panel panel;
 
     public void addCancelAction(Square square, BoardController controller) {
@@ -39,7 +40,7 @@ public abstract class BoardGui extends Frame implements IBoardGui {
     }
 
     public void afterInit() {
-        pack();
+        frame.pack();
     }
 
     public void appendSquare(Square square, Dimension size) {
@@ -47,20 +48,22 @@ public abstract class BoardGui extends Frame implements IBoardGui {
         int y = size.height - square.y - 1;
         Button button = new Button();
         buttons.put(Square.getInstance(x, y), button);
-        button.setBackground(Color.GRAY);
+        button.setBackground(getSquareBgcolor(square));
         button.setSize(30, 30);
         panel.add(button);
     }
 
     public void clear() {
         for (Button button : buttons.values()) {
-            remove(button);
+            panel.remove(button);
         }
+        buttons.clear();
+        listeners.clear();
     }
 
     @Override
     public void disableSquare(Square square) {
-        Button button = buttons.get(square);
+        Button button = getButton(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
         ActionListener action = listeners.remove(square);
@@ -73,7 +76,7 @@ public abstract class BoardGui extends Frame implements IBoardGui {
     }
 
     protected void enableSquare(Square square, ActionListener action) {
-        Button button = buttons.get(square);
+        Button button = getButton(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
         button.addActionListener(action);
@@ -87,14 +90,24 @@ public abstract class BoardGui extends Frame implements IBoardGui {
         return buttons.get(at);
     }
 
-    protected abstract BoardController newController();
+    @Override
+    protected String getWindowTitle() {
+        return "AWT Gui";
+    }
 
     public void initDisplay() {
         initMenu();
+        frame.setTitle(getWindowTitle());
+
+        Dimension defaultSize = getDefaultSize();
+        frame.setSize(defaultSize);
+
+        Dimension minSize = getMinimumSize();
+        frame.setMinimumSize(minSize);
 
         panel = new Panel();
-        add(panel);
-        setVisible(true);
+        frame.add(panel);
+        frame.setVisible(true);
     }
 
     public void initLayout(Dimension size) {
@@ -116,14 +129,9 @@ public abstract class BoardGui extends Frame implements IBoardGui {
 
         MenuItem fileExitItem = new MenuItem("Exit", new MenuShortcut(KeyEvent.VK_X));
         fileMenu.add(fileExitItem);
-        fileExitItem.addActionListener(new ExitAction(this));
+        fileExitItem.addActionListener(new ExitAction(frame));
 
         menuBar.add(fileMenu);
-        setMenuBar(menuBar);
-    }
-
-    public void newGame() {
-        BoardController controller = newController();
-        controller.init();
+        frame.setMenuBar(menuBar);
     }
 }

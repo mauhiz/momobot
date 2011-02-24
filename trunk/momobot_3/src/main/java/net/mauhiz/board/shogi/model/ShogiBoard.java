@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.mauhiz.board.Board;
 import net.mauhiz.board.OwnedPiece;
@@ -63,6 +64,10 @@ public class ShogiBoard extends Board {
     @Override
     public ShogiOwnedPiece getOwnedPieceAt(Square square) {
         return piecesMap.get(square);
+    }
+
+    public Iterable<Entry<ShogiPlayer, Collection<ShogiPiece>>> getPockets() {
+        return pockets.entrySet();
     }
 
     @Override

@@ -1,17 +1,16 @@
 package net.mauhiz.board.chess.gui.swt;
 
-import net.mauhiz.board.OwnedPiece;
 import net.mauhiz.board.Square;
-import net.mauhiz.board.SquareView;
-import net.mauhiz.board.chess.model.ChessBoard;
+import net.mauhiz.board.chess.gui.ChessBoardController;
+import net.mauhiz.board.chess.gui.IChessGui;
 import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
-import net.mauhiz.board.chess.model.ChessRule;
-import net.mauhiz.board.gui.swt.BoardGui;
+import net.mauhiz.board.gui.BoardController;
 import net.mauhiz.board.gui.swt.CancelAction;
 import net.mauhiz.board.gui.swt.MoveAction;
 import net.mauhiz.board.gui.swt.SelectAction;
+import net.mauhiz.board.gui.swt.SwtBoardGui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,131 +24,83 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @author mauhiz
  */
-public class ChessGui extends BoardGui {
+public class ChessGui extends SwtBoardGui implements IChessGui {
 
     public static void main(String... args) {
         ChessGui instance = new ChessGui();
-        Display display = new Display();
-        Shell shell = new Shell(display);
 
-        shell.setSize(400, 400);
-        shell.setMinimumSize(400, 400);
+        instance.initDisplay();
+        instance.swtLoop();
+    }
 
-        /* menu */
+    @Override
+    public void addCancelAction(Square square, BoardController controller) {
+        enableSquare(square, new CancelAction(controller));
+    }
 
-        instance.shell = shell;
-        instance.initMenu();
+    @Override
+    public void addMoveAction(Square square, BoardController controller) {
+        enableSquare(square, new MoveAction(controller, square));
 
-        shell.open();
-        shell.pack();
-        // SWT loop
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch()) {
-                display.sleep();
-            }
+    }
+
+    @Override
+    public void addSelectAction(Square square, BoardController controller) {
+        enableSquare(square, new SelectAction(controller, square));
+    }
+
+    @Override
+    public void decorate(Square square, ChessOwnedPiece op) {
+        Button button = getButton(square);
+        if (op == null) {
+            button.setText("");
+        } else {
+            button.setText(op.getSymbol());
+            Display display = shell.getDisplay();
+            Color black = display.getSystemColor(SWT.COLOR_BLACK);
+            Color white = display.getSystemColor(SWT.COLOR_WHITE);
+            button.setForeground(op.getPlayer() == ChessPlayer.BLACK ? black : white);
         }
-        display.dispose();
-    }
-
-    private final ChessBoard board = new ChessBoard();
-    private Square selectedSquare;
-
-    @Override
-    public void cancelSelection() {
-        selectedSquare = null;
-        refreshBoard();
     }
 
     @Override
-    protected ChessBoard getBoard() {
-        return board;
+    protected String getWindowTitle() {
+        return "mauhiz' Chess";
     }
 
     @Override
-    public void movePiece(final Square to) {
-        if (selectedSquare == null) {
-            return;
-        }
+    protected BoardController newController() {
+        return new ChessBoardController(this);
+    }
 
-        if (board.move(board.getTurn(), selectedSquare, to)) {
-            ChessOwnedPiece currentPiece = board.getOwnedPieceAt(to);
+    @Override
+    public void refresh() {
+        shell.redraw();
+    }
 
-            if (ChessRule.canPromote(currentPiece, to)) {
-                ChessPiece[] promotions = { ChessPiece.QUEEN, ChessPiece.ROOK, ChessPiece.BISHOP, ChessPiece.KNIGHT };
-                Shell popup = new Shell(shell, SWT.ICON_QUESTION);
-                popup.setLayout(new GridLayout(promotions.length, true));
-                popup.setText("Promotion?");
-                popup.setActive();
+    public void showPromotionDialog(ChessPiece[] promotions, final ChessBoardController controller, final Square to) {
+        Shell popup = new Shell(shell, SWT.ICON_QUESTION);
+        popup.setLayout(new GridLayout(promotions.length, true));
+        popup.setText("Promotion?");
+        popup.setActive();
 
-                for (final ChessPiece promotion : promotions) {
-                    Button promoButton = new Button(popup, SWT.PUSH);
-                    promoButton.setText(promotion.getName());
-                    promoButton.setToolTipText(promotion.name());
-                    promoButton.addSelectionListener(new SelectionListener() {
+        for (final ChessPiece promotion : promotions) {
+            Button promoButton = new Button(popup, SWT.PUSH);
+            promoButton.setText(promotion.getName());
+            promoButton.setToolTipText(promotion.name());
+            promoButton.addSelectionListener(new SelectionListener() {
 
-                        @Override
-                        public void widgetDefaultSelected(SelectionEvent selectionevent) {
-                            refreshBoard();
-                            getBoard().promote(to, promotion);
-                        }
-
-                        @Override
-                        public void widgetSelected(SelectionEvent selectionevent) {
-                        }
-                    });
+                public void widgetDefaultSelected(SelectionEvent selectionevent) {
+                    controller.promote(to, promotion);
+                    refresh();
                 }
-                popup.pack();
-                popup.open();
-            }
-            selectedSquare = null;
-            refreshBoard();
-        }
-    }
 
-    @Override
-    protected void refreshBoard() {
-        Display display = shell.getDisplay();
-        Color black = display.getSystemColor(SWT.COLOR_BLACK);
-        Color white = display.getSystemColor(SWT.COLOR_WHITE);
-        shell.setRedraw(false);
-
-        for (Square square : new SquareView(getBoardSize())) {
-            OwnedPiece op = board.getOwnedPieceAt(square);
-            Button button = buttons.get(square);
-            disableButton(square);
-
-            if (selectedSquare != null) { // from the board
-                // available destinations
-                OwnedPiece selected = board.getOwnedPieceAt(selectedSquare);
-
-                if (!square.equals(selectedSquare)
-                        && ChessRule.canGo(board, (ChessOwnedPiece) selected, selectedSquare, square)) {
-                    enableButton(square, new MoveAction(this, square));
+                public void widgetSelected(SelectionEvent selectionevent) {
+                    // ignored
                 }
-            } else {
-                // available pieces
-                if (op != null && op.getPlayer() == board.getTurn()) {
-                    enableButton(square, new SelectAction(this, square));
-                }
-            }
-
-            if (op == null) {
-                button.setText("");
-            } else {
-                button.setText(op.getSymbol());
-                button.setForeground(op.getPlayer() == ChessPlayer.BLACK ? black : white);
-            }
+            });
         }
-        if (selectedSquare != null) {
-            enableButton(selectedSquare, new CancelAction(this));
-        }
-
-        shell.setRedraw(true);
-    }
-
-    @Override
-    public void selectPiece(Square at) {
-        selectedSquare = at;
-        refreshBoard();
+        popup.pack();
+        popup.open();
     }
 }

@@ -1,6 +1,7 @@
 package net.mauhiz.board.gui.swt;
 
 import net.mauhiz.board.Square;
+import net.mauhiz.board.gui.BoardController;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -11,9 +12,9 @@ import org.eclipse.swt.events.SelectionListener;
 public class SelectAction implements SelectionListener {
 
     private final Square at;
-    private final BoardGui gui;
+    private final BoardController gui;
 
-    public SelectAction(BoardGui gui, Square at) {
+    public SelectAction(BoardController gui, Square at) {
         this.gui = gui;
         this.at = at;
     }

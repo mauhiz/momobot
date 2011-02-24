@@ -8,9 +8,9 @@ import org.eclipse.swt.events.SelectionListener;
  */
 public class StartAction implements SelectionListener {
     
-    private final BoardGui gui;
+    private final SwtBoardGui gui;
     
-    public StartAction(BoardGui gui) {
+    public StartAction(SwtBoardGui gui) {
         super();
         this.gui = gui;
     }

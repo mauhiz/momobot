@@ -1,5 +1,6 @@
 package net.mauhiz.board.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import net.mauhiz.board.Square;
@@ -19,9 +20,17 @@ public interface IBoardGui {
 
     void disableSquare(Square square);
 
+    Dimension getDefaultSize();
+
+    Dimension getMinimumSize();
+
+    Color getSquareBgcolor(Square square);
+
     void initDisplay();
 
     void initLayout(Dimension size);
+
+    void newGame();
 
     void refresh();
 }

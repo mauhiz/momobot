@@ -1,11 +1,12 @@
-package net.mauhiz.board.chess.gui.awt;
+package net.mauhiz.board.chess.gui.swing;
 
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
 
 import net.mauhiz.board.Square;
 import net.mauhiz.board.chess.gui.ChessBoardController;
@@ -14,26 +15,26 @@ import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
 import net.mauhiz.board.gui.BoardController;
-import net.mauhiz.board.gui.awt.AwtBoardGui;
+import net.mauhiz.board.gui.swing.SwingBoardGui;
 
 /**
  * @author mauhiz
  */
-public class ChessGui extends AwtBoardGui implements IChessGui {
+public class SwingChessGui extends SwingBoardGui implements IChessGui {
 
     public static void main(String... args) {
-        ChessGui instance = new ChessGui();
+        SwingChessGui instance = new SwingChessGui();
 
         instance.initDisplay();
     }
 
     public void decorate(Square square, ChessOwnedPiece op) {
 
-        Button button = getButton(square);
+        JButton button = getButton(square);
         if (op == null) {
-            button.setLabel("");
+            button.setText("");
         } else {
-            button.setLabel(op.getSymbol());
+            button.setText(op.getSymbol());
             button.setForeground(op.getPlayer() == ChessPlayer.BLACK ? Color.BLACK : Color.WHITE);
         }
     }
@@ -50,12 +51,12 @@ public class ChessGui extends AwtBoardGui implements IChessGui {
 
     @Override
     public void showPromotionDialog(ChessPiece[] promotions, final ChessBoardController controller, final Square to) {
-        final Dialog popup = new Dialog(frame, "Promotion?");
+        final JDialog popup = new JDialog(frame, "Promotion?");
         popup.setLayout(new GridLayout(1, promotions.length));
         popup.setModal(true);
 
         for (final ChessPiece promotion : promotions) {
-            Button promoButton = new Button(promotion.getName());
+            JButton promoButton = new JButton(promotion.getName());
             promoButton.addActionListener(new ActionListener() {
 
                 @Override

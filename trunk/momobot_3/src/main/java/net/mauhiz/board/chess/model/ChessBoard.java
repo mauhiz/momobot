@@ -13,6 +13,19 @@ import net.mauhiz.board.Square;
 import net.mauhiz.board.SquareView;
 
 public class ChessBoard extends Board {
+    public static enum Status {
+        CHECK(false), DRAW(true), MATE(true);
+        private boolean end;
+
+        private Status(boolean end) {
+            this.end = end;
+        }
+
+        public boolean isEnd() {
+            return end;
+        }
+    }
+
     public static final int SIZE = 8;
 
     static boolean isFrontCorner(Square from, Square to, Player pl) {
