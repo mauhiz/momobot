@@ -64,7 +64,7 @@ public class ChessBoardController extends BoardController {
                 ChessOwnedPiece selected = getBoard().getOwnedPieceAt(selectedSquare);
 
                 if (selected != null && !square.equals(selectedSquare)
-                        && ChessRule.canGo(board, selected, selectedSquare, square)) {
+                        && ChessRule.canGo(getBoard(), selected, selectedSquare, square)) {
                     getDisplay().addMoveAction(square, this);
                 }
             } else {

@@ -15,30 +15,31 @@ public class ChessRule {
      *            is different from 'from'
      * @return
      */
-    public static boolean canGo(Board b, ChessOwnedPiece op, Square from, Square to) {
+    public static boolean canGo(ChessBoard b, ChessOwnedPiece op, Square from, Square to) {
         if (b.isFriendlyPieceOn(op.getPlayer(), to)) {
             return false;
         }
 
         switch (op.getPiece()) {
-            case PAWN:
-                if (b.getOwnedPieceAt(to) == null) {
-                    return isPawnMove(from, to, op.getPlayer());
-                }
-                return ChessBoard.isFrontCorner(from, to, op.getPlayer());
-            case KNIGHT:
-                return abs(Board.getXmove(from, to)) == 1 && abs(Board.getYmove(from, to)) == 2
-                        || abs(Board.getXmove(from, to)) == 2 && abs(Board.getYmove(from, to)) == 1;
-            case BISHOP:
-                return Board.isDiagonal(from, to) && !b.isObstruction(from, to);
-            case ROOK:
-                return Board.isStraight(from, to) && !b.isObstruction(from, to);
-            case KING:
-                return abs(Board.getXmove(from, to)) <= 1 && abs(Board.getYmove(from, to)) <= 1;
-            case QUEEN:
-                return (Board.isDiagonal(from, to) || Board.isStraight(from, to)) && !b.isObstruction(from, to);
-            default:
-                throw new IllegalStateException();
+        case PAWN:
+            if (b.getOwnedPieceAt(to) == null) {
+                return isPawnMove(from, to, op.getPlayer());
+            }
+            return ChessBoard.isFrontCorner(from, to, op.getPlayer());
+        case KNIGHT:
+            return abs(Board.getXmove(from, to)) == 1 && abs(Board.getYmove(from, to)) == 2
+                    || abs(Board.getXmove(from, to)) == 2 && abs(Board.getYmove(from, to)) == 1;
+        case BISHOP:
+            return Board.isDiagonal(from, to) && !b.isObstruction(from, to);
+        case ROOK:
+            return Board.isStraight(from, to) && !b.isObstruction(from, to);
+        case KING:
+            return abs(Board.getXmove(from, to)) <= 1 && abs(Board.getYmove(from, to)) <= 1
+                    || b.canCastle(from, to, op.getPlayer());
+        case QUEEN:
+            return (Board.isDiagonal(from, to) || Board.isStraight(from, to)) && !b.isObstruction(from, to);
+        default:
+            throw new IllegalStateException();
         }
     }
 
