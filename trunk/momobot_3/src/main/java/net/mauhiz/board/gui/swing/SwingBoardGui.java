@@ -14,35 +14,23 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import net.mauhiz.board.Board;
+import net.mauhiz.board.Move;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.AbstractBoardGui;
-import net.mauhiz.board.gui.BoardController;
-import net.mauhiz.board.gui.CancelAction;
 import net.mauhiz.board.gui.ExitAction;
-import net.mauhiz.board.gui.MoveAction;
-import net.mauhiz.board.gui.SelectAction;
+import net.mauhiz.board.gui.GuiBoardController;
 import net.mauhiz.board.gui.StartAction;
 import net.mauhiz.board.gui.remote.NewRemoteGameAction;
+import net.mauhiz.util.AbstractAction;
 
-public abstract class SwingBoardGui extends AbstractBoardGui {
+public abstract class SwingBoardGui<B extends Board, M extends Move<B>> extends AbstractBoardGui<B, M> {
 
     private final Map<Square, JButton> buttons = new HashMap<Square, JButton>();
     protected JFrame frame = new JFrame();
 
     private final Map<Square, ActionListener> listeners = new HashMap<Square, ActionListener>();
     protected JPanel panel;
-
-    public void addCancelAction(Square square, BoardController controller) {
-        enableSquare(square, new CancelAction(controller));
-    }
-
-    public void addMoveAction(Square square, BoardController controller) {
-        enableSquare(square, new MoveAction(controller, square));
-    }
-
-    public void addSelectAction(Square square, BoardController controller) {
-        enableSquare(square, new SelectAction(controller, square));
-    }
 
     public void afterInit() {
         frame.pack();
@@ -85,7 +73,8 @@ public abstract class SwingBoardGui extends AbstractBoardGui {
         button.setBackground(back);
     }
 
-    protected void enableSquare(Square square, ActionListener action) {
+    @Override
+    protected void enableSquare(Square square, AbstractAction action) {
         JButton button = getButton(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
@@ -128,7 +117,7 @@ public abstract class SwingBoardGui extends AbstractBoardGui {
     }
 
     protected void initMenu() {
-        BoardController controller = newController();
+        GuiBoardController<B, M> controller = newController();
 
         /* menu */
         JMenuBar menuBar = new JMenuBar();
@@ -136,15 +125,15 @@ public abstract class SwingBoardGui extends AbstractBoardGui {
 
         JMenuItem fileStartItem = new JMenuItem("New Game");
         fileMenu.add(fileStartItem);
-        fileStartItem.addActionListener(new StartAction(this, controller));
+        fileStartItem.addActionListener(new StartAction<B, M>(this, controller));
 
         JMenuItem fileRemoteItem = new JMenuItem("New &Network Game");
         fileMenu.add(fileRemoteItem);
-        fileRemoteItem.addActionListener(new NewRemoteGameAction(this, controller));
+        fileRemoteItem.addActionListener(new NewRemoteGameAction<B, M>(this, controller));
 
         JMenuItem fileExitItem = new JMenuItem("Exit");
         fileMenu.add(fileExitItem);
-        fileExitItem.addActionListener(new ExitAction(this));
+        fileExitItem.addActionListener(new ExitAction<B, M>(this));
 
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);

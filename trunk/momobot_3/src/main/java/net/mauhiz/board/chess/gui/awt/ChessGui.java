@@ -10,16 +10,17 @@ import java.awt.event.ActionListener;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.chess.gui.ChessBoardController;
 import net.mauhiz.board.chess.gui.IChessGui;
+import net.mauhiz.board.chess.model.ChessBoard;
+import net.mauhiz.board.chess.model.ChessMove;
 import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
-import net.mauhiz.board.gui.BoardController;
 import net.mauhiz.board.gui.awt.AwtBoardGui;
 
 /**
  * @author mauhiz
  */
-public class ChessGui extends AwtBoardGui implements IChessGui {
+public class ChessGui extends AwtBoardGui<ChessBoard, ChessMove> implements IChessGui {
 
     public static void main(String... args) {
         ChessGui instance = new ChessGui();
@@ -39,7 +40,7 @@ public class ChessGui extends AwtBoardGui implements IChessGui {
     }
 
     @Override
-    protected BoardController newController() {
+    protected ChessBoardController newController() {
         return new ChessBoardController(this);
     }
 

@@ -3,9 +3,10 @@ package net.mauhiz.board.checkers.gui.swt;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.checkers.gui.CheckersBoardController;
 import net.mauhiz.board.checkers.gui.ICheckersGui;
+import net.mauhiz.board.checkers.model.CheckersBoard;
+import net.mauhiz.board.checkers.model.CheckersMove;
 import net.mauhiz.board.checkers.model.CheckersOwnedPiece;
 import net.mauhiz.board.checkers.model.CheckersPlayer;
-import net.mauhiz.board.gui.BoardController;
 import net.mauhiz.board.gui.swt.SwtBoardGui;
 
 import org.eclipse.swt.SWT;
@@ -16,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * @author mauhiz
  */
-public class CheckersGui extends SwtBoardGui implements ICheckersGui {
+public class CheckersGui extends SwtBoardGui<CheckersBoard, CheckersMove> implements ICheckersGui {
     public static void main(String... args) {
         CheckersGui instance = new CheckersGui();
 
@@ -45,7 +46,7 @@ public class CheckersGui extends SwtBoardGui implements ICheckersGui {
     }
 
     @Override
-    protected BoardController newController() {
+    protected CheckersBoardController newController() {
         return new CheckersBoardController(this);
     }
 

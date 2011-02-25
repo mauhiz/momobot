@@ -4,32 +4,24 @@ import java.awt.Dimension;
 import java.util.Collection;
 import java.util.Map.Entry;
 
+import net.mauhiz.board.MoveReader;
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.BoardController;
+import net.mauhiz.board.gui.GuiBoardController;
 import net.mauhiz.board.shogi.model.ShogiBoard;
+import net.mauhiz.board.shogi.model.ShogiMove;
 import net.mauhiz.board.shogi.model.ShogiOwnedPiece;
 import net.mauhiz.board.shogi.model.ShogiPiece;
 import net.mauhiz.board.shogi.model.ShogiPlayer;
 import net.mauhiz.board.shogi.model.ShogiRule;
 
-public class ShogiBoardController extends BoardController {
+import org.apache.commons.lang.NotImplementedException;
+
+public class ShogiBoardController extends GuiBoardController<ShogiBoard, ShogiMove> {
 
     private ShogiPiece selectedPiece;
 
     public ShogiBoardController(IShogiGui display) {
-        super();
-        board = new ShogiBoard();
-        this.display = display;
-    }
-
-    @Override
-    protected void clear() {
-        getDisplay().clear();
-    }
-
-    @Override
-    public ShogiBoard getBoard() {
-        return (ShogiBoard) board;
+        super(display, new ShogiBoard());
     }
 
     @Override
@@ -74,6 +66,11 @@ public class ShogiBoardController extends BoardController {
                 refresh();
             }
         }
+    }
+
+    @Override
+    public MoveReader<ShogiBoard, ShogiMove> newMoveReader() {
+        throw new NotImplementedException();
     }
 
     public void promote(ShogiOwnedPiece to) {
@@ -124,12 +121,6 @@ public class ShogiBoardController extends BoardController {
 
     public void selectPiece(ShogiPiece inPocket) {
         selectedPiece = inPocket;
-        refresh();
-    }
-
-    @Override
-    public void selectPiece(Square at) {
-        selectedSquare = at;
         refresh();
     }
 }

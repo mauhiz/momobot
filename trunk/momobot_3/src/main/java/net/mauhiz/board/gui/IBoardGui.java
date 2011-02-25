@@ -3,14 +3,17 @@ package net.mauhiz.board.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 
+import net.mauhiz.board.Board;
+import net.mauhiz.board.IBoardController;
+import net.mauhiz.board.Move;
 import net.mauhiz.board.Square;
 
-public interface IBoardGui {
-    void addCancelAction(Square square, BoardController controller);
+public interface IBoardGui<B extends Board, M extends Move<B>> {
+    void addCancelAction(Square square, GuiBoardController<B, M> controller);
 
-    void addMoveAction(Square square, BoardController controller);
+    void addMoveAction(Square square, GuiBoardController<B, M> controller);
 
-    void addSelectAction(Square square, BoardController controller);
+    void addSelectAction(Square square, GuiBoardController<B, M> controller);
 
     void afterInit();
 
@@ -32,7 +35,7 @@ public interface IBoardGui {
 
     void initLayout(Dimension size);
 
-    void newGame(BoardController controller);
+    void newGame(IBoardController<B, M> controller);
 
     void refresh();
 }

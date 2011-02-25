@@ -4,14 +4,14 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.mauhiz.board.Board;
+import net.mauhiz.board.Move;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.AbstractBoardGui;
-import net.mauhiz.board.gui.BoardController;
-import net.mauhiz.board.gui.CancelAction;
 import net.mauhiz.board.gui.ExitAction;
-import net.mauhiz.board.gui.MoveAction;
-import net.mauhiz.board.gui.SelectAction;
+import net.mauhiz.board.gui.GuiBoardController;
 import net.mauhiz.board.gui.StartAction;
+import net.mauhiz.util.AbstractAction;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
@@ -24,26 +24,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-public abstract class SwtBoardGui extends AbstractBoardGui {
+public abstract class SwtBoardGui<B extends Board, M extends Move<B>> extends AbstractBoardGui<B, M> {
 
     private final Map<Square, Button> buttons = new HashMap<Square, Button>();
-    private final Map<Square, SelectionListener> listeners = new HashMap<Square, SelectionListener>();
     protected Shell shell;
-
-    @Override
-    public void addCancelAction(Square square, BoardController controller) {
-        enableSquare(square, new CancelAction(controller));
-    }
-
-    @Override
-    public void addMoveAction(Square square, BoardController controller) {
-        enableSquare(square, new MoveAction(controller, square));
-    }
-
-    @Override
-    public void addSelectAction(Square square, BoardController controller) {
-        enableSquare(square, new SelectAction(controller, square));
-    }
 
     @Override
     public void afterInit() {
@@ -86,7 +70,8 @@ public abstract class SwtBoardGui extends AbstractBoardGui {
         button.setBackground(back);
     }
 
-    protected void enableSquare(Square square, SelectionListener action) {
+    @Override
+    protected void enableSquare(Square square, AbstractAction action) {
         Button button = getButton(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
@@ -131,7 +116,7 @@ public abstract class SwtBoardGui extends AbstractBoardGui {
     }
 
     protected void initMenu() {
-        BoardController controller = newController();
+        GuiBoardController<B, M> controller = newController();
         Menu menuBar = new Menu(shell, SWT.BAR);
         MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
         fileMenuHeader.setText("&File");
@@ -141,11 +126,11 @@ public abstract class SwtBoardGui extends AbstractBoardGui {
 
         MenuItem fileStartItem = new MenuItem(fileMenu, SWT.PUSH);
         fileStartItem.setText("New Local &Game");
-        fileStartItem.addSelectionListener(new StartAction(this, controller));
+        fileStartItem.addSelectionListener(new StartAction<B, M>(this, controller));
 
         MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("E&xit");
-        fileExitItem.addSelectionListener(new ExitAction(this));
+        fileExitItem.addSelectionListener(new ExitAction<B, M>(this));
         shell.setMenuBar(menuBar);
     }
 

@@ -1,27 +1,19 @@
 package net.mauhiz.board.checkers.gui;
 
+import net.mauhiz.board.MoveReader;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.checkers.model.CheckersBoard;
+import net.mauhiz.board.checkers.model.CheckersMove;
 import net.mauhiz.board.checkers.model.CheckersOwnedPiece;
 import net.mauhiz.board.checkers.model.CheckersRule;
-import net.mauhiz.board.gui.BoardController;
+import net.mauhiz.board.gui.GuiBoardController;
 
-public class CheckersBoardController extends BoardController {
+import org.apache.commons.lang.NotImplementedException;
+
+public class CheckersBoardController extends GuiBoardController<CheckersBoard, CheckersMove> {
 
     public CheckersBoardController(ICheckersGui display) {
-        super();
-        board = new CheckersBoard();
-        this.display = display;
-    }
-
-    @Override
-    protected void clear() {
-        getDisplay().clear();
-    }
-
-    @Override
-    public CheckersBoard getBoard() {
-        return (CheckersBoard) board;
+        super(display, new CheckersBoard());
     }
 
     @Override
@@ -44,6 +36,11 @@ public class CheckersBoardController extends BoardController {
             selectedSquare = null;
             refresh();
         }
+    }
+
+    @Override
+    public MoveReader<CheckersBoard, CheckersMove> newMoveReader() {
+        throw new NotImplementedException();
     }
 
     @Override
@@ -75,11 +72,5 @@ public class CheckersBoardController extends BoardController {
         }
 
         getDisplay().refresh();
-    }
-
-    @Override
-    public void selectPiece(Square at) {
-        selectedSquare = at;
-        refresh();
     }
 }

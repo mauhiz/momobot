@@ -15,34 +15,21 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.mauhiz.board.Board;
+import net.mauhiz.board.Move;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.AbstractBoardGui;
-import net.mauhiz.board.gui.BoardController;
-import net.mauhiz.board.gui.CancelAction;
 import net.mauhiz.board.gui.ExitAction;
-import net.mauhiz.board.gui.MoveAction;
-import net.mauhiz.board.gui.SelectAction;
 import net.mauhiz.board.gui.StartAction;
+import net.mauhiz.util.AbstractAction;
 
-public abstract class AwtBoardGui extends AbstractBoardGui {
+public abstract class AwtBoardGui<B extends Board, M extends Move<B>> extends AbstractBoardGui<B, M> {
 
     private final Map<Square, Button> buttons = new HashMap<Square, Button>();
     protected Frame frame = new Frame();
 
     private final Map<Square, ActionListener> listeners = new HashMap<Square, ActionListener>();
     protected Panel panel;
-
-    public void addCancelAction(Square square, BoardController controller) {
-        enableSquare(square, new CancelAction(controller));
-    }
-
-    public void addMoveAction(Square square, BoardController controller) {
-        enableSquare(square, new MoveAction(controller, square));
-    }
-
-    public void addSelectAction(Square square, BoardController controller) {
-        enableSquare(square, new SelectAction(controller, square));
-    }
 
     public void afterInit() {
         frame.pack();
@@ -85,7 +72,8 @@ public abstract class AwtBoardGui extends AbstractBoardGui {
         button.setBackground(back);
     }
 
-    protected void enableSquare(Square square, ActionListener action) {
+    @Override
+    protected void enableSquare(Square square, AbstractAction action) {
         Button button = getButton(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
@@ -135,11 +123,11 @@ public abstract class AwtBoardGui extends AbstractBoardGui {
 
         MenuItem fileStartItem = new MenuItem("New Game", new MenuShortcut(KeyEvent.VK_G));
         fileMenu.add(fileStartItem);
-        fileStartItem.addActionListener(new StartAction(this, newController()));
+        fileStartItem.addActionListener(new StartAction<B, M>(this, newController()));
 
         MenuItem fileExitItem = new MenuItem("Exit", new MenuShortcut(KeyEvent.VK_X));
         fileMenu.add(fileExitItem);
-        fileExitItem.addActionListener(new ExitAction(this));
+        fileExitItem.addActionListener(new ExitAction<B, M>(this));
 
         menuBar.add(fileMenu);
         frame.setMenuBar(menuBar);
