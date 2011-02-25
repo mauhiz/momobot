@@ -1,8 +1,8 @@
 package net.mauhiz.board;
 
-public interface Move<B extends Board> {
+import java.io.Externalizable;
+
+public interface Move<B extends Board> extends Externalizable {
 
     Square getTo();
-
-    String toString(B board);
 }

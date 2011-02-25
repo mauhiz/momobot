@@ -1,31 +1,40 @@
 package net.mauhiz.board;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 public abstract class AbstractMove<B extends Board> implements Move<B> {
     protected Square from;
-    private Player player;
     protected Square to;
 
     public Square getFrom() {
         return from;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
     public Square getTo() {
         return to;
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException {
+        from = Square.getInstance(in.readInt(), in.readInt());
+        to = Square.getInstance(in.readInt(), in.readInt());
     }
 
     public void setFrom(Square from) {
         this.from = from;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
     public void setTo(Square to) {
         this.to = to;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(from.x);
+        out.writeInt(from.y);
+        out.writeInt(to.x);
+        out.writeInt(to.y);
     }
 }
