@@ -3,7 +3,7 @@ package net.mauhiz.irc.bouncer;
 import java.io.IOException;
 import java.net.Socket;
 
-import net.mauhiz.irc.base.IrcOutput;
+import net.mauhiz.irc.base.io.IrcOutput;
 
 /**
  * @author mauhiz

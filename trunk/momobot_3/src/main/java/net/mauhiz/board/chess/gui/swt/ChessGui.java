@@ -7,9 +7,9 @@ import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
 import net.mauhiz.board.gui.BoardController;
-import net.mauhiz.board.gui.swt.CancelAction;
-import net.mauhiz.board.gui.swt.MoveAction;
-import net.mauhiz.board.gui.swt.SelectAction;
+import net.mauhiz.board.gui.CancelAction;
+import net.mauhiz.board.gui.MoveAction;
+import net.mauhiz.board.gui.SelectAction;
 import net.mauhiz.board.gui.swt.SwtBoardGui;
 
 import org.eclipse.swt.SWT;

@@ -5,14 +5,14 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
-import net.mauhiz.irc.bot.triggers.IJoinTrigger;
+import net.mauhiz.irc.base.trigger.IJoinTrigger;
 
 /**
  * @author mauhiz
  */
 public class WelcomeTrigger implements IJoinTrigger {
     /**
-     * @see net.mauhiz.irc.bot.triggers.IJoinTrigger#doTrigger(Join, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IJoinTrigger#doTrigger(Join, IIrcControl)
      */
     @Override
     public void doTrigger(Join im, IIrcControl control) {

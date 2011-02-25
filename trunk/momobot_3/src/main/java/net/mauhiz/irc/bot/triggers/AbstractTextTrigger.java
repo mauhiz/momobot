@@ -2,6 +2,8 @@ package net.mauhiz.irc.bot.triggers;
 
 import java.util.Locale;
 
+import net.mauhiz.irc.base.trigger.ITextTrigger;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.log4j.Logger;
@@ -9,7 +11,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public abstract class AbstractTextTrigger implements ITextTrigger {
+public abstract class AbstractTextTrigger implements ITextTrigger, ICommand {
     /**
      * logger.
      */
@@ -18,7 +20,7 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
      * le texte du trigger.
      */
     private final String triggerText;
-    
+
     /**
      * @param trigger
      *            le trigger
@@ -26,7 +28,7 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     public AbstractTextTrigger(String trigger) {
         triggerText = trigger;
     }
-    
+
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -34,12 +36,12 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof ITextTrigger)) {
+        } else if (!(obj instanceof AbstractTextTrigger)) {
             return false;
         }
-        return getClass().equals(obj.getClass()) && triggerText.equals(((ITextTrigger) obj).getTriggerText());
+        return getClass().equals(obj.getClass()) && triggerText.equals(((AbstractTextTrigger) obj).getTriggerText());
     }
-    
+
     /**
      * @param message
      *            le message
@@ -48,21 +50,21 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     public String getArgs(String message) {
         return StringUtils.substringAfter(message, triggerText).trim();
     }
-    
+
     /**
-     * @see net.mauhiz.irc.bot.triggers.ITextTrigger#getTriggerHelp()
+     * @see net.mauhiz.irc.bot.triggers.ICommand#getTriggerHelp()
      */
     public String getTriggerHelp() {
         return "Usage: " + triggerText;
     }
-    
+
     /**
      * @return {@link #triggerText}
      */
     public String getTriggerText() {
         return triggerText;
     }
-    
+
     /**
      * @see java.lang.Object#hashCode()
      */
@@ -70,9 +72,9 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
     public int hashCode() {
         return new HashCodeBuilder().append(getClass()).append(triggerText).toHashCode();
     }
-    
+
     /**
-     * @see net.mauhiz.irc.bot.triggers.ITextTrigger#isActivatedBy(java.lang.String)
+     * @see net.mauhiz.irc.base.trigger.ITextTrigger#isActivatedBy(java.lang.String)
      */
     public boolean isActivatedBy(String msg) {
         if (msg == null) {
@@ -85,7 +87,7 @@ public abstract class AbstractTextTrigger implements ITextTrigger {
         }
         return activated;
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */

@@ -3,8 +3,8 @@ package net.mauhiz.irc.bouncer;
 import java.io.IOException;
 import java.net.Socket;
 
-import net.mauhiz.irc.base.IIrcIO;
-import net.mauhiz.irc.base.IrcInput;
+import net.mauhiz.irc.base.io.IIrcIO;
+import net.mauhiz.irc.base.io.IrcInput;
 
 /**
  * @author viper

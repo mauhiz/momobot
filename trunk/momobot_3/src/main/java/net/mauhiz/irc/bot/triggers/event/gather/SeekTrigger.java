@@ -10,11 +10,11 @@ import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
 import net.mauhiz.irc.bot.event.SeekWar;
 import net.mauhiz.irc.bot.triggers.AbstractGourmandTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -36,7 +36,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {

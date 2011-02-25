@@ -4,6 +4,7 @@ import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.data.WhoisRequest;
 import net.mauhiz.irc.base.data.qnet.QnetServer;
 import net.mauhiz.irc.base.data.qnet.QnetUser;
+import net.mauhiz.irc.base.trigger.AbstractAutomate;
 import net.mauhiz.irc.bot.triggers.cs.PlayerDB;
 
 import org.apache.commons.lang.StringUtils;

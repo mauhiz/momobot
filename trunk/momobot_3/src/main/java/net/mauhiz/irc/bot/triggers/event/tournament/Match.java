@@ -1,12 +1,11 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
-import java.util.ArrayList;
 
 /**
  * @author Topper
  * 
  */
-public class Match extends ArrayList<TournamentTeam> {
+public class Match {
     /**
      * serial
      */
@@ -40,7 +39,7 @@ public class Match extends ArrayList<TournamentTeam> {
      * Team winner
      */
     private TournamentTeam winner;
-    
+
     /**
      * @param phase1
      * @param id1
@@ -60,6 +59,7 @@ public class Match extends ArrayList<TournamentTeam> {
             score[1] = -1;
         }
     }
+
     /**
      * @param phase1
      * @param id1
@@ -80,7 +80,7 @@ public class Match extends ArrayList<TournamentTeam> {
             team1 = pTeam1;
             team2 = pTeam2;
         }
-        
+
         phase = phase1;
         map = map1;
         score[0] = 0;
@@ -91,6 +91,7 @@ public class Match extends ArrayList<TournamentTeam> {
             score[1] = -1;
         }
     }
+
     /**
      * 
      * @param oldmatch
@@ -116,26 +117,28 @@ public class Match extends ArrayList<TournamentTeam> {
             score[1] = -1;
         }
     }
-    
+
     /**
      * @return {@link #id}
      */
     public int getId() {
         return id;
     }
+
     /**
      * @return {@link #map}
      */
     public String getMap() {
         return map;
     }
+
     /**
      * @return {@link #phase}
      */
     public int getPhase() {
         return phase;
     }
-    
+
     /**
      * @return 2 == team 2 win; 1 == team 1 win ; 0 == draw
      */
@@ -149,6 +152,7 @@ public class Match extends ArrayList<TournamentTeam> {
         }
         return -1;
     }
+
     /**
      * @return true si
      */
@@ -158,7 +162,7 @@ public class Match extends ArrayList<TournamentTeam> {
         }
         return true;
     }
-    
+
     /**
      * @param team
      * @return isTeamIn
@@ -174,7 +178,7 @@ public class Match extends ArrayList<TournamentTeam> {
         }
         return false;
     }
-    
+
     /**
      * @param team
      * @param scoreTeam1
@@ -185,7 +189,7 @@ public class Match extends ArrayList<TournamentTeam> {
         if (team2 == null) {
             return "Erreur : Impossible de mettre le score, la team " + team.getId() + " n'a pas d'adversaire.";
         }
-        
+
         if (team1.getId() == team.getId()) {
             winner = team1;
             score[0] = scoreTeam1;
@@ -198,8 +202,9 @@ public class Match extends ArrayList<TournamentTeam> {
             return toString();
         }
         return "Erreur : Match incompatible.";
-        
+
     }
+
     /**
      * @see java.util.AbstractCollection#toString()
      */
@@ -212,7 +217,7 @@ public class Match extends ArrayList<TournamentTeam> {
             if (phase == 1) {
                 gagnant = " " + winner.toString() + " gagne le tournoi.";
             }
-            
+
             if (team1.getId() == winner.getId()) {
                 return "Team " + team1.getId() + " (WINNER): " + score[0] + " vs Team " + team2.getId() + ":"
                         + score[1] + "." + gagnant;
@@ -221,7 +226,7 @@ public class Match extends ArrayList<TournamentTeam> {
                 return "Team " + team1.getId() + ": " + score[0] + " vs Team " + team2.getId() + " (WINNER):"
                         + score[1] + "." + gagnant;
             }
-            
+
         }
         // on a pas de gagnant
         if (team2 == null) {
@@ -236,5 +241,5 @@ public class Match extends ArrayList<TournamentTeam> {
         // + ".";
         return team1.getNom() + " vs " + team2.getNom() + ".";
     }
-    
+
 }

@@ -11,8 +11,8 @@ import net.mauhiz.irc.base.data.qnet.QnetUser;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.dispo.Dispo.Present;
 import net.mauhiz.util.DateUtil;
 
@@ -35,7 +35,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {

@@ -4,7 +4,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Invite;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
-import net.mauhiz.irc.bot.triggers.IInviteTrigger;
+import net.mauhiz.irc.base.trigger.IInviteTrigger;
 import net.mauhiz.util.Messages;
 
 /**
@@ -15,7 +15,7 @@ public class JoinOnInviteTrigger implements IInviteTrigger {
     /**
      * On est sympa, on join tout.
      * 
-     * @see net.mauhiz.irc.bot.triggers.IInviteTrigger#doTrigger(net.mauhiz.irc.base.msg.Invite,
+     * @see net.mauhiz.irc.base.trigger.IInviteTrigger#doTrigger(net.mauhiz.irc.base.msg.Invite,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override

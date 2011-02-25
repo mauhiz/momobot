@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.mauhiz.irc.base.IrcSpecialChars;
-import net.mauhiz.irc.base.msg.Ctcp;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Kick;
@@ -85,7 +84,7 @@ public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChar
             } else if (PRIVMSG.equals(cmd)) {
                 if (msg.charAt(0) == QUOTE_STX) {
                     msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
-                    return Ctcp.decode(from, to, getServer(), msg.substring(PRIVMSG.length()));
+                    return CtcpFactory.decode(from, to, getServer(), msg.substring(PRIVMSG.length()));
                 }
                 return new Privmsg(from, to, getServer(), msg);
             } else if (QUIT.equals(cmd)) {

@@ -8,6 +8,8 @@ import net.mauhiz.irc.base.data.Mask;
  */
 public class Action extends Ctcp {
 
+    public static final String COMMAND = "ACTION";
+
     /**
      * @param toReply
      * @param msg
@@ -42,6 +44,6 @@ public class Action extends Ctcp {
 
     @Override
     protected String getCommand() {
-        return ACTION;
+        return COMMAND;
     }
 }

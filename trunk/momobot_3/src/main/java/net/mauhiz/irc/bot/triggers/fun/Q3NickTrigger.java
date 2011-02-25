@@ -4,8 +4,8 @@ import net.mauhiz.irc.base.Color;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.text.StrBuilder;
 
@@ -69,7 +69,7 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override

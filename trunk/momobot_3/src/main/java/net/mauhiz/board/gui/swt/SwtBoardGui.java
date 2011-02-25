@@ -7,6 +7,11 @@ import java.util.Map;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.BoardController;
+import net.mauhiz.board.gui.CancelAction;
+import net.mauhiz.board.gui.ExitAction;
+import net.mauhiz.board.gui.MoveAction;
+import net.mauhiz.board.gui.SelectAction;
+import net.mauhiz.board.gui.StartAction;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
@@ -61,6 +66,11 @@ public abstract class SwtBoardGui extends AbstractBoardGui {
         }
         buttons.clear();
         listeners.clear();
+    }
+
+    @Override
+    public void close() {
+        shell.close();
     }
 
     public void disableSquare(Square square) {
@@ -121,6 +131,7 @@ public abstract class SwtBoardGui extends AbstractBoardGui {
     }
 
     protected void initMenu() {
+        BoardController controller = newController();
         Menu menuBar = new Menu(shell, SWT.BAR);
         MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
         fileMenuHeader.setText("&File");
@@ -129,12 +140,12 @@ public abstract class SwtBoardGui extends AbstractBoardGui {
         fileMenuHeader.setMenu(fileMenu);
 
         MenuItem fileStartItem = new MenuItem(fileMenu, SWT.PUSH);
-        fileStartItem.setText("New &Game");
-        fileStartItem.addSelectionListener(new StartAction(this));
+        fileStartItem.setText("New Local &Game");
+        fileStartItem.addSelectionListener(new StartAction(this, controller));
 
         MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("E&xit");
-        fileExitItem.addSelectionListener(new ExitAction(shell));
+        fileExitItem.addSelectionListener(new ExitAction(this));
         shell.setMenuBar(menuBar);
     }
 

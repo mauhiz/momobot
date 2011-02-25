@@ -18,6 +18,11 @@ import java.util.Map;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.BoardController;
+import net.mauhiz.board.gui.CancelAction;
+import net.mauhiz.board.gui.ExitAction;
+import net.mauhiz.board.gui.MoveAction;
+import net.mauhiz.board.gui.SelectAction;
+import net.mauhiz.board.gui.StartAction;
 
 public abstract class AwtBoardGui extends AbstractBoardGui {
 
@@ -59,6 +64,11 @@ public abstract class AwtBoardGui extends AbstractBoardGui {
         }
         buttons.clear();
         listeners.clear();
+    }
+
+    @Override
+    public void close() {
+        frame.dispose();
     }
 
     @Override
@@ -125,11 +135,11 @@ public abstract class AwtBoardGui extends AbstractBoardGui {
 
         MenuItem fileStartItem = new MenuItem("New Game", new MenuShortcut(KeyEvent.VK_G));
         fileMenu.add(fileStartItem);
-        fileStartItem.addActionListener(new StartAction(this));
+        fileStartItem.addActionListener(new StartAction(this, newController()));
 
         MenuItem fileExitItem = new MenuItem("Exit", new MenuShortcut(KeyEvent.VK_X));
         fileMenu.add(fileExitItem);
-        fileExitItem.addActionListener(new ExitAction(frame));
+        fileExitItem.addActionListener(new ExitAction(this));
 
         menuBar.add(fileMenu);
         frame.setMenuBar(menuBar);

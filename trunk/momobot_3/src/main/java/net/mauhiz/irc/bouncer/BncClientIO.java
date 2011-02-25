@@ -3,10 +3,10 @@ package net.mauhiz.irc.bouncer;
 import java.io.IOException;
 import java.net.Socket;
 
-import net.mauhiz.irc.base.AbstractIrcIO;
 import net.mauhiz.irc.base.ColorUtils;
-import net.mauhiz.irc.base.IIrcInput;
-import net.mauhiz.irc.base.IOStatus;
+import net.mauhiz.irc.base.io.AbstractIrcIO;
+import net.mauhiz.irc.base.io.IIrcInput;
+import net.mauhiz.irc.base.io.IOStatus;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.Privmsg;

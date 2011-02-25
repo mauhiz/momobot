@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.ITriggerManager;
 import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
 
 /**
  * @author mauhiz
  */
-public class BouncerTriggerManager implements ITriggerManager, Runnable {
+public class BouncerTriggerManager extends DefaultTriggerManager implements Runnable {
     List<BncClientIO> currentlyConnected = new ArrayList<BncClientIO>();
-    
+
     @Override
-    public void processMsg(IIrcMessage msg, IIrcControl ircControl) {
+    public boolean processMsg(IIrcMessage msg, IIrcControl ircControl) {
         // FIXME this is nonsense. do something cool to handle :
         // multi-accounts
         // multi-clients (per account)
@@ -22,8 +22,10 @@ public class BouncerTriggerManager implements ITriggerManager, Runnable {
         for (BncClientIO client : currentlyConnected) {
             client.sendMsg(msg.getIrcForm());
         }
+
+        return true;
     }
-    
+
     /**
      * @see java.lang.Runnable#run()
      */
@@ -33,13 +35,5 @@ public class BouncerTriggerManager implements ITriggerManager, Runnable {
             /* FIXME receive client msgs */
             break;
         }
-    }
-    
-    /**
-     * @see net.mauhiz.irc.base.ITriggerManager#shutdown()
-     */
-    @Override
-    public void shutdown() {
-        // do nothing
     }
 }

@@ -7,18 +7,19 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.INoticeTrigger;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
+import net.mauhiz.irc.base.trigger.ITrigger;
 import net.mauhiz.irc.bot.MmbTriggerManager;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.INoticeTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.triggers.ITrigger;
+import net.mauhiz.irc.bot.triggers.ICommand;
 import net.mauhiz.util.Messages;
 
 /**
  * @author mauhiz
  */
 public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger, INoticeTrigger {
-    
+
     /**
      * @param trigger
      *            le trigger
@@ -26,9 +27,9 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     public HelpTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
-     * @see net.mauhiz.irc.bot.triggers.INoticeTrigger#doTrigger(Notice, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.INoticeTrigger#doTrigger(Notice, IIrcControl)
      */
     @Override
     public void doTrigger(Notice im, IIrcControl control) {
@@ -36,8 +37,8 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         SortedSet<String> cmds = new TreeSet<String>();
         // on fait en 2x pour trier les commandes
         for (ITrigger trig : getTriggers(control)) {
-            if (trig instanceof INoticeTrigger) {
-                cmds.add(((INoticeTrigger) trig).getTriggerText());
+            if (trig instanceof ICommand && trig instanceof INoticeTrigger) {
+                cmds.add(((ICommand) trig).getTriggerText());
             }
         }
         int maxLen = im.getServer().getLineMaxLength() - 50; // TODO make precise computation of overhead in NOTICE
@@ -52,9 +53,9 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
         control.sendMsg(resp);
     }
-    
+
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
@@ -62,8 +63,8 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         SortedSet<String> cmds = new TreeSet<String>();
         // on fait en 2x pour trier les commandes
         for (ITrigger trig : getTriggers(control)) {
-            if (trig instanceof IPrivmsgTrigger) {
-                cmds.add(((IPrivmsgTrigger) trig).getTriggerText());
+            if (trig instanceof ICommand && trig instanceof IPrivmsgTrigger) {
+                cmds.add(((ICommand) trig).getTriggerText());
             }
         }
         int maxLen = im.getServer().getLineMaxLength(); // TODO make precise computation of overhead in PRIVMSG
@@ -78,11 +79,11 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
         control.sendMsg(resp);
     }
-    
+
     private String getHeader() {
         return Messages.get(getClass(), "help"); //$NON-NLS-1$
     }
-    
+
     /**
      * @param control
      * @return triggers view
