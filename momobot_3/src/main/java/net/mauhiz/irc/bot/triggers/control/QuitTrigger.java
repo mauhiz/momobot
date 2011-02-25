@@ -5,9 +5,9 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Quit;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IAdminTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -24,7 +24,7 @@ public class QuitTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override

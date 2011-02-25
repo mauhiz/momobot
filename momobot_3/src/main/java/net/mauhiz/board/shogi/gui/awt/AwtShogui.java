@@ -29,8 +29,8 @@ public class AwtShogui extends AwtBoardGui implements IShogiGui {
         instance.initDisplay();
     }
 
-    private Panel pocket1;
-    private Panel pocket2;
+    private final Panel pocket1 = new Panel();
+    private final Panel pocket2 = new Panel();
 
     protected void addToPocket(ShogiBoardController controller, ShogiPiece piece, Panel pocket) {
         Button button = new Button(piece.getName());
@@ -51,10 +51,7 @@ public class AwtShogui extends AwtBoardGui implements IShogiGui {
 
     @Override
     public void initPockets() {
-        pocket1 = new Panel();
         frame.add(pocket1, 0);
-
-        pocket2 = new Panel();
         frame.add(pocket2);
     }
 

@@ -4,8 +4,8 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.text.StrTokenizer;
 
@@ -38,7 +38,7 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override

@@ -7,10 +7,13 @@ import java.util.Map;
 
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.ident.IdentServer;
+import net.mauhiz.irc.base.io.IIrcIO;
+import net.mauhiz.irc.base.io.IrcIO;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Quit;
+import net.mauhiz.irc.base.trigger.ITriggerManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;

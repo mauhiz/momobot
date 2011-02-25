@@ -17,11 +17,12 @@ import javax.swing.JPanel;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.BoardController;
-import net.mauhiz.board.gui.awt.CancelAction;
-import net.mauhiz.board.gui.awt.ExitAction;
-import net.mauhiz.board.gui.awt.MoveAction;
-import net.mauhiz.board.gui.awt.SelectAction;
-import net.mauhiz.board.gui.awt.StartAction;
+import net.mauhiz.board.gui.CancelAction;
+import net.mauhiz.board.gui.ExitAction;
+import net.mauhiz.board.gui.MoveAction;
+import net.mauhiz.board.gui.SelectAction;
+import net.mauhiz.board.gui.StartAction;
+import net.mauhiz.board.gui.remote.NewRemoteGameAction;
 
 public abstract class SwingBoardGui extends AbstractBoardGui {
 
@@ -63,6 +64,11 @@ public abstract class SwingBoardGui extends AbstractBoardGui {
         }
         buttons.clear();
         listeners.clear();
+    }
+
+    @Override
+    public void close() {
+        frame.dispose();
     }
 
     @Override
@@ -122,6 +128,7 @@ public abstract class SwingBoardGui extends AbstractBoardGui {
     }
 
     protected void initMenu() {
+        BoardController controller = newController();
 
         /* menu */
         JMenuBar menuBar = new JMenuBar();
@@ -129,11 +136,15 @@ public abstract class SwingBoardGui extends AbstractBoardGui {
 
         JMenuItem fileStartItem = new JMenuItem("New Game");
         fileMenu.add(fileStartItem);
-        fileStartItem.addActionListener(new StartAction(this));
+        fileStartItem.addActionListener(new StartAction(this, controller));
+
+        JMenuItem fileRemoteItem = new JMenuItem("New &Network Game");
+        fileMenu.add(fileRemoteItem);
+        fileRemoteItem.addActionListener(new NewRemoteGameAction(this, controller));
 
         JMenuItem fileExitItem = new JMenuItem("Exit");
         fileMenu.add(fileExitItem);
-        fileExitItem.addActionListener(new ExitAction(frame));
+        fileExitItem.addActionListener(new ExitAction(this));
 
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);

@@ -32,9 +32,8 @@ public class SwingShogui extends SwingBoardGui implements IShogiGui {
         instance.initDisplay();
     }
 
-    private JPanel pocket1;
-
-    private JPanel pocket2;
+    private final JPanel pocket1 = new JPanel();
+    private final JPanel pocket2 = new JPanel();
 
     protected void addToPocket(ShogiBoardController controller, ShogiPiece piece, JPanel pocket) {
         JButton button = new JButton();
@@ -60,10 +59,7 @@ public class SwingShogui extends SwingBoardGui implements IShogiGui {
     }
 
     public void initPockets() {
-        pocket1 = new JPanel();
         frame.add(pocket1, 0);
-
-        pocket2 = new JPanel();
         frame.add(pocket2);
     }
 

@@ -36,7 +36,7 @@ public class ChessBoardController extends BoardController {
             return;
         }
 
-        if (board.move(board.getTurn(), selectedSquare, to)) {
+        if (getBoard().move(getBoard().getTurn(), selectedSquare, to)) {
             ChessOwnedPiece currentPiece = getBoard().getOwnedPieceAt(to);
 
             if (ChessRule.canPromote(currentPiece, to)) {

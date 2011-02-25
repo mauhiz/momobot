@@ -1,8 +1,11 @@
 package net.mauhiz.irc.base;
 
 import net.mauhiz.irc.base.data.IrcPeer;
+import net.mauhiz.irc.base.io.IIrcIO;
+import net.mauhiz.irc.base.io.IOStatus;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
+import net.mauhiz.irc.base.trigger.ITriggerManager;
 
 import org.apache.log4j.Logger;
 
@@ -24,7 +27,7 @@ public abstract class AbstractIrcControl implements IIrcControl {
     }
     
     /**
-     * @see net.mauhiz.irc.base.IIrcControl#decodeIrcRawMsg(java.lang.String, net.mauhiz.irc.base.IIrcIO)
+     * @see net.mauhiz.irc.base.IIrcControl#decodeIrcRawMsg(java.lang.String, net.mauhiz.irc.base.io.IIrcIO)
      */
     public void decodeIrcRawMsg(String raw, IIrcIO io) {
         IrcPeer peer = io.getPeer();

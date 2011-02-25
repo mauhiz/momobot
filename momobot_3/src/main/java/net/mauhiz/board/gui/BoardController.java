@@ -53,7 +53,7 @@ public abstract class BoardController {
 
     public abstract void movePiece(Square to);
 
-    protected abstract void refresh();
+    public abstract void refresh();
 
     public abstract void selectPiece(Square at);
 }

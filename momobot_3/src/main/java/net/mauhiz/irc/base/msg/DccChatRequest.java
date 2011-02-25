@@ -11,12 +11,10 @@ import org.apache.commons.lang.StringUtils;
  * @author mauhiz
  */
 public class DccChatRequest extends Ctcp {
-
+    public static final String COMMAND = "DCC";
     private final InetAddress address;
     private final int port;
 
-    /**
-     */
     public DccChatRequest(String from1, String to1, IrcServer server1, InetAddress address, int port) {
         super(from1, to1, server1, "CHAT CHAT " + NetUtils.iaToLong(address) + " " + port);
         this.address = address;
@@ -37,7 +35,7 @@ public class DccChatRequest extends Ctcp {
 
     @Override
     protected String getCommand() {
-        return DCC;
+        return COMMAND;
     }
 
     public int getPort() {

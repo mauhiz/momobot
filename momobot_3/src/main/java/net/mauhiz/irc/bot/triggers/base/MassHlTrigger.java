@@ -10,8 +10,8 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 /**
  * @author mauhiz
@@ -28,7 +28,7 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {

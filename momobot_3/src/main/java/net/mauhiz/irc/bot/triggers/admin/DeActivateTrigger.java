@@ -4,10 +4,10 @@ import java.util.Arrays;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.MmbTriggerManager;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IAdminTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +25,7 @@ public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrig
     }
 
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {
@@ -42,7 +42,7 @@ public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrig
 
             if (args.length == 1) {
                 /* remove inconditionnel */
-                manager.removeTrigger(className, null);
+                manager.removeTrigger(className);
             } else {
                 /* remove de certains triggertext seulement */
                 String[] texts = Arrays.copyOfRange(args, 1, args.length);

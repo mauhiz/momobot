@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 import net.mauhiz.util.NetUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +23,7 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override

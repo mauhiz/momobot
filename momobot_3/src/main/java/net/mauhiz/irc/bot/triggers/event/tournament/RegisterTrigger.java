@@ -8,9 +8,9 @@ import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -41,7 +41,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override

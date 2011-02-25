@@ -24,8 +24,7 @@ public abstract class AbstractBoardGui implements IBoardGui {
 
     protected abstract BoardController newController();
 
-    public void newGame() {
-        BoardController controller = newController();
+    public void newGame(BoardController controller) {
         controller.init();
     }
 

@@ -2,8 +2,8 @@ package net.mauhiz.irc.bot.triggers.math;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
@@ -24,7 +24,7 @@ public class Md5Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * MessageDigest
      * 
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override

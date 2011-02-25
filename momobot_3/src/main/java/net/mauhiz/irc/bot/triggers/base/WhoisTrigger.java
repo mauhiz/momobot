@@ -6,9 +6,9 @@ import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.data.WhoisRequest;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IJoinTrigger;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IJoinTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 /**
  * @author mauhiz
@@ -26,7 +26,7 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     /**
      * j'evite de flooder en joinant clanwar!
      * 
-     * @see net.mauhiz.irc.bot.triggers.IJoinTrigger#doTrigger(Join, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IJoinTrigger#doTrigger(Join, IIrcControl)
      */
     @Override
     public void doTrigger(Join im, IIrcControl control) {
@@ -38,7 +38,7 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     }
     
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {

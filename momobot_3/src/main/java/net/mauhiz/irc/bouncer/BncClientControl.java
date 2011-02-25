@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mauhiz.irc.base.AbstractIrcControl;
-import net.mauhiz.irc.base.IIrcIO;
+import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.io.IIrcIO;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -21,13 +22,18 @@ public class BncClientControl extends AbstractIrcControl {
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(BncClientControl.class);
-    
+
     private final Map<ClientPeer, BncClientIO> clientToIo = new HashMap<ClientPeer, BncClientIO>();
-    
+
     public BncClientControl() {
         super(new BouncerTriggerManager());
     }
-    
+
+    @Override
+    public void connect(IrcServer server) {
+        throw new UnsupportedOperationException("This is a client contol, so it cannot connect to servers");
+    }
+
     /**
      * @see net.mauhiz.irc.base.IIrcControl#exit()
      */
@@ -38,7 +44,7 @@ public class BncClientControl extends AbstractIrcControl {
             io.disconnect();
         }
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.IIrcControl#sendMsg(net.mauhiz.irc.base.msg.IIrcMessage)
      */
@@ -54,7 +60,7 @@ public class BncClientControl extends AbstractIrcControl {
             }
         }
         LOG.info(msg);
-        
+
         // FIXME this is wrong
         String from = msg.getFrom();
         IIrcIO io = clientToIo.get(from);

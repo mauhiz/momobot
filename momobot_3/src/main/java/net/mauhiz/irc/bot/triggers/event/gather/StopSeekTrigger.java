@@ -5,11 +5,11 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
 import net.mauhiz.irc.bot.event.SeekWar;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
 
 /**
  * @author mauhiz
@@ -37,7 +37,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         super(trigger);
     }
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override

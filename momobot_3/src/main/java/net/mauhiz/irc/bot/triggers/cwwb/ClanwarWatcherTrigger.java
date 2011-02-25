@@ -1,11 +1,12 @@
 package net.mauhiz.irc.bot.triggers.cwwb;
+
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Quit;
-import net.mauhiz.irc.bot.triggers.IPartTrigger;
-import net.mauhiz.irc.bot.triggers.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.triggers.IQuitTrigger;
+import net.mauhiz.irc.base.trigger.IPartTrigger;
+import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
+import net.mauhiz.irc.base.trigger.IQuitTrigger;
 import net.mauhiz.util.HibernateUtils;
 
 import org.hibernate.Query;
@@ -18,28 +19,28 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
     /**
      * nicks ignores.
      */
-    private static final String[] IGNORED_NICKS = {"[CW|FR]", "Q", "S"};
-    
+    private static final String[] IGNORED_NICKS = { "[CW|FR]", "Q", "S" };
+
     /**
      */
     public ClanwarWatcherTrigger() {
         super();
-        
+
         // On vide les tables direct en arrivant
         // TODO permettre un parametrage de cette fonction ?
         SQLQuery trunc = HibernateUtils.currentSession().createSQLQuery("truncate table WAR");
         trunc.executeUpdate();
     }
-    
+
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPartTrigger#doTrigger(Part, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IPartTrigger#doTrigger(Part, IIrcControl)
      */
     public void doTrigger(Part im, IIrcControl control) {
         removeSeekFromUser(im.getFrom());
     }
-    
+
     /**
-     * @see net.mauhiz.irc.bot.triggers.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     public void doTrigger(Privmsg im, IIrcControl control) {
         String message = im.getMessage();
@@ -47,52 +48,36 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
         if (message.length() <= 3) {
             return;
         }
-        
+
         String sender = im.getFrom();
-        
+
         // On ignore les messages provenant de certains utilisateurs.
         for (String element : IGNORED_NICKS) {
             if (element.equals(sender)) {
                 return;
             }
         }
-        
+
         // Commande de parsage des wars
         processMessage(sender, message);
-        
+
     }
-    
+
     /**
-     * @see net.mauhiz.irc.bot.triggers.IQuitTrigger#doTrigger(Quit, IIrcControl)
+     * @see net.mauhiz.irc.base.trigger.IQuitTrigger#doTrigger(Quit, IIrcControl)
      */
     public void doTrigger(Quit im, IIrcControl control) {
         removeSeekFromUser(im.getFrom());
     }
-    
+
     /**
-     * @see net.mauhiz.irc.bot.triggers.ITextTrigger#getTriggerHelp()
-     */
-    @Override
-    public String getTriggerHelp() {
-        return "";
-    }
-    
-    /**
-     * @see net.mauhiz.irc.bot.triggers.ITextTrigger#getTriggerText()
-     */
-    @Override
-    public String getTriggerText() {
-        return null;
-    }
-    
-    /**
-     * @see net.mauhiz.irc.bot.triggers.ITextTrigger#isActivatedBy(java.lang.String)
+     * @see net.mauhiz.irc.base.trigger.ITextTrigger#isActivatedBy(java.lang.String)
      */
     @Override
     public boolean isActivatedBy(String text) {
         return true;
     }
-    
+
     /**
      * @param sender
      * @param pMessage
@@ -100,12 +85,12 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
     public void processMessage(String sender, String pMessage) {
         String message = pMessage.trim();
         // String lowMsg = message.toLowerCase();
-        
+
         // TODO est-ce que l'objet war est bien supprime a chaque fois ?
         War war = new War(sender, message);
-        
+
         // Si le parser n'a pas reussi a trouver une war on arrete
-        
+
         HibernateUtils.currentSession().getTransaction().begin();
         if (war.isNull()) {
             /*
@@ -131,7 +116,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
         }
         HibernateUtils.currentSession().getTransaction().commit();
     }
-    
+
     /**
      * Enleve les seeks des user ayant quit clanwar de la bdd
      * 

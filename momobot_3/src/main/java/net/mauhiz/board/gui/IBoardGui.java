@@ -18,6 +18,8 @@ public interface IBoardGui {
 
     void clear();
 
+    void close();
+
     void disableSquare(Square square);
 
     Dimension getDefaultSize();
@@ -30,7 +32,7 @@ public interface IBoardGui {
 
     void initLayout(Dimension size);
 
-    void newGame();
+    void newGame(BoardController controller);
 
     void refresh();
 }
