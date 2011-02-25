@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.mauhiz.board.MoveReader;
+import net.mauhiz.board.MoveWriter;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.SquareView;
 import net.mauhiz.board.chess.model.Castle;
@@ -20,7 +21,7 @@ import net.mauhiz.board.chess.model.ChessRule;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 
-public class PgnAdapter implements MoveReader<ChessBoard, ChessMove> {
+public class PgnAdapter implements MoveReader<ChessBoard, ChessMove>, MoveWriter<ChessBoard, ChessMove> {
     private static final Pattern CASTLE = Pattern.compile("O-O(-O)?([+#=])?");
     private static final Pattern SAN_MOVE = Pattern
             .compile("([a-hRNBQKP])?([a-h]?[1-8]?)?(x)?([a-h])([1-8])(=[RNBQ])?([+#=])?");
@@ -75,10 +76,6 @@ public class PgnAdapter implements MoveReader<ChessBoard, ChessMove> {
         return new char[] { (char) (square.x + 'a'), (char) (square.y + '1') };
     }
 
-    public static String toPgn(ChessBoard board, ChessMove chessMove) {
-        throw new NotImplementedException();
-    }
-
     @Override
     public ChessMove read(ChessBoard board, String pgnMove) {
         ChessPlayer player = board.getTurn();
@@ -119,7 +116,6 @@ public class PgnAdapter implements MoveReader<ChessBoard, ChessMove> {
             }
         }
 
-        cm.setPlayer(player);
         return cm;
     }
 
@@ -143,5 +139,9 @@ public class PgnAdapter implements MoveReader<ChessBoard, ChessMove> {
         }
 
         return moves;
+    }
+
+    public String write(ChessBoard board, ChessMove chessMove) {
+        throw new NotImplementedException();
     }
 }
