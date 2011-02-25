@@ -11,16 +11,17 @@ import javax.swing.JDialog;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.chess.gui.ChessBoardController;
 import net.mauhiz.board.chess.gui.IChessGui;
+import net.mauhiz.board.chess.model.ChessBoard;
+import net.mauhiz.board.chess.model.ChessMove;
 import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
-import net.mauhiz.board.gui.BoardController;
 import net.mauhiz.board.gui.swing.SwingBoardGui;
 
 /**
  * @author mauhiz
  */
-public class SwingChessGui extends SwingBoardGui implements IChessGui {
+public class SwingChessGui extends SwingBoardGui<ChessBoard, ChessMove> implements IChessGui {
 
     public static void main(String... args) {
         SwingChessGui instance = new SwingChessGui();
@@ -40,7 +41,7 @@ public class SwingChessGui extends SwingBoardGui implements IChessGui {
     }
 
     @Override
-    protected BoardController newController() {
+    protected ChessBoardController newController() {
         return new ChessBoardController(this);
     }
 

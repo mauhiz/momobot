@@ -1,31 +1,44 @@
 package net.mauhiz.board.gui.remote;
 
-import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.BoardController;
+import net.mauhiz.board.Board;
+import net.mauhiz.board.IBoardController;
+import net.mauhiz.board.Move;
+import net.mauhiz.board.MoveReader;
 
-public class RemoteBoardAdapter extends BoardController {
+public class RemoteBoardAdapter<B extends Board, M extends Move<B>> implements IBoardController<B, M> {
 
-    private final BoardController localController;
+    private final IBoardController<B, M> localController;
+    private final MoveReader<B, M> moveReader;
 
-    public RemoteBoardAdapter(BoardController localController) {
-        super();
+    public RemoteBoardAdapter(IBoardController<B, M> localController) {
         this.localController = localController;
+        moveReader = newMoveReader();
     }
 
     @Override
-    public void movePiece(Square to) {
-        localController.movePiece(to);
-        // sendMove(to);
+    public void doMove(M move) {
+        localController.doMove(move);
+        BoardManager.getInstance().sendMove(this, move);
     }
 
     @Override
-    public void refresh() {
-        localController.refresh();
+    public B getBoard() {
+        return localController.getBoard();
     }
 
     @Override
-    public void selectPiece(Square at) {
-        localController.selectPiece(at);
+    public void init() {
+        localController.init();
+    }
+
+    @Override
+    public MoveReader<B, M> newMoveReader() {
+        return localController.newMoveReader();
+    }
+
+    public void readMove(String moveStr) {
+        M move = moveReader.read(localController.getBoard(), moveStr);
+        localController.doMove(move);
     }
 
 }

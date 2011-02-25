@@ -1,7 +1,5 @@
 package net.mauhiz.board.gui.remote;
 
-import java.util.UUID;
-
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -15,8 +13,9 @@ public class MoveTrigger implements IPrivmsgTrigger {
         if (im instanceof CtcpMove) {
             String moveText = ((CtcpMove) im).getCtcpContent();
             String[] args = StringUtils.split(moveText, ' ');
-            UUID gameId = UUID.fromString(args[0]);
-
+            String gameId = args[0];
+            String move = args[1];
+            BoardManager.getInstance().receiveMove(gameId, move);
         }
     }
 

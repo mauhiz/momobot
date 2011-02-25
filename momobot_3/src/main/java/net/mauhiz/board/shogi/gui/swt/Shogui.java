@@ -3,10 +3,11 @@ package net.mauhiz.board.shogi.gui.swt;
 import java.util.Collection;
 
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.BoardController;
 import net.mauhiz.board.gui.swt.SwtBoardGui;
 import net.mauhiz.board.shogi.gui.IShogiGui;
 import net.mauhiz.board.shogi.gui.ShogiBoardController;
+import net.mauhiz.board.shogi.model.ShogiBoard;
+import net.mauhiz.board.shogi.model.ShogiMove;
 import net.mauhiz.board.shogi.model.ShogiOwnedPiece;
 import net.mauhiz.board.shogi.model.ShogiPiece;
 import net.mauhiz.board.shogi.model.ShogiPlayer;
@@ -22,7 +23,7 @@ import org.eclipse.swt.widgets.MessageBox;
 /**
  * @author mauhiz
  */
-public class Shogui extends SwtBoardGui implements IShogiGui {
+public class Shogui extends SwtBoardGui<ShogiBoard, ShogiMove> implements IShogiGui {
 
     public static void main(String... args) {
         Shogui instance = new Shogui();
@@ -65,7 +66,7 @@ public class Shogui extends SwtBoardGui implements IShogiGui {
     }
 
     @Override
-    protected BoardController newController() {
+    protected ShogiBoardController newController() {
         return new ShogiBoardController(this);
     }
 
@@ -93,11 +94,11 @@ public class Shogui extends SwtBoardGui implements IShogiGui {
         mb.setMessage("Promote?");
         int buttonID = mb.open();
         switch (buttonID) {
-        case SWT.YES:
-            controller.promote(piece);
-            break;
-        default:
-            break;
+            case SWT.YES:
+                controller.promote(piece);
+                break;
+            default:
+                break;
         }
     }
 }

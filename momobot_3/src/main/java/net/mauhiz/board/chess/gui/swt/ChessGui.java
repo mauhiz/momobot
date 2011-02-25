@@ -3,13 +3,11 @@ package net.mauhiz.board.chess.gui.swt;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.chess.gui.ChessBoardController;
 import net.mauhiz.board.chess.gui.IChessGui;
+import net.mauhiz.board.chess.model.ChessBoard;
+import net.mauhiz.board.chess.model.ChessMove;
 import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
-import net.mauhiz.board.gui.BoardController;
-import net.mauhiz.board.gui.CancelAction;
-import net.mauhiz.board.gui.MoveAction;
-import net.mauhiz.board.gui.SelectAction;
 import net.mauhiz.board.gui.swt.SwtBoardGui;
 
 import org.eclipse.swt.SWT;
@@ -24,29 +22,13 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @author mauhiz
  */
-public class ChessGui extends SwtBoardGui implements IChessGui {
+public class ChessGui extends SwtBoardGui<ChessBoard, ChessMove> implements IChessGui {
 
     public static void main(String... args) {
         ChessGui instance = new ChessGui();
 
         instance.initDisplay();
         instance.swtLoop();
-    }
-
-    @Override
-    public void addCancelAction(Square square, BoardController controller) {
-        enableSquare(square, new CancelAction(controller));
-    }
-
-    @Override
-    public void addMoveAction(Square square, BoardController controller) {
-        enableSquare(square, new MoveAction(controller, square));
-
-    }
-
-    @Override
-    public void addSelectAction(Square square, BoardController controller) {
-        enableSquare(square, new SelectAction(controller, square));
     }
 
     @Override
@@ -69,7 +51,7 @@ public class ChessGui extends SwtBoardGui implements IChessGui {
     }
 
     @Override
-    protected BoardController newController() {
+    protected ChessBoardController newController() {
         return new ChessBoardController(this);
     }
 

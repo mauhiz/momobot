@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.mauhiz.board.Board;
 import net.mauhiz.board.Move;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
@@ -19,11 +20,18 @@ public class BoardManager {
         IrcServer server;
     }
 
-    private final Map<String, RemoteBoardAdapter> games = new HashMap<String, RemoteBoardAdapter>();
+    private static final BoardManager INSTANCE = new BoardManager();
+
+    public static BoardManager getInstance() {
+        return INSTANCE;
+    }
+
+    private final Map<String, RemoteBoardAdapter<? extends Board, ? extends Move<?>>> games = new HashMap<String, RemoteBoardAdapter<? extends Board, ? extends Move<?>>>();
+
     private final Map<String, Set<IrcOpponent>> opponents = new HashMap<String, Set<IrcOpponent>>();
 
-    private String findGame(RemoteBoardAdapter rba) {
-        for (Entry<String, RemoteBoardAdapter> ent : games.entrySet()) {
+    private <B extends Board, M extends Move<B>> String findGame(RemoteBoardAdapter<B, M> rba) {
+        for (Entry<String, RemoteBoardAdapter<? extends Board, ? extends Move<?>>> ent : games.entrySet()) {
             if (ent.getValue().equals(rba)) {
                 return ent.getKey();
             }
@@ -32,7 +40,15 @@ public class BoardManager {
         return null;
     }
 
-    protected void sendMove(RemoteBoardAdapter rba, Move move) {
+    public void receiveMove(String gameId, String moveStr) {
+        RemoteBoardAdapter<? extends Board, ? extends Move<?>> rba = games.get(gameId);
+
+        if (rba != null) {
+            rba.readMove(moveStr);
+        }
+    }
+
+    public <B extends Board, M extends Move<B>> void sendMove(RemoteBoardAdapter<B, M> rba, M move) {
         String gameId = findGame(rba);
 
         if (gameId != null) {
@@ -44,5 +60,4 @@ public class BoardManager {
             }
         }
     }
-
 }

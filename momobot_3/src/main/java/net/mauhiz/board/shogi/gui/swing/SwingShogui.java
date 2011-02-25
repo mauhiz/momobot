@@ -12,11 +12,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.BoardController;
 import net.mauhiz.board.gui.swing.SwingBoardGui;
 import net.mauhiz.board.shogi.gui.IShogiGui;
 import net.mauhiz.board.shogi.gui.ShogiBoardController;
 import net.mauhiz.board.shogi.gui.awt.PocketAction;
+import net.mauhiz.board.shogi.model.ShogiBoard;
+import net.mauhiz.board.shogi.model.ShogiMove;
 import net.mauhiz.board.shogi.model.ShogiOwnedPiece;
 import net.mauhiz.board.shogi.model.ShogiPiece;
 import net.mauhiz.board.shogi.model.ShogiPlayer;
@@ -24,7 +25,7 @@ import net.mauhiz.board.shogi.model.ShogiPlayer;
 /**
  * @author mauhiz
  */
-public class SwingShogui extends SwingBoardGui implements IShogiGui {
+public class SwingShogui extends SwingBoardGui<ShogiBoard, ShogiMove> implements IShogiGui {
 
     public static void main(String... args) {
         SwingShogui instance = new SwingShogui();
@@ -64,7 +65,7 @@ public class SwingShogui extends SwingBoardGui implements IShogiGui {
     }
 
     @Override
-    protected BoardController newController() {
+    protected ShogiBoardController newController() {
         return new ShogiBoardController(this);
     }
 

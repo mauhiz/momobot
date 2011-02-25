@@ -1,28 +1,18 @@
 package net.mauhiz.board.chess.gui;
 
+import net.mauhiz.board.MoveReader;
 import net.mauhiz.board.Square;
+import net.mauhiz.board.chess.PgnAdapter;
 import net.mauhiz.board.chess.model.ChessBoard;
+import net.mauhiz.board.chess.model.ChessMove;
 import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessRule;
-import net.mauhiz.board.gui.BoardController;
+import net.mauhiz.board.gui.GuiBoardController;
 
-public class ChessBoardController extends BoardController {
-
+public class ChessBoardController extends GuiBoardController<ChessBoard, ChessMove> {
     public ChessBoardController(IChessGui display) {
-        super();
-        board = new ChessBoard();
-        this.display = display;
-    }
-
-    @Override
-    protected void clear() {
-        getDisplay().clear();
-    }
-
-    @Override
-    public ChessBoard getBoard() {
-        return (ChessBoard) board;
+        super(display, new ChessBoard());
     }
 
     @Override
@@ -47,6 +37,11 @@ public class ChessBoardController extends BoardController {
             selectedSquare = null;
             refresh();
         }
+    }
+
+    @Override
+    public MoveReader<ChessBoard, ChessMove> newMoveReader() {
+        return new PgnAdapter();
     }
 
     public void promote(Square to, ChessPiece promotion) {
@@ -81,11 +76,5 @@ public class ChessBoardController extends BoardController {
             getDisplay().addCancelAction(selectedSquare, this);
         }
         getDisplay().refresh();
-    }
-
-    @Override
-    public void selectPiece(Square at) {
-        selectedSquare = at;
-        refresh();
     }
 }

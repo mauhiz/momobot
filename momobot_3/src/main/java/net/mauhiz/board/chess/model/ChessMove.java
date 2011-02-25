@@ -1,9 +1,10 @@
 package net.mauhiz.board.chess.model;
 
-import net.mauhiz.board.Move;
+import net.mauhiz.board.AbstractMove;
+import net.mauhiz.board.chess.PgnAdapter;
 import net.mauhiz.board.chess.model.ChessBoard.Status;
 
-public class ChessMove extends Move {
+public class ChessMove extends AbstractMove<ChessBoard> {
     private boolean capture;
     public ChessPiece moved;
     public ChessPiece promotion;
@@ -15,5 +16,10 @@ public class ChessMove extends Move {
 
     public void setCapture(boolean capture) {
         this.capture = capture;
+    }
+
+    @Override
+    public String toString(ChessBoard board) {
+        return PgnAdapter.toPgn(board, this);
     }
 }

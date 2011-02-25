@@ -1,7 +1,8 @@
 package net.mauhiz.board;
 
-public abstract class Move {
-    public Square from;
-    public Player player;
-    public Square to;
+public interface Move<B extends Board> {
+
+    Square getTo();
+
+    String toString(B board);
 }
