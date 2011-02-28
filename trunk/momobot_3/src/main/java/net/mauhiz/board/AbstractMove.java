@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-public abstract class AbstractMove<B extends Board> implements Move<B> {
+public abstract class AbstractMove<P extends Piece, J extends Player> implements Move {
     protected Square from;
     protected Square to;
 

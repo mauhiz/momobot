@@ -17,13 +17,16 @@ import java.util.Map;
 
 import net.mauhiz.board.Board;
 import net.mauhiz.board.Move;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.ExitAction;
 import net.mauhiz.board.gui.StartAction;
 import net.mauhiz.util.AbstractAction;
 
-public abstract class AwtBoardGui<B extends Board, M extends Move<B>> extends AbstractBoardGui<B, M> {
+public abstract class AwtBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
+        AbstractBoardGui<B, M> {
 
     private final Map<Square, Button> buttons = new HashMap<Square, Button>();
     protected Frame frame = new Frame();

@@ -4,13 +4,18 @@ import net.mauhiz.board.Board;
 import net.mauhiz.board.IBoardController;
 import net.mauhiz.board.Move;
 import net.mauhiz.board.MoveReader;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
+import net.mauhiz.board.gui.AbstractBoardController;
 
-public class RemoteBoardAdapter<B extends Board, M extends Move<B>> implements IBoardController<B, M> {
+public class RemoteBoardAdapter<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
+        AbstractBoardController<B, M> {
 
     private final IBoardController<B, M> localController;
     private final MoveReader<B, M> moveReader;
 
     public RemoteBoardAdapter(IBoardController<B, M> localController) {
+        super(localController.getBoard());
         this.localController = localController;
         moveReader = newMoveReader();
     }
@@ -19,11 +24,6 @@ public class RemoteBoardAdapter<B extends Board, M extends Move<B>> implements I
     public void doMove(M move) {
         localController.doMove(move);
         BoardManager.getInstance().sendMove(this, move);
-    }
-
-    @Override
-    public B getBoard() {
-        return localController.getBoard();
     }
 
     @Override

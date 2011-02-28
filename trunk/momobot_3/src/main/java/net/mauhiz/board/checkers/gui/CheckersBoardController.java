@@ -14,11 +14,12 @@ public class CheckersBoardController extends GuiBoardController<CheckersBoard, C
 
     public CheckersBoardController(ICheckersGui display) {
         super(display, new CheckersBoard());
+        getBoard().setRule(new CheckersRule());
     }
 
     @Override
     protected ICheckersGui getDisplay() {
-        return (ICheckersGui) super.getDisplay();
+        return super.getDisplay();
     }
 
     @Override
@@ -26,8 +27,10 @@ public class CheckersBoardController extends GuiBoardController<CheckersBoard, C
         if (selectedSquare == null) {
             return;
         }
-
-        if (board.move(board.getTurn(), selectedSquare, to)) {
+        CheckersMove move = new CheckersMove();
+        move.setFrom(selectedSquare);
+        move.setTo(to);
+        if (getBoard().move(move)) {
             CheckersOwnedPiece currentPiece = getBoard().getOwnedPieceAt(to);
 
             if (CheckersRule.canPromote(currentPiece, to)) {
@@ -54,12 +57,12 @@ public class CheckersBoardController extends GuiBoardController<CheckersBoard, C
                 CheckersOwnedPiece selected = getBoard().getOwnedPieceAt(selectedSquare);
 
                 if (selected != null && !square.equals(selectedSquare)
-                        && CheckersRule.canGo(board, selected, selectedSquare, square)) {
+                        && CheckersRule.canGo(getBoard(), selectedSquare, square)) {
                     getDisplay().addMoveAction(square, this);
                 }
             } else {
                 // available pieces
-                if (op != null && op.getPlayer() == board.getTurn()) {
+                if (op != null && op.getPlayer() == getBoard().getTurn()) {
                     getDisplay().addSelectAction(square, this);
                 }
             }

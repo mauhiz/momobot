@@ -6,9 +6,11 @@ import java.awt.Dimension;
 import net.mauhiz.board.Board;
 import net.mauhiz.board.IBoardController;
 import net.mauhiz.board.Move;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
 
-public interface IBoardGui<B extends Board, M extends Move<B>> {
+public interface IBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> {
     void addCancelAction(Square square, GuiBoardController<B, M> controller);
 
     void addMoveAction(Square square, GuiBoardController<B, M> controller);

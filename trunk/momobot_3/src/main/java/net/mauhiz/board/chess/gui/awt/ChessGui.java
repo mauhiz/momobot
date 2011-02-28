@@ -7,12 +7,12 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import net.mauhiz.board.OwnedPiece;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.chess.gui.ChessBoardController;
 import net.mauhiz.board.chess.gui.IChessGui;
 import net.mauhiz.board.chess.model.ChessBoard;
 import net.mauhiz.board.chess.model.ChessMove;
-import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
 import net.mauhiz.board.gui.awt.AwtBoardGui;
@@ -28,7 +28,7 @@ public class ChessGui extends AwtBoardGui<ChessBoard, ChessMove> implements IChe
         instance.initDisplay();
     }
 
-    public void decorate(Square square, ChessOwnedPiece op) {
+    public void decorate(Square square, OwnedPiece<ChessPiece, ChessPlayer> op) {
 
         Button button = getButton(square);
         if (op == null) {

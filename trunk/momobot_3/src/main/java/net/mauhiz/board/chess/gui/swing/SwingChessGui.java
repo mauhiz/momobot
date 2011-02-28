@@ -8,12 +8,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
+import net.mauhiz.board.OwnedPiece;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.chess.gui.ChessBoardController;
 import net.mauhiz.board.chess.gui.IChessGui;
 import net.mauhiz.board.chess.model.ChessBoard;
 import net.mauhiz.board.chess.model.ChessMove;
-import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
 import net.mauhiz.board.gui.swing.SwingBoardGui;
@@ -29,7 +29,7 @@ public class SwingChessGui extends SwingBoardGui<ChessBoard, ChessMove> implemen
         instance.initDisplay();
     }
 
-    public void decorate(Square square, ChessOwnedPiece op) {
+    public void decorate(Square square, OwnedPiece<ChessPiece, ChessPlayer> op) {
 
         JButton button = getButton(square);
         if (op == null) {

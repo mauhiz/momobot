@@ -2,7 +2,7 @@ package net.mauhiz.board.checkers.model;
 
 import net.mauhiz.board.OwnedPiece;
 
-public class CheckersOwnedPiece implements OwnedPiece {
+public class CheckersOwnedPiece implements OwnedPiece<CheckersPiece, CheckersPlayer> {
 
     private final CheckersPiece piece;
     private CheckersPlayer player;

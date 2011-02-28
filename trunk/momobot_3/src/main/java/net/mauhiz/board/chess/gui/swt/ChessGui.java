@@ -1,11 +1,11 @@
 package net.mauhiz.board.chess.gui.swt;
 
+import net.mauhiz.board.OwnedPiece;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.chess.gui.ChessBoardController;
 import net.mauhiz.board.chess.gui.IChessGui;
 import net.mauhiz.board.chess.model.ChessBoard;
 import net.mauhiz.board.chess.model.ChessMove;
-import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
 import net.mauhiz.board.gui.swt.SwtBoardGui;
@@ -32,7 +32,7 @@ public class ChessGui extends SwtBoardGui<ChessBoard, ChessMove> implements IChe
     }
 
     @Override
-    public void decorate(Square square, ChessOwnedPiece op) {
+    public void decorate(Square square, OwnedPiece<ChessPiece, ChessPlayer> op) {
         Button button = getButton(square);
         if (op == null) {
             button.setText("");

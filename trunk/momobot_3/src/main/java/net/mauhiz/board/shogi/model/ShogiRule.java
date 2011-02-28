@@ -1,24 +1,27 @@
 package net.mauhiz.board.shogi.model;
 
 import static java.lang.Math.abs;
-import net.mauhiz.board.Board;
+import net.mauhiz.board.AbstractBoard;
+import net.mauhiz.board.Move;
+import net.mauhiz.board.Rule;
 import net.mauhiz.board.Square;
 
-public class ShogiRule {
+public class ShogiRule implements Rule<ShogiBoard> {
 
-    public static boolean canDrop(Board b, Square to) {
-        return b.getOwnedPieceAt(to) == null;
+    public static boolean canDrop(ShogiBoard board, Square to) {
+        return board.getOwnedPieceAt(to) == null;
     }
 
     /**
-     * @param op
      * @param from
      * @param to
      *            is different from 'from'
      * @return
      */
-    public static boolean canGo(Board b, ShogiOwnedPiece op, Square from, Square to) {
-        if (b.isFriendlyPieceOn(op.getPlayer(), to)) {
+    public static boolean canGo(ShogiBoard board, Square from, Square to) {
+        ShogiOwnedPiece op = board.getOwnedPieceAt(from);
+
+        if (board.isFriendlyPieceOn(op.getPlayer(), to)) {
             return false;
         }
 
@@ -28,11 +31,13 @@ public class ShogiRule {
                 case LANCE:
                 case SILVER:
                 case KNIGHT:
-                    return isGoldMove(from, to, op.getPlayer());
+                    return board.isGoldMove(from, to, op.getPlayer());
                 case BISHOP:
-                    return Board.isDiagonal(from, to) && !b.isObstruction(from, to) || Board.isCross(from, to);
+                    return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to)
+                            || AbstractBoard.isCross(from, to);
                 case ROOK:
-                    return Board.isStraight(from, to) && !b.isObstruction(from, to) || Board.isCorner(from, to);
+                    return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to)
+                            || AbstractBoard.isCorner(from, to);
                 default:
                     throw new IllegalStateException();
             }
@@ -40,48 +45,60 @@ public class ShogiRule {
 
         switch (op.getPiece()) {
             case PAWN:
-                return isPawnMove(from, to, op.getPlayer());
+                return board.isPawnMove(from, to, op.getPlayer());
             case LANCE:
-                return !b.isObstruction(from, to) && Board.getXmove(from, to) == 0
-                        && Board.getYmove(from, to) * (op.getPlayer() == ShogiPlayer.BOTTOM ? 1 : -1) > 0;
+                return !board.isObstruction(from, to) && AbstractBoard.getXmove(from, to) == 0
+                        && AbstractBoard.getYmove(from, to) * (op.getPlayer() == ShogiPlayer.BOTTOM ? 1 : -1) > 0;
             case SILVER:
-                return Board.isCorner(from, to) || isPawnMove(from, to, op.getPlayer());
+                return AbstractBoard.isCorner(from, to) || board.isPawnMove(from, to, op.getPlayer());
             case KNIGHT:
-                return abs(Board.getXmove(from, to)) == 1
-                        && Board.getYmove(from, to) == (op.getPlayer() == ShogiPlayer.BOTTOM ? 2 : -2);
+                return abs(AbstractBoard.getXmove(from, to)) == 1
+                        && AbstractBoard.getYmove(from, to) == (op.getPlayer() == ShogiPlayer.BOTTOM ? 2 : -2);
             case GOLD:
-                return isGoldMove(from, to, op.getPlayer());
+                return board.isGoldMove(from, to, op.getPlayer());
             case BISHOP:
-                return Board.isDiagonal(from, to) && !b.isObstruction(from, to);
+                return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to);
             case ROOK:
-                return Board.isStraight(from, to) && !b.isObstruction(from, to);
+                return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to);
             case KING:
-                return abs(Board.getXmove(from, to)) <= 1 && abs(Board.getYmove(from, to)) <= 1;
+                return abs(AbstractBoard.getXmove(from, to)) <= 1 && abs(AbstractBoard.getYmove(from, to)) <= 1;
             default:
                 throw new IllegalStateException();
         }
     }
 
-    static boolean canJump(ShogiPiece p) {
-        return ShogiPiece.KNIGHT == p;
-    }
+    public static boolean canPromote(ShogiBoard board, Square from, Square to) {
+        ShogiOwnedPiece op = board.getOwnedPieceAt(from);
 
-    public static boolean canPromote(ShogiOwnedPiece op, Square from, Square to) {
         if (op.getPiece() == ShogiPiece.GOLD || op.getPiece() == ShogiPiece.KING || op.isPromoted()) {
             return false;
         }
+
         return isPromotionZone(op.getPlayer(), from) || isPromotionZone(op.getPlayer(), to);
     }
 
-    static boolean isGoldMove(Square from, Square to, ShogiPlayer pl) {
-        return Board.isCross(from, to) || ShogiBoard.isFrontCorner(from, to, pl);
+    static boolean isPromotionZone(ShogiPlayer player, Square square) {
+        return player == ShogiPlayer.BOTTOM ? square.y >= 6 : square.y <= 2;
     }
 
-    static boolean isPawnMove(Square from, Square to, ShogiPlayer pl) {
-        return Board.getXmove(from, to) == 0 && Board.getYmove(from, to) == (pl == ShogiPlayer.BOTTOM ? 1 : -1);
-    }
+    @Override
+    public boolean isLegalMove(ShogiBoard board, Move move) {
 
-    static boolean isPromotionZone(ShogiPlayer pl, Square here) {
-        return pl == ShogiPlayer.BOTTOM ? here.y >= 6 : here.y <= 2;
+        if (move instanceof ShogiMove) {
+            if (move instanceof Drop) {
+                return canDrop(board, move.getTo());
+            }
+
+            Square from = ((ShogiMove) move).getFrom();
+            ShogiOwnedPiece toMove = board.getOwnedPieceAt(from);
+
+            if (toMove == null || toMove.getPlayer() != board.getTurn()) {
+                return false;
+            }
+
+            return canGo(board, from, move.getTo());
+        }
+
+        return false;
     }
 }

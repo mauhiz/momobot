@@ -8,10 +8,13 @@ import java.util.Map;
 import net.mauhiz.board.Board;
 import net.mauhiz.board.IBoardController;
 import net.mauhiz.board.Move;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
 import net.mauhiz.util.AbstractAction;
 
-public abstract class AbstractBoardGui<B extends Board, M extends Move<B>> implements IBoardGui<B, M> {
+public abstract class AbstractBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> implements
+        IBoardGui<B, M> {
     protected final Map<Square, AbstractAction> listeners = new HashMap<Square, AbstractAction>();
 
     public void addCancelAction(Square square, GuiBoardController<B, M> controller) {
@@ -43,7 +46,7 @@ public abstract class AbstractBoardGui<B extends Board, M extends Move<B>> imple
 
     protected abstract String getWindowTitle();
 
-    protected abstract GuiBoardController<B, M> newController();
+    protected abstract AbstractBoardController<B, M> newController();
 
     public void newGame(IBoardController<B, M> controller) {
         controller.init();

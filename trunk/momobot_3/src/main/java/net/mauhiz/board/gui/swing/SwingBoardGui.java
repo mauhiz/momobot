@@ -16,15 +16,18 @@ import javax.swing.JPanel;
 
 import net.mauhiz.board.Board;
 import net.mauhiz.board.Move;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
+import net.mauhiz.board.gui.AbstractBoardController;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.ExitAction;
-import net.mauhiz.board.gui.GuiBoardController;
 import net.mauhiz.board.gui.StartAction;
 import net.mauhiz.board.gui.remote.NewRemoteGameAction;
 import net.mauhiz.util.AbstractAction;
 
-public abstract class SwingBoardGui<B extends Board, M extends Move<B>> extends AbstractBoardGui<B, M> {
+public abstract class SwingBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
+        AbstractBoardGui<B, M> {
 
     private final Map<Square, JButton> buttons = new HashMap<Square, JButton>();
     protected JFrame frame = new JFrame();
@@ -117,7 +120,7 @@ public abstract class SwingBoardGui<B extends Board, M extends Move<B>> extends 
     }
 
     protected void initMenu() {
-        GuiBoardController<B, M> controller = newController();
+        AbstractBoardController<B, M> controller = newController();
 
         /* menu */
         JMenuBar menuBar = new JMenuBar();

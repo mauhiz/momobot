@@ -8,7 +8,8 @@ import org.apache.commons.lang.SerializationUtils;
  * Default serialization for moves
  * @author mauhiz
  */
-public class SerializerMoveAdapter<B extends Board, M extends Move<B>> implements MoveReader<B, M>, MoveWriter<B, M> {
+public class SerializerMoveAdapter<B extends Board<? extends Piece, ? extends Player>, M extends Move> implements
+        MoveReader<B, M>, MoveWriter<B, M> {
 
     @Override
     public M read(B board, String moveStr) {

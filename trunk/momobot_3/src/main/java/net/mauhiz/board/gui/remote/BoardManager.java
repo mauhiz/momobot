@@ -7,6 +7,8 @@ import java.util.Set;
 
 import net.mauhiz.board.Board;
 import net.mauhiz.board.Move;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
@@ -26,12 +28,13 @@ public class BoardManager {
         return INSTANCE;
     }
 
-    private final Map<String, RemoteBoardAdapter<? extends Board, ? extends Move<?>>> games = new HashMap<String, RemoteBoardAdapter<? extends Board, ? extends Move<?>>>();
+    private final Map<String, RemoteBoardAdapter<? extends Board<? extends Piece, ? extends Player>, ? extends Move>> games = new HashMap<String, RemoteBoardAdapter<? extends Board<? extends Piece, ? extends Player>, ? extends Move>>();
 
     private final Map<String, Set<IrcOpponent>> opponents = new HashMap<String, Set<IrcOpponent>>();
 
-    private <B extends Board, M extends Move<B>> String findGame(RemoteBoardAdapter<B, M> rba) {
-        for (Entry<String, RemoteBoardAdapter<? extends Board, ? extends Move<?>>> ent : games.entrySet()) {
+    private String findGame(RemoteBoardAdapter<? extends Board<? extends Piece, ? extends Player>, ? extends Move> rba) {
+        for (Entry<String, RemoteBoardAdapter<? extends Board<? extends Piece, ? extends Player>, ? extends Move>> ent : games
+                .entrySet()) {
             if (ent.getValue().equals(rba)) {
                 return ent.getKey();
             }
@@ -41,14 +44,15 @@ public class BoardManager {
     }
 
     public void receiveMove(String gameId, String moveStr) {
-        RemoteBoardAdapter<? extends Board, ? extends Move<?>> rba = games.get(gameId);
+        RemoteBoardAdapter<? extends Board<? extends Piece, ? extends Player>, ? extends Move> rba = games.get(gameId);
 
         if (rba != null) {
             rba.readMove(moveStr);
         }
     }
 
-    public <B extends Board, M extends Move<B>> void sendMove(RemoteBoardAdapter<B, M> rba, M move) {
+    public <M extends Move> void sendMove(
+            RemoteBoardAdapter<? extends Board<? extends Piece, ? extends Player>, ? extends Move> rba, M move) {
         String gameId = findGame(rba);
 
         if (gameId != null) {

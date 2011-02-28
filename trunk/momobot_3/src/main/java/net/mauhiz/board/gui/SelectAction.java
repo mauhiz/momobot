@@ -2,13 +2,15 @@ package net.mauhiz.board.gui;
 
 import net.mauhiz.board.Board;
 import net.mauhiz.board.Move;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
 import net.mauhiz.util.AbstractAction;
 
 /**
  * @author mauhiz
  */
-public class SelectAction<B extends Board, M extends Move<B>> extends AbstractAction {
+public class SelectAction<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends AbstractAction {
 
     private final Square at;
     private final GuiBoardController<B, M> controller;
