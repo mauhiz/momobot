@@ -6,10 +6,12 @@ import java.util.Map;
 
 import net.mauhiz.board.Board;
 import net.mauhiz.board.Move;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
+import net.mauhiz.board.gui.AbstractBoardController;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.ExitAction;
-import net.mauhiz.board.gui.GuiBoardController;
 import net.mauhiz.board.gui.StartAction;
 import net.mauhiz.util.AbstractAction;
 
@@ -24,7 +26,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-public abstract class SwtBoardGui<B extends Board, M extends Move<B>> extends AbstractBoardGui<B, M> {
+public abstract class SwtBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
+        AbstractBoardGui<B, M> {
 
     private final Map<Square, Button> buttons = new HashMap<Square, Button>();
     protected Shell shell;
@@ -116,7 +119,7 @@ public abstract class SwtBoardGui<B extends Board, M extends Move<B>> extends Ab
     }
 
     protected void initMenu() {
-        GuiBoardController<B, M> controller = newController();
+        AbstractBoardController<B, M> controller = newController();
         Menu menuBar = new Menu(shell, SWT.BAR);
         MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
         fileMenuHeader.setText("&File");

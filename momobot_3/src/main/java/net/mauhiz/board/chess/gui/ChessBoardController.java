@@ -13,11 +13,12 @@ import net.mauhiz.board.gui.GuiBoardController;
 public class ChessBoardController extends GuiBoardController<ChessBoard, ChessMove> {
     public ChessBoardController(IChessGui display) {
         super(display, new ChessBoard());
+        getBoard().setRule(new ChessRule());
     }
 
     @Override
     protected IChessGui getDisplay() {
-        return (IChessGui) super.getDisplay();
+        return super.getDisplay();
     }
 
     @Override
@@ -26,7 +27,11 @@ public class ChessBoardController extends GuiBoardController<ChessBoard, ChessMo
             return;
         }
 
-        if (getBoard().move(getBoard().getTurn(), selectedSquare, to)) {
+        ChessMove move = new ChessMove();
+        move.setFrom(selectedSquare);
+        move.setTo(to);
+
+        if (getBoard().move(move)) {
             ChessOwnedPiece currentPiece = getBoard().getOwnedPieceAt(to);
 
             if (ChessRule.canPromote(currentPiece, to)) {
@@ -59,12 +64,12 @@ public class ChessBoardController extends GuiBoardController<ChessBoard, ChessMo
                 ChessOwnedPiece selected = getBoard().getOwnedPieceAt(selectedSquare);
 
                 if (selected != null && !square.equals(selectedSquare)
-                        && ChessRule.canGo(getBoard(), selected, selectedSquare, square)) {
+                        && ChessRule.canGo(getBoard(), selectedSquare, square)) {
                     getDisplay().addMoveAction(square, this);
                 }
             } else {
                 // available pieces
-                if (op != null && op.getPlayer() == board.getTurn()) {
+                if (op != null && op.getPlayer() == getBoard().getTurn()) {
                     getDisplay().addSelectAction(square, this);
                 }
             }

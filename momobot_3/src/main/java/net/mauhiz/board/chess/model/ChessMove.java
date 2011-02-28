@@ -3,7 +3,7 @@ package net.mauhiz.board.chess.model;
 import net.mauhiz.board.AbstractMove;
 import net.mauhiz.board.chess.model.ChessBoard.Status;
 
-public class ChessMove extends AbstractMove<ChessBoard> {
+public class ChessMove extends AbstractMove<ChessPiece, ChessPlayer> {
     private boolean capture;
     public ChessPiece moved;
     public ChessPiece promotion;

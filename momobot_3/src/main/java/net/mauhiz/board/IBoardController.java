@@ -1,7 +1,6 @@
 package net.mauhiz.board;
 
-
-public interface IBoardController<B extends Board, M extends Move<B>> {
+public interface IBoardController<B extends Board<? extends Piece, ? extends Player>, M extends Move> {
 
     void doMove(M move);
 

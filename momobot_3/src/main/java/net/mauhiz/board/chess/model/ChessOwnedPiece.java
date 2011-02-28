@@ -2,7 +2,7 @@ package net.mauhiz.board.chess.model;
 
 import net.mauhiz.board.OwnedPiece;
 
-public class ChessOwnedPiece implements OwnedPiece {
+public class ChessOwnedPiece implements OwnedPiece<ChessPiece, ChessPlayer> {
 
     private ChessPiece piece;
     private final ChessPlayer player;

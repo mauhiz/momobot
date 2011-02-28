@@ -1,9 +1,9 @@
 package net.mauhiz.board;
 
-public interface OwnedPiece {
-    Piece getPiece();
+public interface OwnedPiece<P extends Piece, J extends Player> {
+    P getPiece();
 
-    Player getPlayer();
+    J getPlayer();
 
     String getSymbol();
 }

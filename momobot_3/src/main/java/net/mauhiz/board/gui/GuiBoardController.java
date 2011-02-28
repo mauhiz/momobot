@@ -3,20 +3,19 @@ package net.mauhiz.board.gui;
 import java.awt.Dimension;
 
 import net.mauhiz.board.Board;
-import net.mauhiz.board.IBoardController;
 import net.mauhiz.board.Move;
+import net.mauhiz.board.Piece;
+import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
-import net.mauhiz.board.SquareView;
 
-public abstract class GuiBoardController<B extends Board, M extends Move<B>> implements IBoardController<B, M> {
-    protected B board;
-    protected IBoardGui<B, M> display;
+public abstract class GuiBoardController<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
+        AbstractBoardController<B, M> {
+    private final IBoardGui<B, M> display;
     protected Square selectedSquare;
 
     protected GuiBoardController(IBoardGui<B, M> display, B board) {
-        super();
+        super(board);
         this.display = display;
-        this.board = board;
     }
 
     public void cancelSelection() {
@@ -28,24 +27,13 @@ public abstract class GuiBoardController<B extends Board, M extends Move<B>> imp
         display.clear();
     }
 
+    @Override
     public void doMove(M move) {
         movePiece(move.getTo());
     }
 
-    public B getBoard() {
-        return board;
-    }
-
-    protected Dimension getBoardSize() {
-        return getBoard().getSize();
-    }
-
-    protected IBoardGui<B, M> getDisplay() {
-        return display;
-    }
-
-    public Iterable<Square> getSquares() {
-        return new SquareView(getBoardSize());
+    protected <G extends IBoardGui<B, M>> G getDisplay() {
+        return (G) display;
     }
 
     public void init() {

@@ -47,7 +47,7 @@ public class PgnAdapter implements MoveReader<ChessBoard, ChessMove>, MoveWriter
             if (cop == null || cop.getPlayer() != player || cop.getPiece() != moved) {
                 continue;
             }
-            if (ChessRule.canGo(board, cop, square, to)) {
+            if (ChessRule.canGo(board, square, to)) {
                 return square;
             }
         }
@@ -134,7 +134,9 @@ public class PgnAdapter implements MoveReader<ChessBoard, ChessMove>, MoveWriter
             }
 
             ChessMove move = read(board, pgnMoves[i]);
-            board.move(board.getTurn(), move.getFrom(), move.getTo());
+            if (!board.move(move)) {
+                throw new IllegalArgumentException("Invalid move at " + i / 3);
+            }
             moves.add(move);
         }
 

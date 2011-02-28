@@ -3,19 +3,18 @@ package net.mauhiz.board.chess.model;
 import static java.lang.Math.abs;
 
 import java.awt.Dimension;
-import java.util.HashMap;
-import java.util.Map;
 
-import net.mauhiz.board.Board;
+import net.mauhiz.board.AbstractBoard;
+import net.mauhiz.board.Move;
 import net.mauhiz.board.OwnedPiece;
 import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.SquareView;
 
-public class ChessBoard extends Board {
+public class ChessBoard extends AbstractBoard<ChessPiece, ChessPlayer> {
     public static enum Status {
         CHECK(false), DRAW(true), MATE(true);
-        private boolean end;
+        private final boolean end;
 
         private Status(boolean end) {
             this.end = end;
@@ -27,13 +26,6 @@ public class ChessBoard extends Board {
     }
 
     public static final int SIZE = 8;
-
-    static boolean isFrontCorner(Square from, Square to, Player pl) {
-        return abs(getXmove(from, to)) == 1 && getYmove(from, to) == (pl == ChessPlayer.WHITE ? 1 : -1);
-    }
-
-    private final Map<Square, ChessOwnedPiece> piecesMap = new HashMap<Square, ChessOwnedPiece>();
-    private ChessPlayer turn = ChessPlayer.WHITE;
 
     public boolean canCastle(Square from, Square to, ChessPlayer player) {
         // TODO use move history (and status?)
@@ -60,7 +52,7 @@ public class ChessBoard extends Board {
     public Square findKingSquare(Player pl) {
         // locate the king
         for (Square square : new SquareView(getSize())) {
-            OwnedPiece op = getOwnedPieceAt(square);
+            ChessOwnedPiece op = getOwnedPieceAt(square);
             if (op == null) {
                 continue;
             }
@@ -74,7 +66,12 @@ public class ChessBoard extends Board {
 
     @Override
     public ChessOwnedPiece getOwnedPieceAt(Square square) {
-        return piecesMap.get(square);
+        return super.getOwnedPieceAt(square);
+    }
+
+    @Override
+    public ChessRule getRule() {
+        return super.getRule();
     }
 
     @Override
@@ -83,8 +80,31 @@ public class ChessBoard extends Board {
     }
 
     @Override
-    public ChessPlayer getTurn() {
-        return turn;
+    protected void initGameFor(Square square) {
+        int j = square.y;
+        int i = square.x;
+        ChessPlayer pl = j <= 2 ? ChessPlayer.WHITE : ChessPlayer.BLACK;
+
+        if (j == 0 || j == 7) {
+            if (i == 0 || i == 7) {
+                piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.ROOK));
+            } else if (i == 1 || i == 6) {
+                piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.KNIGHT));
+            } else if (i == 2 || i == 5) {
+                piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.BISHOP));
+            } else if (i == 3) {
+                piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.QUEEN));
+            } else if (i == 4) {
+                piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.KING));
+            }
+        } else if (j == 1 || j == 6) {
+            piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.PAWN));
+        }
+    }
+
+    @Override
+    protected void initTurn() {
+        turn = ChessPlayer.WHITE;
     }
 
     public boolean isCheck(Player player) {
@@ -98,7 +118,7 @@ public class ChessBoard extends Board {
             if (attacker == null || attacker.getPlayer() == player) {
                 continue;
             }
-            if (ChessRule.canGo(this, attacker, square, kingSquare)) {
+            if (ChessRule.canGo(this, square, kingSquare)) {
                 return true;
             }
         }
@@ -106,18 +126,35 @@ public class ChessBoard extends Board {
     }
 
     @Override
-    public boolean move(Player pl, Square from, Square to) {
-        if (!pl.equals(turn)) {
-            return false;
+    protected boolean isForward(Square from, Square to, ChessPlayer player) {
+        return from.y != to.y && player == ChessPlayer.WHITE ^ from.y > to.y;
+    }
+
+    public boolean isPawnMove(Square from, Square to, ChessPlayer player) {
+        if (AbstractBoard.getXmove(from, to) == 0 && isForward(from, to, player)) {
+            return from.y == (player == ChessPlayer.WHITE ? 1 : 6) ? abs(AbstractBoard.getYmove(from, to)) <= 2
+                    : abs(AbstractBoard.getYmove(from, to)) == 1;
         }
-        ChessOwnedPiece toMove = getOwnedPieceAt(from);
-        if (toMove == null || toMove.getPlayer() != pl) {
+        return false;
+    }
+
+    @Override
+    public boolean move(Move move) {
+        if (!(move instanceof ChessMove)) {
             return false;
         }
 
-        if (ChessRule.canGo(this, toMove, from, to)) {
+        Square from = ((ChessMove) move).getFrom();
+        ChessOwnedPiece toMove = getOwnedPieceAt(from);
+
+        if (toMove == null || toMove.getPlayer() != getTurn()) {
+            return false;
+        }
+
+        if (getRule().isLegalMove(this, move)) {
             piecesMap.remove(from);
-            ChessOwnedPiece captured = piecesMap.put(to, toMove);
+            Square to = move.getTo();
+            OwnedPiece<ChessPiece, ChessPlayer> captured = piecesMap.put(to, toMove);
 
             // castle
             if (toMove.getPiece() == ChessPiece.KING && abs(getXmove(from, to)) == 2) {
@@ -127,45 +164,17 @@ public class ChessBoard extends Board {
 
                 piecesMap.put(rookTo, piecesMap.remove(rookFrom));
 
-            } else if (toMove.getPiece() == ChessPiece.PAWN && isFrontCorner(from, to, pl) && captured == null) {
+            } else if (toMove.getPiece() == ChessPiece.PAWN && isFrontCorner(from, to, toMove.getPlayer())
+                    && captured == null) {
                 Square enPassant = Square.getInstance(to.x, from.y);
                 piecesMap.remove(enPassant);
             }
 
-            turn = turn.next();
+            nextTurn();
             return true;
         }
 
         return false;
-    }
-
-    @Override
-    public void newGame() {
-        piecesMap.clear();
-
-        for (Square square : new SquareView(getSize())) {
-            int j = square.y;
-            int i = square.x;
-            ChessPlayer pl = j <= 2 ? ChessPlayer.WHITE : ChessPlayer.BLACK;
-
-            if (j == 0 || j == 7) {
-                if (i == 0 || i == 7) {
-                    piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.ROOK));
-                } else if (i == 1 || i == 6) {
-                    piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.KNIGHT));
-                } else if (i == 2 || i == 5) {
-                    piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.BISHOP));
-                } else if (i == 3) {
-                    piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.QUEEN));
-                } else if (i == 4) {
-                    piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.KING));
-                }
-            } else if (j == 1 || j == 6) {
-                piecesMap.put(square, new ChessOwnedPiece(pl, ChessPiece.PAWN));
-            }
-        }
-
-        turn = ChessPlayer.WHITE;
     }
 
     public void promote(Square to, ChessPiece promotion) {

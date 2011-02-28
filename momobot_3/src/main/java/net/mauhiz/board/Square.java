@@ -36,4 +36,9 @@ public class Square {
     public int hashCode() {
         return x + 377 * y;
     }
+
+    @Override
+    public String toString() {
+        return "(" + x + "," + y + ")";
+    }
 }

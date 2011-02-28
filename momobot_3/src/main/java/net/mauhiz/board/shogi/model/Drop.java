@@ -1,8 +1,7 @@
 package net.mauhiz.board.shogi.model;
 
-import net.mauhiz.board.AbstractMove;
-
-public class ShogiMove extends AbstractMove<ShogiPiece, ShogiPlayer> {
+public class Drop extends ShogiMove {
     // TODO implement drops in externalization
     // TODO add Kifu adapter
+    public ShogiPiece dropped;
 }

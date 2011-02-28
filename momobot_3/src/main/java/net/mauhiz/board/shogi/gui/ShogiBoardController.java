@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import net.mauhiz.board.MoveReader;
 import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.GuiBoardController;
+import net.mauhiz.board.shogi.model.Drop;
 import net.mauhiz.board.shogi.model.ShogiBoard;
 import net.mauhiz.board.shogi.model.ShogiMove;
 import net.mauhiz.board.shogi.model.ShogiOwnedPiece;
@@ -22,11 +23,12 @@ public class ShogiBoardController extends GuiBoardController<ShogiBoard, ShogiMo
 
     public ShogiBoardController(IShogiGui display) {
         super(display, new ShogiBoard());
+        getBoard().setRule(new ShogiRule());
     }
 
     @Override
     protected IShogiGui getDisplay() {
-        return (IShogiGui) super.getDisplay();
+        return super.getDisplay();
     }
 
     @Override
@@ -50,18 +52,25 @@ public class ShogiBoardController extends GuiBoardController<ShogiBoard, ShogiMo
     @Override
     public void movePiece(final Square to) {
         if (selectedSquare != null) {
+            ShogiMove move = new ShogiMove();
+            move.setFrom(selectedSquare);
+            move.setTo(to);
 
-            if (board.move(board.getTurn(), selectedSquare, to)) {
-                ShogiOwnedPiece currentPiece = getBoard().getOwnedPieceAt(to);
+            if (getBoard().move(move)) {
 
-                if (ShogiRule.canPromote(currentPiece, selectedSquare, to)) {
-                    getDisplay().showPromotionDialog(this, currentPiece);
+                if (ShogiRule.canPromote(getBoard(), selectedSquare, to)) {
+                    getDisplay().showPromotionDialog(this, getBoard().getOwnedPieceAt(to));
                 }
+
                 selectedSquare = null;
                 refresh();
             }
         } else if (selectedPiece != null) {
-            if (getBoard().drop(getBoard().getTurn(), selectedPiece, to)) {
+            Drop drop = new Drop();
+            drop.setTo(to);
+            drop.dropped = selectedPiece;
+
+            if (getBoard().move(drop)) {
                 selectedPiece = null;
                 refresh();
             }
@@ -89,16 +98,16 @@ public class ShogiBoardController extends GuiBoardController<ShogiBoard, ShogiMo
                 ShogiOwnedPiece selected = getBoard().getOwnedPieceAt(selectedSquare);
 
                 if (selected != null && !square.equals(selectedSquare)
-                        && ShogiRule.canGo(board, selected, selectedSquare, square)) {
+                        && ShogiRule.canGo(getBoard(), selectedSquare, square)) {
                     getDisplay().addMoveAction(square, this);
                 }
             } else if (selectedPiece != null) { // from the pocket
-                if (ShogiRule.canDrop(board, square)) {
+                if (ShogiRule.canDrop(getBoard(), square)) {
                     getDisplay().addMoveAction(square, this);
                 }
             } else {
                 // available pieces
-                if (op != null && op.getPlayer() == board.getTurn()) {
+                if (op != null && op.getPlayer() == getBoard().getTurn()) {
                     getDisplay().addSelectAction(square, this);
                 }
             }

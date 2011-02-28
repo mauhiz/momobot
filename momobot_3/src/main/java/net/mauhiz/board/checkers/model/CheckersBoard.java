@@ -1,20 +1,15 @@
 package net.mauhiz.board.checkers.model;
 
-import static java.lang.Math.abs;
-
 import java.awt.Dimension;
-import java.util.HashMap;
-import java.util.Map;
 
-import net.mauhiz.board.Board;
-import net.mauhiz.board.Player;
+import net.mauhiz.board.AbstractBoard;
+import net.mauhiz.board.Move;
 import net.mauhiz.board.Square;
-import net.mauhiz.board.SquareView;
 
 /**
  * @author mauhiz
  */
-public class CheckersBoard extends Board {
+public class CheckersBoard extends AbstractBoard<CheckersPiece, CheckersPlayer> {
     public static final int SIZE = 10;
 
     static Square getSkippedSquare(Square from, Square to) {
@@ -24,25 +19,14 @@ public class CheckersBoard extends Board {
         return null;
     }
 
-    static boolean isCornerSkip(Square from, Square to) {
-        return abs(getXmove(from, to)) == 2 && abs(getYmove(from, to)) == 2;
-    }
-
-    static boolean isForward(Square from, Square to, CheckersPlayer player) {
-        return getYmove(from, to) * (player == CheckersPlayer.BLACK ? 1 : -1) > 0;
-    }
-
-    static boolean isFrontCorner(Square from, Square to, CheckersPlayer pl) {
-        return isCorner(from, to) && isForward(from, to, pl);
-    }
-
-    private final Map<Square, CheckersOwnedPiece> piecesMap = new HashMap<Square, CheckersOwnedPiece>();
-
-    private CheckersPlayer turn = CheckersPlayer.BLACK;
-
     @Override
     public CheckersOwnedPiece getOwnedPieceAt(Square square) {
-        return piecesMap.get(square);
+        return super.getOwnedPieceAt(square);
+    }
+
+    @Override
+    public CheckersRule getRule() {
+        return super.getRule();
     }
 
     @Override
@@ -51,21 +35,42 @@ public class CheckersBoard extends Board {
     }
 
     @Override
-    public CheckersPlayer getTurn() {
-        return turn;
+    protected void initGameFor(Square square) {
+        int j = square.y;
+        int i = square.x;
+
+        if (j <= 3 || j >= 6) {
+            CheckersPlayer pl = j <= 4 ? CheckersPlayer.BLACK : CheckersPlayer.WHITE;
+
+            if ((i + j) % 2 == 0) { // TODO test
+                piecesMap.put(square, new CheckersOwnedPiece(pl, CheckersPiece.PAWN));
+            }
+        }
     }
 
     @Override
-    public boolean move(Player pl, Square from, Square to) {
-        if (!pl.equals(turn)) {
+    protected void initTurn() {
+        turn = CheckersPlayer.BLACK;
+    }
+
+    @Override
+    protected boolean isForward(Square from, Square to, CheckersPlayer player) {
+        return from.y != to.y && player == CheckersPlayer.BLACK ^ from.y < to.y;
+    }
+
+    public boolean move(Move move) {
+        if (!(move instanceof CheckersMove)) {
             return false;
         }
+        Square from = ((CheckersMove) move).getFrom();
         CheckersOwnedPiece toMove = getOwnedPieceAt(from);
-        if (toMove == null || toMove.getPlayer() != pl) {
+
+        if (toMove == null || !toMove.getPlayer().equals(getTurn())) {
             return false;
         }
 
-        if (CheckersRule.canGo(this, toMove, from, to)) {
+        if (getRule().isLegalMove(this, move)) {
+            Square to = move.getTo();
             piecesMap.remove(from);
             piecesMap.put(to, toMove);
 
@@ -73,30 +78,10 @@ public class CheckersBoard extends Board {
             piecesMap.remove(getSkippedSquare(from, to));
 
             // TODO can capture again with same piece if capture
-            turn = turn.next();
+            nextTurn();
             return true;
         }
 
         return false;
-    }
-
-    @Override
-    public void newGame() {
-        piecesMap.clear();
-
-        for (Square square : new SquareView(getSize())) {
-            int j = square.y;
-            int i = square.x;
-
-            if (j <= 3 || j >= 6) {
-                CheckersPlayer pl = j <= 4 ? CheckersPlayer.BLACK : CheckersPlayer.WHITE;
-
-                if ((i + j) % 2 == 0) { // TODO test
-                    piecesMap.put(square, new CheckersOwnedPiece(pl, CheckersPiece.PAWN));
-                }
-            }
-        }
-
-        turn = CheckersPlayer.BLACK;
     }
 }
