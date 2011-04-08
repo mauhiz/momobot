@@ -18,22 +18,21 @@ public abstract class AbstractIrcControl implements IIrcControl {
      */
     private static final Logger LOG = Logger.getLogger(AbstractIrcControl.class);
     private final ITriggerManager manager;
-    
+
     /**
      * @param mtm
      */
     public AbstractIrcControl(ITriggerManager mtm) {
         manager = mtm;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.IIrcControl#decodeIrcRawMsg(java.lang.String, net.mauhiz.irc.base.io.IIrcIO)
      */
     public void decodeIrcRawMsg(String raw, IIrcIO io) {
         IrcPeer peer = io.getPeer();
-        if (peer == null) {
-            throw new IllegalStateException("io had no associated server");
-        }
+        assert peer != null : "io had no associated server";
+
         IIrcMessage msg = peer.buildFromRaw(raw);
         if (msg instanceof Notice && io.getStatus() == IOStatus.CONNECTING) {
             Notice notice = (Notice) msg;
@@ -51,7 +50,7 @@ public abstract class AbstractIrcControl implements IIrcControl {
         }
         getManager().processMsg(msg, this); // specific client actions
     }
-    
+
     /**
      * @return trigger manager
      */
