@@ -21,4 +21,9 @@ public class ExitAction extends AbstractAction {
     protected void doAction() {
         shell.close();
     }
+
+    @Override
+    protected boolean isAsynchronous() {
+        return false; // I want to quit now!
+    }
 }

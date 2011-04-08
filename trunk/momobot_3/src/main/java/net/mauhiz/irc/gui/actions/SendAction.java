@@ -40,4 +40,9 @@ public class SendAction extends AbstractAction {
         gtm.getClient().sendMsg(msg);
         bar.setText("");
     }
+
+    @Override
+    protected boolean isAsynchronous() {
+        return false; // this should be quick 
+    }
 }

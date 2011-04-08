@@ -25,4 +25,9 @@ public class StartAction<B extends Board<? extends Piece, ? extends Player>, M e
     public void doAction() {
         gui.newGame(controller);
     }
+
+    @Override
+    protected boolean isAsynchronous() {
+        return true; // this might take time
+    }
 }

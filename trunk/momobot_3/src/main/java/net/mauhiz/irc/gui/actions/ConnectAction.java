@@ -24,4 +24,9 @@ public class ConnectAction extends AbstractAction {
     protected void doAction() {
         gtm.getClient().connect(server);
     }
+
+    @Override
+    protected boolean isAsynchronous() {
+        return true; // this action takes time
+    }
 }

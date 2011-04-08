@@ -20,4 +20,9 @@ public class ExitAction<B extends Board<? extends Piece, ? extends Player>, M ex
     protected void doAction() {
         gui.close();
     }
+
+    @Override
+    protected boolean isAsynchronous() {
+        return false; // I want to quit now!
+    }
 }

@@ -24,4 +24,9 @@ public class MoveAction<B extends Board<? extends Piece, ? extends Player>, M ex
     protected void doAction() {
         controller.movePiece(to);
     }
+
+    @Override
+    protected boolean isAsynchronous() {
+        return true; // this might take time, especially if communicating the move
+    }
 }

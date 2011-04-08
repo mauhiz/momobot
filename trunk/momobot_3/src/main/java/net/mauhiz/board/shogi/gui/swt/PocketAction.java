@@ -2,14 +2,12 @@ package net.mauhiz.board.shogi.gui.swt;
 
 import net.mauhiz.board.shogi.gui.ShogiBoardController;
 import net.mauhiz.board.shogi.model.ShogiPiece;
+import net.mauhiz.util.AbstractAction;
 
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+public class PocketAction extends AbstractAction {
 
-public class PocketAction implements SelectionListener {
-
-    private ShogiBoardController controller;
-    private ShogiPiece piece;
+    private final ShogiBoardController controller;
+    private final ShogiPiece piece;
 
     public PocketAction(ShogiBoardController controller, ShogiPiece piece) {
         this.controller = controller;
@@ -17,14 +15,12 @@ public class PocketAction implements SelectionListener {
     }
 
     @Override
-    public void widgetDefaultSelected(SelectionEvent arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void widgetSelected(SelectionEvent arg0) {
+    protected void doAction() {
         controller.selectPiece(piece);
     }
 
+    @Override
+    protected boolean isAsynchronous() {
+        return false; // should be quick
+    }
 }

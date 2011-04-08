@@ -22,4 +22,8 @@ public class CancelAction<B extends Board<? extends Piece, ? extends Player>, M 
         gui.cancelSelection();
     }
 
+    @Override
+    protected boolean isAsynchronous() {
+        return false; // should be immediate
+    }
 }

@@ -24,4 +24,9 @@ public class SelectAction<B extends Board<? extends Piece, ? extends Player>, M 
     protected void doAction() {
         controller.selectPiece(at);
     }
+
+    @Override
+    protected boolean isAsynchronous() {
+        return false; // this should be quick
+    }
 }
