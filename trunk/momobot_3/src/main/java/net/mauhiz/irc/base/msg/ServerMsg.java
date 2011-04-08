@@ -24,7 +24,7 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
      * suite du message
      */
     private final String msg;
-    
+
     /**
      * @param from1
      * @param to1
@@ -37,26 +37,26 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
         code = Integer.parseInt(codeStr);
         msg = group2;
     }
-    
+
     /**
      * @return {@link #code}
      */
     public int getCode() {
         return code;
     }
-    
+
     @Override
     public String getIrcForm() {
         return ":" + from + " " + code + " " + to + " :" + msg;
     }
-    
+
     /**
      * @return {@link #msg}
      */
     public String getMsg() {
         return msg;
     }
-    
+
     private void handleNamReply() {
         int sep = msg.indexOf(" :");
         String chanName = msg.substring(2, sep);
@@ -64,7 +64,7 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
         if (chan == null) {
             return;
         }
-        
+
         String[] prefixedNames = StringUtils.split(msg.substring(sep + 2));
         for (String prefixedName : prefixedNames) {
             char prefix = prefixedName.charAt(0);
@@ -76,11 +76,11 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
         }
         LOG.debug("Names Reply on " + chan + ": " + StringUtils.join(prefixedNames, ' '));
     }
-    
+
     private void handleWhoisChannels() {
         String nick = StringUtils.substringBefore(msg, " ");
         IrcUser ircUser = server.findUser(nick, true);
-        
+
         String lstChanNames = StringUtils.substringAfter(msg, " :");
         String[] chanNames = StringUtils.split(lstChanNames, " ");
         for (String chanName : chanNames) {
@@ -93,124 +93,125 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
             }
         }
     }
-    
+
     private void handleWhoisUser() {
         String nick = StringUtils.substringBefore(msg, " ");
         IrcUser ircUser = server.findUser(nick, true);
-        
+
         String remaining = StringUtils.substringAfter(msg, " ");
         String user = StringUtils.substringBefore(remaining, " ");
         remaining = StringUtils.substringAfter(remaining, " ");
         ircUser.setUser(user);
-        
+
         String host = StringUtils.substringBefore(remaining, " ");
         ircUser.setHost(host);
-        
+
         String fullName = StringUtils.substringAfter(remaining, " :");
         ircUser.setFullName(fullName);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.msg.IIrcMessage#process(net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void process(IIrcControl control) {
         switch (code) {
-            case RPL_UMODEIS :
+            case RPL_UMODEIS:
                 LOG.debug("my mode: " + msg);
                 break;
-            case RPL_TOPIC :
+            case RPL_TOPIC:
                 LOG.debug("topic: " + msg);
                 break;
-            case RPL_TOPICINFO :
+            case RPL_TOPICINFO:
                 LOG.debug("topic info: " + msg);
                 break;
-            case RPL_LUSERCLIENT :
+            case RPL_LUSERCLIENT:
                 LOG.info("number of clients: " + msg);
                 break;
-            case RPL_LUSERCHANNELS :
+            case RPL_LUSERCHANNELS:
                 LOG.info("number of channels: " + msg);
                 break;
-            case RPL_LUSERME :
+            case RPL_LUSERME:
                 LOG.info("server userme: " + msg);
                 break;
-            case RPL_MOTD :
+            case RPL_MOTD:
                 LOG.info("Motd LINE: " + msg);
                 break;
-            case RPL_NAMREPLY :
+            case RPL_NAMREPLY:
                 handleNamReply();
                 break;
-            case RPL_ENDOFNAMES :
+            case RPL_ENDOFNAMES:
                 LOG.debug("End of Names Reply");
                 break;
-            case RPL_LUSEROP :
+            case RPL_LUSEROP:
                 LOG.info("list of operators: " + msg);
                 break;
-            case RPL_MOTDSTART :
+            case RPL_MOTDSTART:
                 LOG.debug("Start of MOTD: " + msg);
                 break;
-            case ERR_NOTEXTTOSEND :
+            case ERR_NOTEXTTOSEND:
                 LOG.warn("Server told me that I tried to send an empty msg");
                 break;
-            case RPL_ENDOFMOTD :
+            case RPL_ENDOFMOTD:
                 LOG.debug("End of MOTD");
                 break;
-            case RPL_LUSERUNKNOWN :
+            case RPL_LUSERUNKNOWN:
                 LOG.info("list of unknown users: " + msg);
                 break;
-            case ERR_QNETSERVICEIMMUNE :
+            case ERR_QNETSERVICEIMMUNE:
                 LOG.warn("I cannot do harm to a service! " + msg);
                 break;
-            case RPL_WHOISUSER :
+            case RPL_WHOISUSER:
                 handleWhoisUser();
                 break;
-            case ERR_NOSUCHNICK :
+            case ERR_NOSUCHNICK:
                 String unkNick = StringUtils.substringBefore(msg, " :");
                 WhoisRequest.end(unkNick, false);
                 break;
-            case RPL_WHOISCHANNELS :
+            case RPL_WHOISCHANNELS:
                 handleWhoisChannels();
                 break;
-            case RPL_WHOISSERVER :
+            case RPL_WHOISSERVER:
                 LOG.warn("TODO whois server : " + msg);
                 // msg = mauhiz *.quakenet.org :QuakeNet IRC Server
                 break;
-            case RPL_WHOISAUTH : // this message is specific to Qnet Servers
+            case RPL_WHOISAUTH: // this message is specific to Qnet Servers
                 ((QnetServer) server).handleWhois(msg);
                 break;
-            case RPL_ENDOFWHOIS :
+            case RPL_ENDOFWHOIS:
                 String nick = StringUtils.substringBefore(msg, " ");
                 WhoisRequest.end(nick, true);
                 break;
-            case ERR_CHANOPRIVSNEEDED :
+            case ERR_CHANOPRIVSNEEDED:
                 LOG.warn("I am not channel operator. " + StringUtils.substringBefore(msg, " "));
                 break;
-            case ERR_NOTREGISTERED :
+            case ERR_NOTREGISTERED:
                 LOG.warn("I should register before sending commands!");
                 break;
-            case RPL_WHOISIDLE :
+            case RPL_WHOISIDLE:
                 LOG.debug("User has been idle : " + StringUtils.substringAfter(msg, " "));
                 break;
-            case RPL_WHOISOPERATOR :
+            case RPL_WHOISOPERATOR:
                 String opNick = StringUtils.substringBefore(msg, " ");
                 WhoisRequest.end(opNick, true);
-                
+
                 String opText = StringUtils.substringAfter(msg, ":");
                 LOG.debug(opNick + " " + opText);
                 break;
-            case ERR_NICKNAMEINUSE :
+            case ERR_NICKNAMEINUSE:
                 String nickInUse = StringUtils.substringBefore(msg, " ");
                 LOG.warn(nickInUse + " is already in use");
-                
+
                 // TODO use alternate nicknames from config ?
                 String newNick = nickInUse + "_";
                 control.sendMsg(new Nick(server, null, newNick));
                 break;
-            default :
+            default:
+                // TODO 442 #tsi.fr :You're not on that channel
                 LOG.warn("Unhandled server reply : " + this);
         }
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.msg.AbstractIrcMessage#toString()
      */
