@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -42,12 +43,20 @@ public class GuiLauncher {
      */
     public static void main(String[] args) throws IOException {
         GuiTriggerManager gtm = new GuiTriggerManager();
+        swtLaunch(gtm);
+        gtm.getClient().exit();
+    }
+
+    static void swtLaunch(GuiTriggerManager gtm) {
         Display display = Display.getDefault();
         Shell shell = new Shell(display);
+
         shell.setSize(800, 600);
+
         /* layout */
-        GridLayout gridLayout = new GridLayout(3, false);
+        GridLayout gridLayout = new GridLayout(4, false);
         shell.setLayout(gridLayout);
+
         /* menu */
         Menu menuBar = new Menu(shell, SWT.BAR);
         MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
@@ -59,7 +68,7 @@ public class GuiLauncher {
         fileConnectItem.addSelectionListener(new ConnectAction(gtm, qnet));
         MenuItem fileJoinItem = new MenuItem(fileMenu, SWT.PUSH);
         fileJoinItem.setText("&Join #tsi.fr");
-        fileJoinItem.addSelectionListener(new JoinAction(gtm, qnet, "#tsi.fr"));
+
         MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("E&xit");
         fileExitItem.addSelectionListener(new ExitAction(shell));
@@ -75,9 +84,16 @@ public class GuiLauncher {
         logInfo.setLayoutData(gridData);
         logInfo.setText("");
         logInfo.setEditable(false);
+
+        /* Affichage de la liste d'utilisateurs */
+        List usersInChan = new List(shell, SWT.BORDER | SWT.V_SCROLL);
+        ChannelUpdateTrigger cut = new ChannelUpdateTrigger();
+        gtm.addTrigger(cut);
+        fileJoinItem.addSelectionListener(new JoinAction(gtm, qnet, "#tsi.fr", cut, usersInChan));
+
         /* Affichage de la barre de saisie */
-        Label label2 = new Label(shell, SWT.NONE);
-        label2.setText("Input");
+        Label label3 = new Label(shell, SWT.NONE);
+        label3.setText("Input");
         Text inputBar = new Text(shell, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
         GridData gridData2 = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
         gridData2.horizontalSpan = 1;
@@ -88,8 +104,8 @@ public class GuiLauncher {
         Button send = new Button(shell, SWT.PUSH);
         send.setText("envoyer");
         send.addSelectionListener(new SendAction(inputBar, gtm, qnet, "#tsi.fr"));
+
         /* go afficher */
-        shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
             IIrcMessage msg = gtm.nextMsg();
@@ -102,6 +118,5 @@ public class GuiLauncher {
             }
         }
         display.dispose();
-        gtm.getClient().exit();
     }
 }
