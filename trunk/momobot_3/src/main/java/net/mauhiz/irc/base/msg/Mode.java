@@ -9,7 +9,6 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.data.UserChannelMode;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -19,7 +18,7 @@ import org.apache.log4j.Logger;
 public class Mode extends AbstractIrcMessage {
     private static final Logger LOG = Logger.getLogger(Mode.class);
     private final String message;
-    
+
     /**
      * @param from1
      * @param to1
@@ -28,7 +27,7 @@ public class Mode extends AbstractIrcMessage {
     public Mode(String from1, String to1, IrcServer server1) {
         this(from1, to1, server1, null);
     }
-    
+
     /**
      * @param group
      * @param object
@@ -39,7 +38,7 @@ public class Mode extends AbstractIrcMessage {
         super(group, object, ircServer);
         message = group2;
     }
-    
+
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
@@ -56,70 +55,80 @@ public class Mode extends AbstractIrcMessage {
         sb.append(message);
         return sb.toString();
     }
-    
+
     /**
      * @return the message
      */
     public String getMessage() {
         return message;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
-        Mask fromMask = new Mask(from);
-        IrcUser by = fromMask.getNick() == null ? null : server.findUser(fromMask, true);
-        
         String[] toks = StringUtils.split(message, ' ');
-        String modeInfo = toks[0];
-        
-        char modifier = modeInfo.charAt(0);
-        String modes = modeInfo.substring(1);
-        
+
         if (isToChannel()) {
             IrcChannel chan = server.findChannel(to);
-            if (toks.length == 1) {
-                // pure channel mode
-                chan.getProperties().process(modifier, modes);
-            } else {
-                // setting mode on people
-                String target = toks[1];
-                
-                if (toks.length > 2) {
-                    LOG.warn("TODO handle multiple users : " + ArrayUtils.toString(toks));
-                }
-                
-                IrcUser targetUser = server.findUser(target, false);
-                
-                if (target == null) {
-                    return; // let's skip this unknown user
-                }
-                Set<UserChannelMode> userModes = chan.getModes(targetUser);
-                
-                if (modes.length() > 1) {
-                    LOG.warn("TODO handle multiple modes : " + modes);
-                }
-                
-                UserChannelMode newMode = UserChannelMode.fromCmd(modes.charAt(0));
-                
-                if (modifier == '+') {
-                    userModes.add(newMode);
-                    
+            int argIdx = 0;
+            String modeInfo = toks[argIdx++]; // consume 1st argument
+
+            for (int idx = 0; idx < modeInfo.length(); idx++) {
+                char modifier = modeInfo.charAt(idx++);
+                boolean set = modifier == '+';
+
+                if (set || modifier == '-') {
+                    char modeItem = modeInfo.charAt(idx);
+
+                    if (modeItem == '+' || modeItem == '-') {
+                        // a modifier => this is next token
+                        continue;
+                    }
+
+                    idx++; // consume char
+                    UserChannelMode newMode = UserChannelMode.fromCmd(modeItem);
+
+                    if (newMode == null) {
+                        // channel mode
+                        chan.getProperties().process(set, modeItem);
+
+                    } else {
+                        // user mode
+                        String target = toks[argIdx++];
+                        IrcUser targetUser = server.findUser(target, true);
+                        Set<UserChannelMode> userModes = chan.getModes(targetUser);
+
+                        if (set) {
+                            userModes.add(newMode);
+
+                        } else {
+                            userModes.remove(newMode);
+                        }
+                    }
                 } else {
-                    userModes.remove(newMode);
+                    LOG.warn("Invalid mode command: " + message);
+                    return;
                 }
-                
-                LOG.debug("userModes : " + userModes);
             }
         } else {
-            // TODO
+            IrcUser target = server.findUser(to, true);
+            char modifier = message.charAt(0);
+            char mode = message.charAt(1);
+            if (mode == 'i') {
+                target.getProperties().setInvisible(modifier == '+');
+
+            } else {
+                LOG.warn("TODO process user mode: " + message);
+            }
         }
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "* " + from + " sets mode: " + message + " " + to;
+        Mask fromMask = new Mask(from);
+        String by = fromMask.getNick() == null ? server.getAlias() : server.findUser(fromMask, true).getNick();
+        return "* " + by + " sets mode: " + message + " " + to;
     }
 }

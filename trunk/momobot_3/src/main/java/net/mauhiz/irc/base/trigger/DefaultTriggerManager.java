@@ -90,16 +90,7 @@ public class DefaultTriggerManager implements ITriggerManager {
     void addTrigger(Class<? extends ITrigger> triggerClass, Object... params) {
         try {
             ITrigger trigger = (ITrigger) ConstructorUtils.invokeConstructor(triggerClass, params);
-            if (!(trigger instanceof ITextTrigger)) {
-                /* seuls les triggers text peuvent avoir plusieurs instances */
-                for (ITrigger every : myKeeper) {
-                    if (trigger.getClass().equals(every.getClass())) {
-                        /* refused */
-                        return;
-                    }
-                }
-            }
-            myKeeper.add(trigger);
+            addTrigger(trigger);
         } catch (InstantiationException e) {
             LOG.warn(e, e);
         } catch (IllegalAccessException e) {
@@ -109,6 +100,19 @@ public class DefaultTriggerManager implements ITriggerManager {
         } catch (NoSuchMethodException e) {
             LOG.warn(e, e);
         }
+    }
+
+    public void addTrigger(ITrigger trigger) {
+        if (!(trigger instanceof ITextTrigger)) {
+            /* seuls les triggers text peuvent avoir plusieurs instances */
+            for (ITrigger every : myKeeper) {
+                if (trigger.getClass().equals(every.getClass())) {
+                    /* refused */
+                    return;
+                }
+            }
+        }
+        myKeeper.add(trigger);
     }
 
     /**

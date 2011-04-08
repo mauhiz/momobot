@@ -15,10 +15,10 @@ import org.apache.log4j.Logger;
  */
 public class IrcInput extends AbstractRunnable implements IIrcInput {
     private static final Logger LOGGER = Logger.getLogger(IrcInput.class);
-    
+
     private final IIrcIO io;
     private final BufferedReader reader;
-    
+
     /**
      * @param io1
      * @param socket
@@ -29,14 +29,11 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
         io = io1;
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15));
     }
-    
+
     /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        if (reader == null) {
-            throw new IllegalStateException("use connect() first");
-        }
         while (isRunning()) {
             try {
                 String nextRaw = reader.readLine();
@@ -53,7 +50,7 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
         }
         io.disconnect();
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.io.IIrcInput#start()
      */
