@@ -73,9 +73,7 @@ public class Gather extends ChannelEvent {
      * @return le message d'ajout, jamais <code>null</code>.
      */
     public String add(IrcUser element) {
-        if (element == null) {
-            throw new IllegalArgumentException("element must not be null");
-        }
+        assert element != null;
         StringBuilder retour = new StringBuilder();
         retour.append(element.getNick());
 

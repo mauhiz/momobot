@@ -29,12 +29,12 @@ public class NetUtils {
      * nombre de champs dans l'Ipv4.
      */
     public static final int IP_FIELDS = 4;
-    
+
     /**
      * logger.
      */
     private static final Logger LOG = Logger.getLogger(NetUtils.class);
-    
+
     /**
      * A convenient method that accepts an IP address represented by a byte[] of size 4 and returns this as a long
      * representation of the same IP address.
@@ -45,9 +45,7 @@ public class NetUtils {
      * @return a long representation of the IP address.
      */
     public static long byteTabToLong(byte[] address) {
-        if (address.length != IP_FIELDS) {
-            throw new IllegalArgumentException("byte array must be of length " + IP_FIELDS);
-        }
+        assert address.length == IP_FIELDS : "address.length must be " + IP_FIELDS;
         long ipNum = 0;
         long multiplier = 1;
         for (int i = address.length - 1; i >= 0; --i) {
@@ -57,7 +55,7 @@ public class NetUtils {
         }
         return ipNum;
     }
-    
+
     /**
      * Une IP vaut 32 bits, un int aussi. Par contre l'entier est signe...
      * 
@@ -68,16 +66,14 @@ public class NetUtils {
     public static int byteTabToSignedInt(byte[] addr) {
         return (int) byteTabToLong(addr);
     }
-    
+
     /**
      * @param ip
      *            l'IP
      * @return ?
      */
     public static InetAddress charTabToIa(char[] ip) {
-        if (ip.length != IP_FIELDS) {
-            throw new IllegalArgumentException("short array must be of length " + IP_FIELDS);
-        }
+        assert ip.length == IP_FIELDS : "ip.length must be " + IP_FIELDS;
         try {
             StringBuilder name = new StringBuilder();
             for (char ipField : ip) {
@@ -90,17 +86,17 @@ public class NetUtils {
         }
         return null;
     }
-    
+
     public static String doHttpGet(String url) throws IOException, URISyntaxException {
         return doHttpGet(new URI(url));
     }
-    
+
     public static String doHttpGet(URI url) throws IOException {
         HttpGet get = new HttpGet(url);
         HttpResponse resp = new DefaultHttpClient().execute(get);
         return IOUtils.toString(resp.getEntity().getContent());
     }
-    
+
     /**
      * @param address
      *            l'adresse
@@ -119,7 +115,7 @@ public class NetUtils {
         }
         return ipNum;
     }
-    
+
     /**
      * @param addr
      *            l'adresse
@@ -133,6 +129,7 @@ public class NetUtils {
         }
         return result;
     }
+
     /**
      * A convenient method that accepts an IP address represented as a long and returns an integer array of size 4
      * representing the same IP address.
@@ -150,6 +147,7 @@ public class NetUtils {
         }
         return ip;
     }
+
     /**
      * @param longip
      *            une ip
@@ -158,7 +156,7 @@ public class NetUtils {
     public static InetAddress longToIa(long longip) {
         return charTabToIa(longToCharTab(longip));
     }
-    
+
     /**
      * @param str
      *            la chaine a parser
@@ -171,17 +169,17 @@ public class NetUtils {
                 InetAddress ip = InetAddress.getByName(str.substring(0, index));
                 int port = Integer.parseInt(str.substring(index + 1));
                 return new InetSocketAddress(ip, port);
-                
+
             } catch (UnknownHostException uhe) {
                 LOG.debug(uhe, uhe);
-                
+
             } catch (IllegalArgumentException iae) {
                 LOG.debug(iae, iae);
             }
         }
         return null;
     }
-    
+
     /**
      * @param uns
      *            un long non signe
@@ -190,18 +188,11 @@ public class NetUtils {
     public static byte[] unsIntToByteTab(long uns) {
         byte[] retour = new byte[Integer.SIZE / Byte.SIZE];
         int shift = Integer.SIZE;
-        
+
         for (char i = 0; i < retour.length; i++) {
             shift -= Byte.SIZE;
             retour[i] = (byte) (uns >> shift & BYTE_MASK);
         }
         return retour;
-    }
-    
-    /**
-     * constructeur cache.
-     */
-    protected NetUtils() {
-        throw new UnsupportedOperationException();
     }
 }

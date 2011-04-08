@@ -33,6 +33,7 @@ public class Pendu extends ChannelEvent {
             throw new ExceptionInInitializerError(ioe);
         }
     }
+
     /**
      * @param len
      *            la longueur du mot
@@ -40,30 +41,30 @@ public class Pendu extends ChannelEvent {
      */
     private static int calibre(int len) {
         switch (len) {
-            case 0 :
-                throw new IllegalArgumentException();
-            case 1 :
+            case 0:
+                throw new IllegalArgumentException("Invalid length: " + len);
+            case 1:
                 return 15;
-            case 2 :
+            case 2:
                 return 14;
-            case 3 :
+            case 3:
                 return 12;
-            case 4 :
+            case 4:
                 return 7;
-            case 5 :
+            case 5:
                 return 6;
-            case 6 :
-            case 7 :
-            case 8 :
-            case 9 :
-            case 10 :
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
                 return 5;
-            default :
+            default:
                 break;
         }
         return 4;
     }
-    
+
     /**
      * @return un mot au hasard
      */
@@ -75,7 +76,7 @@ public class Pendu extends ChannelEvent {
         }
         return mot;
     }
-    
+
     /**
      * lettres deja proposees.
      */
@@ -100,7 +101,7 @@ public class Pendu extends ChannelEvent {
      * le nombre de vies.
      */
     private int vies;
-    
+
     /**
      * @param channel1
      *            le channel
@@ -114,7 +115,7 @@ public class Pendu extends ChannelEvent {
         devinage.append(StringUtils.rightPad("", mot.length(), UNDERSCORE));
         LOG.debug(solutionPure);
     }
-    
+
     /**
      * @param car
      *            la lettre
@@ -131,14 +132,14 @@ public class Pendu extends ChannelEvent {
         }
         return present;
     }
-    
+
     /**
      * @return Returns the devinage.
      */
     public String getDevinage() {
         return devinage.toString();
     }
-    
+
     /**
      * @param toSubmit
      *            la lettre
@@ -150,7 +151,7 @@ public class Pendu extends ChannelEvent {
         } else if (!alreadyTried.add(Character.valueOf(toSubmit))) {
             return "La lettre " + toSubmit + " a deja ete essayee";
         }
-        
+
         StringBuilder penduMsg = new StringBuilder();
         penduMsg.append("La lettre ").append(toSubmit).append(" est ");
         if (findLetter(toSubmit)) {
@@ -166,20 +167,21 @@ public class Pendu extends ChannelEvent {
         } else {
             penduMsg.append("absente! ");
             switch (--vies) {
-                case 0 :
+                case 0:
                     /* arreter le pendu */
                     stop();
                     penduMsg.append("Vous avez perdu! le mot etait: ").append(solutionPure);
                     break;
-                case 1 :
+                case 1:
                     penduMsg.append("Plus qu'un essai!");
                     break;
-                default :
+                default:
                     penduMsg.append("Encore ").append(vies).append(" essais.");
             }
         }
         return penduMsg.toString();
     }
+
     /**
      * @param test
      *            le mot a tester
@@ -197,21 +199,21 @@ public class Pendu extends ChannelEvent {
         } else {
             retour.append("Non, le mot n'est pas: ").append(test).append(". ");
             switch (--vies) {
-                case 0 :
+                case 0:
                     stop();
                     retour.append("Vous avez perdu! le mot etait: ").append(solutionPure);
                     break;
                 /* arreter le pendu */
-                case 1 :
+                case 1:
                     retour.append("Plus qu'un essai!");
                     break;
-                default :
+                default:
                     retour.append("Encore ").append(vies).append(" essais.");
             }
         }
         return retour;
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
