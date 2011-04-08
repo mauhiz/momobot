@@ -17,6 +17,11 @@ import org.apache.log4j.Logger;
  */
 public class Mode extends AbstractIrcMessage {
     private static final Logger LOG = Logger.getLogger(Mode.class);
+
+    public static boolean isModifier(char c) {
+        return c == '+' || c == '-';
+    }
+
     private final String message;
 
     /**
@@ -71,42 +76,35 @@ public class Mode extends AbstractIrcMessage {
             IrcChannel chan = server.findChannel(to);
             int argIdx = 0;
             String modeInfo = toks[argIdx++]; // consume 1st argument
+            boolean set = false;
 
             for (int idx = 0; idx < modeInfo.length(); idx++) {
-                char modifier = modeInfo.charAt(idx++);
-                boolean set = modifier == '+';
+                char next = modeInfo.charAt(idx);
 
-                if (set || modifier == '-') {
-                    char modeItem = modeInfo.charAt(idx);
+                if (isModifier(next)) {
+                    set = next == '+';
+                    continue;
+                }
 
-                    if (modeItem == '+' || modeItem == '-') {
-                        // a modifier => this is next token
-                        continue;
-                    }
+                char modeItem = modeInfo.charAt(idx);
+                UserChannelMode newMode = UserChannelMode.fromCmd(modeItem);
 
-                    idx++; // consume char
-                    UserChannelMode newMode = UserChannelMode.fromCmd(modeItem);
+                if (newMode == null) {
+                    // channel mode
+                    chan.getProperties().process(set, modeItem);
 
-                    if (newMode == null) {
-                        // channel mode
-                        chan.getProperties().process(set, modeItem);
+                } else {
+                    // user mode
+                    String target = toks[argIdx++];
+                    IrcUser targetUser = server.findUser(target, true);
+                    Set<UserChannelMode> userModes = chan.getModes(targetUser);
+
+                    if (set) {
+                        userModes.add(newMode);
 
                     } else {
-                        // user mode
-                        String target = toks[argIdx++];
-                        IrcUser targetUser = server.findUser(target, true);
-                        Set<UserChannelMode> userModes = chan.getModes(targetUser);
-
-                        if (set) {
-                            userModes.add(newMode);
-
-                        } else {
-                            userModes.remove(newMode);
-                        }
+                        userModes.remove(newMode);
                     }
-                } else {
-                    LOG.warn("Invalid mode command: " + message);
-                    return;
                 }
             }
         } else {

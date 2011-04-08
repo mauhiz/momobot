@@ -12,7 +12,7 @@ import net.mauhiz.irc.base.data.Mask;
 public class Part extends AbstractIrcMessage {
     private final String chan;
     private final String reason;
-    
+
     /**
      * @param ircServer
      * @param msg
@@ -21,7 +21,7 @@ public class Part extends AbstractIrcMessage {
     public Part(IrcServer ircServer, String msg, String reason1) {
         this(ircServer, null, null, msg, reason1);
     }
-    
+
     /**
      * @param from1
      * @param to1
@@ -34,14 +34,14 @@ public class Part extends AbstractIrcMessage {
         chan = msg1;
         reason = reason1;
     }
-    
+
     /**
      * @return the message
      */
     public String getChan() {
         return chan;
     }
-    
+
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
@@ -62,14 +62,14 @@ public class Part extends AbstractIrcMessage {
         }
         return sb.toString();
     }
-    
+
     /**
      * @return {@link #reason}
      */
     public String getReason() {
         return reason;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         IrcChannel fromChan = server.findChannel(chan);
@@ -79,9 +79,9 @@ public class Part extends AbstractIrcMessage {
             fromChan.remove(leaver);
         }
     }
-    
+
     @Override
     public String toString() {
-        return "* Parts: " + from;
+        return "* Parts: " + to;
     }
 }
