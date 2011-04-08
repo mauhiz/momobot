@@ -7,7 +7,7 @@ import net.mauhiz.irc.base.data.AbstractIrcUser;
  */
 public class QnetUser extends AbstractIrcUser {
     private String auth;
-    
+
     /**
      * @param nick1
      */
@@ -15,14 +15,19 @@ public class QnetUser extends AbstractIrcUser {
         super(nick1);
         props = new QnetUserProperties();
     }
-    
+
     /**
      * @return the auth
      */
     public String getAuth() {
         return auth;
     }
-    
+
+    @Override
+    public QnetUserProperties getProperties() {
+        return (QnetUserProperties) props;
+    }
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#isService()
      */
@@ -30,7 +35,7 @@ public class QnetUser extends AbstractIrcUser {
     public boolean isService() {
         return getNick().length() == 1;
     }
-    
+
     /**
      * @param auth1
      *            the auth to set

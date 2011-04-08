@@ -5,5 +5,13 @@ package net.mauhiz.irc.base.data;
  * @author mauhiz
  */
 public class UserProperties {
-    boolean invisible;
+    private boolean invisible;
+
+    public void setInvisible(boolean invisible) {
+        this.invisible = invisible;
+    }
+
+    public boolean isInvisible() {
+        return invisible;
+    }
 }

@@ -1,7 +1,5 @@
 package net.mauhiz.irc.base.data;
 
-import org.apache.commons.lang.NullArgumentException;
-
 /**
  * @author mauhiz
  */
@@ -11,19 +9,19 @@ public abstract class AbstractIrcUser implements IrcUser {
     private String nick;
     protected UserProperties props;
     private String user;
-    
+
     /**
      * @param nick1
      */
     protected AbstractIrcUser(String nick1) {
         nick = nick1;
     }
-    
+
     @Override
     public int compareTo(IrcUser o) {
         return nick.compareTo(o.getNick());
     }
-    
+
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -36,42 +34,40 @@ public abstract class AbstractIrcUser implements IrcUser {
         }
         return nick.equals(((IrcUser) obj).getNick());
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#getFullName()
      */
     public String getFullName() {
         return fullName;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#getHost()
      */
     public String getHost() {
         return host;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#getNick()
      */
     public String getNick() {
         return nick;
     }
-    
-    /**
-     * @return {@link #props}
-     */
-    public UserProperties getProps() {
+
+    @Override
+    public UserProperties getProperties() {
         return props;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#getUser()
      */
     public String getUser() {
         return user;
     }
-    
+
     /**
      * @see java.lang.Object#hashCode()
      */
@@ -79,7 +75,7 @@ public abstract class AbstractIrcUser implements IrcUser {
     public int hashCode() {
         return nick.hashCode();
     }
-    
+
     /**
      * Par defaut : pas de service
      * 
@@ -88,44 +84,41 @@ public abstract class AbstractIrcUser implements IrcUser {
     public boolean isService() {
         return false;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#setFullName(java.lang.String)
      */
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#setHost(java.lang.String)
      */
     public void setHost(String host1) {
         host = host1;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#setNick(java.lang.String)
      */
     public void setNick(String nick1) {
-        if (nick == null) {
-            throw new NullArgumentException("nick");
-        }
-        
+        assert nick != null;
         nick = nick1;
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#setUser(java.lang.String)
      */
     public void setUser(String user1) {
         user = user1;
     }
-    
+
     @Override
     public String toString() {
         return nick;
     }
-    
+
     /**
      * @param hostmask
      */
