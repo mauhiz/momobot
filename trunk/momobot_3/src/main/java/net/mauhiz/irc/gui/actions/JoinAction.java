@@ -5,9 +5,9 @@ import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.gui.ChannelUpdateTrigger;
 import net.mauhiz.irc.gui.GuiTriggerManager;
+import net.mauhiz.irc.gui.SwtChanTab;
+import net.mauhiz.irc.gui.SwtIrcClient;
 import net.mauhiz.util.AbstractAction;
-
-import org.eclipse.swt.widgets.List;
 
 /**
  * @author mauhiz
@@ -17,7 +17,7 @@ public class JoinAction extends AbstractAction {
     ChannelUpdateTrigger cut;
     GuiTriggerManager gtm;
     IrcServer server;
-    List userList;
+    SwtIrcClient swtIrcClient;
 
     /**
      * @param gtm1
@@ -25,12 +25,12 @@ public class JoinAction extends AbstractAction {
      * @param channel1
      */
     public JoinAction(GuiTriggerManager gtm1, IrcServer server1, String channel1, ChannelUpdateTrigger cut,
-            List userList) {
+            SwtIrcClient swtIrcClient) {
         server = server1;
         gtm = gtm1;
         channel = channel1;
         this.cut = cut;
-        this.userList = userList;
+        this.swtIrcClient = swtIrcClient;
     }
 
     @Override
@@ -39,7 +39,8 @@ public class JoinAction extends AbstractAction {
         IIrcControl control = gtm.getClient();
         assert control != null;
         control.sendMsg(msg);
-        cut.addChannel(server.findChannel(channel, true), userList);
+        SwtChanTab tab = swtIrcClient.createTab(channel);
+        cut.addChannel(server.findChannel(channel, true), tab.getUsersInChan());
     }
 
     @Override
