@@ -11,17 +11,17 @@ import org.apache.commons.lang.text.StrTokenizer;
  * @author mauhiz
  */
 class RconClient extends ValveUdpClient {
-    
+
     /**
      * challenger!
      */
     private static final String CHALLENGE = "challenge rcon";
-    
+
     /**
      * 
      */
     private static final String CMD_MAP = "!map ";
-    
+
     /**
      * Mon rcon.
      */
@@ -30,12 +30,12 @@ class RconClient extends ValveUdpClient {
      * mon challenge.
      */
     private String rconChallenge;
-    
+
     /**
      * ah, mon ecouteur prefere.
      */
     private final RconListener rl;
-    
+
     /**
      * @param server1
      *            le serveur
@@ -45,7 +45,7 @@ class RconClient extends ValveUdpClient {
         this.rcon = rcon;
         rl = new RconListener(this);
     }
-    
+
     /**
      * @param rcon1
      *            le rcon
@@ -59,7 +59,7 @@ class RconClient extends ValveUdpClient {
             initLogThread();
         }
     }
-    
+
     /**
      * @throws IOException
      *             en cas de pepin!
@@ -67,17 +67,14 @@ class RconClient extends ValveUdpClient {
     public void getRconChallenge() throws IOException {
         rconChallenge = substringAfter(new String(sendAndRcvValveCmd(CHALLENGE)), CHALLENGE + " ");
     }
-    
+
     /**
      */
     public void initLogThread() {
-        if (StringUtils.isEmpty(rcon)) {
-            throw new UnsupportedOperationException("pas de rcon defini");
-        }
-        
+        assert StringUtils.isNotEmpty(rcon) : "pas de rcon defini";
         rl.startAs("Valve Udp Listener on " + server.getIp());
     }
-    
+
     /**
      * @param string
      *            la ligne e etudier
@@ -110,7 +107,7 @@ class RconClient extends ValveUdpClient {
             }
         }
     }
-    
+
     /**
      * @param log
      *            le log e etudier
@@ -144,15 +141,15 @@ class RconClient extends ValveUdpClient {
             }
         }
     }
-    
+
     /**
      * @param status
      *            le message de status
      */
     private void processStatus(String status) {
-        LOG.debug("Status");
+        LOG.debug("Status: " + status);
         if (status.length() < 25) {
-            throw new IllegalArgumentException("erreur status trop court");
+            throw new IllegalArgumentException("status trop court: " + status);
         }
         StrTokenizer lignes = new StrTokenizer(status);
         // 1 - hostname
@@ -177,7 +174,7 @@ class RconClient extends ValveUdpClient {
         // 7 - ligne inutile
         // # name userid uniqueid frag time ping loss adr
         lignes.nextToken();
-        
+
         server.resetPlayers();
         while (lignes.hasNext()) {
             String line = lignes.nextToken();
@@ -187,7 +184,7 @@ class RconClient extends ValveUdpClient {
             traiteLigneJoueur(line.substring(2));
         }
     }
-    
+
     /**
      * @param cmd
      *            la commande rcon
@@ -203,7 +200,7 @@ class RconClient extends ValveUdpClient {
         }
         sendValveCmd("rcon " + rconChallenge + " \"" + rcon + "\" " + cmd);
     }
-    
+
     /**
      * @param line
      */
@@ -224,7 +221,7 @@ class RconClient extends ValveUdpClient {
         player.setFrags(frags);
         server.setPlayer(index, player);
     }
-    
+
     /**
      * efface le rcon.
      */
