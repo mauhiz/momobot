@@ -8,4 +8,6 @@ public interface IIrcInput {
      * go !
      */
     void start();
+
+    void stop();
 }

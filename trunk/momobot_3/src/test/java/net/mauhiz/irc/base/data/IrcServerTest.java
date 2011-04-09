@@ -17,7 +17,7 @@ import org.junit.Test;
  * @author mauhiz
  */
 public class IrcServerTest extends AbstractServerTest {
-    
+
     /**
      * Test method for {@link AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
@@ -31,7 +31,7 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertEquals("momobot3", notice.getTo());
         Assert.assertEquals("on 4 ca 1(4) ft 20(20) tr", notice.getMessage());
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
@@ -45,7 +45,7 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertEquals("momobot3", mode.getTo());
         Assert.assertEquals("+i", mode.getMessage());
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
@@ -58,7 +58,7 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertEquals("HP|Angie!~mauhiz@86.255.97-84.rev.gaoland.net", join.getFrom());
         Assert.assertEquals("#truite", join.getChan());
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
@@ -71,7 +71,7 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertEquals("= #truite :@HP|Angie", smsg.getMsg());
         Assert.assertEquals(NumericReplies.RPL_NAMREPLY, smsg.getCode());
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
@@ -84,7 +84,7 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertEquals("#truite :End of /NAMES list.", smsg.getMsg());
         Assert.assertEquals(NumericReplies.RPL_ENDOFNAMES, smsg.getCode());
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */
@@ -98,7 +98,7 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertEquals("momobot3", kick.getTarget());
         Assert.assertEquals("go away", kick.getReason());
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.irc.base.data.AbstractIrcServer#buildFromRaw(java.lang.String)}.
      */

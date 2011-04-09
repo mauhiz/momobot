@@ -22,7 +22,7 @@ public class Privmsg extends AbstractIrcMessage {
         }
         return buildPrivateAnswer(toReply, msg);
     }
-    
+
     /**
      * @param toReply
      * @param msg
@@ -33,12 +33,12 @@ public class Privmsg extends AbstractIrcMessage {
         Mask mask = new Mask(from);
         return new Privmsg(null, mask.getNick(), toReply.getServer(), msg);
     }
-    
+
     /**
      * message
      */
     private final String message;
-    
+
     /**
      * TODO constr private
      * 
@@ -51,7 +51,7 @@ public class Privmsg extends AbstractIrcMessage {
         super(from1, to1, server1);
         message = message1;
     }
-    
+
     @Override
     public String getIrcForm() {
         if (StringUtils.isEmpty(message)) {
@@ -82,24 +82,25 @@ public class Privmsg extends AbstractIrcMessage {
         sb.append(getMessage()); // important pour les sous classes (CTCP, ACTION...)
         return sb.toString();
     }
-    
+
     /**
      * @return le message
      */
     public String getMessage() {
         return message;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         // nothing to do
     }
-    
+
     @Override
     public String toString() {
         if (from == null) { // self
             return "Saying to " + to + " : " + message;
         }
-        return "<" + from + "> " + message;
+        IrcUser fromUser = server.findUser(new Mask(from), false);
+        return "<" + (fromUser == null ? from : fromUser) + "> " + message;
     }
 }

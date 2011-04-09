@@ -22,7 +22,7 @@ public class Notice extends AbstractIrcMessage {
         }
         return buildPrivateAnswer(toReply, msg);
     }
-    
+
     /**
      * @param toReply
      * @param msg
@@ -31,9 +31,9 @@ public class Notice extends AbstractIrcMessage {
     public static Notice buildPrivateAnswer(IIrcMessage toReply, String msg) {
         return new Notice(null, toReply.getFrom(), toReply.getServer(), msg);
     }
-    
+
     private final String message;
-    
+
     /**
      * @param from1
      * @param to1
@@ -44,7 +44,7 @@ public class Notice extends AbstractIrcMessage {
         super(from1, to1, ircServer);
         message = msg1;
     }
-    
+
     @Override
     public String getIrcForm() {
         if (StringUtils.isEmpty(message)) {
@@ -75,22 +75,19 @@ public class Notice extends AbstractIrcMessage {
         sb.append(message);
         return sb.toString();
     }
-    
+
     /**
      * @return the message
      */
     public String getMessage() {
         return message;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         // nothing to do here
     }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         if (from == null) {

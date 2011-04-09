@@ -84,7 +84,7 @@ public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChar
             } else if (PRIVMSG.equals(cmd)) {
                 if (msg.charAt(0) == QUOTE_STX) {
                     msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
-                    return CtcpFactory.decode(from, to, getServer(), msg.substring(PRIVMSG.length()));
+                    return CtcpFactory.decode(from, to, getServer(), msg);
                 }
                 return new Privmsg(from, to, getServer(), msg);
             } else if (QUIT.equals(cmd)) {

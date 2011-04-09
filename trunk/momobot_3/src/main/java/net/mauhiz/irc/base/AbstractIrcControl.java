@@ -34,6 +34,8 @@ public abstract class AbstractIrcControl implements IIrcControl {
         assert peer != null : "io had no associated server";
 
         IIrcMessage msg = peer.buildFromRaw(raw);
+        assert msg != null;
+
         if (msg instanceof Notice && io.getStatus() == IOStatus.CONNECTING) {
             Notice notice = (Notice) msg;
             if (notice.getFrom() != null) {

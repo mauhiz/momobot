@@ -1,28 +1,24 @@
 package net.mauhiz.irc.gui.actions;
 
 import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.gui.GuiTriggerManager;
+import net.mauhiz.irc.gui.SwtIrcClient;
 import net.mauhiz.util.AbstractAction;
 
 /**
  * @author mauhiz
  */
 public class ConnectAction extends AbstractAction {
-    private final GuiTriggerManager gtm;
+    private final SwtIrcClient ircClient;
     private final IrcServer server;
 
-    /**
-     * @param gtm1
-     * @param server1
-     */
-    public ConnectAction(GuiTriggerManager gtm1, IrcServer server1) {
+    public ConnectAction(SwtIrcClient ircClient, IrcServer server1) {
         server = server1;
-        gtm = gtm1;
+        this.ircClient = ircClient;
     }
 
     @Override
     protected void doAction() {
-        gtm.getClient().connect(server);
+        ircClient.doConnect(server);
     }
 
     @Override

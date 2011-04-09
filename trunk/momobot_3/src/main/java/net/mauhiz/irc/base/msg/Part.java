@@ -82,6 +82,6 @@ public class Part extends AbstractIrcMessage {
 
     @Override
     public String toString() {
-        return "* Parts: " + to;
+        return "* Parts: " + chan + (reason == null ? "" : "(" + reason + ")");
     }
 }
