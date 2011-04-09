@@ -24,6 +24,7 @@ public class IrcIO extends AbstractIrcIO {
     }
 
     private static final Logger LOG = Logger.getLogger(IrcIO.class);
+    private IIrcInput input;
     private final IrcClient sclient = new IrcClient();
 
     /**
@@ -46,7 +47,7 @@ public class IrcIO extends AbstractIrcIO {
         }
         output = new IrcOutput(sclient.getSocket());
         output.start();
-        IIrcInput input = new IrcInput(this, sclient.getSocket());
+        input = new IrcInput(this, sclient.getSocket());
         input.start();
         sendMsg(new Nick(getPeer()).getIrcForm());
         sendMsg(new User(getPeer()).getIrcForm());
@@ -60,8 +61,11 @@ public class IrcIO extends AbstractIrcIO {
         status = IOStatus.DISCONNECTING;
         if (output != null) {
             output.stop();
-            AbstractRunnable.sleep(2000);
         }
+        if (input != null) {
+            input.stop();
+        }
+        AbstractRunnable.sleep(2000);
         if (sclient.isConnected()) {
             try {
                 sclient.disconnect();

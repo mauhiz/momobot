@@ -44,7 +44,7 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
                 LOGGER.debug("<< " + nextRaw);
                 io.processMsg(nextRaw);
             } catch (IOException e) {
-                LOGGER.warn("disconnected", e);
+                LOGGER.warn("disconnected: " + e, e);
                 break;
             }
         }
@@ -57,5 +57,15 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
     @Override
     public void start() {
         startAs("Input Thread");
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        try {
+            reader.close();
+        } catch (IOException ioe) {
+            LOGGER.warn("Could not close input stream: " + ioe, ioe);
+        }
     }
 }

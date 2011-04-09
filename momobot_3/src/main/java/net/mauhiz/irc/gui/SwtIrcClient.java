@@ -2,14 +2,19 @@ package net.mauhiz.irc.gui;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.gui.actions.ConnectAction;
 import net.mauhiz.irc.gui.actions.ExitAction;
-import net.mauhiz.irc.gui.actions.JoinAction;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.layout.FillLayout;
@@ -19,26 +24,54 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 public class SwtIrcClient {
+    static final Logger LOG = Logger.getLogger(SwtIrcClient.class);
+    final Map<IrcChannel, SwtChanTab> chanTabs = new HashMap<IrcChannel, SwtChanTab>();
     protected final ChannelUpdateTrigger cut = new ChannelUpdateTrigger();
-    protected final Display display = Display.getDefault();
     protected CTabFolder folderBar;
-    protected Map<String, SwtChanTab> folders = new HashMap<String, SwtChanTab>();
     protected final GuiTriggerManager gtm = new GuiTriggerManager();
+    protected final Map<IrcServer, SwtServerTab> serverTabs = new HashMap<IrcServer, SwtServerTab>();
     protected final Shell shell;
 
     public SwtIrcClient() {
         super();
-        shell = new Shell(display);
+        shell = new Shell(Display.getDefault());
         shell.setLayout(new FillLayout());
         folderBar = new CTabFolder(shell, SWT.BORDER);
     }
 
-    public SwtChanTab createTab(String channel) {
-        return new SwtChanTab(this, channel);
+    public SwtChanTab createChanTab(IrcServer server, IrcChannel channel) {
+        SwtChanTab tab = new SwtChanTab(this, server, channel);
+        chanTabs.put(channel, tab);
+        return tab;
     }
 
-    private SwtLogTab initDefaultTab() {
-        return new SwtLogTab(this);
+    public SwtServerTab createServerTab(IrcServer server) {
+        SwtServerTab tab = new SwtServerTab(this, server);
+        serverTabs.put(server, tab);
+        return tab;
+    }
+
+    public void doConnect(IrcServer server) {
+        gtm.getClient().connect(server);
+        createServerTab(server);
+    }
+
+    void doJoin(IrcServer server, String chanName) {
+        Join msg = new Join(server, chanName);
+        IIrcControl control = gtm.getClient();
+        assert control != null;
+        control.sendMsg(msg);
+        IrcChannel channel = server.findChannel(chanName, true);
+        SwtChanTab tab = createChanTab(server, channel);
+        cut.addChannel(channel, tab.getUsersInChan());
+    }
+
+    public Shell getShell() {
+        return shell;
+    }
+
+    private SwtTab initDefaultTab() {
+        return null; // TODO log tag
     }
 
     private void initMenus() {
@@ -51,15 +84,7 @@ public class SwtIrcClient {
         fileMenuHeader.setMenu(fileMenu);
         MenuItem fileConnectItem = new MenuItem(fileMenu, SWT.PUSH);
         fileConnectItem.setText("&Connect Quakenet");
-        fileConnectItem.addSelectionListener(new ConnectAction(gtm, GuiLauncher.qnet));
-
-        MenuItem fileJoinItem = new MenuItem(fileMenu, SWT.PUSH);
-        fileJoinItem.setText("&Join #tsi.fr");
-        fileJoinItem.addSelectionListener(new JoinAction(gtm, GuiLauncher.qnet, "#tsi.fr", cut, this));
-
-        MenuItem fileJoinItem2 = new MenuItem(fileMenu, SWT.PUSH);
-        fileJoinItem2.setText("&Join #-duCk-");
-        fileJoinItem2.addSelectionListener(new JoinAction(gtm, GuiLauncher.qnet, "#-duCk-", cut, this));
+        fileConnectItem.addSelectionListener(new ConnectAction(this, GuiLauncher.qnet));
 
         MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("E&xit");
@@ -82,11 +107,11 @@ public class SwtIrcClient {
         initMenus();
 
         /* Affichage des logs */
-        SwtLogTab defaut = initDefaultTab();
+        SwtTab defaut = initDefaultTab();
 
         /* go afficher */
         initShell();
-
+        Display display = shell.getDisplay();
         while (!shell.isDisposed()) {
             swtLoop(defaut);
 
@@ -99,23 +124,34 @@ public class SwtIrcClient {
         gtm.getClient().exit();
     }
 
-    private void swtLoop(final SwtLogTab logTab) {
+    private void swtLoop(SwtTab logTab) {
         final IIrcMessage msg = gtm.nextMsg();
-        if (msg != null) {
-            display.syncExec(new Runnable() {
+        if (msg == null) {
+            return;
+        }
+        if (logTab != null) {
+            logTab.appendText(msg.getIrcForm());
+        }
 
-                @Override
-                public void run() {
-                    logTab.appendText(msg.getIrcForm());
-                    String to = msg.getTo();
-                    if (MomoStringUtils.isChannelName(to)) {
-                        SwtChanTab chanTab = folders.get(to);
-                        if (chanTab != null) {
-                            chanTab.appendText(msg.toString());
-                        }
-                    }
-                }
-            });
+        String to = msg.getTo();
+        if (MomoStringUtils.isChannelName(to)) {
+            SwtChanTab chanTab = chanTabs.get(to.toLowerCase(Locale.ENGLISH));
+            if (chanTab != null) {
+                chanTab.appendText(msg.toString());
+            } else {
+                LOG.warn("Missing chan tab: " + to);
+            }
+        } else if (msg.getFrom() != null && msg.getFrom().indexOf('.') == 0) {
+            // TODO private msgs
+            LOG.warn("Unhandled msg on GUI: " + msg.getIrcForm());
+        } else {
+            IrcServer server = msg.getServer();
+            SwtServerTab serverTab = serverTabs.get(server);
+            if (serverTab != null) {
+                serverTab.appendText(msg.toString());
+            } else {
+                LOG.warn("Missing server tab: " + server);
+            }
         }
     }
 }

@@ -67,6 +67,7 @@ public class IrcControl extends AbstractIrcControl implements IIrcClientControl 
         for (IIrcIO io : ios) {
             io.disconnect();
         }
+        serverToIo.clear();
     }
 
     public void quit(IrcServer server) {

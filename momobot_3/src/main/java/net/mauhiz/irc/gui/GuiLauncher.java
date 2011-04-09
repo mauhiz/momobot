@@ -5,6 +5,7 @@ import java.io.IOException;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.qnet.QnetServer;
+import net.mauhiz.irc.base.trigger.TriggerExecutor;
 
 /**
  * @author mauhiz
@@ -26,5 +27,6 @@ public class GuiLauncher {
      */
     public static void main(String[] args) throws IOException {
         new SwtIrcClient().start();
+        TriggerExecutor.getInstance().shutdown();
     }
 }
