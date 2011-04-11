@@ -38,5 +38,5 @@ public interface IIrcMessage {
      * @return message lisible par l'utilisateur
      */
     @Override
-    public String toString();
+    String toString();
 }

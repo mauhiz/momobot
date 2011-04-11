@@ -8,14 +8,14 @@ import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.Topic;
 
 public class SetTopic extends AbstractIrcMessage {
-    
+
     private final String topic;
-    
+
     public SetTopic(String from1, String to1, IrcServer server1, String newTopic) {
         super(from1, to1, server1);
         topic = newTopic;
     }
-    
+
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
@@ -35,18 +35,24 @@ public class SetTopic extends AbstractIrcMessage {
         }
         return sb.toString();
     }
-    
+
     /**
      * @return the topic
      */
     public String getTopic() {
         return topic;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         IrcChannel chan = server.findChannel(to);
         Topic newTopic = new Topic(from, new Date(), topic);
         chan.getProperties().setTopic(newTopic);
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return super.toString();
     }
 }

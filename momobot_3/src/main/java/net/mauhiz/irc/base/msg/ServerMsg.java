@@ -116,104 +116,104 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
     @Override
     public void process(IIrcControl control) {
         switch (code) {
-        case RPL_UMODEIS:
-            LOG.debug("my mode: " + msg);
-            break;
-        case RPL_TOPIC:
-            LOG.debug("topic: " + msg);
-            break;
-        case RPL_TOPICINFO:
-            LOG.debug("topic info: " + msg);
-            break;
-        case RPL_LUSERCLIENT:
-            LOG.info("number of clients: " + msg);
-            break;
-        case RPL_LUSERCHANNELS:
-            LOG.info("number of channels: " + msg);
-            break;
-        case RPL_LUSERME:
-            LOG.info("server userme: " + msg);
-            break;
-        case RPL_MOTD:
-            LOG.info("Motd LINE: " + msg);
-            break;
-        case RPL_NAMREPLY:
-            handleNamReply();
-            break;
-        case RPL_ENDOFNAMES:
-            LOG.debug("End of Names Reply");
-            break;
-        case RPL_LUSEROP:
-            LOG.info("list of operators: " + msg);
-            break;
-        case RPL_MOTDSTART:
-            LOG.debug("Start of MOTD: " + msg);
-            break;
-        case ERR_NOTEXTTOSEND:
-            LOG.warn("Server told me that I tried to send an empty msg");
-            break;
-        case RPL_ENDOFMOTD:
-            LOG.debug("End of MOTD");
-            break;
-        case RPL_LUSERUNKNOWN:
-            LOG.info("list of unknown users: " + msg);
-            break;
-        case ERR_QNETSERVICEIMMUNE:
-            LOG.warn("I cannot do harm to a service! " + msg);
-            break;
-        case RPL_WHOISUSER:
-            handleWhoisUser();
-            break;
-        case ERR_NOSUCHNICK:
-            String unkNick = StringUtils.substringBefore(msg, " :");
-            WhoisRequest.end(unkNick, false);
-            break;
-        case RPL_WHOISCHANNELS:
-            handleWhoisChannels();
-            break;
-        case RPL_WHOISSERVER:
-            LOG.warn("TODO whois server : " + msg);
-            // msg = mauhiz *.quakenet.org :QuakeNet IRC Server
-            break;
-        case RPL_WHOISAUTH: // this message is specific to Qnet Servers
-            ((QnetServer) server).handleWhois(msg);
-            break;
-        case RPL_ENDOFWHOIS:
-            String nick = StringUtils.substringBefore(msg, " ");
-            WhoisRequest.end(nick, true);
-            break;
-        case ERR_CHANOPRIVSNEEDED:
-            LOG.warn("I am not channel operator. " + StringUtils.substringBefore(msg, " "));
-            break;
-        case ERR_NOTREGISTERED:
-            LOG.warn("I should register before sending commands!");
-            break;
-        case RPL_WHOISIDLE:
-            LOG.debug("User has been idle : " + StringUtils.substringAfter(msg, " "));
-            break;
-        case RPL_WHOISOPERATOR:
-            String opNick = StringUtils.substringBefore(msg, " ");
-            WhoisRequest.end(opNick, true);
+            case RPL_UMODEIS:
+                LOG.debug("my mode: " + msg);
+                break;
+            case RPL_TOPIC:
+                LOG.debug("topic: " + msg);
+                break;
+            case RPL_TOPICINFO:
+                LOG.debug("topic info: " + msg);
+                break;
+            case RPL_LUSERCLIENT:
+                LOG.info("number of clients: " + msg);
+                break;
+            case RPL_LUSERCHANNELS:
+                LOG.info("number of channels: " + msg);
+                break;
+            case RPL_LUSERME:
+                LOG.info("server userme: " + msg);
+                break;
+            case RPL_MOTD:
+                LOG.info("Motd LINE: " + msg);
+                break;
+            case RPL_NAMREPLY:
+                handleNamReply();
+                break;
+            case RPL_ENDOFNAMES:
+                LOG.debug("End of Names Reply");
+                break;
+            case RPL_LUSEROP:
+                LOG.info("list of operators: " + msg);
+                break;
+            case RPL_MOTDSTART:
+                LOG.debug("Start of MOTD: " + msg);
+                break;
+            case ERR_NOTEXTTOSEND:
+                LOG.warn("Server told me that I tried to send an empty msg");
+                break;
+            case RPL_ENDOFMOTD:
+                LOG.debug("End of MOTD");
+                break;
+            case RPL_LUSERUNKNOWN:
+                LOG.info("list of unknown users: " + msg);
+                break;
+            case ERR_QNETSERVICEIMMUNE:
+                LOG.warn("I cannot do harm to a service! " + msg);
+                break;
+            case RPL_WHOISUSER:
+                handleWhoisUser();
+                break;
+            case ERR_NOSUCHNICK:
+                String unkNick = StringUtils.substringBefore(msg, " :");
+                WhoisRequest.end(unkNick, false);
+                break;
+            case RPL_WHOISCHANNELS:
+                handleWhoisChannels();
+                break;
+            case RPL_WHOISSERVER:
+                LOG.warn("TODO whois server : " + msg);
+                // msg = mauhiz *.quakenet.org :QuakeNet IRC Server
+                break;
+            case RPL_WHOISAUTH: // this message is specific to Qnet Servers
+                ((QnetServer) server).handleWhois(msg);
+                break;
+            case RPL_ENDOFWHOIS:
+                String nick = StringUtils.substringBefore(msg, " ");
+                WhoisRequest.end(nick, true);
+                break;
+            case ERR_CHANOPRIVSNEEDED:
+                LOG.warn("I am not channel operator. " + StringUtils.substringBefore(msg, " "));
+                break;
+            case ERR_NOTREGISTERED:
+                LOG.warn("I should register before sending commands!");
+                break;
+            case RPL_WHOISIDLE:
+                LOG.debug("User has been idle : " + StringUtils.substringAfter(msg, " "));
+                break;
+            case RPL_WHOISOPERATOR:
+                String opNick = StringUtils.substringBefore(msg, " ");
+                WhoisRequest.end(opNick, true);
 
-            String opText = StringUtils.substringAfter(msg, ":");
-            LOG.debug(opNick + " " + opText);
-            break;
-        case ERR_NICKNAMEINUSE:
-            String nickInUse = StringUtils.substringBefore(msg, " ");
-            LOG.warn(nickInUse + " is already in use");
+                String opText = StringUtils.substringAfter(msg, ":");
+                LOG.debug(opNick + " " + opText);
+                break;
+            case ERR_NICKNAMEINUSE:
+                String nickInUse = StringUtils.substringBefore(msg, " ");
+                LOG.warn(nickInUse + " is already in use");
 
-            // TODO use alternate nicknames from config ?
-            String newNick = nickInUse + "_";
-            control.sendMsg(new Nick(server, null, newNick));
-            break;
-        case ERR_NOTONCHANNEL:
-            LOG.warn("[TODO process] " + msg);
-            break;
-        case ERR_NOSUCHCHANNEL:
-            LOG.warn("[TODO process] " + msg);
-            break;
-        default:
-            LOG.warn("Unhandled server reply : " + this);
+                // TODO use alternate nicknames from config ?
+                String newNick = nickInUse + "_";
+                control.sendMsg(new Nick(server, null, newNick));
+                break;
+            case ERR_NOTONCHANNEL:
+                LOG.warn("[TODO process] " + msg);
+                break;
+            case ERR_NOSUCHCHANNEL:
+                LOG.warn("[TODO process] " + msg);
+                break;
+            default:
+                LOG.warn("Unhandled server reply : " + this);
         }
     }
 
@@ -222,6 +222,6 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
      */
     @Override
     public String toString() {
-        return "server msg: code=" + code + " msg=" + msg;
+        return "code=" + code + " msg=" + msg;
     }
 }

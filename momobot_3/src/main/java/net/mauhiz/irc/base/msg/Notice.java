@@ -93,6 +93,6 @@ public class Notice extends AbstractIrcMessage {
         if (from == null) {
             return "Noticing: " + message;
         }
-        return "-" + from + "- " + message;
+        return "-" + niceFromDisplay() + "- " + message;
     }
 }

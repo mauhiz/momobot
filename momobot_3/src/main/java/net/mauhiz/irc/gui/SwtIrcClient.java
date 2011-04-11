@@ -2,7 +2,6 @@ package net.mauhiz.irc.gui;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import net.mauhiz.irc.MomoStringUtils;
@@ -11,6 +10,9 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
+import net.mauhiz.irc.base.msg.Notice;
+import net.mauhiz.irc.base.msg.Part;
+import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.gui.actions.ConnectAction;
 import net.mauhiz.irc.gui.actions.ExitAction;
 
@@ -71,7 +73,7 @@ public class SwtIrcClient {
     }
 
     private SwtTab initDefaultTab() {
-        return null; // TODO log tag
+        return null; // TODO log tab
     }
 
     private void initMenus() {
@@ -98,6 +100,44 @@ public class SwtIrcClient {
         // let's not pack() ...
     }
 
+    private boolean processChanLog(IIrcMessage msg) {
+        String chanName;
+
+        if (MomoStringUtils.isChannelName(msg.getTo())) {
+            chanName = msg.getTo();
+
+        } else if (msg instanceof Part) {
+            chanName = ((Part) msg).getChan();
+
+        } else if (msg instanceof Join) {
+            chanName = ((Join) msg).getChan();
+
+        } else {
+            return false;
+        }
+
+        IrcChannel channel = msg.getServer().findChannel(chanName);
+        SwtChanTab chanTab = chanTabs.get(channel);
+        if (chanTab == null) {
+            LOG.warn("Missing chan tab: " + channel);
+            return false;
+        }
+        chanTab.appendText(msg.toString());
+        return true;
+    }
+
+    private boolean processServerLog(IIrcMessage msg) {
+        IrcServer server = msg.getServer();
+        SwtServerTab serverTab = serverTabs.get(server);
+        if (serverTab == null) {
+            LOG.warn("Missing server tab: " + server);
+            return false;
+        }
+
+        serverTab.appendText("[" + msg.getClass().getSimpleName() + "] " + msg.toString());
+        return true;
+    }
+
     /**
      * SWT GUI.
      * One default CTabFolder + 1 per channel/private conversation
@@ -112,6 +152,7 @@ public class SwtIrcClient {
         /* go afficher */
         initShell();
         Display display = shell.getDisplay();
+
         while (!shell.isDisposed()) {
             swtLoop(defaut);
 
@@ -126,32 +167,31 @@ public class SwtIrcClient {
 
     private void swtLoop(SwtTab logTab) {
         final IIrcMessage msg = gtm.nextMsg();
-        if (msg == null) {
+
+        if (msg == null) { // booh, no new message
             return;
         }
+
         if (logTab != null) {
             logTab.appendText(msg.getIrcForm());
         }
 
-        String to = msg.getTo();
-        if (MomoStringUtils.isChannelName(to)) {
-            SwtChanTab chanTab = chanTabs.get(to.toLowerCase(Locale.ENGLISH));
-            if (chanTab != null) {
-                chanTab.appendText(msg.toString());
-            } else {
-                LOG.warn("Missing chan tab: " + to);
+        boolean processed = processChanLog(msg);
+
+        if (!processed) {
+            if (msg instanceof Notice || msg instanceof Privmsg) {
+                // TODO private msgs
+                //                processed = processPrivateLog(msg);
             }
-        } else if (msg.getFrom() != null && msg.getFrom().indexOf('.') == 0) {
+
+        }
+        if (!processed) {
+            processed = processServerLog(msg);
+        }
+        if (!processed) {
+
             // TODO private msgs
             LOG.warn("Unhandled msg on GUI: " + msg.getIrcForm());
-        } else {
-            IrcServer server = msg.getServer();
-            SwtServerTab serverTab = serverTabs.get(server);
-            if (serverTab != null) {
-                serverTab.appendText(msg.toString());
-            } else {
-                LOG.warn("Missing server tab: " + server);
-            }
         }
     }
 }

@@ -6,7 +6,6 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.data.UserChannelMode;
 
 import org.apache.commons.lang.StringUtils;
@@ -125,8 +124,6 @@ public class Mode extends AbstractIrcMessage {
      */
     @Override
     public String toString() {
-        Mask fromMask = new Mask(from);
-        String by = fromMask.getNick() == null ? server.getAlias() : server.findUser(fromMask, true).getNick();
-        return "* " + by + " sets mode: " + message + " " + to;
+        return "* " + niceFromDisplay() + " sets mode: " + message + " " + to;
     }
 }

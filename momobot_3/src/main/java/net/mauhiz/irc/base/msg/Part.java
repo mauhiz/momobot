@@ -6,6 +6,8 @@ import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author mauhiz
  */
@@ -82,6 +84,10 @@ public class Part extends AbstractIrcMessage {
 
     @Override
     public String toString() {
-        return "* Parts: " + chan + (reason == null ? "" : "(" + reason + ")");
+        if (from == null) {
+            return "* Leaving " + chan + (StringUtils.isEmpty(reason) ? "" : " (" + reason + ")");
+        }
+        return "* " + niceFromDisplay() + " has left " + chan
+                + (StringUtils.isEmpty(reason) ? "" : " (" + reason + ")");
     }
 }
