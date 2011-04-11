@@ -69,10 +69,10 @@ public class SwtChanTab extends SwtTab {
         buttonZone.setLayout(new GridLayout(1, false));
         Button sendText = new Button(buttonZone, SWT.PUSH);
         sendText.setText("Send text");
-        sendText.addSelectionListener(new SendAction(inputBar, swtIrcClient.gtm, server, channel));
+        sendText.addSelectionListener(new SendAction(inputBar, swtIrcClient.gtm, server, channel.fullName()));
 
         Button sendNotice = new Button(buttonZone, SWT.PUSH);
         sendNotice.setText("Send notice");
-        sendNotice.addSelectionListener(new SendNoticeAction(inputBar, swtIrcClient.gtm, server, channel));
+        sendNotice.addSelectionListener(new SendNoticeAction(inputBar, swtIrcClient.gtm, server, channel.fullName()));
     }
 }
