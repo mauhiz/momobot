@@ -78,12 +78,21 @@ public class Kick extends AbstractIrcMessage {
         if (fromChan != null) {
             IrcUser kicked = server.findUser(target, true);
             fromChan.remove(kicked);
+            if (kicked.equals(server.getMyself())) {
+                server.remove(fromChan);
+            }
         }
     }
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        if (server.getMyself().getNick().equals(target)) {
+            // I have been kicked
+            return "* Kicked from " + chan + " by " + niceFromDisplay() + ": " + reason;
+        } else if (from == null) { // I am kicking
+            return "* Kicking " + target + " from " + chan + ": " + reason;
+        } else { // Someone kicks someone else
+            return "* " + target + " was kicked from " + chan + " by " + niceFromDisplay() + ": " + reason;
+        }
     }
 }

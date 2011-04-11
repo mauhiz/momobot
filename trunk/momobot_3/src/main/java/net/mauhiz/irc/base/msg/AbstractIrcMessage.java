@@ -54,7 +54,9 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
     }
 
     protected String niceFromDisplay() {
-        assert from != null; // calling method must play by the rules!
+        if (from == null) {
+            return server.getMyself().toString();
+        }
         Mask fromMask = new Mask(from);
         if (fromMask.getNick() == null) {
             return server.getAlias();

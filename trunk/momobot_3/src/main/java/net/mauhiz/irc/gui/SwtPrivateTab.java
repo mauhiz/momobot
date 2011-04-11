@@ -24,7 +24,7 @@ public class SwtPrivateTab extends SwtTab {
         folder.setText(user.getNick());
 
         /* layout */
-        GridLayout gridLayout = new GridLayout(2, false);
+        GridLayout gridLayout = new GridLayout(1, false);
         compo.setLayout(gridLayout);
 
         initReceiveBox();
@@ -36,20 +36,21 @@ public class SwtPrivateTab extends SwtTab {
     }
 
     protected void initTypeBar() {
+        Composite typeZone = new Composite(compo, SWT.BORDER);
+        typeZone.setLayout(new GridLayout(3, false));
+
         /* Affichage de la barre de saisie */
-        Text inputBar = new Text(compo, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
+        Text inputBar = new Text(typeZone, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
         inputBar.setText(StringUtils.EMPTY);
         inputBar.setEditable(true);
         setTextSize(inputBar, 1, 400);
         inputBar.setBackground(inputBar.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 
-        Composite buttonZone = new Composite(compo, SWT.BORDER);
-        buttonZone.setLayout(new GridLayout(1, false));
-        Button sendText = new Button(buttonZone, SWT.PUSH);
+        Button sendText = new Button(typeZone, SWT.PUSH);
         sendText.setText("Send text");
         sendText.addSelectionListener(new SendAction(inputBar, swtIrcClient.gtm, server, getTarget()));
 
-        Button sendNotice = new Button(buttonZone, SWT.PUSH);
+        Button sendNotice = new Button(typeZone, SWT.PUSH);
         sendNotice.setText("Send notice");
         sendNotice.addSelectionListener(new SendNoticeAction(inputBar, swtIrcClient.gtm, server, getTarget()));
     }
