@@ -1,5 +1,6 @@
 package net.mauhiz.irc.bot;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 
 import net.mauhiz.irc.base.IIrcClientControl;
@@ -9,13 +10,13 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.defaut.DefaultServer;
 import net.mauhiz.irc.base.msg.Join;
 
-import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -23,12 +24,12 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class Launcher {
-    
+
     /**
      * logger
      */
     private static final Logger LOG = Logger.getLogger(Launcher.class);
-    
+
     /**
      * @param args
      * @throws ConfigurationException
@@ -44,10 +45,12 @@ public class Launcher {
             launcher.loadProfile(arg);
         }
     }
+
     /**
      * configuration
      */
     private final Configuration config;
+
     /**
      * @param config1
      */
@@ -55,6 +58,7 @@ public class Launcher {
         config = config1;
         config1.setExpressionEngine(new XPathExpressionEngine());
     }
+
     /**
      * @param profile
      */
@@ -67,10 +71,10 @@ public class Launcher {
         LOG.debug("login=" + login);
         String fullName = config.getString(profileCriteria + "/@fullName");
         LOG.debug("fullName=" + fullName);
-        
+
         MmbTriggerManager mtm = new MmbTriggerManager();
         IIrcClientControl control = new IrcControl(mtm);
-        
+
         String[] serverNames = config.getStringArray(profileCriteria + "/autoconnect/@server");
         for (String serverName : serverNames) {
             String uri = config.getString("server[@alias='" + serverName + "']/@uri");
@@ -81,20 +85,30 @@ public class Launcher {
             }
             IrcServer server;
             try {
-                server = (IrcServer) ConstructorUtils.invokeConstructor(Class.forName(serverClass), uri);
-            } catch (Exception e) {
+                server = Class.forName(serverClass).asSubclass(IrcServer.class).getConstructor(String.class)
+                        .newInstance(uri);
+            } catch (NoSuchMethodException e) {
+                throw new NotImplementedException(e);
+            } catch (ClassNotFoundException e) {
+                throw new NotImplementedException(e);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException(e);
+            } catch (InstantiationException e) {
+                LOG.error(e, e);
+                continue;
+            } catch (InvocationTargetException e) {
                 LOG.error(e, e);
                 continue;
             }
-            
+
             server.setAlias(serverName);
-            
+
             String nickOverride = config.getString(profileCriteria + "/autoconnect/@nick");
             IrcUser myself = server.newUser(nickOverride == null ? nick : nickOverride);
-            
+
             String loginOverride = config.getString(profileCriteria + "/autoconnect/@login");
             myself.setUser(loginOverride == null ? login : loginOverride);
-            
+
             String fullNameOverride = config.getString(profileCriteria + "/autoconnect/@fullName");
             if (fullNameOverride == null) {
                 myself.setFullName(fullName);
@@ -109,7 +123,7 @@ public class Launcher {
             for (String chan : joins) {
                 control.sendMsg(new Join(server, chan));
             }
-            
+
             String[] packageBundles = config.getStringArray(profileCriteria + "/loadtriggerpack/@bundle");
             for (String bundle : packageBundles) {
                 String prefix = config
@@ -126,5 +140,5 @@ public class Launcher {
             }
         }
     }
-    
+
 }

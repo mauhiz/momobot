@@ -43,6 +43,7 @@ public class Tournament extends ChannelEvent {
             throw new ExceptionInInitializerError(e);
         }
     }
+
     /**
      * @param temp
      * @throws IOException
@@ -67,7 +68,7 @@ public class Tournament extends ChannelEvent {
             String remoteDir = remotePath.substring(0, slash);
             LOG.debug("cwd to " + remoteDir);
             client.changeWorkingDirectory(remoteDir);
-            
+
             String remoteFileName = remotePath.substring(slash);
             LOG.debug("storing to " + remoteFileName);
             InputStream is = new FileInputStream(temp);
@@ -79,17 +80,17 @@ public class Tournament extends ChannelEvent {
             } finally {
                 is.close();
             }
-            
+
         } else {
             throw new UnsupportedOperationException("protocol not yet supported" + ftpURI.getScheme());
         }
     }
-    
+
     /**
      * 
      */
     private boolean isLunched;
-    
+
     /**
      * 
      */
@@ -106,17 +107,17 @@ public class Tournament extends ChannelEvent {
      * 
      */
     private final int numberTeams;
-    
+
     /**
      * le temps ou je commence.
      */
     private final StopWatch sw = new StopWatch();
-    
+
     /**
      * l'ensemble de joueurs. Ne sera jamais <code>null</code>
      */
     private final List<TournamentTeam> teamList = new ArrayList<TournamentTeam>();
-    
+
     /**
      * @param chan
      * @param maps
@@ -130,14 +131,13 @@ public class Tournament extends ChannelEvent {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Lancement d'un tn sur: " + chan.fullName() + " maps: " + StringUtils.join(maps));
         }
-        
+
         // On cree la liste de map
         for (String map : maps) {
             mapList.add(map);
         }
-        
     }
-    
+
     /**
      * @return template File.
      */
@@ -150,13 +150,13 @@ public class Tournament extends ChannelEvent {
             maps.append('\'');
         }
         context.put("maps", maps.substring(1));
-        
+
         VelocityEngine ve = new VelocityEngine();
         File temp = new File(CFG.getString("tn.tempfile.name"));
-        
+
         ve.init();
         PrintWriter writer = new PrintWriter(temp);
-        
+
         try {
             Template plate = ve.getTemplate(CFG.getString("tn.vm"));
             plate.initDocument();
@@ -165,13 +165,13 @@ public class Tournament extends ChannelEvent {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(FileUtils.readFileToString(temp));
             }
-            
+
         } finally {
             writer.close();
         }
         return temp;
     }
-    
+
     /**
      * genere et upload le template
      */
@@ -183,10 +183,11 @@ public class Tournament extends ChannelEvent {
             } finally {
                 FileUtils.deleteQuietly(temp);
             }
-        } catch (Exception ioe) {
+        } catch (IOException ioe) {
             LOG.error(ioe, ioe);
         }
     }
+
     /**
      * @return listTeam
      */
@@ -197,6 +198,7 @@ public class Tournament extends ChannelEvent {
         }
         return reply;
     }
+
     /**
      * @param phase
      * @param id
@@ -205,19 +207,19 @@ public class Tournament extends ChannelEvent {
     private int getMatchId(int phase, int id) {
         for (int i = 0; i < matchList.size(); i++) {
             Match match = matchList.get(i);
-            
+
             if (match.getPhase() == phase && match.getId() == id) {
                 return i;
             }
         }
         return -1;
     }
-    
+
     /**
      * @return status
      */
     public String getStatus() {
-        
+
         if (!isLunched && teamList.size() == numberTeams) {
             isLunched = true;
             int phase = mapList.size(); // 3
@@ -226,11 +228,11 @@ public class Tournament extends ChannelEvent {
                 matchList.add(match);
             }
             return "Attention le Tournois commence. A vos marques! Pret? GO!!";
-            
+
         }
         return toString();
     }
-    
+
     /**
      * @return 0== pas complet ; 1 complet ; -1 == erreur (trop plein)
      * 
@@ -238,7 +240,7 @@ public class Tournament extends ChannelEvent {
     public boolean isReady() {
         return isLunched;
     }
-    
+
     /**
      * @param oldMatch
      * @param team
@@ -251,7 +253,7 @@ public class Tournament extends ChannelEvent {
             // Match match = new Match(newphase, 0, mapList.get(0), team, team);
             // matchList.add(match);
             return "Bravo, team #" + team.getId() + "=" + team.getNom() + " gagne le tournois! o//";
-            
+
         }
         int id = team.getId();
         // int newID = id / nombreMatchPerSide;
@@ -263,15 +265,16 @@ public class Tournament extends ChannelEvent {
             matchList.add(match);
             // "La team " + team.getId() + " en attente du resultat des adversaires. next map = " + match.getMap();
             return match.toString();
-            
+
         }
         // le match existe, on ajoute l'autre team
         Match oldmatch = matchList.remove(testMatch);
         Match match = new Match(oldmatch, team);
         matchList.add(match);
         return "Nouveau match : " + match.toString();
-        
+
     }
+
     /**
      * @param idTeam
      *            qui a win
@@ -281,23 +284,23 @@ public class Tournament extends ChannelEvent {
      *            de la team qui a loose
      * @return List String
      */
-    
+
     public List<String> setScore(int idTeam, int score01, int score02) {
         List<String> reply = new ArrayList<String>();
         int score1 = score01;
         int score2 = score02;
-        
+
         if (idTeam < 0 || idTeam > teamList.size() - 1) {
             reply.add("Erreur : Id team invalide");
             return reply;
         }
-        
+
         if (score1 <= score2) {
             int score3 = score1;
             score1 = score2;
             score2 = score3;
         }
-        
+
         for (Match match : matchList) {
             // on regarde si le match est complet ou pas
             if (match.isTeamIn(teamList.get(idTeam)) && match.getWinner() == -1) {
@@ -312,7 +315,7 @@ public class Tournament extends ChannelEvent {
         reply.add("La team " + teamList.get(idTeam).getId() + " est deja eliminee.");
         return reply;
     }
-    
+
     /**
      * @param ircuser
      * @param loc
@@ -327,10 +330,10 @@ public class Tournament extends ChannelEvent {
                 TournamentTeam team = element;
                 team.setCountry(loc);
                 team.setNom(tag);
-                
+
                 // On clean pour tout remettre
                 team.clear();
-                
+
                 if (nicknames.length < team.getCapacity()) {
                     team.addAll(nicknames);
                     for (int i = nicknames.length + 1; i <= team.getCapacity(); i++) {
@@ -339,7 +342,7 @@ public class Tournament extends ChannelEvent {
                 } else {
                     team.addAll((String[]) ArrayUtils.subarray(nicknames, 0, team.getCapacity()));
                 }
-                
+
                 return team.toString();
             }
         }
@@ -355,13 +358,13 @@ public class Tournament extends ChannelEvent {
         teamList.add(team);
         return team.toString();
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
      */
     @Override
     public String toString() {
-        
+
         Match finale = null;
         List<Match> enCours = new ArrayList<Match>();
         List<Match> enAttente = new ArrayList<Match>();
@@ -377,27 +380,27 @@ public class Tournament extends ChannelEvent {
                 finale = element;
             }
         }
-        
+
         String matchEnCours;
         if (enCours.isEmpty()) {
             matchEnCours = "";
         } else {
             matchEnCours = " Match en attente : " + StringUtils.join(enCours, "");
         }
-        
+
         String matchEnAttente;
         if (enCours.isEmpty()) {
             matchEnAttente = "";
         } else {
             matchEnAttente = " Match en cours: " + StringUtils.join(enAttente, "");
         }
-        
+
         if (finale == null) {
             return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs." + matchEnCours
                     + matchEnAttente;
         }
-        
+
         return "Tounois : " + teamList.size() + " teams de " + numberPlayerPerTeam + " joueurs. finale : " + finale;
     }
-    
+
 }
