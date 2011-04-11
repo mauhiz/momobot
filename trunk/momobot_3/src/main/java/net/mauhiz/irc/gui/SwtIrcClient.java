@@ -8,6 +8,8 @@ import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
@@ -31,6 +33,7 @@ public class SwtIrcClient {
     protected final ChannelUpdateTrigger cut = new ChannelUpdateTrigger();
     protected CTabFolder folderBar;
     protected final GuiTriggerManager gtm = new GuiTriggerManager();
+    protected final Map<IrcUser, SwtPrivateTab> privateTabs = new HashMap<IrcUser, SwtPrivateTab>();
     protected final Map<IrcServer, SwtServerTab> serverTabs = new HashMap<IrcServer, SwtServerTab>();
     protected final Shell shell;
 
@@ -44,6 +47,12 @@ public class SwtIrcClient {
     public SwtChanTab createChanTab(IrcServer server, IrcChannel channel) {
         SwtChanTab tab = new SwtChanTab(this, server, channel);
         chanTabs.put(channel, tab);
+        return tab;
+    }
+
+    public SwtPrivateTab createPrivateTab(IrcServer server, IrcUser user) {
+        SwtPrivateTab tab = new SwtPrivateTab(this, server, user);
+        privateTabs.put(user, tab);
         return tab;
     }
 
@@ -126,6 +135,23 @@ public class SwtIrcClient {
         return true;
     }
 
+    private boolean processPrivateLog(IIrcMessage msg) {
+        String from = msg.getFrom();
+        Mask mask = new Mask(from);
+        if (mask.getNick() == null) {
+            return false;
+        }
+        IrcServer server = msg.getServer();
+        IrcUser user = server.findUser(mask, true);
+        SwtPrivateTab privateTab = privateTabs.get(user);
+        if (privateTab == null) {
+            // create tab
+            privateTab = createPrivateTab(server, user);
+        }
+        privateTab.appendText(msg.toString());
+        return true;
+    }
+
     private boolean processServerLog(IIrcMessage msg) {
         IrcServer server = msg.getServer();
         SwtServerTab serverTab = serverTabs.get(server);
@@ -181,7 +207,7 @@ public class SwtIrcClient {
         if (!processed) {
             if (msg instanceof Notice || msg instanceof Privmsg) {
                 // TODO private msgs
-                //                processed = processPrivateLog(msg);
+                processed = processPrivateLog(msg);
             }
 
         }
