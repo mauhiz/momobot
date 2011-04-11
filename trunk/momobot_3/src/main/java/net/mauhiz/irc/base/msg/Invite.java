@@ -8,7 +8,7 @@ import net.mauhiz.irc.base.data.IrcServer;
  */
 public class Invite extends AbstractIrcMessage {
     private final String message;
-    
+
     /**
      * @param ircServer
      * @param msg
@@ -16,7 +16,7 @@ public class Invite extends AbstractIrcMessage {
     public Invite(IrcServer ircServer, String msg) {
         this(null, null, ircServer, msg);
     }
-    
+
     /**
      * @param from1
      * @param to1
@@ -27,7 +27,7 @@ public class Invite extends AbstractIrcMessage {
         super(from1, to1, ircServer);
         message = msg1;
     }
-    
+
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
@@ -44,16 +44,22 @@ public class Invite extends AbstractIrcMessage {
         sb.append(message);
         return sb.toString();
     }
-    
+
     /**
      * @return the message
      */
     public String getMessage() {
         return message;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         // nothing to do
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return super.toString();
     }
 }

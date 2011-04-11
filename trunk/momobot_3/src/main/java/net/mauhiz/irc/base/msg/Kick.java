@@ -12,7 +12,7 @@ public class Kick extends AbstractIrcMessage {
     private final String chan;
     private final String reason;
     private final String target;
-    
+
     /**
      * @param from1
      * @param to1
@@ -27,14 +27,14 @@ public class Kick extends AbstractIrcMessage {
         target = target1;
         reason = reason1;
     }
-    
+
     /**
      * @return the message
      */
     public String getChan() {
         return chan;
     }
-    
+
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
@@ -57,21 +57,21 @@ public class Kick extends AbstractIrcMessage {
         }
         return sb.toString();
     }
-    
+
     /**
      * @return {@link #reason}
      */
     public String getReason() {
         return reason;
     }
-    
+
     /**
      * @return {@link #target}
      */
     public String getTarget() {
         return target;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         IrcChannel fromChan = server.findChannel(chan);
@@ -79,5 +79,11 @@ public class Kick extends AbstractIrcMessage {
             IrcUser kicked = server.findUser(target, true);
             fromChan.remove(kicked);
         }
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return super.toString();
     }
 }

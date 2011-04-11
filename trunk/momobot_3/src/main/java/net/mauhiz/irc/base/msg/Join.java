@@ -12,7 +12,7 @@ import net.mauhiz.irc.base.data.Mask;
 public class Join extends AbstractIrcMessage {
     private final String chan;
     private final String key;
-    
+
     /**
      * @param ircServer
      * @param channel
@@ -20,7 +20,7 @@ public class Join extends AbstractIrcMessage {
     public Join(IrcServer ircServer, String channel) {
         this(null, ircServer, channel);
     }
-    
+
     /**
      * @param from1
      * @param ircServer
@@ -29,7 +29,7 @@ public class Join extends AbstractIrcMessage {
     public Join(String from1, IrcServer ircServer, String chan1) {
         this(from1, ircServer, chan1, null);
     }
-    
+
     /**
      * @param from1
      * @param ircServer
@@ -40,16 +40,16 @@ public class Join extends AbstractIrcMessage {
         super(from1, null, ircServer);
         chan = chan1;
         key = key1;
-        
+
     }
-    
+
     /**
      * @return {@link #chan}
      */
     public String getChan() {
         return chan;
     }
-    
+
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
@@ -70,21 +70,21 @@ public class Join extends AbstractIrcMessage {
         }
         return sb.toString();
     }
-    
+
     /**
      * @return the message
      */
     public String getKey() {
         return key;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         IrcChannel joined = server.findChannel(chan);
         IrcUser joiner = server.findUser(new Mask(from), true);
         joined.add(joiner);
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */
@@ -93,6 +93,6 @@ public class Join extends AbstractIrcMessage {
         if (from == null) { // self
             return "Joining " + chan;
         }
-        return "* Joins " + chan + " : " + from;
+        return "* Joins " + chan + " : " + niceFromDisplay();
     }
 }

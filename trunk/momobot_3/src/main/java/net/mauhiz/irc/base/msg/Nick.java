@@ -13,14 +13,14 @@ public class Nick extends AbstractIrcMessage {
      * le nouveau nick
      */
     private final String newNick;
-    
+
     /**
      * @param server1
      */
     public Nick(IrcServer server1) {
         this(server1, null, server1.getMyself().getNick());
     }
-    
+
     /**
      * @param server1
      * @param from1
@@ -30,7 +30,7 @@ public class Nick extends AbstractIrcMessage {
         super(from1, null, server1);
         newNick = newNick1;
     }
-    
+
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
@@ -43,21 +43,21 @@ public class Nick extends AbstractIrcMessage {
         sb.append(newNick);
         return sb.toString();
     }
-    
+
     /**
      * @return {@link #newNick}
      */
     public String getNewNick() {
         return newNick;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         Mask fromMask = new Mask(from);
         IrcUser target = server.findUser(fromMask, true);
         server.updateNick(target, newNick);
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */
@@ -66,6 +66,6 @@ public class Nick extends AbstractIrcMessage {
         if (from == null) {
             return "* Setting new nickname " + newNick;
         }
-        return "* " + from + " is now known as " + newNick;
+        return "* " + niceFromDisplay() + " is now known as " + newNick;
     }
 }

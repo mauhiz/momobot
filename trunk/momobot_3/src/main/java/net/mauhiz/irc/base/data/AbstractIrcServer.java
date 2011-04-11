@@ -63,7 +63,7 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
             }
         }
         if (addIfNotFound && MomoStringUtils.isChannelName(chanName)) {
-            String chanLowerCase = chanName.toLowerCase(Locale.FRANCE);
+            String chanLowerCase = chanName.toLowerCase(Locale.ENGLISH);
             IrcChannel chan = newChannel(chanLowerCase);
             channels.add(chan);
             return chan;

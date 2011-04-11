@@ -100,7 +100,6 @@ public class Privmsg extends AbstractIrcMessage {
         if (from == null) { // self
             return "Saying to " + to + " : " + message;
         }
-        IrcUser fromUser = server.findUser(new Mask(from), false);
-        return "<" + (fromUser == null ? from : fromUser) + "> " + message;
+        return "<" + niceFromDisplay() + "> " + message;
     }
 }

@@ -8,7 +8,7 @@ import net.mauhiz.irc.base.data.IrcServer;
  */
 public class Ping extends AbstractIrcMessage {
     private final String pingId;
-    
+
     /**
      * @param from1
      * @param to1
@@ -19,29 +19,29 @@ public class Ping extends AbstractIrcMessage {
         super(from1, to1, server1);
         pingId = pingId1;
     }
-    
+
     @Override
     public String getIrcForm() {
         return "PING " + pingId;
     }
-    
+
     /**
      * @return the pingId
      */
     public String getPingId() {
         return pingId;
     }
-    
+
     @Override
     public void process(IIrcControl control) {
         control.sendMsg(new Pong(server, pingId));
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return pingId;
+        return "Answering PING: " + pingId;
     }
 }
