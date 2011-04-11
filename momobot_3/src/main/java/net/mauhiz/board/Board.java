@@ -8,9 +8,9 @@ public interface Board<P extends Piece, J extends Player> {
 
     <R extends Rule<? extends Board<P, J>>> R getRule();
 
-    abstract Dimension getSize();
+    Dimension getSize();
 
-    abstract J getTurn();
+    J getTurn();
 
     boolean isFriendlyPieceOn(J player, Square to);
 
