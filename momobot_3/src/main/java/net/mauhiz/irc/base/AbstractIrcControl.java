@@ -7,6 +7,7 @@ import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.trigger.ITriggerManager;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 
 /**
@@ -34,7 +35,10 @@ public abstract class AbstractIrcControl implements IIrcControl {
         assert peer != null : "io had no associated server";
 
         IIrcMessage msg = peer.buildFromRaw(raw);
-        assert msg != null;
+
+        if (msg == null) {
+            throw new NotImplementedException("Unknown msg: " + raw);
+        }
 
         if (msg instanceof Notice && io.getStatus() == IOStatus.CONNECTING) {
             Notice notice = (Notice) msg;
@@ -45,11 +49,9 @@ public abstract class AbstractIrcControl implements IIrcControl {
             /* dont let it be processed */
             return;
         }
-        try {
-            msg.process(this); // common actions
-        } catch (RuntimeException rex) {
-            LOG.error(rex, rex); // dont let it crash
-        }
+
+        msg.process(this); // common actions
+
         getManager().processMsg(msg, this); // specific client actions
     }
 

@@ -89,7 +89,9 @@ public class ChannelProperties {
     }
 
     public void process(boolean set, char mode, String... args) {
-        if (mode == 't') {
+        if (mode == 'n') {
+            noExt = set;
+        } else if (mode == 't') {
             opTopic = set;
         } else {
             LOG.warn("TODO process mode=" + mode);

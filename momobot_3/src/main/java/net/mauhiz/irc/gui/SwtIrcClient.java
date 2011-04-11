@@ -12,6 +12,7 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
+import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -94,8 +95,12 @@ public class SwtIrcClient {
         Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
         fileMenuHeader.setMenu(fileMenu);
         MenuItem fileConnectItem = new MenuItem(fileMenu, SWT.PUSH);
-        fileConnectItem.setText("&Connect Quakenet");
+        fileConnectItem.setText("&Connect " + GuiLauncher.qnet);
         fileConnectItem.addSelectionListener(new ConnectAction(this, GuiLauncher.qnet));
+
+        MenuItem fileConnectItem2 = new MenuItem(fileMenu, SWT.PUSH);
+        fileConnectItem2.setText("&Connect " + GuiLauncher.rizon);
+        fileConnectItem2.addSelectionListener(new ConnectAction(this, GuiLauncher.rizon));
 
         MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("E&xit");
@@ -121,16 +126,21 @@ public class SwtIrcClient {
         } else if (msg instanceof Join) {
             chanName = ((Join) msg).getChan();
 
+        } else if (msg instanceof Kick) {
+            chanName = ((Kick) msg).getChan();
+
         } else {
             return false;
         }
 
         IrcChannel channel = msg.getServer().findChannel(chanName);
         SwtChanTab chanTab = chanTabs.get(channel);
+
         if (chanTab == null) {
             LOG.warn("Missing chan tab: " + channel);
             return false;
         }
+
         chanTab.appendText(msg.toString());
         return true;
     }

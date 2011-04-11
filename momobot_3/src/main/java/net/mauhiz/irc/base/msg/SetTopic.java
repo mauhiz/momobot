@@ -52,7 +52,6 @@ public class SetTopic extends AbstractIrcMessage {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        return niceFromDisplay() + " changed the topic on " + to;
     }
 }

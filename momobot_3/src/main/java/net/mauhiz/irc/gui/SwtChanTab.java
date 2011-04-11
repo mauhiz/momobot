@@ -43,11 +43,14 @@ public class SwtChanTab extends SwtTab {
             @Override
             public void close(CTabFolderEvent event) {
                 if (event.item == folder) {
-                    Part msg = new Part(server, channel.fullName(), "@+");
-                    IIrcControl control = swtIrcClient.gtm.getClient();
-                    assert control != null;
-                    control.sendMsg(msg);
-                    swtIrcClient.cut.removeChannel(channel);
+                    // if I am still on this channel - leave it.
+                    if (channel.contains(server.getMyself())) {
+                        Part msg = new Part(server, channel.fullName(), "@+");
+                        IIrcControl control = swtIrcClient.gtm.getClient();
+                        assert control != null;
+                        control.sendMsg(msg);
+                        swtIrcClient.cut.removeChannel(channel);
+                    }
                 }
             }
         });
