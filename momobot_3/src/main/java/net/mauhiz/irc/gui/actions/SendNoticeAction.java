@@ -15,13 +15,13 @@ public class SendNoticeAction extends AbstractAction {
     private final Text bar;
     private final GuiTriggerManager gtm;
     private final IrcServer server;
-    private String target;
+    private final String target;
 
-    public SendNoticeAction(Text bar1, GuiTriggerManager gtm1, IrcServer server1, String target) {
-        gtm = gtm1;
-        bar = bar1;
-        server = server1;
-        target = target;
+    public SendNoticeAction(Text bar, GuiTriggerManager gtm, IrcServer server, String target) {
+        this.gtm = gtm;
+        this.bar = bar;
+        this.server = server;
+        this.target = target;
     }
 
     @Override
