@@ -16,7 +16,7 @@ import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
-import net.mauhiz.irc.gui.actions.ConnectAction;
+import net.mauhiz.irc.base.msg.SetTopic;
 import net.mauhiz.irc.gui.actions.ExitAction;
 
 import org.apache.log4j.Logger;
@@ -68,6 +68,12 @@ public class SwtIrcClient {
         createServerTab(server);
     }
 
+    public void doDisconnect(IrcServer server) {
+        gtm.getClient().quit(server);
+        serverTabs.remove(server);
+        // TODO remove channels too
+    }
+
     void doJoin(IrcServer server, String chanName) {
         Join msg = new Join(server, chanName);
         IIrcControl control = gtm.getClient();
@@ -82,8 +88,8 @@ public class SwtIrcClient {
         return shell;
     }
 
-    private SwtTab initDefaultTab() {
-        return null; // TODO log tab
+    private SwtLogTab initDefaultTab() {
+        return new SwtLogTab(this);
     }
 
     private void initMenus() {
@@ -94,13 +100,6 @@ public class SwtIrcClient {
         fileMenuHeader.setText("&File");
         Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
         fileMenuHeader.setMenu(fileMenu);
-        MenuItem fileConnectItem = new MenuItem(fileMenu, SWT.PUSH);
-        fileConnectItem.setText("&Connect " + GuiLauncher.qnet);
-        fileConnectItem.addSelectionListener(new ConnectAction(this, GuiLauncher.qnet));
-
-        MenuItem fileConnectItem2 = new MenuItem(fileMenu, SWT.PUSH);
-        fileConnectItem2.setText("&Connect " + GuiLauncher.rizon);
-        fileConnectItem2.addSelectionListener(new ConnectAction(this, GuiLauncher.rizon));
 
         MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("E&xit");
@@ -142,6 +141,11 @@ public class SwtIrcClient {
         }
 
         chanTab.appendText(msg.toString());
+
+        if (msg instanceof SetTopic) {
+            chanTab.updateTopic(channel.getProperties().getTopic());
+        }
+
         return true;
     }
 

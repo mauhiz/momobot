@@ -9,7 +9,7 @@ import net.mauhiz.irc.base.data.qnet.QnetUser;
 import org.junit.Test;
 
 public class ServerMsgTest extends AbstractServerTest {
-    
+
     /**
      * :port80b.se.quakenet.org 311 momobot3 Krauser2 ~mauhiz 195.255.97-84.rev.gaoland.net * :currently baving _@/'
      */
@@ -23,6 +23,7 @@ public class ServerMsgTest extends AbstractServerTest {
         Assert.assertEquals("195.255.97-84.rev.gaoland.net", user.getHost());
         Assert.assertEquals("currently baving _@/'", user.getFullName());
     }
+
     /**
      * :port80b.se.quakenet.org 319 momobot3 Krauser2 :@#cos_squad @#eule #pitinours +#-wav- +#-hp- +#eloquence @#tsi.fr
      */
@@ -35,7 +36,7 @@ public class ServerMsgTest extends AbstractServerTest {
         IrcUser user = QNET.findUser("Krauser2", false);
         Assert.assertTrue(chan.contains(user));
     }
-    
+
     /**
      * :port80b.se.quakenet.org 330 momobot3 Krauser2 mauhiz :is authed as
      */
@@ -44,7 +45,7 @@ public class ServerMsgTest extends AbstractServerTest {
         ServerMsg msg = new ServerMsg("port80b.se.quakenet.org", "momobot3", QNET, "330",
                 "Krauser2 mauhiz :is authed as");
         msg.process(null);
-        QnetUser user = QNET.findUser("Krauser2", false);
+        QnetUser user = (QnetUser) QNET.findUser("Krauser2", false);
         Assert.assertEquals("mauhiz", user.getAuth());
     }
 }

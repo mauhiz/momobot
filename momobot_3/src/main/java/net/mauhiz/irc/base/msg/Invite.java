@@ -59,7 +59,6 @@ public class Invite extends AbstractIrcMessage {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        return " * " + niceFromDisplay() + " invited me to " + message;
     }
 }

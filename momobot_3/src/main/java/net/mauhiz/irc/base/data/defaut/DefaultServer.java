@@ -1,5 +1,6 @@
 package net.mauhiz.irc.base.data.defaut;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
@@ -12,24 +13,24 @@ import net.mauhiz.irc.base.data.IrcUser;
  * 
  */
 public class DefaultServer extends AbstractIrcServer {
-    
+
     /**
-     * @param uriStr
+     * @param uri
      */
-    public DefaultServer(String uriStr) {
-        super(uriStr);
+    public DefaultServer(URI uri) {
+        super(uri);
     }
-    
+
     @Override
     public int getLineMaxLength() {
         return 127; // TODO confirm?
     }
-    
+
     @Override
     public Set<String> getServiceNicks() {
         return Collections.emptySet();
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcServer#newChannel(java.lang.String)
      */
@@ -37,7 +38,7 @@ public class DefaultServer extends AbstractIrcServer {
     public IrcChannel newChannel(String chanLowerCase) {
         return new DefaultChannel(chanLowerCase);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcServer#newUser(java.lang.String)
      */

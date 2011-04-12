@@ -1,7 +1,12 @@
 package net.mauhiz.irc;
 
+import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcServerFactory;
+import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.qnet.QnetServer;
 import net.mauhiz.irc.base.data.qnet.QnetUser;
+
+import org.junit.Assert;
 
 /**
  * Effectue les tests avec un serveur type Qnet
@@ -9,12 +14,12 @@ import net.mauhiz.irc.base.data.qnet.QnetUser;
  * @author mauhiz
  */
 public abstract class AbstractServerTest {
-    protected final QnetServer QNET = new QnetServer("irc://uk.quakenet.org:6667/");
-    
+    protected final IrcServer QNET = IrcServerFactory.createServer("irc://uk.quakenet.org:6667/");
+
     public AbstractServerTest() {
-        QNET.setAlias("QuakeNet");
-        
-        QnetUser myself = QNET.newUser("momobot3");
+        Assert.assertTrue(QNET instanceof QnetServer);
+        IrcUser myself = QNET.newUser("momobot3");
+        Assert.assertTrue(myself instanceof QnetUser);
         myself.setUser("mmb");
         myself.setFullName("MMB v3");
         QNET.setMyself(myself);
