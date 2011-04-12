@@ -13,6 +13,7 @@ public class ExitAction<B extends Board<? extends Piece, ? extends Player>, M ex
     private final IBoardGui<B, M> gui;
 
     public ExitAction(IBoardGui<B, M> gui) {
+        super();
         this.gui = gui;
     }
 

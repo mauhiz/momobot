@@ -12,22 +12,22 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
  * @author Topper
  */
 public class ShakeTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    
+
     /**
      * @param trigger
      *            le trigger
      */
-    
+
     public ShakeTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        IrcChannel chan = im.getServer().findChannel(im.getTo());
+        IrcChannel chan = (IrcChannel) im.getTo();
         ChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {

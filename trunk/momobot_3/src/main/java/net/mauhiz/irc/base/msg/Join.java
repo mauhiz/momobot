@@ -4,50 +4,40 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
  */
 public class Join extends AbstractIrcMessage {
-    private final String chan;
     private final String key;
 
     /**
      * @param ircServer
      * @param channel
      */
-    public Join(IrcServer ircServer, String channel) {
+    public Join(IrcServer ircServer, IrcChannel channel) {
         this(null, ircServer, channel);
     }
 
     /**
-     * @param from1
+     * @param from
      * @param ircServer
      * @param chan1
      */
-    public Join(String from1, IrcServer ircServer, String chan1) {
-        this(from1, ircServer, chan1, null);
+    public Join(Target from, IrcServer ircServer, IrcChannel chan1) {
+        this(from, ircServer, chan1, null);
     }
 
     /**
-     * @param from1
+     * @param from
      * @param ircServer
      * @param chan1
      * @param key1
      */
-    public Join(String from1, IrcServer ircServer, String chan1, String key1) {
-        super(from1, null, ircServer);
-        chan = chan1;
+    public Join(Target from, IrcServer ircServer, IrcChannel chan1, String key1) {
+        super(from, chan1, ircServer);
         key = key1;
-
-    }
-
-    /**
-     * @return {@link #chan}
-     */
-    public String getChan() {
-        return chan;
     }
 
     @Override
@@ -59,11 +49,8 @@ public class Join extends AbstractIrcMessage {
             sb.append(' ');
         }
         sb.append("JOIN ");
-        if (super.to != null) {
-            sb.append(super.to);
-            sb.append(' ');
-        }
-        sb.append(chan);
+        sb.append(super.to);
+
         if (key != null) {
             sb.append(' ');
             sb.append(key);
@@ -78,10 +65,18 @@ public class Join extends AbstractIrcMessage {
         return key;
     }
 
+    /**
+     * The channel this JOIN joins
+     */
+    @Override
+    public IrcChannel getTo() {
+        return (IrcChannel) super.getTo();
+    }
+
     @Override
     public void process(IIrcControl control) {
-        IrcChannel joined = server.findChannel(chan);
-        IrcUser joiner = server.findUser(new Mask(from), true);
+        IrcChannel joined = (IrcChannel) to;
+        IrcUser joiner = (IrcUser) from;
         joined.add(joiner);
     }
 
@@ -91,8 +86,8 @@ public class Join extends AbstractIrcMessage {
     @Override
     public String toString() {
         if (from == null) { // self
-            return "Joining " + chan;
+            return "Joining " + to;
         }
-        return "* Joins " + chan + " : " + niceFromDisplay();
+        return "* Joins " + to + " : " + niceFromDisplay();
     }
 }

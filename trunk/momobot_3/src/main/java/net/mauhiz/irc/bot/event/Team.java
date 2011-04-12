@@ -73,7 +73,7 @@ public class Team implements Iterable<IrcUser> {
         return members.iterator();
     }
 
-    public Collection<IrcUser> members() {
+    public Collection<IrcUser> getMembers() {
         return members;
     }
 

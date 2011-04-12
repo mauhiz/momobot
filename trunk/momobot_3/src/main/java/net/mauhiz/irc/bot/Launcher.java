@@ -110,7 +110,7 @@ public class Launcher {
             IrcUser myself = server.newUser(nickOverride == null ? nick : nickOverride);
 
             String loginOverride = config.getString(profileCriteria + "/autoconnect/@login");
-            myself.setUser(loginOverride == null ? login : loginOverride);
+            myself.getMask().setUser(loginOverride == null ? login : loginOverride);
 
             String fullNameOverride = config.getString(profileCriteria + "/autoconnect/@fullName");
             if (fullNameOverride == null) {
@@ -124,7 +124,7 @@ public class Launcher {
             String[] joins = config.getStringArray(profileCriteria + "/autoconnect/join");
             LOG.debug(StringUtils.join(joins, ' '));
             for (String chan : joins) {
-                control.sendMsg(new Join(server, chan));
+                control.sendMsg(new Join(server, server.findChannel(chan)));
             }
 
             String[] packageBundles = config.getStringArray(profileCriteria + "/loadtriggerpack/@bundle");

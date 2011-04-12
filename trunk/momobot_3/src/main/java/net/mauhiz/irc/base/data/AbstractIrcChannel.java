@@ -84,6 +84,11 @@ public abstract class AbstractIrcChannel implements IrcChannel {
         return Hooks.getHook(this, ChannelEvent.class);
     }
 
+    @Override
+    public String getIrcForm() {
+        return fullName();
+    }
+
     /**
      * @see net.mauhiz.irc.base.data.IrcChannel#getModes(IrcUser)
      */
@@ -148,9 +153,6 @@ public abstract class AbstractIrcChannel implements IrcChannel {
         return localEvent.stop();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return fullName();

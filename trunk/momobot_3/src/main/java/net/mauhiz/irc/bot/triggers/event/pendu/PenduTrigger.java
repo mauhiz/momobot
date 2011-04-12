@@ -23,13 +23,13 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
     public PenduTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        IrcChannel chan = cme.getServer().findChannel(cme.getTo());
+        IrcChannel chan = (IrcChannel) cme.getTo();
         if (chan == null) {
             /* c est un msg prive */
             return;
@@ -37,10 +37,10 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
         ChannelEvent evt = chan.getEvt();
         if (isCommandMsg(cme.getMessage())) {
             String respMsg;
-            if (evt != null) {
-                respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
-            } else {
+            if (evt == null) {
                 respMsg = "Devinez ce mot: " + new Pendu(chan).getDevinage();
+            } else {
+                respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
             }
             Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
             control.sendMsg(resp);

@@ -1,21 +1,16 @@
 package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
  */
 public class Invite extends AbstractIrcMessage {
-    private final String message;
 
-    /**
-     * @param ircServer
-     * @param msg
-     */
-    public Invite(IrcServer ircServer, String msg) {
-        this(null, null, ircServer, msg);
-    }
+    private final IrcChannel chan;
 
     /**
      * @param from1
@@ -23,9 +18,16 @@ public class Invite extends AbstractIrcMessage {
      * @param ircServer
      * @param msg1
      */
-    public Invite(String from1, String to1, IrcServer ircServer, String msg1) {
-        super(from1, to1, ircServer);
-        message = msg1;
+    public Invite(Target from, Target to, IrcServer ircServer, IrcChannel chan) {
+        super(from, to, ircServer);
+        this.chan = chan;
+    }
+
+    /**
+     * @return the message
+     */
+    public IrcChannel getChan() {
+        return chan;
     }
 
     @Override
@@ -37,19 +39,11 @@ public class Invite extends AbstractIrcMessage {
             sb.append(' ');
         }
         sb.append("INVITE ");
-        if (super.to != null) {
-            sb.append(super.to);
-            sb.append(' ');
-        }
-        sb.append(message);
-        return sb.toString();
-    }
+        sb.append(super.to);
+        sb.append(' ');
 
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
+        sb.append(chan);
+        return sb.toString();
     }
 
     @Override
@@ -59,6 +53,6 @@ public class Invite extends AbstractIrcMessage {
 
     @Override
     public String toString() {
-        return " * " + niceFromDisplay() + " invited me to " + message;
+        return " * " + niceFromDisplay() + " invited me to " + chan;
     }
 }

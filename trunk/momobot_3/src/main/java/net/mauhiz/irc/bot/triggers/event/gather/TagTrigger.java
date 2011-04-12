@@ -19,14 +19,14 @@ public class TagTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     public TagTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         /* on test si un gather est lance sur le channel en question */
-        IrcChannel chan = im.getServer().findChannel(im.getTo());
+        IrcChannel chan = (IrcChannel) im.getTo();
         ChannelEvent evt = chan.getEvt();
         if (evt instanceof Gather) {
             Privmsg msg = Privmsg.buildAnswer(im, ((Gather) evt).setTag(getArgs(im.getMessage())));

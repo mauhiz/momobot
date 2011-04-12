@@ -11,7 +11,7 @@ import org.junit.Test;
  * @author mauhiz
  */
 public class UsersTest extends AbstractServerTest {
-    
+
     /**
      * 
      */
@@ -27,7 +27,7 @@ public class UsersTest extends AbstractServerTest {
         Assert.assertEquals(2, QNET.getChannelsForUser(peon2).size());
         Assert.assertEquals(2, QNET.countUsers());
     }
-    
+
     /**
      * 
      */
@@ -35,7 +35,7 @@ public class UsersTest extends AbstractServerTest {
     public void testSingleChan() {
         IrcChannel chan = QNET.findChannel("#tsi.Fr", true);
         IrcChannel chan2 = QNET.findChannel("#tsi.fr", true);
-        Assert.assertTrue(chan == chan2);
+        Assert.assertSame(chan, chan2);
         IrcUser peon = QNET.findUser("Truite", true);
         IrcUser peon2 = QNET.findUser("Gruiiik", true);
         chan.add(peon);

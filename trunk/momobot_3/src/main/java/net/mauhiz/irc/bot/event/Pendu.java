@@ -146,10 +146,12 @@ public class Pendu extends ChannelEvent {
      * @return un message
      */
     public String submitLettre(char toSubmit) {
-        if (!Character.isLetter(toSubmit)) {
+        if (Character.isLetter(toSubmit)) {
+            if (!alreadyTried.add(Character.valueOf(toSubmit))) {
+                return "La lettre " + toSubmit + " a deja ete essayee";
+            }
+        } else {
             return "";
-        } else if (!alreadyTried.add(Character.valueOf(toSubmit))) {
-            return "La lettre " + toSubmit + " a deja ete essayee";
         }
 
         StringBuilder penduMsg = new StringBuilder();

@@ -3,7 +3,7 @@ package net.mauhiz.irc.base.msg;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
@@ -26,7 +26,7 @@ public class Nick extends AbstractIrcMessage {
      * @param from1
      * @param newNick1
      */
-    public Nick(IrcServer server1, String from1, String newNick1) {
+    public Nick(IrcServer server1, Target from1, String newNick1) {
         super(from1, null, server1);
         newNick = newNick1;
     }
@@ -53,8 +53,7 @@ public class Nick extends AbstractIrcMessage {
 
     @Override
     public void process(IIrcControl control) {
-        Mask fromMask = new Mask(from);
-        IrcUser target = server.findUser(fromMask, true);
+        IrcUser target = (IrcUser) from;
         server.updateNick(target, newNick);
     }
 

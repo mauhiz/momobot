@@ -4,14 +4,14 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
  */
 public class Kick extends AbstractIrcMessage {
-    private final String chan;
     private final String reason;
-    private final String target;
+    private final IrcUser target;
 
     /**
      * @param from1
@@ -21,18 +21,10 @@ public class Kick extends AbstractIrcMessage {
      * @param target1
      * @param reason1
      */
-    public Kick(IrcServer ircServer, String from1, String to1, String chan1, String target1, String reason1) {
-        super(from1, to1, ircServer);
-        chan = chan1;
-        target = target1;
-        reason = reason1;
-    }
-
-    /**
-     * @return the message
-     */
-    public String getChan() {
-        return chan;
+    public Kick(IrcServer ircServer, Target kicker, IrcChannel chan, IrcUser target, String reason) {
+        super(kicker, chan, ircServer);
+        this.target = target;
+        this.reason = reason;
     }
 
     @Override
@@ -44,11 +36,7 @@ public class Kick extends AbstractIrcMessage {
             sb.append(' ');
         }
         sb.append("KICK ");
-        if (super.to != null) {
-            sb.append(super.to);
-            sb.append(' ');
-        }
-        sb.append(chan);
+        sb.append(to);
         sb.append(' ');
         sb.append(target);
         if (reason != null) {
@@ -68,31 +56,28 @@ public class Kick extends AbstractIrcMessage {
     /**
      * @return {@link #target}
      */
-    public String getTarget() {
+    public IrcUser getTarget() {
         return target;
     }
 
     @Override
     public void process(IIrcControl control) {
-        IrcChannel fromChan = server.findChannel(chan);
-        if (fromChan != null) {
-            IrcUser kicked = server.findUser(target, true);
-            fromChan.remove(kicked);
-            if (kicked.equals(server.getMyself())) {
-                server.remove(fromChan);
-            }
+        IrcChannel chan = (IrcChannel) to;
+        chan.remove(target);
+        if (target.equals(server.getMyself())) {
+            server.remove(chan);
         }
     }
 
     @Override
     public String toString() {
-        if (server.getMyself().getNick().equals(target)) {
+        if (server.getMyself().equals(target)) {
             // I have been kicked
-            return "* Kicked from " + chan + " by " + niceFromDisplay() + ": " + reason;
+            return "* Kicked from " + to + " by " + niceFromDisplay() + ": " + reason;
         } else if (from == null) { // I am kicking
-            return "* Kicking " + target + " from " + chan + ": " + reason;
+            return "* Kicking " + target + " from " + to + ": " + reason;
         } else { // Someone kicks someone else
-            return "* " + target + " was kicked from " + chan + " by " + niceFromDisplay() + ": " + reason;
+            return "* " + target + " was kicked from " + to + " by " + niceFromDisplay() + ": " + reason;
         }
     }
 }

@@ -6,6 +6,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.data.UserChannelMode;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,19 +29,19 @@ public class Mode extends AbstractIrcMessage {
      * @param to1
      * @param server1
      */
-    public Mode(String from1, String to1, IrcServer server1) {
-        this(from1, to1, server1, null);
+    public Mode(Target from, Target to, IrcServer server) {
+        this(from, to, server, null);
     }
 
     /**
-     * @param group
-     * @param object
+     * @param from
+     * @param to
      * @param ircServer
-     * @param group2
+     * @param message
      */
-    public Mode(String group, String object, IrcServer ircServer, String group2) {
-        super(group, object, ircServer);
-        message = group2;
+    public Mode(Target from, Target to, IrcServer ircServer, String message) {
+        super(from, to, ircServer);
+        this.message = message;
     }
 
     @Override
@@ -72,7 +73,7 @@ public class Mode extends AbstractIrcMessage {
         String[] toks = StringUtils.split(message, ' ');
 
         if (isToChannel()) {
-            IrcChannel chan = server.findChannel(to);
+            IrcChannel chan = (IrcChannel) to;
             int argIdx = 0;
             String modeInfo = toks[argIdx++]; // consume 1st argument
             boolean set = false;
@@ -107,7 +108,7 @@ public class Mode extends AbstractIrcMessage {
                 }
             }
         } else {
-            IrcUser target = server.findUser(to, true);
+            IrcUser target = (IrcUser) to;
             char modifier = message.charAt(0);
             char mode = message.charAt(1);
             if (mode == 'i') {

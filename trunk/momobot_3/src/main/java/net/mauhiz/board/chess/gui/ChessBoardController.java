@@ -59,18 +59,17 @@ public class ChessBoardController extends GuiBoardController<ChessBoard, ChessMo
             ChessOwnedPiece op = getBoard().getOwnedPieceAt(square);
             getDisplay().disableSquare(square);
 
-            if (selectedSquare != null) { // from the board
+            if (selectedSquare == null) {// available pieces
+                if (op != null && op.getPlayer() == getBoard().getTurn()) {
+                    getDisplay().addSelectAction(square, this);
+                }
+            } else { // from the board
                 // available destinations
                 ChessOwnedPiece selected = getBoard().getOwnedPieceAt(selectedSquare);
 
                 if (selected != null && !square.equals(selectedSquare)
                         && ChessRule.canGo(getBoard(), selectedSquare, square)) {
                     getDisplay().addMoveAction(square, this);
-                }
-            } else {
-                // available pieces
-                if (op != null && op.getPlayer() == getBoard().getTurn()) {
-                    getDisplay().addSelectAction(square, this);
                 }
             }
 

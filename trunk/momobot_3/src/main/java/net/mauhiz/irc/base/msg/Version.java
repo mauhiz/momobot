@@ -1,7 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
@@ -28,8 +28,7 @@ public class Version extends Ctcp {
      * @return new msg
      */
     public static Version buildPrivateAnswer(IIrcMessage toReply, String msg) {
-        Mask from = new Mask(toReply.getFrom());
-        return new Version(null, from.getNick(), toReply.getServer(), msg);
+        return new Version(null, toReply.getFrom(), toReply.getServer(), msg);
     }
 
     /**
@@ -38,7 +37,7 @@ public class Version extends Ctcp {
      * @param server1
      * @param message1
      */
-    public Version(String from1, String to1, IrcServer server1, String message1) {
+    public Version(Target from1, Target to1, IrcServer server1, String message1) {
         super(from1, to1, server1, message1);
     }
 

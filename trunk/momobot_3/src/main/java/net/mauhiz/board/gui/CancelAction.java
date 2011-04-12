@@ -14,6 +14,7 @@ public class CancelAction<B extends Board<? extends Piece, ? extends Player>, M 
     private final GuiBoardController<B, M> gui;
 
     public CancelAction(GuiBoardController<B, M> gui) {
+        super();
         this.gui = gui;
     }
 

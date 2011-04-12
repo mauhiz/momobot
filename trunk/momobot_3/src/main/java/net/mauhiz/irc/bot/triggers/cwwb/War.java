@@ -1,45 +1,48 @@
 package net.mauhiz.irc.bot.triggers.cwwb;
+
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.mauhiz.irc.base.data.IrcUser;
+
 /**
  * @author abby
  */
 public class War {
-    
+
     /**
      * Regexp magique de FenX<br>
      * Inutile de mettre Pattern.CASE_INSENSITIVE<br>
      * Parfait pour les 5vs5, 4x4, ...
      */
     public static final Pattern NB_JOUEURS = Pattern.compile("(\\d+)\\s?(vs|vv|o|c|x|n|on|/|v)\\s?(\\d+)");
-    
+
     // Pour les joueurs en 55, 44, 33...
     // public static Pattern patternNbJoueursShort = Pattern.compile("(\\d)(\\d)");
-    
+
     private long id;
     private Level level = Level.UNKOWN;
-    
+
     /**
      * nbjoueur = 0 <=> UNKNOWN
      */
     private int nbjoueurs;
-    
+
     private ServerStatus server = ServerStatus.UNKOWN;
-    private String user = "";
+    private IrcUser user;
     private Calendar when;
-    
+
     public War() {
         super();
     }
-    
+
     /**
      * @param pUser
      * @param pSeekMessage
      */
-    public War(String pUser, String pSeekMessage) {
+    public War(IrcUser pUser, String pSeekMessage) {
         this();
         // Important
         String seekMessage = pSeekMessage.toLowerCase(Locale.FRENCH);
@@ -47,9 +50,9 @@ public class War {
                 || seekMessage.contains("binome") || seekMessage.contains("cherche team")) {
             return;
         }
-        
+
         user = pUser;
-        
+
         Matcher matcherNbJoueurs = NB_JOUEURS.matcher(seekMessage);
         // Matcher matcherNbJoueursShort = patternNbJoueursShort.matcher(SeekMessage);
         /*
@@ -69,7 +72,7 @@ public class War {
                 || seekMessage.contains("pa de serv")) {
             server = ServerStatus.OFF;
         }
-        
+
         /*
          * On detecte le nombre de joueurs
          */
@@ -92,7 +95,7 @@ public class War {
             // for (int i = 0; i <= matcherNbJoueursShort.groupCount(); i++) {
             // System.out.println("Groupe " + i + " : '" + matcherNbJoueursShort.group(i) + "'");
             // }
-            
+
         } else {
             // TODO : mettre le 55 en regexp (pour que ca marche aussi avec 33)
             if (seekMessage.contains("pcw") || seekMessage.contains("war") || seekMessage.contains("pracc")
@@ -106,7 +109,7 @@ public class War {
                 nbjoueurs = 2;
             }
         }
-        
+
         /*
          * On detecte le lvl
          */
@@ -128,35 +131,39 @@ public class War {
         } else if (seekMessage.contains("noob") || seekMessage.contains("invincible")) {
             level = Level.NOOB;
         }
-        
+
     }
-    
+
     /**
      * @return the id
      */
     public long getId() {
         return id;
     }
-    
+
     public Level getLevel() {
         return level;
     }
+
     public int getNbjoueurs() {
         return nbjoueurs;
     }
-    
+
     public ServerStatus getServer() {
         return server;
     }
-    public String getUser() {
+
+    public IrcUser getUser() {
         return user;
     }
+
     /**
      * @return the when
      */
     public Calendar getWhen() {
         return when;
     }
+
     public boolean isNull() {
         int nulllevel = 0;
         if (level == Level.UNKOWN) {
@@ -173,6 +180,7 @@ public class War {
         }
         return false;
     }
+
     /**
      * @param id
      *            the id to set
@@ -180,35 +188,35 @@ public class War {
     public void setId(long id) {
         this.id = id;
     }
-    
+
     /**
      * @param level
      */
     public void setLevel(Level level) {
         this.level = level;
     }
-    
+
     /**
      * @param nbjoueurs
      */
     public void setNbjoueurs(int nbjoueurs) {
         this.nbjoueurs = nbjoueurs;
     }
-    
+
     /**
      * @param status
      */
     public void setServer(ServerStatus status) {
         server = status;
     }
-    
+
     /**
      * @param user
      */
-    public void setUser(String user) {
+    public void setUser(IrcUser user) {
         this.user = user;
     }
-    
+
     /**
      * @param when
      *            the when to set

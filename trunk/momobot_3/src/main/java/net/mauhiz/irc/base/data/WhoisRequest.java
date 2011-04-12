@@ -22,7 +22,7 @@ public class WhoisRequest extends AbstractRunnable {
      */
     private static final Map<String, WhoisRequest> ALL_WHOIS = new HashMap<String, WhoisRequest>();
     private static final Logger LOGGER = Logger.getLogger(WhoisRequest.class);
-    
+
     /**
      * le temps d'attente entre deux boucles.
      */
@@ -31,18 +31,19 @@ public class WhoisRequest extends AbstractRunnable {
      * periode minimale du whois en ms.
      */
     private static final long TIMEOUT = TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS);
-    
+
     public static void end(String nick, boolean ok) {
         WhoisRequest wr = ALL_WHOIS.get(nick);
         if (wr != null) {
             wr.setSuccess(ok);
         }
     }
+
     private final IIrcControl control;
     private boolean purgatory;
-    private String reportTo;
+    private Target reportTo;
     protected final IrcServer server;
-    
+
     /**
      * fait attendre la reponse.
      */
@@ -52,7 +53,7 @@ public class WhoisRequest extends AbstractRunnable {
      * ma cible.
      */
     protected final String target;
-    
+
     /**
      * whois silencieux.
      * 
@@ -67,15 +68,15 @@ public class WhoisRequest extends AbstractRunnable {
         server = server1;
         control = control1;
     }
-    
+
     public long getElapsedTime() {
         return sw.getTime();
     }
-    
-    public String getReportTo() {
+
+    public Target getReportTo() {
         return reportTo;
     }
-    
+
     /**
      * Ce thread attend que momobot lui dise qu'il a fini le whois.
      */
@@ -94,14 +95,14 @@ public class WhoisRequest extends AbstractRunnable {
             return;
             /* else : echec du whois precedent : retry */
         }
-        
+
         waitForResult();
     }
-    
-    public void setReportTo(String reportTo) {
+
+    public void setReportTo(Target reportTo) {
         this.reportTo = reportTo;
     }
-    
+
     public void setSuccess(boolean ok) {
         stop();
         String respMsg;
@@ -123,10 +124,10 @@ public class WhoisRequest extends AbstractRunnable {
         LOGGER.debug("[whois ended][done=" + ok + "]");
         ALL_WHOIS.remove(target);
     }
-    
+
     private void waitForResult() {
         sw.start();
-        
+
         ALL_WHOIS.put(target, this);
         Whois who = new Whois(null, null, server, target);
         control.sendMsg(who);
@@ -139,7 +140,7 @@ public class WhoisRequest extends AbstractRunnable {
                     return;
                 }
             }
-            
+
             /* debug */
             pause(TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS));
         }

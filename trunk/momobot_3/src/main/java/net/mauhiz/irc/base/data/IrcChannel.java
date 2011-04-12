@@ -7,7 +7,7 @@ import net.mauhiz.irc.bot.event.ChannelEvent;
 /**
  * @author mauhiz
  */
-public interface IrcChannel extends Iterable<IrcUser>, Comparable<IrcChannel> {
+public interface IrcChannel extends Iterable<IrcUser>, Comparable<IrcChannel>, Target {
 
     void add(IrcUser smith);
 

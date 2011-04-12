@@ -2,6 +2,7 @@ package net.mauhiz.irc.gui;
 
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.gui.actions.SendAction;
 import net.mauhiz.irc.gui.actions.SendNoticeAction;
 
@@ -31,11 +32,11 @@ public class SwtPrivateTab extends SwtTab {
         initTypeBar();
     }
 
-    protected String getTarget() {
-        return user.getNick() + "!" + user.getUser() + "@" + user.getHost();
+    protected final Target getTarget() {
+        return user;
     }
 
-    protected void initTypeBar() {
+    protected final void initTypeBar() {
         Composite typeZone = new Composite(compo, SWT.BORDER);
         typeZone.setLayout(new GridLayout(3, false));
 

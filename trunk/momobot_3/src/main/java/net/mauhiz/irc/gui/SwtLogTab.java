@@ -30,7 +30,7 @@ public class SwtLogTab extends SwtTab {
         public void handleEvent(Event event) {
             IrcServer server = IrcServerFactory.createServer(connectField.getText());
             IrcUser myself = server.newUser("momobot3");
-            myself.setUser("mmb");
+            myself.getMask().setUser("mmb");
             myself.setFullName("momobot le 3eme");
             server.setMyself(myself);
             swtIrcClient.doConnect(server);

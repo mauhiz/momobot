@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.mauhiz.irc.base.data.AbstractIrcServer;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.HostMask;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -22,7 +22,7 @@ public class QnetServer extends AbstractIrcServer {
     }
 
     @Override
-    public QnetUser findUser(Mask mask, boolean addIfNotFound) {
+    public QnetUser findUser(HostMask mask, boolean addIfNotFound) {
         return (QnetUser) super.findUser(mask, addIfNotFound);
     }
 

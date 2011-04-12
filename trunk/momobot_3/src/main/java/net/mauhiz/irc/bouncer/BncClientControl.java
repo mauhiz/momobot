@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.mauhiz.irc.base.AbstractIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.io.IIrcIO;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
@@ -62,7 +63,7 @@ public class BncClientControl extends AbstractIrcControl {
         LOG.info(msg);
 
         // FIXME this is wrong
-        String from = msg.getFrom();
+        Target from = msg.getFrom();
         IIrcIO io = clientToIo.get(from);
         io.sendMsg(msg.getIrcForm());
     }

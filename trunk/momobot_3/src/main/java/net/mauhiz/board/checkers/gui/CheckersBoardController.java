@@ -52,18 +52,17 @@ public class CheckersBoardController extends GuiBoardController<CheckersBoard, C
             CheckersOwnedPiece op = getBoard().getOwnedPieceAt(square);
             getDisplay().disableSquare(square);
 
-            if (selectedSquare != null) { // from the board
+            if (selectedSquare == null) { // available pieces
+                if (op != null && op.getPlayer() == getBoard().getTurn()) {
+                    getDisplay().addSelectAction(square, this);
+                }
+            } else { // from the board
                 // available destinations
                 CheckersOwnedPiece selected = getBoard().getOwnedPieceAt(selectedSquare);
 
                 if (selected != null && !square.equals(selectedSquare)
                         && CheckersRule.canGo(getBoard(), selectedSquare, square)) {
                     getDisplay().addMoveAction(square, this);
-                }
-            } else {
-                // available pieces
-                if (op != null && op.getPlayer() == getBoard().getTurn()) {
-                    getDisplay().addSelectAction(square, this);
                 }
             }
 

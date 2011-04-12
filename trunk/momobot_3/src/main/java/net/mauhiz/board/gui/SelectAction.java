@@ -16,6 +16,7 @@ public class SelectAction<B extends Board<? extends Piece, ? extends Player>, M 
     private final GuiBoardController<B, M> controller;
 
     public SelectAction(GuiBoardController<B, M> controller, Square at) {
+        super();
         this.controller = controller;
         this.at = at;
     }

@@ -2,7 +2,6 @@ package net.mauhiz.irc.bot.triggers.fun;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
@@ -23,7 +22,7 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
     public RollTheDiceTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -31,7 +30,7 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
     public void doTrigger(Privmsg im, IIrcControl control) {
         String args = getArgs(im.getMessage());
         boolean engueuler = false;
-        
+
         // 1000 par defaut;
         int defaultmax = 1000;
         int max;
@@ -43,18 +42,18 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
             // 
             max = Integer.parseInt(args);
         } catch (NumberFormatException e) {
-            
+
             max = defaultmax;
         }
-        
+
         // Fourchette arbitraire
         if (max <= 1 || max > 10000) {
             engueuler = true;
         }
-        
+
         // Recupere le nom du joueur
-        IrcUser user = im.getServer().findUser(new Mask(im.getFrom()), true);
-        
+        IrcUser user = (IrcUser) im.getFrom();
+
         // Un parametre est incorrect, on s'arrete la avec un message d'erreur.
         if (engueuler) {
             Privmsg msg = Privmsg
@@ -65,18 +64,18 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
             control.sendMsg(msg);
             return;
         }
-        
+
         // random de base
         int diceRoll = RandomUtils.nextInt(max) + 1;
-        
+
         // Petits commentaires futes
         String commentaire = getCommentaire(diceRoll, max);
-        
+
         Privmsg msg = Privmsg.buildAnswer(im, commentaire + user.getNick() + " a obtenu un " + diceRoll + " (sur "
                 + max + ')');
         control.sendMsg(msg);
     }
-    
+
     private String getCommentaire(int diceRoll, int max) {
         if (diceRoll == max) {
             return "Quelle chance ! ";

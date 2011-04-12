@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 public class CtcpFactory {
 
-    public static Ctcp decode(String from, String to, IrcServer server, String msg) {
+    public static Ctcp decode(Target from, Target to, IrcServer server, String msg) {
         final String command = StringUtils.substringBefore(msg, " ");
         String ctcpContent = StringUtils.substringAfter(msg, " ");
 

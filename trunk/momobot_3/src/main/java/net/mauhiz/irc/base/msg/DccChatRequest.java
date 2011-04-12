@@ -3,6 +3,7 @@ package net.mauhiz.irc.base.msg;
 import java.net.InetAddress;
 
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.util.NetUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,13 +16,13 @@ public class DccChatRequest extends Ctcp {
     private final InetAddress address;
     private final int port;
 
-    public DccChatRequest(String from1, String to1, IrcServer server1, InetAddress address, int port) {
-        super(from1, to1, server1, "CHAT CHAT " + NetUtils.iaToLong(address) + " " + port);
+    public DccChatRequest(Target from, Target to, IrcServer server1, InetAddress address, int port) {
+        super(from, to, server1, "CHAT CHAT " + NetUtils.iaToLong(address) + " " + port);
         this.address = address;
         this.port = port;
     }
 
-    public DccChatRequest(String from, String to, IrcServer server, String ctcpContent) {
+    public DccChatRequest(Target from, Target to, IrcServer server, String ctcpContent) {
         super(from, to, server, ctcpContent);
         String[] tokens = StringUtils.split(ctcpContent, ' ');
         long addrLong = Long.parseLong(tokens[2]);

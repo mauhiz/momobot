@@ -19,8 +19,6 @@ public abstract class AbstractBoardController<B extends Board<? extends Piece, ?
         this.board = board;
     }
 
-    public abstract void doMove(M move);
-
     public B getBoard() {
         return board;
     }

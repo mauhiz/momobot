@@ -18,7 +18,7 @@ public class PartTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     public PartTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
@@ -35,7 +35,7 @@ public class PartTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
             reason = null;
         }
         /* TODO part cross servers */
-        Part leave = new Part(im.getServer(), args, reason);
+        Part leave = new Part(im.getServer(), im.getServer().findChannel(args), reason);
         control.sendMsg(leave);
     }
 }

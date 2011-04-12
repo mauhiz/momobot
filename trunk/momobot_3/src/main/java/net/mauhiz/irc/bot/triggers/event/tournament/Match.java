@@ -1,6 +1,5 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
-
 /**
  * @author Topper
  * 
@@ -54,10 +53,6 @@ public class Match {
         score[0] = 0;
         score[1] = 0;
         id = id1;
-        if (team1.equals(team2)) {
-            score[0] = -1;
-            score[1] = -1;
-        }
     }
 
     /**

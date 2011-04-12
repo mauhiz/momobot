@@ -5,13 +5,15 @@ import java.util.Date;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.data.Topic;
 
 public class SetTopic extends AbstractIrcMessage {
 
     private final String topic;
 
-    public SetTopic(String from1, String to1, IrcServer server1, String newTopic) {
+    public SetTopic(Target from1, Target to1, IrcServer server1, String newTopic) {
         super(from1, to1, server1);
         topic = newTopic;
     }
@@ -45,8 +47,9 @@ public class SetTopic extends AbstractIrcMessage {
 
     @Override
     public void process(IIrcControl control) {
-        IrcChannel chan = server.findChannel(to);
-        Topic newTopic = new Topic(from, new Date(), topic);
+        IrcChannel chan = (IrcChannel) to;
+        IrcUser changer = (IrcUser) from;
+        Topic newTopic = new Topic(changer.getNick(), new Date(), topic);
         chan.getProperties().setTopic(newTopic);
     }
 

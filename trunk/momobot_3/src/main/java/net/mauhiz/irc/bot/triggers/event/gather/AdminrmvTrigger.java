@@ -2,7 +2,6 @@ package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -25,15 +24,14 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     public AdminrmvTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        IrcServer server = im.getServer();
-        IrcChannel chan = server.findChannel(im.getTo());
+        IrcChannel chan = (IrcChannel) im.getTo();
         ChannelEvent event = chan.getEvt();
         if (event == null) {
             Privmsg msg = Privmsg.buildAnswer(im, "Aucun gather ou pickup n'est lance.");
@@ -44,10 +42,10 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         if (ArrayUtils.isEmpty(whos)) {
             return;
         }
-        
+
         if (event instanceof Gather) {
             for (String who : whos) {
-                IrcUser target = server.findUser(who, false);
+                IrcUser target = im.getServer().findUser(who, false);
                 if (target == null) {
                     Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan.fullName());
                     control.sendMsg(msg);
@@ -57,10 +55,10 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 Privmsg msg = Privmsg.buildAnswer(im, resp);
                 control.sendMsg(msg);
             }
-            
+
         } else if (event instanceof Pickup) {
             for (String who : whos) {
-                IrcUser target = server.findUser(who, false);
+                IrcUser target = im.getServer().findUser(who, false);
                 if (target == null) {
                     Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan.fullName());
                     control.sendMsg(msg);
@@ -70,7 +68,7 @@ public class AdminrmvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 Privmsg msg = Privmsg.buildAnswer(im, resp);
                 control.sendMsg(msg);
             }
-            
+
         }
     }
 }

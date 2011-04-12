@@ -2,6 +2,7 @@ package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
@@ -14,7 +15,7 @@ public abstract class Ctcp extends Privmsg implements IrcSpecialChars {
      * @param server1
      * @param message1
      */
-    public Ctcp(String from1, String to1, IrcServer server1, String message1) {
+    public Ctcp(Target from1, Target to1, IrcServer server1, String message1) {
         super(from1, to1, server1, message1);
     }
 

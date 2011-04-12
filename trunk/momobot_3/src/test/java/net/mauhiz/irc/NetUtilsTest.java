@@ -16,11 +16,11 @@ public class NetUtilsTest {
     /**
      * 192.168.0.255
      */
-    private static final byte[] BYTES_CLASS_C_MASK = new byte[]{-64, -88, 0, -1};
+    private static final byte[] BYTES_CLASS_C_MASK = new byte[] { -64, -88, 0, -1 };
     /**
      * 192.168.0.255
      */
-    private static final char[] CHARS_CLASS_C_MASK = new char[]{192, 168, 0, 255};
+    private static final char[] CHARS_CLASS_C_MASK = new char[] { 192, 168, 0, 255 };
     /**
      * 192.168.0.255
      */
@@ -33,7 +33,7 @@ public class NetUtilsTest {
      * 192.168.0.255
      */
     private static final String STR_CLASS_C_MASK = "192.168.0.255";
-    
+
     /**
      * Test method for {@link net.mauhiz.util.NetUtils#byteTabToSignedInt(byte[])}.
      */
@@ -42,7 +42,7 @@ public class NetUtilsTest {
         int toInt = NetUtils.byteTabToSignedInt(BYTES_CLASS_C_MASK);
         Assert.assertEquals(INT_CLASS_C_MASK, toInt);
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.util.NetUtils#charTabToIa(char[])}.
      */
@@ -51,6 +51,7 @@ public class NetUtilsTest {
         InetAddress classC = NetUtils.charTabToIa(CHARS_CLASS_C_MASK);
         Assert.assertEquals(STR_CLASS_C_MASK, classC.getHostAddress());
     }
+
     /**
      * Test method for {@link net.mauhiz.util.NetUtils#intToBytes(int)}.
      */
@@ -62,7 +63,7 @@ public class NetUtilsTest {
             Assert.assertEquals(BYTES_CLASS_C_MASK[i], toBytes[i]);
         }
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.util.NetUtils#iaToLong(InetAddress)}.
      * 
@@ -73,6 +74,7 @@ public class NetUtilsTest {
         InetAddress localhost = InetAddress.getByName(STR_CLASS_C_MASK);
         Assert.assertEquals(LONG_CLASS_C_MASK, NetUtils.iaToLong(localhost));
     }
+
     /**
      * Test method for {@link net.mauhiz.util.NetUtils#longToCharTab(long)}.
      */
@@ -84,14 +86,14 @@ public class NetUtilsTest {
             Assert.assertEquals(CHARS_CLASS_C_MASK[i], maskc[i]);
         }
     }
-    
+
     /**
      * Test method for {@link net.mauhiz.util.NetUtils#makeISA(java.lang.String)}.
      */
     @Test
-    public void testMakeISA() {
+    public void testMakeISA() throws UnknownHostException {
         InetSocketAddress add1 = NetUtils.makeISA("127.0.0.1:27015");
         Assert.assertEquals(27015, add1.getPort());
-        Assert.assertEquals("localhost", add1.getHostName());
+        Assert.assertEquals(InetAddress.getLocalHost(), add1.getAddress());
     }
 }

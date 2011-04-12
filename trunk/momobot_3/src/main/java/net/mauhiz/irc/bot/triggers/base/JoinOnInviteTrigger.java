@@ -11,7 +11,7 @@ import net.mauhiz.util.Messages;
  * @author mauhiz
  */
 public class JoinOnInviteTrigger implements IInviteTrigger {
-    
+
     /**
      * On est sympa, on join tout.
      * 
@@ -20,7 +20,7 @@ public class JoinOnInviteTrigger implements IInviteTrigger {
      */
     @Override
     public void doTrigger(Invite im, IIrcControl control) {
-        Join join = new Join(im.getServer(), im.getMessage());
+        Join join = new Join(im.getServer(), im.getChan());
         control.sendMsg(join);
         Notice notice = Notice.buildPrivateAnswer(im, Messages.get(getClass(), "join.on.invite")); //$NON-NLS-1$
         control.sendMsg(notice);

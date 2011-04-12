@@ -4,7 +4,6 @@ import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.event.ChannelEvent;
@@ -22,15 +21,14 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     public ResultTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        IrcServer server = im.getServer();
-        IrcChannel chan = server.findChannel(im.getTo());
+        IrcChannel chan = (IrcChannel) im.getTo();
         ChannelEvent event = chan.getEvt();
         if (event == null) {
             Privmsg msg = Privmsg.buildAnswer(im, "Aucun tournois n'est lance.");
@@ -52,7 +50,7 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                 }
                 tn.generateTemplate();
                 return;
-                
+
             }
             Privmsg msg = Privmsg.buildAnswer(im,
                     "Erreur : Parametre(s) Incorrect(s). ex : $tn-result id_team score1 score2");

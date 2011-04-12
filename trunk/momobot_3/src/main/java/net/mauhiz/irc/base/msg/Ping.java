@@ -2,6 +2,7 @@ package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
@@ -15,7 +16,7 @@ public class Ping extends AbstractIrcMessage {
      * @param server1
      * @param pingId1
      */
-    public Ping(String from1, String to1, IrcServer server1, String pingId1) {
+    public Ping(Target from1, Target to1, IrcServer server1, String pingId1) {
         super(from1, to1, server1);
         pingId = pingId1;
     }

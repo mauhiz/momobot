@@ -14,6 +14,7 @@ public class ExitAction extends AbstractAction {
      * @param shell1
      */
     public ExitAction(Shell shell1) {
+        super();
         shell = shell1;
     }
 

@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.cwwb;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Quit;
@@ -36,7 +37,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
      * @see net.mauhiz.irc.base.trigger.IPartTrigger#doTrigger(Part, IIrcControl)
      */
     public void doTrigger(Part im, IIrcControl control) {
-        removeSeekFromUser(im.getFrom());
+        removeSeekFromUser((IrcUser) im.getFrom());
     }
 
     /**
@@ -49,11 +50,11 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
             return;
         }
 
-        String sender = im.getFrom();
+        IrcUser sender = (IrcUser) im.getFrom();
 
         // On ignore les messages provenant de certains utilisateurs.
         for (String element : IGNORED_NICKS) {
-            if (element.equals(sender)) {
+            if (element.equals(sender.getNick())) {
                 return;
             }
         }
@@ -67,7 +68,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
      * @see net.mauhiz.irc.base.trigger.IQuitTrigger#doTrigger(Quit, IIrcControl)
      */
     public void doTrigger(Quit im, IIrcControl control) {
-        removeSeekFromUser(im.getFrom());
+        removeSeekFromUser((IrcUser) im.getFrom());
     }
 
     /**
@@ -82,7 +83,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
      * @param sender
      * @param pMessage
      */
-    public void processMessage(String sender, String pMessage) {
+    public void processMessage(IrcUser sender, String pMessage) {
         String message = pMessage.trim();
         // String lowMsg = message.toLowerCase();
 
@@ -106,7 +107,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
              * joueur existe deja
              */
             Query qry = HibernateUtils.currentSession().createQuery("from War where user = :user");
-            qry.setString("user", sender);
+            qry.setString("user", sender.getNick());
             War existing = (War) qry.uniqueResult();
             if (existing != null) {
                 war.setId(existing.getId());
@@ -122,9 +123,9 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
      * 
      * @param user
      */
-    public void removeSeekFromUser(String user) {
+    public void removeSeekFromUser(IrcUser user) {
         SQLQuery qry = HibernateUtils.currentSession().createSQLQuery("delete from War where user = :user");
-        qry.setString("user", user);
+        qry.setString("user", user.getNick());
         qry.executeUpdate();
     }
 }
