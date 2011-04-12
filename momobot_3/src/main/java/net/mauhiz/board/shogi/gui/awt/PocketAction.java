@@ -8,8 +8,8 @@ import net.mauhiz.board.shogi.model.ShogiPiece;
 
 public class PocketAction implements ActionListener {
 
-    private ShogiBoardController controller;
-    private ShogiPiece piece;
+    private final ShogiBoardController controller;
+    private final ShogiPiece piece;
 
     public PocketAction(ShogiBoardController controller, ShogiPiece piece) {
         this.controller = controller;

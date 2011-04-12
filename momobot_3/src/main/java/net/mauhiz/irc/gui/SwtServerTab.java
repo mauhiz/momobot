@@ -17,8 +17,8 @@ public class SwtServerTab extends SwtTab {
 
     static class JoinHandler implements Listener {
         private final Text joinField;
-        private final SwtIrcClient swtIrcClient;
         private final IrcServer server;
+        private final SwtIrcClient swtIrcClient;
 
         JoinHandler(Text joinField, SwtIrcClient swtIrcClient, IrcServer server) {
             this.joinField = joinField;
@@ -28,7 +28,7 @@ public class SwtServerTab extends SwtTab {
 
         @Override
         public void handleEvent(Event arg0) {
-            swtIrcClient.doJoin(server, joinField.getText());
+            swtIrcClient.doJoin(server, server.findChannel(joinField.getText()));
         }
     }
 

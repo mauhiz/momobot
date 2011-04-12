@@ -49,7 +49,7 @@ public abstract class AbstractIrcIO implements IIrcIO {
         try {
             control.decodeIrcRawMsg(msg, this);
         } catch (RuntimeException rex) {
-            LOG.error(rex, rex); // dont let it crash
+            LOG.error("Error while processing msg: " + msg, rex); // dont let it crash
         }
     }
 

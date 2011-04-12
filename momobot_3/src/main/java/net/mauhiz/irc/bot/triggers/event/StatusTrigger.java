@@ -2,7 +2,6 @@ package net.mauhiz.irc.bot.triggers.event;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.event.ChannelEvent;
@@ -19,15 +18,14 @@ public class StatusTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     public StatusTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        IrcServer server = im.getServer();
-        IrcChannel chan = server.findChannel(im.getTo());
+        IrcChannel chan = (IrcChannel) im.getTo();
         if (chan == null) {
             /* msg prive */
             return;
@@ -39,7 +37,7 @@ public class StatusTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         } else {
             reply = evt.toString();
         }
-        
+
         Privmsg msg = Privmsg.buildAnswer(im, reply);
         control.sendMsg(msg);
     }

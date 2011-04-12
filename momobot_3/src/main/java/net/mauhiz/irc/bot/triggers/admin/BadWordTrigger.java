@@ -5,6 +5,9 @@ import java.util.TreeSet;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.UserChannelMode;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -26,14 +29,14 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
         BADWORDS.add("caca");
         BADWORDS.add("prout");
     }
-    
+
     /**
      * @param trigger
      */
     public BadWordTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -60,9 +63,9 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
                 }
             }
         }
-        
+
     }
-    
+
     /**
      * @param toReply
      * @param control
@@ -70,13 +73,12 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
      */
     private void getAngry(IIrcMessage toReply, IIrcControl control, String badword) {
         IIrcMessage resp;
-        IrcChannel targetChan = toReply.getServer().findChannel(toReply.getTo(), false);
-        // IrcUser infringer = toReply.getServer().findUser(new Mask(toReply.getFrom()), false);
-        
-        /* TODO verifier que je suis OP et que c'est un channel */
-        if (targetChan != null /* && targetChan.isOp(infringer) */) {
+        IrcServer server = toReply.getServer();
+        IrcChannel targetChan = (IrcChannel) toReply.getTo();
+
+        if (targetChan != null && targetChan.getModes(server.getMyself()).contains(UserChannelMode.OP)) {
             /* hinhin, je suis op */
-            resp = new Kick(toReply.getServer(), null, null, toReply.getTo(), toReply.getFrom(),
+            resp = new Kick(server, null, targetChan, (IrcUser) toReply.getFrom(),
                     "You shall not use bad words such as " + badword);
         } else {
             /* je rage quand meme */

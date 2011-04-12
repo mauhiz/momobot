@@ -23,7 +23,9 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
      */
     private final Set<IrcChannel> channels = new ConcurrentSkipListSet<IrcChannel>();
 
+    private String ircForm;
     private IrcUser myself;
+
     /**
      * a chaque server sa liste d users.
      */
@@ -72,9 +74,9 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
     }
 
     /**
-     * @see net.mauhiz.irc.base.data.IrcServer#findUser(net.mauhiz.irc.base.data.Mask, boolean)
+     * @see net.mauhiz.irc.base.data.IrcServer#findUser(net.mauhiz.irc.base.data.HostMask, boolean)
      */
-    public IrcUser findUser(Mask mask, boolean addIfNotFound) {
+    public IrcUser findUser(HostMask mask, boolean addIfNotFound) {
         assert mask != null;
 
         String nick = mask.getNick();
@@ -83,15 +85,15 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
         }
         for (IrcUser user : users) {
             if (nick.equalsIgnoreCase(user.getNick())) {
-                if (addIfNotFound && (user.getHost() == null || user.getUser() == null)) {
-                    user.updateWithMask(mask);
+                if (user.getMask() == null) {
+                    user.setMask(mask);
                 }
                 return user;
             }
         }
         if (addIfNotFound) {
             IrcUser newUser = newUser(mask.getNick());
-            newUser.updateWithMask(mask);
+            newUser.setMask(mask);
             users.add(newUser);
             return newUser;
         }
@@ -111,12 +113,13 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
                 return user;
             }
         }
+
+        IrcUser newUser = newUser(nick);
         if (addIfNotFound) {
-            IrcUser newUser = newUser(nick);
             users.add(newUser);
-            return newUser;
         }
-        return null;
+        return newUser;
+
     }
 
     /**
@@ -147,6 +150,10 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
             }
         }
         return chans;
+    }
+
+    public String getIrcForm() {
+        return ircForm;
     }
 
     /**
@@ -187,6 +194,10 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
      */
     public void setAlias(String alias1) {
         alias = alias1;
+    }
+
+    public void setIrcForm(String ircForm) {
+        this.ircForm = ircForm;
     }
 
     /**

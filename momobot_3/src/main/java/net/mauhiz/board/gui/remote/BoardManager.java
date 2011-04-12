@@ -59,7 +59,7 @@ public class BoardManager {
             String text = move.toString();
 
             for (IrcOpponent opponent : opponents.get(gameId)) {
-                Ctcp msg = new CtcpMove(null, opponent.opponentUser.getNick(), opponent.server, text);
+                Ctcp msg = new CtcpMove(null, opponent.opponentUser, opponent.server, text);
                 opponent.control.sendMsg(msg);
             }
         }

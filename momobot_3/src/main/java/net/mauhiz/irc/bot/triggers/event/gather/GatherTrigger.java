@@ -2,9 +2,7 @@ package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.event.ChannelEvent;
@@ -23,18 +21,17 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     public GatherTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        IrcServer server = cme.getServer();
-        IrcChannel chan = server.findChannel(cme.getTo());
+        IrcChannel chan = (IrcChannel) cme.getTo();
         ChannelEvent evt = chan.getEvt();
         String respMsg;
         if (evt == null) {
-            IrcUser user = server.findUser(new Mask(cme.getFrom()), true);
+            IrcUser user = (IrcUser) cme.getFrom();
             Gather gather;
             String arg = getArgs(cme.getMessage());
             if (StringUtils.isNumeric(arg) && StringUtils.isNotBlank(arg)) {

@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
  */
 public class ChannelProperties {
     private static final Logger LOG = Logger.getLogger(ChannelProperties.class);
-    private final List<Mask> bans = new ArrayList<Mask>();
+    private final List<HostMask> bans = new ArrayList<HostMask>();
     private boolean inviteOnly;
     private String key;
     private Integer limit;
@@ -24,14 +24,14 @@ public class ChannelProperties {
      * @param ban
      *            the ban to set
      */
-    public void addBan(Mask ban) {
+    public void addBan(HostMask ban) {
         bans.add(ban);
     }
 
     /**
      * @return the bans
      */
-    public List<Mask> getBans() {
+    public List<HostMask> getBans() {
         return bans;
     }
 

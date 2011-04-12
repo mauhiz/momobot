@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
@@ -25,7 +26,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChars {
+public abstract class IrcDecoder implements IrcPeer, IrcSpecialChars {
 
     static final Pattern CMD = Pattern.compile("([\\S^:]+) (.*)");
     static final Pattern FROM = Pattern.compile(":([\\S^:]+) (.*)");
@@ -44,11 +45,11 @@ public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChar
      */
     public IIrcMessage buildFromRaw(String raw) {
         String work = raw;
-        String from = null;
-        String to = null;
+        String fromStr = null;
+        String toStr = null;
         Matcher m = FROM.matcher(work);
         if (m.matches()) {
-            from = m.group(1);
+            fromStr = m.group(1);
             work = m.group(2);
         }
         m = CMD.matcher(work);
@@ -58,7 +59,7 @@ public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChar
             m = TO.matcher(work);
             String msg;
             if (m.matches()) {
-                to = m.group(1);
+                toStr = m.group(1);
                 msg = m.group(2);
             } else {
                 msg = work;
@@ -67,43 +68,87 @@ public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChar
             if (msg.charAt(0) == ':') {
                 msg = msg.substring(1);
             }
+            Target from = decodeTarget(getServer(), fromStr);
+            Target to = decodeTarget(getServer(), toStr);
             if (StringUtils.isNumeric(cmd)) {
                 return newServerMsg(from, to, cmd, msg);
-            } else if (NOTICE.equals(cmd)) {
-                return new Notice(from, to, getServer(), msg);
-            } else if (PING.equals(cmd)) {
-                return new Ping(from, to, getServer(), msg);
-            } else if (MODE.equals(cmd)) {
-                return new Mode(from, to, getServer(), msg);
-            } else if (JOIN.equals(cmd)) {
-                return new Join(from, getServer(), msg);
-            } else if (PART.equals(cmd)) {
-                String reason = StringUtils.substringAfter(msg, " :");
-                msg = StringUtils.substringBefore(msg, " :");
-                return new Part(getServer(), from, to, msg, reason);
-            } else if (PRIVMSG.equals(cmd)) {
-                if (msg.charAt(0) == QUOTE_STX) {
-                    msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
-                    return CtcpFactory.decode(from, to, getServer(), msg);
-                }
-                return new Privmsg(from, to, getServer(), msg);
-            } else if (QUIT.equals(cmd)) {
-                return new Quit(from, to, getServer(), msg);
-            } else if (NICK.equals(cmd)) {
-                return new Nick(getServer(), from, msg);
-            } else if (KICK.equals(cmd)) {
-                String reason = StringUtils.substringAfter(msg, " :");
-                msg = StringUtils.substringBefore(msg, " :");
-                return new Kick(getServer(), from, null, to, msg, reason);
-            } else if (ERROR.equals(cmd)) {
-                return new ServerError(getServer(), cmd);
-            } else if (TOPIC.equals(cmd)) {
-                return new SetTopic(from, to, getServer(), msg);
+            }
+
+            IrcCommands command = IrcCommands.valueOf(cmd);
+
+            switch (command) {
+                case NOTICE:
+                    return new Notice(from, to, getServer(), msg);
+
+                case PING:
+                    return new Ping(from, to, getServer(), msg);
+
+                case MODE:
+                    return new Mode(from, to, getServer(), msg);
+
+                case JOIN:
+                    IrcChannel channel = getServer().findChannel(msg);
+                    return new Join(from, getServer(), channel);
+
+                case PART:
+                    String partReason = StringUtils.substringAfter(msg, " :");
+                    return new Part(getServer(), from, to, partReason);
+
+                case PRIVMSG:
+                    if (msg.charAt(0) == QUOTE_STX) {
+                        msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
+                        return CtcpFactory.decode(from, to, getServer(), msg);
+                    }
+                    return new Privmsg(from, to, getServer(), msg);
+
+                case QUIT:
+                    // FIXME the pattern for Quit is wrong, 'to' is actually the beginning of the message
+                    return new Quit(from, to, getServer(), msg);
+
+                case NICK:
+                    return new Nick(getServer(), from, msg);
+
+                case KICK:
+                    String reason = StringUtils.substringAfter(msg, " :");
+                    String nick = StringUtils.substringBefore(msg, " :");
+                    IrcUser target = getServer().findUser(nick, false);
+                    return new Kick(getServer(), from, (IrcChannel) to, target, reason);
+
+                case ERROR:
+                    return new ServerError(getServer(), cmd);
+
+                case TOPIC:
+                    return new SetTopic(from, to, getServer(), msg);
+
+                default:
+                    break;
             }
         }
         // TODO ERROR :Closing Link: by underworld2.no.quakenet.org (Registration Timeout)
-        LOG.warn("Unknown message on server " + getServer().getAlias() + ": " + raw);
+        LOG.warn("Unknown message on server " + getServer() + ": " + raw);
         return null;
+    }
+
+    protected Target decodeTarget(IrcServer server, String fromStr) {
+        if (fromStr == null) {
+            return null;
+        }
+        if (MomoStringUtils.isChannelName(fromStr)) {
+            return server.findChannel(fromStr);
+        }
+
+        HostMask mask = HostMask.getInstance(fromStr);
+
+        if (mask == null) { // not a host mask
+            if (StringUtils.contains(fromStr, '.')) {
+                server.setIrcForm(fromStr);
+                return server;
+            }
+
+            return server.findUser(fromStr, true);
+        }
+
+        return server.findUser(mask, true);
     }
 
     /**
@@ -118,7 +163,7 @@ public abstract class IrcDecoder implements IrcCommands, IrcPeer, IrcSpecialChar
     /**
      * this method can be subclassed
      */
-    protected IIrcMessage newServerMsg(String from, String to, String cmd, String msg) {
+    protected IIrcMessage newServerMsg(Target from, Target to, String cmd, String msg) {
         return new ServerMsg(from, to, getServer(), cmd, msg);
     }
 }

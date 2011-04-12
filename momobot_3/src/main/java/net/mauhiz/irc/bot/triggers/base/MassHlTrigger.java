@@ -5,9 +5,7 @@ import java.util.TreeSet;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
 import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -18,7 +16,7 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
  */
 
 public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    
+
     /**
      * @param trigger
      *            le trigger
@@ -26,14 +24,13 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     public MassHlTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        IrcServer server = cme.getServer();
-        IrcChannel chan = server.findChannel(cme.getTo());
+        IrcChannel chan = (IrcChannel) cme.getTo();
         if (chan == null) {
             /* msg pv */
             return;
@@ -42,9 +39,9 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             LOG.error("no user on channel " + cme.getTo());
             return;
         }
-        
+
         LOG.debug("MassHlTrigger : " + chan.fullName() + " has " + chan.size() + " users");
-        IrcUser from = server.findUser(new Mask(cme.getFrom()), true);
+        IrcUser from = (IrcUser) cme.getFrom();
         Set<IrcUser> nudgeableUsers = new TreeSet<IrcUser>();
         for (IrcUser nextIrcUser : chan) {
             if (nextIrcUser.isService()) {
@@ -55,14 +52,14 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                 /* no caller */
                 LOG.debug("skipping caller : " + nextIrcUser.getNick());
                 continue;
-            } else if (nextIrcUser.equals(server.getMyself())) {
+            } else if (nextIrcUser.equals(cme.getServer().getMyself())) {
                 /* no self */
                 LOG.debug("skipping myself : " + nextIrcUser.getNick());
                 continue;
             }
             nudgeableUsers.add(nextIrcUser);
         }
-        
+
         if (nudgeableUsers.isEmpty()) {
             return;
         }
@@ -73,7 +70,7 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             msg.append(' ');
             msg.append(user.getNick());
         }
-        
+
         Action pmsg = Action.buildAnswer(cme, msg.toString());
         control.sendMsg(pmsg);
     }

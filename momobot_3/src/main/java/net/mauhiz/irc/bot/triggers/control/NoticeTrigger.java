@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.control;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -18,7 +19,7 @@ public class NoticeTrigger extends AbstractTextTrigger implements IAdminTrigger,
     public NoticeTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -31,11 +32,12 @@ public class NoticeTrigger extends AbstractTextTrigger implements IAdminTrigger,
             control.sendMsg(msg);
         } else {
             /* FIXME cross-server */
-            Notice msg = new Notice(null, args.substring(0, index), im.getServer(), args.substring(index + 1));
+            IrcUser target = im.getServer().findUser(args.substring(0, index), false);
+            Notice msg = new Notice(null, target, im.getServer(), args.substring(index + 1));
             control.sendMsg(msg);
         }
     }
-    
+
     @Override
     public String getTriggerHelp() {
         return "syntaxe $" + getTriggerText() + " target msg";

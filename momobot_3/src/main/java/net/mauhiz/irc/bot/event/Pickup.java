@@ -153,7 +153,7 @@ public class Pickup extends ChannelEvent {
 
             // On Ajoute les user dans la liste
             for (Team team : teams) {
-                listeUser.addAll(team.members());
+                listeUser.addAll(team.getMembers());
                 team.clear();
             }
 

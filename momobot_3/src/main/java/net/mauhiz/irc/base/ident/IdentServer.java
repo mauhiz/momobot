@@ -41,7 +41,7 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
      */
     public IdentServer(IrcUser user1) {
         super();
-        user = user1.getUser();
+        user = user1.getMask().getUser();
     }
 
     /**

@@ -20,7 +20,7 @@ public abstract class AbstractServerTest {
         Assert.assertTrue(QNET instanceof QnetServer);
         IrcUser myself = QNET.newUser("momobot3");
         Assert.assertTrue(myself instanceof QnetUser);
-        myself.setUser("mmb");
+        myself.getMask().setUser("mmb");
         myself.setFullName("MMB v3");
         QNET.setMyself(myself);
     }

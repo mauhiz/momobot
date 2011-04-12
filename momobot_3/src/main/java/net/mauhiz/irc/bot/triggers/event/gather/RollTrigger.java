@@ -19,13 +19,13 @@ public class RollTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     public RollTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        IrcChannel chan = im.getServer().findChannel(im.getTo());
+        IrcChannel chan = (IrcChannel) im.getTo();
         ChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {

@@ -2,7 +2,6 @@ package net.mauhiz.irc.bot.triggers.event.gather;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -24,10 +23,10 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @return replacement
      */
     public static String replaceTu(String input, String with) {
-        return StringUtils.replaceEach(input, new String[]{"tu es ", "Tu es "}, new String[]{with + " est ",
-                with + " est "});
+        return StringUtils.replaceEach(input, new String[] { "tu es ", "Tu es " }, new String[] { with + " est ",
+                with + " est " });
     }
-    
+
     /**
      * @param trigger
      *            le trigger
@@ -35,15 +34,14 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     public AdminaddTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        IrcServer server = im.getServer();
-        IrcChannel chan = server.findChannel(im.getTo());
+        IrcChannel chan = (IrcChannel) im.getTo();
         ChannelEvent event = chan.getEvt();
         if (event == null) {
             Privmsg msg = Privmsg.buildAnswer(im, "Aucun gather ou pickup n'est lance.");
@@ -54,10 +52,10 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         if (ArrayUtils.isEmpty(whos)) {
             return;
         }
-        
+
         if (event instanceof Gather) {
             for (String who : whos) {
-                IrcUser target = server.findUser(who, false);
+                IrcUser target = im.getServer().findUser(who, false);
                 if (target == null) {
                     Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan);
                     control.sendMsg(msg);
@@ -67,7 +65,7 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 Privmsg msg = Privmsg.buildAnswer(im, resp);
                 control.sendMsg(msg);
             }
-            
+
         } else if (event instanceof Pickup) {
             String team = whos[whos.length - 1];
             Pickup pick = (Pickup) event;
@@ -76,7 +74,7 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 --max;
             }
             for (int i = 0; i < max; i++) {
-                IrcUser target = server.findUser(whos[i], false);
+                IrcUser target = im.getServer().findUser(whos[i], false);
                 if (target == null) {
                     Privmsg msg = Privmsg.buildAnswer(im, whos[i] + " n'est pas sur " + chan);
                     control.sendMsg(msg);
@@ -86,7 +84,7 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 Privmsg msg = Privmsg.buildAnswer(im, resp);
                 control.sendMsg(msg);
             }
-            
+
         }
     }
 }

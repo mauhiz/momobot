@@ -89,7 +89,7 @@ public class Tournament extends ChannelEvent {
     /**
      * 
      */
-    private boolean isLunched;
+    private boolean isLaunched;
 
     /**
      * 
@@ -220,8 +220,8 @@ public class Tournament extends ChannelEvent {
      */
     public String getStatus() {
 
-        if (!isLunched && teamList.size() == numberTeams) {
-            isLunched = true;
+        if (!isLaunched && teamList.size() == numberTeams) {
+            isLaunched = true;
             int phase = mapList.size(); // 3
             for (int i = 0; i < numberTeams / 2; i++) {
                 Match match = new Match(phase, i, mapList.get(0), teamList.get(2 * i), teamList.get(2 * i + 1));
@@ -238,7 +238,7 @@ public class Tournament extends ChannelEvent {
      * 
      */
     public boolean isReady() {
-        return isLunched;
+        return isLaunched;
     }
 
     /**

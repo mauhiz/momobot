@@ -2,6 +2,7 @@ package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
@@ -10,7 +11,7 @@ public interface IIrcMessage {
     /**
      * @return from
      */
-    String getFrom();
+    Target getFrom();
 
     /**
      * @return message prêt à être utilise sur IRC
@@ -25,7 +26,7 @@ public interface IIrcMessage {
     /**
      * @return to
      */
-    String getTo();
+    Target getTo();
 
     boolean isToChannel();
 

@@ -10,6 +10,7 @@ import java.util.Locale;
 import net.mauhiz.irc.base.Color;
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -28,7 +29,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * un espace.
      */
     private static final char SEP = ' ';
-    
+
     /**
      * @param msg
      * @param heureDispo
@@ -51,7 +52,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         }
         return msg;
     }
-    
+
     /**
      * @param trigger
      *            le trigger
@@ -59,7 +60,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     public YaquiTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @param imsg
      * @param cal
@@ -71,7 +72,8 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         Collection<String> heure1Pala = new LinkedList<String>();
         Collection<String> heure2Dispo = new LinkedList<String>();
         Collection<String> heure2Pala = new LinkedList<String>();
-        List<Dispo> dispos = DispoDb.getInstance(imsg.getServer()).getDispo(imsg.getTo(), date);
+        List<Dispo> dispos = DispoDb.getInstance(imsg.getServer()).getDispo(((IrcChannel) imsg.getTo()).fullName(),
+                date);
         for (Dispo dispo : dispos) {
             if (dispo.getPresent1() == Dispo.Present.LA) {
                 heure1Dispo.add(dispo.getQauth());
@@ -91,7 +93,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         appendDispos(msg, heure2Dispo, heure2Pala);
         return msg.toString();
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -123,7 +125,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             }
         }
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.triggers.AbstractTextTrigger#getTriggerHelp()
      */

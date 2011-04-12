@@ -16,6 +16,7 @@ public class MoveAction<B extends Board<? extends Piece, ? extends Player>, M ex
     private final Square to;
 
     public MoveAction(GuiBoardController<B, M> controller, Square to) {
+        super();
         this.to = to;
         this.controller = controller;
     }

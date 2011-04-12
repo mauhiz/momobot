@@ -51,15 +51,12 @@ public class SwtChanTab extends SwtTab {
         swtIrcClient.folderBar.addCTabFolder2Listener(new CTabFolder2Adapter() {
             @Override
             public void close(CTabFolderEvent event) {
-                if (event.item == folder) {
-                    // if I am still on this channel - leave it.
-                    if (channel.contains(server.getMyself())) {
-                        Part msg = new Part(server, channel.fullName(), "@+");
-                        IIrcControl control = swtIrcClient.gtm.getClient();
-                        assert control != null;
-                        control.sendMsg(msg);
-                        swtIrcClient.cut.removeChannel(channel);
-                    }
+                if (event.item == folder && channel.contains(server.getMyself())) {
+                    Part msg = new Part(server, channel, "@+");
+                    IIrcControl control = swtIrcClient.gtm.getClient();
+                    assert control != null;
+                    control.sendMsg(msg);
+                    swtIrcClient.cut.removeChannel(channel);
                 }
             }
         });
@@ -69,7 +66,7 @@ public class SwtChanTab extends SwtTab {
         return usersInChan;
     }
 
-    protected void initTypeBar() {
+    protected final void initTypeBar() {
         /* Affichage de la barre de saisie */
         Text inputBar = new Text(compo, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
         inputBar.setText(StringUtils.EMPTY);
@@ -81,11 +78,11 @@ public class SwtChanTab extends SwtTab {
         buttonZone.setLayout(new GridLayout(1, false));
         Button sendText = new Button(buttonZone, SWT.PUSH);
         sendText.setText("Send text");
-        sendText.addSelectionListener(new SendAction(inputBar, swtIrcClient.gtm, server, channel.fullName()));
+        sendText.addSelectionListener(new SendAction(inputBar, swtIrcClient.gtm, server, channel));
 
         Button sendNotice = new Button(buttonZone, SWT.PUSH);
         sendNotice.setText("Send notice");
-        sendNotice.addSelectionListener(new SendNoticeAction(inputBar, swtIrcClient.gtm, server, channel.fullName()));
+        sendNotice.addSelectionListener(new SendNoticeAction(inputBar, swtIrcClient.gtm, server, channel));
     }
 
     public void setTopicEditable(boolean editable) {

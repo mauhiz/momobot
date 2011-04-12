@@ -5,6 +5,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.data.WhoisRequest;
 import net.mauhiz.irc.base.data.qnet.QnetServer;
 
@@ -14,7 +15,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
+public class ServerMsg extends AbstractIrcMessage {
     private static final Logger LOG = Logger.getLogger(ServerMsg.class);
     /**
      * code numerique
@@ -32,7 +33,7 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
      * @param codeStr
      * @param group2
      */
-    public ServerMsg(String from1, String to1, IrcServer ircServer, String codeStr, String group2) {
+    public ServerMsg(Target from1, Target to1, IrcServer ircServer, String codeStr, String group2) {
         super(from1, to1, ircServer);
         code = Integer.parseInt(codeStr);
         msg = group2;
@@ -47,7 +48,7 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
 
     @Override
     public String getIrcForm() {
-        return ":" + from + " " + code + " " + to + " :" + msg;
+        return ":" + from.getIrcForm() + " " + code + " " + to + " :" + msg;
     }
 
     /**
@@ -100,11 +101,11 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
 
         String remaining = StringUtils.substringAfter(msg, " ");
         String user = StringUtils.substringBefore(remaining, " ");
-        remaining = StringUtils.substringAfter(remaining, " ");
-        ircUser.setUser(user);
+        ircUser.getMask().setUser(user);
 
+        remaining = StringUtils.substringAfter(remaining, " ");
         String host = StringUtils.substringBefore(remaining, " ");
-        ircUser.setHost(host);
+        ircUser.getMask().setHost(host);
 
         String fullName = StringUtils.substringAfter(remaining, " :");
         ircUser.setFullName(fullName);
@@ -115,7 +116,16 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
      */
     @Override
     public void process(IIrcControl control) {
-        switch (code) {
+        if (code <= 5) {
+            LOG.info("Greeting #" + code + ": " + msg);
+            return;
+        }
+        NumericReplies reply = NumericReplies.fromCode(code);
+        if (reply == null) {
+            LOG.warn("Unknown code: " + code);
+            return;
+        }
+        switch (reply) {
             case RPL_UMODEIS:
                 LOG.debug("my mode: " + msg);
                 break;
@@ -203,8 +213,10 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
                 LOG.warn(nickInUse + " is already in use");
 
                 // TODO use alternate nicknames from config ?
-                String newNick = nickInUse + "_";
-                control.sendMsg(new Nick(server, null, newNick));
+                if (control != null) {
+                    String newNick = nickInUse + "_";
+                    control.sendMsg(new Nick(server, null, newNick));
+                }
                 break;
             case ERR_NOTONCHANNEL:
                 LOG.warn("[TODO process] " + msg);
@@ -214,6 +226,7 @@ public class ServerMsg extends AbstractIrcMessage implements NumericReplies {
                 break;
             default:
                 LOG.warn("Unhandled server reply : " + this);
+                break;
         }
     }
 

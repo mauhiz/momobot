@@ -51,7 +51,18 @@ public class ShogiBoardController extends GuiBoardController<ShogiBoard, ShogiMo
 
     @Override
     public void movePiece(final Square to) {
-        if (selectedSquare != null) {
+        if (selectedSquare == null) {
+            if (selectedPiece != null) {
+                Drop drop = new Drop();
+                drop.setTo(to);
+                drop.dropped = selectedPiece;
+
+                if (getBoard().move(drop)) {
+                    selectedPiece = null;
+                    refresh();
+                }
+            }
+        } else {
             ShogiMove move = new ShogiMove();
             move.setFrom(selectedSquare);
             move.setTo(to);
@@ -63,15 +74,6 @@ public class ShogiBoardController extends GuiBoardController<ShogiBoard, ShogiMo
                 }
 
                 selectedSquare = null;
-                refresh();
-            }
-        } else if (selectedPiece != null) {
-            Drop drop = new Drop();
-            drop.setTo(to);
-            drop.dropped = selectedPiece;
-
-            if (getBoard().move(drop)) {
-                selectedPiece = null;
                 refresh();
             }
         }
@@ -93,22 +95,23 @@ public class ShogiBoardController extends GuiBoardController<ShogiBoard, ShogiMo
             ShogiOwnedPiece op = getBoard().getOwnedPieceAt(square);
             getDisplay().disableSquare(square);
 
-            if (selectedSquare != null) { // from the board
+            if (selectedSquare == null) {
+                if (selectedPiece == null) { // available pieces
+                    if (op != null && op.getPlayer() == getBoard().getTurn()) {
+                        getDisplay().addSelectAction(square, this);
+                    }
+                } else { // from the pocket
+                    if (ShogiRule.canDrop(getBoard(), square)) {
+                        getDisplay().addMoveAction(square, this);
+                    }
+                }
+            } else { // from the board
                 // available destinations
                 ShogiOwnedPiece selected = getBoard().getOwnedPieceAt(selectedSquare);
 
                 if (selected != null && !square.equals(selectedSquare)
                         && ShogiRule.canGo(getBoard(), selectedSquare, square)) {
                     getDisplay().addMoveAction(square, this);
-                }
-            } else if (selectedPiece != null) { // from the pocket
-                if (ShogiRule.canDrop(getBoard(), square)) {
-                    getDisplay().addMoveAction(square, this);
-                }
-            } else {
-                // available pieces
-                if (op != null && op.getPlayer() == getBoard().getTurn()) {
-                    getDisplay().addSelectAction(square, this);
                 }
             }
 

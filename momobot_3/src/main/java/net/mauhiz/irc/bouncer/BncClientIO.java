@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 import net.mauhiz.irc.base.ColorUtils;
+import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.io.AbstractIrcIO;
 import net.mauhiz.irc.base.io.IIrcInput;
 import net.mauhiz.irc.base.io.IOStatus;
@@ -24,13 +26,13 @@ public class BncClientIO extends AbstractIrcIO {
     private String nick;
     private final BncServerConnection server;
     private final Socket socket;
-    
+
     protected BncClientIO(BncClientControl ircControl, Socket socket, ClientPeer peer, BncServerConnection server) {
         super(ircControl, peer);
         this.server = server;
         this.socket = socket;
     }
-    
+
     @Override
     public void disconnect() {
         status = IOStatus.DISCONNECTING;
@@ -47,27 +49,27 @@ public class BncClientIO extends AbstractIrcIO {
         }
         status = IOStatus.DISCONNECTED;
     }
-    
+
     public String getHostName() {
         return socket.getInetAddress().getHostName();
     }
-    
+
     @Override
     public ClientPeer getPeer() {
         return (ClientPeer) super.getPeer();
     }
-    
+
     // private long connectionTime = System.currentTimeMillis();
-    
+
     @Override
     public void processMsg(String raw) {
         if (status == IOStatus.CONNECTING) {
             IIrcMessage msg = getPeer().buildFromRaw(raw);
-            
+
             if (nick == null) {
                 if (msg instanceof Nick) {
                     nick = ((Nick) msg).getNewNick();
-                    sendGreetings(server.mySelf.getNick());
+                    sendGreetings(server.mySelf);
                 } else {
                     super.processMsg(raw);
                 }
@@ -83,12 +85,12 @@ public class BncClientIO extends AbstractIrcIO {
             super.processMsg(raw);
         }
     }
-    
+
     private void readAccount(Privmsg pmsg) {
-        String target = pmsg.getTo();
-        String myNick = server.mySelf.getNick();
-        
-        if (myNick.equals(target)) {
+        Target target = pmsg.getTo();
+        Target myself = server.mySelf;
+
+        if (myself.equals(target)) {
             String content = pmsg.getMessage();
             String[] parts = content.split("\\s+");
             if (parts.length == 2) {
@@ -101,51 +103,52 @@ public class BncClientIO extends AbstractIrcIO {
                     LOG.info(acc.getUsername() + " logged in successfully from " + getHostName());
                     return;
                 }
-                
+
                 LOG.info("Failed login attempt from " + getHostName() + " (" + login + "/" + password + ")");
             }
             NoticeAuth pasBon = new NoticeAuth(server.serverData, "Invalid login or password.");
             sendMsg(pasBon.getIrcForm());
         }
     }
-    
-    void sendGreetings(String myNick) {
+
+    void sendGreetings(Target myNick) {
         BncServer bncServer = server.serverData;
         // TODO review this stuff
-        ServerMsg smsg1 = new ServerMsg(myNick, nick, bncServer, "001", "Welcome to MomoBouncer");
+        IrcUser targetNick = bncServer.findUser(nick, false);
+        ServerMsg smsg1 = new ServerMsg(myNick, targetNick, bncServer, "001", "Welcome to MomoBouncer");
         sendMsg(smsg1.getIrcForm());
-        
-        ServerMsg smsg2 = new ServerMsg(myNick, nick, bncServer, "002",
+
+        ServerMsg smsg2 = new ServerMsg(myNick, targetNick, bncServer, "002",
                 "This is an IRC proxy/bouncer. Unauthorized users must disconnect immediately.");
         sendMsg(smsg2.getIrcForm());
-        
-        ServerMsg smsg3 = new ServerMsg(myNick, nick, bncServer, "003", "This bouncer has been up since ??");
+
+        ServerMsg smsg3 = new ServerMsg(myNick, targetNick, bncServer, "003", "This bouncer has been up since ??");
         // TODO smth like server.getGlobalStartTime()
         sendMsg(smsg3.getIrcForm());
-        
-        ServerMsg smsg4 = new ServerMsg(myNick, nick, bncServer, "004", "");
+
+        ServerMsg smsg4 = new ServerMsg(myNick, targetNick, bncServer, "004", "");
         sendMsg(smsg4.getIrcForm());
-        
-        ServerMsg smsg5 = new ServerMsg(myNick, nick, bncServer, "005", "");
+
+        ServerMsg smsg5 = new ServerMsg(myNick, targetNick, bncServer, "005", "");
         sendMsg(smsg5.getIrcForm());
-        
+
         NoticeAuth na1 = new NoticeAuth(bncServer, "Welcome to JBouncer. http://www.jibble.org/jbouncer/");
         sendMsg(na1.getIrcForm());
-        
+
         NoticeAuth na2 = new NoticeAuth(bncServer,
                 "WThis is an IRC proxy/bouncer. Unauthorized users must disconnect immediately.");
         sendMsg(na2.getIrcForm());
-        
+
         NoticeAuth na3 = new NoticeAuth(bncServer, "To connect, enter your password by typing "
                 + ColorUtils.toBold("/msg " + myNick + " " + ColorUtils.toUnderline("login") + " "
                         + ColorUtils.toUnderline("password")));
         sendMsg(na3.getIrcForm());
     }
-    
+
     void start() throws IOException {
         output = new BncClientOutput(socket);
         output.start();
-        
+
         IIrcInput input = new BncClientInput(this, socket);
         input.start();
     }

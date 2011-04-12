@@ -10,6 +10,7 @@ public class PocketAction extends AbstractAction {
     private final ShogiPiece piece;
 
     public PocketAction(ShogiBoardController controller, ShogiPiece piece) {
+        super();
         this.controller = controller;
         this.piece = piece;
     }

@@ -3,7 +3,7 @@ package net.mauhiz.irc.base.msg;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.Target;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -29,9 +29,7 @@ public class Privmsg extends AbstractIrcMessage {
      * @return new msg
      */
     public static Privmsg buildPrivateAnswer(IIrcMessage toReply, String msg) {
-        String from = toReply.getFrom();
-        Mask mask = new Mask(from);
-        return new Privmsg(null, mask.getNick(), toReply.getServer(), msg);
+        return new Privmsg(null, toReply.getFrom(), toReply.getServer(), msg);
     }
 
     /**
@@ -47,7 +45,7 @@ public class Privmsg extends AbstractIrcMessage {
      * @param server1
      * @param message1
      */
-    public Privmsg(String from1, String to1, IrcServer server1, String message1) {
+    public Privmsg(Target from1, Target to1, IrcServer server1, String message1) {
         super(from1, to1, server1);
         message = message1;
     }
@@ -65,14 +63,9 @@ public class Privmsg extends AbstractIrcMessage {
         }
         sb.append("PRIVMSG ");
         if (super.to != null) {
-            if (super.from == null && !isToChannel()) {
-                try {
-                    Mask m = new Mask(super.to);
-                    IrcUser dest = super.server.findUser(m, true);
-                    sb.append(dest.getNick());
-                } catch (IllegalArgumentException iae) {
-                    sb.append(super.to);
-                }
+            if (from == null && !isToChannel()) {
+                IrcUser dest = (IrcUser) to;
+                sb.append(dest.getNick());
             } else {
                 sb.append(super.to);
             }

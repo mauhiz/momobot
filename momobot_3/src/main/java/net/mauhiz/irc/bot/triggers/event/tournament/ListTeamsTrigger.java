@@ -4,7 +4,6 @@ import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -23,22 +22,21 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
     public ListTeamsTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        IrcServer server = im.getServer();
-        IrcChannel chan = server.findChannel(im.getTo());
+        IrcChannel chan = (IrcChannel) im.getTo();
         ChannelEvent event = chan.getEvt();
         if (event == null) {
             Privmsg msg = Privmsg.buildAnswer(im, "Aucun tournoi n'est lance.");
             control.sendMsg(msg);
             return;
         }
-        
+
         if (event instanceof Tournament) {
             List<String> reply = ((Tournament) event).getListTeam();
             if (!reply.isEmpty()) {

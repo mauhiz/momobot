@@ -5,10 +5,9 @@ package net.mauhiz.irc.base.data;
  */
 public abstract class AbstractIrcUser implements IrcUser {
     private String fullName;
-    private String host;
+    private HostMask mask;
     private String nick;
     protected UserProperties props;
-    private String user;
 
     /**
      * @param nick1
@@ -42,11 +41,20 @@ public abstract class AbstractIrcUser implements IrcUser {
         return fullName;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcUser#getHost()
-     */
-    public String getHost() {
-        return host;
+    @Override
+    public String getIrcForm() {
+        if (mask == null) {
+            return nick;
+        }
+        return mask.getIrcForm();
+    }
+
+    @Override
+    public HostMask getMask() {
+        if (mask == null) {
+            mask = HostMask.getInstance(nick + "!*@*");
+        }
+        return mask;
     }
 
     /**
@@ -59,13 +67,6 @@ public abstract class AbstractIrcUser implements IrcUser {
     @Override
     public UserProperties getProperties() {
         return props;
-    }
-
-    /**
-     * @see net.mauhiz.irc.base.data.IrcUser#getUser()
-     */
-    public String getUser() {
-        return user;
     }
 
     /**
@@ -92,11 +93,10 @@ public abstract class AbstractIrcUser implements IrcUser {
         this.fullName = fullName;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcUser#setHost(java.lang.String)
-     */
-    public void setHost(String host1) {
-        host = host1;
+    @Override
+    public void setMask(HostMask mask) {
+        this.mask = mask;
+        setNick(mask.getNick());
     }
 
     /**
@@ -107,29 +107,8 @@ public abstract class AbstractIrcUser implements IrcUser {
         nick = nick1;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcUser#setUser(java.lang.String)
-     */
-    public void setUser(String user1) {
-        user = user1;
-    }
-
     @Override
     public String toString() {
         return nick;
-    }
-
-    /**
-     * @param hostmask
-     */
-    public void updateWithMask(Mask hostmask) {
-        host = hostmask.getHost();
-        if ("*".equals(host)) {
-            host = null;
-        }
-        user = hostmask.getUser();
-        if ("*".equals(user)) {
-            user = null;
-        }
     }
 }

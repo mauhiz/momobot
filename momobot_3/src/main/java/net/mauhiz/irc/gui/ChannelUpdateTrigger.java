@@ -43,16 +43,15 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger {
 
     @Override
     public void doTrigger(Join im, IIrcControl control) {
-        doUpdate(im.getServer(), im.getChan());
+        doUpdate(im.getServer(), im.getTo());
     }
 
     @Override
     public void doTrigger(Part im, IIrcControl control) {
-        doUpdate(im.getServer(), im.getChan());
+        doUpdate(im.getServer(), im.getTo());
     }
 
-    private void doUpdate(IrcServer server, String chan) {
-        final IrcChannel channel = server.findChannel(chan, false);
+    private void doUpdate(IrcServer server, IrcChannel channel) {
 
         if (channel != null) {
             final List userList = userLists.get(channel);

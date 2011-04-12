@@ -24,7 +24,7 @@ public class DummyAccountStore extends AccountStore {
             acc.setServer(QNET);
             /* cette technique ne marche que pour 1 seul account */
             IrcUser myself = acc.getServer().getMyself();
-            myself.setUser(acc.getUsername());
+            myself.getMask().setUser(acc.getUsername());
             myself.setNick(acc.getUsername());
             ACCOUNTS.add(acc);
         }

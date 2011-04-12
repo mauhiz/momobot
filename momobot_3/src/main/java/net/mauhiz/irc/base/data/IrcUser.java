@@ -3,16 +3,14 @@ package net.mauhiz.irc.base.data;
 /**
  * @author mauhiz
  */
-public interface IrcUser extends Comparable<IrcUser> {
+public interface IrcUser extends Comparable<IrcUser>, Target {
     String getFullName();
 
-    String getHost();
+    HostMask getMask();
 
     String getNick();
 
     UserProperties getProperties();
-
-    String getUser();
 
     /**
      * @return si je suis un service du reseau
@@ -21,11 +19,7 @@ public interface IrcUser extends Comparable<IrcUser> {
 
     void setFullName(String fullName);
 
-    void setHost(String string);
+    void setMask(HostMask mask);
 
     void setNick(String newNick);
-
-    void setUser(String string);
-
-    void updateWithMask(Mask mask);
 }

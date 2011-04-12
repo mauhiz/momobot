@@ -4,7 +4,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
@@ -26,7 +26,7 @@ public class Quit extends AbstractIrcMessage {
      * @param ircServer
      * @param msg1
      */
-    public Quit(String from1, String to1, IrcServer ircServer, String msg1) {
+    public Quit(Target from1, Target to1, IrcServer ircServer, String msg1) {
         super(from1, to1, ircServer);
         message = msg1;
     }
@@ -58,7 +58,7 @@ public class Quit extends AbstractIrcMessage {
 
     @Override
     public void process(IIrcControl control) {
-        IrcUser quitter = server.findUser(new Mask(from), false);
+        IrcUser quitter = (IrcUser) from;
         if (quitter != null) {
             for (IrcChannel every : server.getChannels()) {
                 every.remove(quitter);
@@ -69,7 +69,6 @@ public class Quit extends AbstractIrcMessage {
 
     @Override
     public String toString() {
-        // FIXME the pattern for Quit is wrong, 'to' is actually the beginning of the message
-        return "* Quits: " + niceFromDisplay() + " (" + to.substring(1) + " " + message + ")";
+        return "* Quits: " + niceFromDisplay() + " (" + message + ")";
     }
 }

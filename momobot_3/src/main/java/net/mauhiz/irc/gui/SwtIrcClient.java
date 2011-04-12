@@ -4,17 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
-import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Notice;
-import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.SetTopic;
 import net.mauhiz.irc.gui.actions.ExitAction;
@@ -74,12 +71,11 @@ public class SwtIrcClient {
         // TODO remove channels too
     }
 
-    void doJoin(IrcServer server, String chanName) {
-        Join msg = new Join(server, chanName);
+    void doJoin(IrcServer server, IrcChannel channel) {
+        Join msg = new Join(server, channel);
         IIrcControl control = gtm.getClient();
         assert control != null;
         control.sendMsg(msg);
-        IrcChannel channel = server.findChannel(chanName, true);
         SwtChanTab tab = createChanTab(server, channel);
         cut.addChannel(channel, tab.getUsersInChan());
     }
@@ -114,25 +110,15 @@ public class SwtIrcClient {
     }
 
     private boolean processChanLog(IIrcMessage msg) {
-        String chanName;
+        IrcChannel channel;
 
-        if (MomoStringUtils.isChannelName(msg.getTo())) {
-            chanName = msg.getTo();
-
-        } else if (msg instanceof Part) {
-            chanName = ((Part) msg).getChan();
-
-        } else if (msg instanceof Join) {
-            chanName = ((Join) msg).getChan();
-
-        } else if (msg instanceof Kick) {
-            chanName = ((Kick) msg).getChan();
+        if (msg.getTo() instanceof IrcChannel) {
+            channel = (IrcChannel) msg.getTo();
 
         } else {
             return false;
         }
 
-        IrcChannel channel = msg.getServer().findChannel(chanName);
         SwtChanTab chanTab = chanTabs.get(channel);
 
         if (chanTab == null) {
@@ -150,17 +136,14 @@ public class SwtIrcClient {
     }
 
     private boolean processPrivateLog(IIrcMessage msg) {
-        String from = msg.getFrom();
-        Mask mask = new Mask(from);
-        if (mask.getNick() == null) {
+        Target from = msg.getFrom();
+        if (!(from instanceof IrcUser)) {
             return false;
         }
-        IrcServer server = msg.getServer();
-        IrcUser user = server.findUser(mask, true);
+        IrcUser user = (IrcUser) from;
         SwtPrivateTab privateTab = privateTabs.get(user);
-        if (privateTab == null) {
-            // create tab
-            privateTab = createPrivateTab(server, user);
+        if (privateTab == null) { // create tab
+            privateTab = createPrivateTab(msg.getServer(), user);
         }
         privateTab.appendText(msg.toString());
         return true;

@@ -18,7 +18,7 @@ public class JoinTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     public JoinTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
@@ -26,7 +26,8 @@ public class JoinTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         /* TODO join cross server */
-        Join go = new Join(im.getServer(), getArgs(im.getMessage()));
+        String chanName = getArgs(im.getMessage());
+        Join go = new Join(im.getServer(), im.getServer().findChannel(chanName));
         control.sendMsg(go);
     }
 }

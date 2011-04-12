@@ -3,7 +3,7 @@ package net.mauhiz.irc.base.msg;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.Target;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -40,7 +40,7 @@ public class Notice extends AbstractIrcMessage {
      * @param ircServer
      * @param msg1
      */
-    public Notice(String from1, String to1, IrcServer ircServer, String msg1) {
+    public Notice(Target from1, Target to1, IrcServer ircServer, String msg1) {
         super(from1, to1, ircServer);
         message = msg1;
     }
@@ -59,13 +59,8 @@ public class Notice extends AbstractIrcMessage {
         sb.append("NOTICE ");
         if (super.to != null) {
             if (super.from == null && !isToChannel()) {
-                try {
-                    Mask m = new Mask(super.to);
-                    IrcUser dest = super.server.findUser(m, true);
-                    sb.append(dest.getNick());
-                } catch (IllegalArgumentException iae) {
-                    sb.append(super.to);
-                }
+                IrcUser dest = (IrcUser) to;
+                sb.append(dest.getNick());
             } else {
                 sb.append(super.to);
             }

@@ -1,9 +1,8 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.Mask;
+import net.mauhiz.irc.base.data.Target;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -13,16 +12,16 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author mauhiz
  */
 public abstract class AbstractIrcMessage implements IIrcMessage {
-    protected String from;
+    protected Target from;
     protected IrcServer server;
-    protected String to;
+    protected Target to;
 
     /**
      * @param from1
      * @param to1
      * @param server1
      */
-    public AbstractIrcMessage(String from1, String to1, IrcServer server1) {
+    public AbstractIrcMessage(Target from1, Target to1, IrcServer server1) {
         from = from1;
         to = to1;
         server = server1;
@@ -31,7 +30,7 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
     /**
      * @see net.mauhiz.irc.base.msg.IIrcMessage#getFrom()
      */
-    public String getFrom() {
+    public Target getFrom() {
         return from;
     }
 
@@ -45,27 +44,19 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
     /**
      * @see net.mauhiz.irc.base.msg.IIrcMessage#getTo()
      */
-    public String getTo() {
+    public Target getTo() {
         return to;
     }
 
     public boolean isToChannel() {
-        return MomoStringUtils.isChannelName(to);
+        return to instanceof IrcChannel;
     }
 
     protected String niceFromDisplay() {
         if (from == null) {
             return server.getMyself().toString();
         }
-        Mask fromMask = new Mask(from);
-        if (fromMask.getNick() == null) {
-            return server.getAlias();
-        }
-        IrcUser fromUser = server.findUser(fromMask, false);
-        if (fromUser == null) {
-            return from; // should seldom happen
-        }
-        return fromUser.toString();
+        return from.toString();
     }
 
     /**
