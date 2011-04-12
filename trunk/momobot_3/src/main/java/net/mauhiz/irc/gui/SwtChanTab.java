@@ -3,6 +3,7 @@ package net.mauhiz.irc.gui;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.Topic;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.gui.actions.SendAction;
 import net.mauhiz.irc.gui.actions.SendNoticeAction;
@@ -21,6 +22,7 @@ public class SwtChanTab extends SwtTab {
 
     final IrcChannel channel;
     IrcServer server;
+    final Text topicBar;
     private final List usersInChan;
 
     public SwtChanTab(final SwtIrcClient swtIrcClient, final IrcServer server, final IrcChannel channel) {
@@ -32,6 +34,13 @@ public class SwtChanTab extends SwtTab {
         /* layout */
         GridLayout gridLayout = new GridLayout(2, false);
         compo.setLayout(gridLayout);
+
+        // topic bar
+        topicBar = new Text(compo, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
+
+        // control buttons (chan flags...)
+        Composite controlGroup = new Composite(compo, SWT.BORDER);
+        controlGroup.setBackground(controlGroup.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 
         initReceiveBox();
         usersInChan = new List(compo, SWT.BORDER | SWT.V_SCROLL);
@@ -77,5 +86,13 @@ public class SwtChanTab extends SwtTab {
         Button sendNotice = new Button(buttonZone, SWT.PUSH);
         sendNotice.setText("Send notice");
         sendNotice.addSelectionListener(new SendNoticeAction(inputBar, swtIrcClient.gtm, server, channel.fullName()));
+    }
+
+    public void setTopicEditable(boolean editable) {
+        topicBar.setEditable(editable);
+    }
+
+    public void updateTopic(Topic topic) {
+        topicBar.setText(topic.toString());
     }
 }

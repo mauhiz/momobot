@@ -15,6 +15,23 @@ import org.eclipse.swt.widgets.Text;
 
 public class SwtServerTab extends SwtTab {
 
+    static class JoinHandler implements Listener {
+        private final Text joinField;
+        private final SwtIrcClient swtIrcClient;
+        private final IrcServer server;
+
+        JoinHandler(Text joinField, SwtIrcClient swtIrcClient, IrcServer server) {
+            this.joinField = joinField;
+            this.swtIrcClient = swtIrcClient;
+            this.server = server;
+        }
+
+        @Override
+        public void handleEvent(Event arg0) {
+            swtIrcClient.doJoin(server, joinField.getText());
+        }
+    }
+
     public SwtServerTab(final SwtIrcClient swtIrcClient, final IrcServer server) {
         super(swtIrcClient);
 
@@ -31,20 +48,14 @@ public class SwtServerTab extends SwtTab {
         joinField.setEditable(true);
         Button joinButton = new Button(joinBar, SWT.PUSH);
         joinButton.setText("Join");
-        joinButton.addListener(SWT.Selection, new Listener() {
-
-            @Override
-            public void handleEvent(Event arg0) {
-                swtIrcClient.doJoin(server, joinField.getText());
-            }
-        });
+        joinButton.addListener(SWT.Selection, new JoinHandler(joinField, swtIrcClient, server));
 
         swtIrcClient.folderBar.addCTabFolder2Listener(new CTabFolder2Adapter() {
 
             @Override
             public void close(CTabFolderEvent event) {
                 if (folder == event.item) {
-                    event.doit = false;
+                    swtIrcClient.doDisconnect(server);
                 }
             }
         });

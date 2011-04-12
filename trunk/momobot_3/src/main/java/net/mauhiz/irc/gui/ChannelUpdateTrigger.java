@@ -16,6 +16,25 @@ import org.eclipse.swt.widgets.List;
 
 public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger {
 
+    static class UserListUpdater implements Runnable {
+        private final IrcChannel channel;
+        private final List userList;
+
+        UserListUpdater(List userList, IrcChannel channel) {
+            this.userList = userList;
+            this.channel = channel;
+        }
+
+        @Override
+        public void run() {
+            userList.removeAll();
+
+            for (IrcUser user : channel) {
+                userList.add(user.getNick());
+            }
+        }
+    }
+
     private final Map<IrcChannel, List> userLists = new HashMap<IrcChannel, List>();
 
     public void addChannel(IrcChannel channel, List list) {
@@ -39,17 +58,7 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger {
             final List userList = userLists.get(channel);
 
             if (userList != null) {
-                userList.getDisplay().syncExec(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        userList.removeAll();
-
-                        for (IrcUser user : channel) {
-                            userList.add(user.getNick());
-                        }
-                    }
-                });
+                userList.getDisplay().syncExec(new UserListUpdater(userList, channel));
             }
         }
     }

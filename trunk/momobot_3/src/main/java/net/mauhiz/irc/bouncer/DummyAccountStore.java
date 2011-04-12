@@ -1,20 +1,19 @@
 package net.mauhiz.irc.bouncer;
 
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcServerFactory;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.qnet.QnetServer;
 
 public class DummyAccountStore extends AccountStore {
     private static final IrcServer QNET;
-    
+
     static {
-        QNET = new QnetServer("irc://uk.quakenet.org:6667/");
-        QNET.setAlias("Quakenet");
-        
+        QNET = IrcServerFactory.createServer("irc://uk.quakenet.org:6667/");
+
         IrcUser myself = QNET.newUser("MomoBouncer");
         QNET.setMyself(myself);
     }
-    
+
     @Override
     protected void load() {
         synchronized (ACCOUNTS) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <momobot>
-  <server alias="Quakenet" uri="irc://irc.quakenet.org:6667/" class="net.mauhiz.irc.base.data.qnet.QnetServer" />
+  <server alias="Quakenet" uri="irc://irc.quakenet.org:6667/" />
   <server alias="Localhost" uri="irc://localhost:6667/" />
   <profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
     <autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">

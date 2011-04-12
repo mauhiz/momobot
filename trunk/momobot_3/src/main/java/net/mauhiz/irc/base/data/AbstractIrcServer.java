@@ -32,9 +32,8 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
     /**
      * @param uriStr
      */
-    protected AbstractIrcServer(String uriStr) {
+    protected AbstractIrcServer(URI uri) {
         super();
-        URI uri = URI.create(uriStr);
         hostPort = new InetSocketAddress(uri.getHost(), uri.getPort());
     }
 
@@ -124,6 +123,9 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
      * @see net.mauhiz.irc.base.data.IrcServer#getAlias()
      */
     public String getAlias() {
+        if (alias == null) {
+            return hostPort.getHostName();
+        }
         return alias;
     }
 

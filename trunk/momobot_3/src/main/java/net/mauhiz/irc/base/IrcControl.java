@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.ident.IdentServer;
 import net.mauhiz.irc.base.io.IIrcIO;
 import net.mauhiz.irc.base.io.IrcIO;
@@ -49,7 +50,11 @@ public class IrcControl extends AbstractIrcControl implements IIrcClientControl 
         }
 
         try {
-            new IdentServer(server.getMyself()).start();
+            IrcUser myself = server.getMyself();
+            if (myself == null) {
+                throw new IllegalArgumentException("I have no name. Who am I?");
+            }
+            new IdentServer(myself).start();
             IrcIO ircio = new IrcIO(this, server);
             ircio.connect();
             serverToIo.put(server, ircio);

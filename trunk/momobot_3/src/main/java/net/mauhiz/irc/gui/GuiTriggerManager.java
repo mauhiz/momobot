@@ -3,6 +3,7 @@ package net.mauhiz.irc.gui;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
@@ -15,13 +16,13 @@ import org.eclipse.swt.widgets.Display;
  * @author mauhiz
  */
 public class GuiTriggerManager extends DefaultTriggerManager {
-    IIrcControl client = new IrcControl(this);
+    IIrcClientControl client = new IrcControl(this);
     BlockingQueue<IIrcMessage> incoming = new LinkedBlockingQueue<IIrcMessage>();
 
     /**
      * @return the client
      */
-    public IIrcControl getClient() {
+    public IIrcClientControl getClient() {
         return client;
     }
 

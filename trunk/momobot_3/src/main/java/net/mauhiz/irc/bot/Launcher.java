@@ -6,8 +6,8 @@ import java.nio.charset.Charset;
 import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IrcControl;
 import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcServerFactory;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.base.data.defaut.DefaultServer;
 import net.mauhiz.irc.base.msg.Join;
 
 import org.apache.commons.configuration.Configuration;
@@ -34,7 +34,7 @@ public class Launcher {
      * @param args
      * @throws ConfigurationException
      */
-    public static void main(String[] args) throws ConfigurationException {
+    public static void main(String... args) throws ConfigurationException {
         if (ArrayUtils.isEmpty(args)) {
             throw new IllegalArgumentException("Please specify profile names to be loaded");
         }
@@ -79,26 +79,29 @@ public class Launcher {
         for (String serverName : serverNames) {
             String uri = config.getString("server[@alias='" + serverName + "']/@uri");
             LOG.debug("uri=" + uri);
-            String serverClass = config.getString("server[@alias='" + serverName + "']/@class");
-            if (serverClass == null) {
-                serverClass = DefaultServer.class.getName();
-            }
             IrcServer server;
-            try {
-                server = Class.forName(serverClass).asSubclass(IrcServer.class).getConstructor(String.class)
-                        .newInstance(uri);
-            } catch (NoSuchMethodException e) {
-                throw new NotImplementedException(e);
-            } catch (ClassNotFoundException e) {
-                throw new NotImplementedException(e);
-            } catch (IllegalAccessException e) {
-                throw new IllegalStateException(e);
-            } catch (InstantiationException e) {
-                LOG.error(e, e);
-                continue;
-            } catch (InvocationTargetException e) {
-                LOG.error(e, e);
-                continue;
+            String serverClass = config.getString("server[@alias='" + serverName + "']/@class");
+
+            if (serverClass == null) {
+                server = IrcServerFactory.createServer(uri);
+
+            } else {
+                try {
+                    server = Class.forName(serverClass).asSubclass(IrcServer.class).getConstructor(String.class)
+                            .newInstance(uri);
+                } catch (NoSuchMethodException e) {
+                    throw new NotImplementedException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new NotImplementedException(e);
+                } catch (IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                } catch (InstantiationException e) {
+                    LOG.error(e, e);
+                    continue;
+                } catch (InvocationTargetException e) {
+                    LOG.error(e, e);
+                    continue;
+                }
             }
 
             server.setAlias(serverName);

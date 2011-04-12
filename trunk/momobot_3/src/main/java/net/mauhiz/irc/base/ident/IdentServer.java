@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class IdentServer extends AbstractRunnable implements IIdentServer {
-    
+
     private static final Logger LOGGER = Logger.getLogger(IdentServer.class);
     /**
      * le port sur lequel on ecoute.
@@ -35,7 +35,7 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
      */
     private ServerSocket ss;
     private final String user;
-    
+
     /**
      * @param user1
      */
@@ -43,20 +43,20 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
         super();
         user = user1.getUser();
     }
-    
+
     /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        
+
         try {
             ss = new ServerSocket(PORT);
             ss.setSoTimeout(SO_TIMEOUT);
-            
+
             Socket socket = ss.accept();
             socket.setSoTimeout(SO_TIMEOUT);
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-            
+
             try {
                 String line = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ASCII))
                         .readLine();
@@ -66,25 +66,26 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
             } finally {
                 writer.close();
             }
-            
+
         } catch (BindException be) {
             LOGGER.error("Could not bind on port: " + PORT, be);
-            
+
         } catch (SocketTimeoutException ste) {
+            LOGGER.debug(ste);
             // nevermind
         } catch (IOException ioe) {
             LOGGER.error(ioe, ioe);
         }
         stop();
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.ident.IIdentServer#start()
      */
     public void start() {
         startAs("ident server");
     }
-    
+
     /**
      * @see net.mauhiz.util.AbstractRunnable#stop()
      */
@@ -93,7 +94,7 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
         if (ss != null) {
             try {
                 ss.close();
-                
+
             } catch (IOException ioe) {
                 LOGGER.warn(ioe, ioe);
             }
