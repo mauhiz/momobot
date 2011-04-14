@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
  * @author mauhiz
  */
 public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    
+
     /**
      * @return next VDM
      */
@@ -27,29 +27,29 @@ public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
             page = StringUtils.substringBefore(page, "</p>");
             page = StringUtils.replaceChars(page, "\r\n", "");
             return StringEscapeUtils.unescapeHtml(page);
-            
+
         } catch (IOException e) {
             return e.getMessage();
-            
+
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
     }
-    
+
     /**
      * @param trigger
      */
     public VdmTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         String vdm = getNextVdm();
-        int maxLen = im.getServer().getLineMaxLength() - 50; // TODO make precise computation of overhead in PRIVMSG
+        int maxLen = im.getServerPeer().getNetwork().getLineMaxLength() - 50; // TODO make precise computation of overhead in PRIVMSG
         while (vdm.length() > maxLen) {
             int spc = StringUtils.indexOf(vdm, ' ', maxLen);
             Privmsg reply = Privmsg.buildAnswer(im, vdm.substring(0, spc));

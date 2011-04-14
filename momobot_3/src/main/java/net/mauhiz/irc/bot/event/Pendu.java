@@ -16,7 +16,7 @@ import org.apache.commons.lang.math.RandomUtils;
 /**
  * @author mauhiz
  */
-public class Pendu extends ChannelEvent {
+public class Pendu extends AbstractChannelEvent {
     /**
      * un dictionnaire de mots.
      */
@@ -217,7 +217,7 @@ public class Pendu extends ChannelEvent {
     }
 
     /**
-     * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
+     * @see net.mauhiz.irc.bot.event.AbstractChannelEvent#toString()
      */
     @Override
     public String toString() {

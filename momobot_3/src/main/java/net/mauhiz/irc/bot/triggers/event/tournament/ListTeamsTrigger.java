@@ -7,7 +7,7 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 /**
@@ -30,7 +30,7 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = (IrcChannel) im.getTo();
-        ChannelEvent event = chan.getEvt();
+        IChannelEvent event = chan.getEvt();
         if (event == null) {
             Privmsg msg = Privmsg.buildAnswer(im, "Aucun tournoi n'est lance.");
             control.sendMsg(msg);

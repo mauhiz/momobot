@@ -1,11 +1,11 @@
-package net.mauhiz.irc.bot.triggers.event.gather;
+package net.mauhiz.irc.bot.event.seek;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 /**
@@ -27,7 +27,7 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = (IrcChannel) im.getTo();
-        ChannelEvent evt = chan.getEvt();
+        IChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {
             reply = "Aucun gather n'est lance.";

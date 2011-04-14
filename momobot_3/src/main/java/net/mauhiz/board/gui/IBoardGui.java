@@ -11,11 +11,11 @@ import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
 
 public interface IBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> {
-    void addCancelAction(Square square, GuiBoardController<B, M> controller);
+    void addCancelAction(Square square, IGuiBoardController<B, M> controller);
 
-    void addMoveAction(Square square, GuiBoardController<B, M> controller);
+    void addMoveAction(Square square, IGuiBoardController<B, M> controller);
 
-    void addSelectAction(Square square, GuiBoardController<B, M> controller);
+    void addSelectAction(Square square, IGuiBoardController<B, M> controller);
 
     void afterInit();
 

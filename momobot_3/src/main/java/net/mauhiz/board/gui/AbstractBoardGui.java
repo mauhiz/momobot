@@ -11,25 +11,25 @@ import net.mauhiz.board.Move;
 import net.mauhiz.board.Piece;
 import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
-import net.mauhiz.util.AbstractAction;
+import net.mauhiz.util.IAction;
 
 public abstract class AbstractBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> implements
         IBoardGui<B, M> {
-    protected final Map<Square, AbstractAction> listeners = new HashMap<Square, AbstractAction>();
+    protected final Map<Square, IAction> listeners = new HashMap<Square, IAction>();
 
-    public void addCancelAction(Square square, GuiBoardController<B, M> controller) {
+    public void addCancelAction(Square square, IGuiBoardController<B, M> controller) {
         enableSquare(square, new CancelAction<B, M>(controller));
     }
 
-    public void addMoveAction(Square square, GuiBoardController<B, M> controller) {
+    public void addMoveAction(Square square, IGuiBoardController<B, M> controller) {
         enableSquare(square, new MoveAction<B, M>(controller, square));
     }
 
-    public void addSelectAction(Square square, GuiBoardController<B, M> controller) {
+    public void addSelectAction(Square square, IGuiBoardController<B, M> controller) {
         enableSquare(square, new SelectAction<B, M>(controller, square));
     }
 
-    protected abstract void enableSquare(Square square, AbstractAction action);
+    protected abstract void enableSquare(Square square, IAction action);
 
     public Dimension getDefaultSize() {
         return new Dimension(400, 400);
@@ -46,7 +46,7 @@ public abstract class AbstractBoardGui<B extends Board<? extends Piece, ? extend
 
     protected abstract String getWindowTitle();
 
-    protected abstract AbstractBoardController<B, M> newController();
+    protected abstract IBoardController<B, M> newController();
 
     public void newGame(IBoardController<B, M> controller) {
         controller.init();

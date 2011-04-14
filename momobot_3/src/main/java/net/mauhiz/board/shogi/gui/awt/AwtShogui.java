@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.awt.AwtBoardGui;
+import net.mauhiz.board.gui.awt.AbstractAwtBoardGui;
 import net.mauhiz.board.shogi.gui.IShogiGui;
 import net.mauhiz.board.shogi.gui.ShogiBoardController;
 import net.mauhiz.board.shogi.model.ShogiBoard;
@@ -22,7 +22,7 @@ import net.mauhiz.board.shogi.model.ShogiPlayer;
 /**
  * @author mauhiz
  */
-public class AwtShogui extends AwtBoardGui<ShogiBoard, ShogiMove> implements IShogiGui {
+public class AwtShogui extends AbstractAwtBoardGui<ShogiBoard, ShogiMove> implements IShogiGui {
 
     public static void main(String... args) {
         AwtShogui instance = new AwtShogui();

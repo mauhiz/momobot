@@ -8,7 +8,7 @@ import net.mauhiz.board.chess.model.ChessBoard;
 import net.mauhiz.board.chess.model.ChessMove;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
-import net.mauhiz.board.gui.swt.SwtBoardGui;
+import net.mauhiz.board.gui.swt.AbstractSwtBoardGui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @author mauhiz
  */
-public class ChessGui extends SwtBoardGui<ChessBoard, ChessMove> implements IChessGui {
+public class ChessGui extends AbstractSwtBoardGui<ChessBoard, ChessMove> implements IChessGui {
 
     public static void main(String... args) {
         ChessGui instance = new ChessGui();

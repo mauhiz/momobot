@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.event;
+package net.mauhiz.irc.bot.event.seek;
 
 public class SeekWarSelecter {
     

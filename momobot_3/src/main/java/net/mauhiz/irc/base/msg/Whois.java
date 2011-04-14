@@ -1,39 +1,35 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
  */
 public class Whois extends AbstractIrcMessage {
 
-    private final String target;
+    private final String[] targets;
 
-    /**
-     * @param from1
-     * @param to1
-     * @param server1
-     * @param target1
-     */
-    public Whois(Target from1, Target to1, IrcServer server1, String target1) {
-        super(from1, to1, server1);
-        target = target1;
+    public Whois(Target from, Target to, IIrcServerPeer server, String... targets) {
+        super(from, to, server);
+        this.targets = targets;
+    }
+
+    @Override
+    public Whois copy() {
+        return new Whois(from, to, server, targets);
     }
 
     @Override
     public String getIrcForm() {
-        return "WHOIS " + target + ' ';
-    }
-
-    @Override
-    public void process(IIrcControl control) {
-        throw new UnsupportedOperationException("I should not receive WHOIS msg");
+        return IrcCommands.WHOIS + " " + StringUtils.join(targets, ',');
     }
 
     @Override
     public String toString() {
-        return "Whoising " + target;
+        return "* Whoising " + StringUtils.join(targets, ' ');
     }
 }

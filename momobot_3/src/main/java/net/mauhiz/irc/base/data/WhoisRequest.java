@@ -42,7 +42,7 @@ public class WhoisRequest extends AbstractRunnable {
     private final IIrcControl control;
     private boolean purgatory;
     private Target reportTo;
-    protected final IrcServer server;
+    protected final IIrcServerPeer server;
 
     /**
      * fait attendre la reponse.
@@ -59,14 +59,12 @@ public class WhoisRequest extends AbstractRunnable {
      * 
      * @param nick
      *            le nom
-     * @param server1
-     * @param control1
      */
-    public WhoisRequest(String nick, IrcServer server1, IIrcControl control1) {
+    public WhoisRequest(String nick, IIrcServerPeer server, IIrcControl control) {
         super();
         target = nick;
-        server = server1;
-        control = control1;
+        this.server = server;
+        this.control = control;
     }
 
     public long getElapsedTime() {
@@ -82,7 +80,7 @@ public class WhoisRequest extends AbstractRunnable {
      */
     public void run() {
         /* whois deja en cours */
-        IrcUser user = server.findUser(target, false);
+        IrcUser user = server.getNetwork().findUser(target, false);
         if (user == null) {
             /* user inconnu */
             purgatory = true;
@@ -108,7 +106,7 @@ public class WhoisRequest extends AbstractRunnable {
         String respMsg;
         if (ok) {
             if (purgatory) {
-                server.findUser(target, true);
+                server.getNetwork().findUser(target, true);
             }
             respMsg = target + " has been whoised";
         } else {

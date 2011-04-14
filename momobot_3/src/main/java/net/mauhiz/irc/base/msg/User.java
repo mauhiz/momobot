@@ -2,8 +2,8 @@ package net.mauhiz.irc.base.msg;
 
 import java.util.Locale;
 
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 
 /**
  * @author mauhiz
@@ -13,21 +13,21 @@ public class User extends AbstractIrcMessage {
     private final String login;
 
     /**
-     * @param server1
+     * @param server
      */
-    public User(IrcServer server1) {
-        super(null, null, server1);
+    public User(IIrcServerPeer server) {
+        super(null, null, server);
         login = server.getMyself().getMask().getUser();
         fullName = server.getMyself().getFullName();
     }
 
     @Override
-    public String getIrcForm() {
-        return "USER " + login.toLowerCase(Locale.US) + " \"neuf.fr\" \"irc.quakenet.org\" :" + fullName;
+    public User copy() {
+        return new User(server);
     }
 
     @Override
-    public void process(IIrcControl control) {
-        throw new UnsupportedOperationException("I should not receive USER msg");
+    public String getIrcForm() {
+        return IrcCommands.USER + " " + login.toLowerCase(Locale.US) + " \"neuf.fr\" \"irc.quakenet.org\" :" + fullName;
     }
 }

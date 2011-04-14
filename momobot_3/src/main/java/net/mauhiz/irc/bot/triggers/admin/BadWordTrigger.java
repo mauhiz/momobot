@@ -5,7 +5,7 @@ import java.util.TreeSet;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.UserChannelMode;
 import net.mauhiz.irc.base.msg.IIrcMessage;
@@ -73,7 +73,7 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
      */
     private void getAngry(IIrcMessage toReply, IIrcControl control, String badword) {
         IIrcMessage resp;
-        IrcServer server = toReply.getServer();
+        IIrcServerPeer server = toReply.getServerPeer();
         IrcChannel targetChan = (IrcChannel) toReply.getTo();
 
         if (targetChan != null && targetChan.getModes(server.getMyself()).contains(UserChannelMode.OP)) {

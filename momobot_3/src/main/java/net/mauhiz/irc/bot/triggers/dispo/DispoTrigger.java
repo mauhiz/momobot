@@ -81,7 +81,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             dispo.setPresent1(heures[0]);
             dispo.setPresent2(heures[1]);
             dispo.setQauth(quser.getAuth());
-            dispo.setServerAlias(cme.getServer().getAlias());
+            dispo.setServerAlias(cme.getServerPeer().getNetwork().getAlias());
             dispo.setQuand(new java.sql.Date(date.getTimeInMillis()));
             DispoDb.updateDispo(dispo);
             notice = Notice.buildPrivateAnswer(cme, "dispo enregistree pour le " + DateUtil.DATE_FORMAT.format(date));
@@ -91,7 +91,7 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
 
     private void whoisUser(QnetUser quser, IIrcMessage cme, IIrcControl control) {
         if (StringUtils.isEmpty(quser.getAuth())) {
-            WhoisRequest whois = new WhoisRequest(quser.getNick(), cme.getServer(), control);
+            WhoisRequest whois = new WhoisRequest(quser.getNick(), cme.getServerPeer(), control);
             whois.startAs("Whois Request");
 
             /* on attend le whois */

@@ -1,34 +1,31 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
  */
 public class Quit extends AbstractIrcMessage {
-    String message;
+    private final String message;
 
     /**
-     * @param ircServer
+     * @param server
      * @param msg
      */
-    public Quit(IrcServer ircServer, String msg) {
-        this(null, null, ircServer, msg);
+    public Quit(IIrcServerPeer server, String msg) {
+        this(null, server, msg);
     }
 
-    /**
-     * @param from1
-     * @param to1
-     * @param ircServer
-     * @param msg1
-     */
-    public Quit(Target from1, Target to1, IrcServer ircServer, String msg1) {
-        super(from1, to1, ircServer);
-        message = msg1;
+    public Quit(Target from, IIrcServerPeer server, String reason) {
+        super(from, null, server);
+        message = reason;
+    }
+
+    @Override
+    public Quit copy() {
+        return new Quit(from, server, message);
     }
 
     @Override
@@ -39,13 +36,11 @@ public class Quit extends AbstractIrcMessage {
             sb.append(super.from);
             sb.append(' ');
         }
-        sb.append("QUIT ");
-        if (super.to != null) {
-            sb.append(super.to);
-            sb.append(' ');
+        sb.append(IrcCommands.QUIT);
+        if (message != null) {
+            sb.append(" :").append(message);
         }
-        sb.append(':');
-        sb.append(message);
+
         return sb.toString();
     }
 
@@ -54,17 +49,6 @@ public class Quit extends AbstractIrcMessage {
      */
     public String getMessage() {
         return message;
-    }
-
-    @Override
-    public void process(IIrcControl control) {
-        IrcUser quitter = (IrcUser) from;
-        if (quitter != null) {
-            for (IrcChannel every : server.getChannels()) {
-                every.remove(quitter);
-            }
-            server.remove(quitter);
-        }
     }
 
     @Override

@@ -2,7 +2,7 @@ package net.mauhiz.irc.bot.triggers.memo;
 
 import java.util.List;
 
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcNetwork;
 import net.mauhiz.util.HibernateUtils;
 import net.mauhiz.util.Hooks;
 
@@ -17,24 +17,24 @@ public class MemoDb {
      * @param server
      * @return instance
      */
-    public static MemoDb getInstance(IrcServer server) {
+    public static MemoDb getInstance(IrcNetwork server) {
         MemoDb ret = Hooks.getHook(server, MemoDb.class);
         if (ret == null) {
             return new MemoDb(server);
         }
         return ret;
     }
-    
-    private final IrcServer hook;
-    
+
+    private final IrcNetwork hook;
+
     /**
      * @param server1
      */
-    public MemoDb(IrcServer server1) {
+    public MemoDb(IrcNetwork server1) {
         Hooks.addHook(server1, this);
         hook = server1;
     }
-    
+
     /**
      * @return le nbre de memos enregistres par rapport a ce serveur
      */
@@ -48,7 +48,7 @@ public class MemoDb {
         }
         return uniqueResult.intValue();
     }
-    
+
     /**
      * @param key
      *            la cle
@@ -61,7 +61,7 @@ public class MemoDb {
         }
         return result;
     }
-    
+
     /**
      * @return la liste des memos
      */
@@ -73,10 +73,10 @@ public class MemoDb {
         if (results.isEmpty()) {
             return "Pas de memo pour l'instant";
         }
-        
+
         return "memos : " + StringUtils.join(results, ' ');
     }
-    
+
     /**
      * @param key
      *            la cle
@@ -89,7 +89,7 @@ public class MemoDb {
         getQry.setString("key", key);
         return (String) getQry.uniqueResult();
     }
-    
+
     /**
      * @param key
      *            la cle
@@ -123,9 +123,9 @@ public class MemoDb {
                 return "Erreur, memo non enregistre";
             }
         }
-        
+
         HibernateUtils.currentSession().getTransaction().commit();
         return msg.toString();
-        
+
     }
 }

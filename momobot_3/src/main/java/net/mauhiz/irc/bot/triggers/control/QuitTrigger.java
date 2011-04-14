@@ -33,9 +33,9 @@ public class QuitTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         Quit quit;
         if (StringUtils.isEmpty(args)) {
             IrcUser from = (IrcUser) im.getFrom();
-            quit = new Quit(im.getServer(), "Requested by " + from);
+            quit = new Quit(im.getServerPeer(), "Requested by " + from);
         } else {
-            quit = new Quit(im.getServer(), args);
+            quit = new Quit(im.getServerPeer(), args);
         }
         control.sendMsg(quit);
     }

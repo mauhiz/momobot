@@ -4,6 +4,7 @@ import net.mauhiz.irc.base.Color;
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.bot.event.seek.SeekWar;
 import net.mauhiz.util.DateUtil;
 
 import org.apache.commons.lang.time.StopWatch;
@@ -11,7 +12,7 @@ import org.apache.commons.lang.time.StopWatch;
 /**
  * @author mauhiz
  */
-public class Gather extends ChannelEvent {
+public class Gather extends AbstractChannelEvent {
     /**
      * La taille d'un gather.
      */
@@ -190,7 +191,7 @@ public class Gather extends ChannelEvent {
 
     /**
      * @return un message
-     * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
+     * @see net.mauhiz.irc.bot.event.AbstractChannelEvent#toString()
      */
     @Override
     public String toString() {

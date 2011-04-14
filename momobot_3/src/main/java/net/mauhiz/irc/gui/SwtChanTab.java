@@ -2,7 +2,7 @@ package net.mauhiz.irc.gui;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Topic;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.gui.actions.SendAction;
@@ -18,14 +18,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
-public class SwtChanTab extends SwtTab {
+public class SwtChanTab extends AbstractSwtTab {
 
     final IrcChannel channel;
-    IrcServer server;
+    IIrcServerPeer server;
     final Text topicBar;
     private final List usersInChan;
 
-    public SwtChanTab(final SwtIrcClient swtIrcClient, final IrcServer server, final IrcChannel channel) {
+    public SwtChanTab(final SwtIrcClient swtIrcClient, final IIrcServerPeer server, final IrcChannel channel) {
         super(swtIrcClient);
         this.server = server;
         this.channel = channel;

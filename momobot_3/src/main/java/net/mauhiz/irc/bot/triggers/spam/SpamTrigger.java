@@ -28,8 +28,8 @@ public class SpamTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         String msg = getArgs(im.getMessage());
         String targetNick = StringUtils.substringBefore(msg, " ");
         msg = StringUtils.substringAfter(msg, " ");
-        IrcUser target = im.getServer().findUser(targetNick, false);
-        Privmsg spamMsg = new Privmsg(null, target, im.getServer(), msg);
+        IrcUser target = im.getServerPeer().getNetwork().findUser(targetNick, false);
+        Privmsg spamMsg = new Privmsg(null, target, im.getServerPeer(), msg);
         long delay = 150;
         SpamRunnable spam = new SpamRunnable(spamMsg, control, delay);
         spam.startAs("Spam");

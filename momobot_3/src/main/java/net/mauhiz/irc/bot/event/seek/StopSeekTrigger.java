@@ -1,14 +1,13 @@
-package net.mauhiz.irc.bot.triggers.event.gather;
+package net.mauhiz.irc.bot.event.seek;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
-import net.mauhiz.irc.bot.event.SeekWar;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 /**
@@ -21,10 +20,10 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param control
      * @param server
      */
-    static void leaveSeekChans(IIrcControl control, IrcServer server) {
+    static void leaveSeekChans(IIrcControl control, IIrcServerPeer server) {
         String[] channelSeek = SeekWar.SEEK_CHANS;
         for (String element : channelSeek) {
-            Part leave = new Part(server, server.findChannel(element), null);
+            Part leave = new Part(server, server.getNetwork().findChannel(element), null);
             control.sendMsg(leave);
         }
     }
@@ -44,7 +43,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = (IrcChannel) im.getTo();
-        ChannelEvent evt = chan.getEvt();
+        IChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {
             reply = "Aucun gather n'est lance.";
@@ -55,7 +54,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 } else {
                     // if (((Gather) evt).getSeek().isSeekInProgress()) {
                     reply = "Seek arrete.";
-                    leaveSeekChans(control, im.getServer());
+                    leaveSeekChans(control, im.getServerPeer());
                     ((Gather) evt).setSeekToNull();
                     // }
                 }

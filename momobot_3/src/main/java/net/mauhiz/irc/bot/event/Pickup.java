@@ -10,7 +10,7 @@ import net.mauhiz.irc.base.data.IrcUser;
 /**
  * @author mauhiz
  */
-public class Pickup extends ChannelEvent {
+public class Pickup extends AbstractChannelEvent {
     /**
      * le nombre de teams.
      */
@@ -170,7 +170,7 @@ public class Pickup extends ChannelEvent {
     }
 
     /**
-     * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
+     * @see net.mauhiz.irc.bot.event.AbstractChannelEvent#toString()
      */
     @Override
     public String toString() {

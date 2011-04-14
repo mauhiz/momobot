@@ -1,8 +1,8 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Target;
 
@@ -13,18 +13,15 @@ public class Kick extends AbstractIrcMessage {
     private final String reason;
     private final IrcUser target;
 
-    /**
-     * @param from1
-     * @param to1
-     * @param ircServer
-     * @param chan1
-     * @param target1
-     * @param reason1
-     */
-    public Kick(IrcServer ircServer, Target kicker, IrcChannel chan, IrcUser target, String reason) {
-        super(kicker, chan, ircServer);
+    public Kick(IIrcServerPeer server, Target kicker, IrcChannel chan, IrcUser target, String reason) {
+        super(kicker, chan, server);
         this.target = target;
         this.reason = reason;
+    }
+
+    @Override
+    public Kick copy() {
+        return new Kick(server, from, (IrcChannel) to, target, reason);
     }
 
     @Override
@@ -35,7 +32,7 @@ public class Kick extends AbstractIrcMessage {
             sb.append(super.from);
             sb.append(' ');
         }
-        sb.append("KICK ");
+        sb.append(IrcCommands.KICK).append(' ');
         sb.append(to);
         sb.append(' ');
         sb.append(target);
@@ -58,15 +55,6 @@ public class Kick extends AbstractIrcMessage {
      */
     public IrcUser getTarget() {
         return target;
-    }
-
-    @Override
-    public void process(IIrcControl control) {
-        IrcChannel chan = (IrcChannel) to;
-        chan.remove(target);
-        if (target.equals(server.getMyself())) {
-            server.remove(chan);
-        }
     }
 
     @Override

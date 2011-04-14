@@ -1,6 +1,6 @@
 package net.mauhiz.irc.gui;
 
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -13,14 +13,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
-public class SwtServerTab extends SwtTab {
+public class SwtServerTab extends AbstractSwtTab {
 
     static class JoinHandler implements Listener {
         private final Text joinField;
-        private final IrcServer server;
+        private final IIrcServerPeer server;
         private final SwtIrcClient swtIrcClient;
 
-        JoinHandler(Text joinField, SwtIrcClient swtIrcClient, IrcServer server) {
+        JoinHandler(Text joinField, SwtIrcClient swtIrcClient, IIrcServerPeer server) {
             this.joinField = joinField;
             this.swtIrcClient = swtIrcClient;
             this.server = server;
@@ -28,14 +28,14 @@ public class SwtServerTab extends SwtTab {
 
         @Override
         public void handleEvent(Event arg0) {
-            swtIrcClient.doJoin(server, server.findChannel(joinField.getText()));
+            swtIrcClient.doJoin(server, server.getNetwork().findChannel(joinField.getText()));
         }
     }
 
-    public SwtServerTab(final SwtIrcClient swtIrcClient, final IrcServer server) {
+    public SwtServerTab(final SwtIrcClient swtIrcClient, final IIrcServerPeer server) {
         super(swtIrcClient);
 
-        folder.setText(server.getAlias());
+        folder.setText(server.getNetwork().getAlias());
 
         GridLayout gridLayout = new GridLayout(1, false);
         compo.setLayout(gridLayout);

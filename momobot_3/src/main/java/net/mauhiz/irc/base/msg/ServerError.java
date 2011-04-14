@@ -1,8 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcClientControl;
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 
 /**
  * @author mauhiz
@@ -12,35 +11,29 @@ public class ServerError extends AbstractIrcMessage {
      * contenu de l erreur
      */
     private final String msg;
-    
-    /**
-     * @param server1
-     * @param msg1
-     */
-    public ServerError(IrcServer server1, String msg1) {
-        super(null, null, server1);
-        msg = msg1;
+
+    public ServerError(IIrcServerPeer server, String msg) {
+        super(null, null, server);
+        this.msg = msg;
     }
-    
+
+    @Override
+    public ServerError copy() {
+        return new ServerError(server, msg);
+    }
+
     @Override
     public String getIrcForm() {
-        return "ERROR :" + msg;
+        return IrcCommands.ERROR + " :" + msg;
     }
-    
+
     /**
      * @return {@link #msg}
      */
     public String getMsg() {
         return msg;
     }
-    
-    @Override
-    public void process(IIrcControl control) {
-        if (control instanceof IIrcClientControl) {
-            ((IIrcClientControl) control).quit(server);
-        }
-    }
-    
+
     @Override
     public String toString() {
         return getIrcForm();

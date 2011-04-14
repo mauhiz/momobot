@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.msg.IIrcMessage;
@@ -32,7 +32,7 @@ public class SwtIrcClient {
     protected CTabFolder folderBar;
     protected final GuiTriggerManager gtm = new GuiTriggerManager();
     protected final Map<IrcUser, SwtPrivateTab> privateTabs = new HashMap<IrcUser, SwtPrivateTab>();
-    protected final Map<IrcServer, SwtServerTab> serverTabs = new HashMap<IrcServer, SwtServerTab>();
+    protected final Map<IIrcServerPeer, SwtServerTab> serverTabs = new HashMap<IIrcServerPeer, SwtServerTab>();
     protected final Shell shell;
 
     public SwtIrcClient() {
@@ -42,41 +42,40 @@ public class SwtIrcClient {
         folderBar = new CTabFolder(shell, SWT.BORDER);
     }
 
-    public SwtChanTab createChanTab(IrcServer server, IrcChannel channel) {
+    public SwtChanTab createChanTab(IIrcServerPeer server, IrcChannel channel) {
         SwtChanTab tab = new SwtChanTab(this, server, channel);
         chanTabs.put(channel, tab);
         return tab;
     }
 
-    public SwtPrivateTab createPrivateTab(IrcServer server, IrcUser user) {
+    public SwtPrivateTab createPrivateTab(IIrcServerPeer server, IrcUser user) {
         SwtPrivateTab tab = new SwtPrivateTab(this, server, user);
         privateTabs.put(user, tab);
         return tab;
     }
 
-    public SwtServerTab createServerTab(IrcServer server) {
+    public SwtServerTab createServerTab(IIrcServerPeer server) {
         SwtServerTab tab = new SwtServerTab(this, server);
         serverTabs.put(server, tab);
         return tab;
     }
 
-    public void doConnect(IrcServer server) {
-        gtm.getClient().connect(server);
+    public void doConnect(IIrcServerPeer server) {
         createServerTab(server);
+        gtm.getClient().connect(server);
     }
 
-    public void doDisconnect(IrcServer server) {
-        gtm.getClient().quit(server);
+    public void doDisconnect(IIrcServerPeer server) {
         serverTabs.remove(server);
+        gtm.getClient().quit(server);
         // TODO remove channels too
     }
 
-    void doJoin(IrcServer server, IrcChannel channel) {
+    void doJoin(IIrcServerPeer server, IrcChannel channel) {
         Join msg = new Join(server, channel);
-        IIrcControl control = gtm.getClient();
-        assert control != null;
-        control.sendMsg(msg);
         SwtChanTab tab = createChanTab(server, channel);
+        IIrcControl control = gtm.getClient();
+        control.sendMsg(msg);
         cut.addChannel(channel, tab.getUsersInChan());
     }
 
@@ -143,14 +142,14 @@ public class SwtIrcClient {
         IrcUser user = (IrcUser) from;
         SwtPrivateTab privateTab = privateTabs.get(user);
         if (privateTab == null) { // create tab
-            privateTab = createPrivateTab(msg.getServer(), user);
+            privateTab = createPrivateTab(msg.getServerPeer(), user);
         }
         privateTab.appendText(msg.toString());
         return true;
     }
 
     private boolean processServerLog(IIrcMessage msg) {
-        IrcServer server = msg.getServer();
+        IIrcServerPeer server = msg.getServerPeer();
         SwtServerTab serverTab = serverTabs.get(server);
         if (serverTab == null) {
             LOG.warn("Missing server tab: " + server);
@@ -170,7 +169,7 @@ public class SwtIrcClient {
         initMenus();
 
         /* Affichage des logs */
-        SwtTab defaut = initDefaultTab();
+        SwtLogTab defaut = initDefaultTab();
 
         /* go afficher */
         initShell();
@@ -188,7 +187,7 @@ public class SwtIrcClient {
         gtm.getClient().exit();
     }
 
-    private void swtLoop(SwtTab logTab) {
+    private void swtLoop(SwtLogTab logTab) {
         final IIrcMessage msg = gtm.nextMsg();
 
         if (msg == null) { // booh, no new message

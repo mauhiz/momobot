@@ -2,7 +2,7 @@ package net.mauhiz.irc.base.data;
 
 import java.util.Set;
 
-import net.mauhiz.irc.bot.event.ChannelEvent;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 
 /**
  * @author mauhiz
@@ -15,7 +15,7 @@ public interface IrcChannel extends Iterable<IrcUser>, Comparable<IrcChannel>, T
 
     String fullName();
 
-    ChannelEvent getEvt();
+    IChannelEvent getEvt();
 
     Set<UserChannelMode> getModes(IrcUser smith);
 

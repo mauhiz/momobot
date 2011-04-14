@@ -1,7 +1,7 @@
 package net.mauhiz.irc.base.trigger;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.util.AbstractRunnable;
@@ -59,25 +59,23 @@ public abstract class AbstractAutomate extends AbstractRunnable {
      * L'user associe.
      */
     private final AutomateHook myHook;
-    private final IrcServer server;
+    private final IIrcServerPeer server;
 
     /**
-     * @param user1
+     * @param user
      *            l'user
-     * @param control1
-     * @param server1
      */
-    public AbstractAutomate(IrcUser user1, IIrcControl control1, IrcServer server1) {
+    public AbstractAutomate(IrcUser user, IIrcControl control, IIrcServerPeer server) {
         super();
-        control = control1;
-        server = server1;
-        myHook = new AutomateHook(user1);
+        this.control = control;
+        this.server = server;
+        myHook = new AutomateHook(user);
     }
 
     /**
      * @return {@link #server}
      */
-    public IrcServer getServer() {
+    public IIrcServerPeer getServer() {
         return server;
     }
 

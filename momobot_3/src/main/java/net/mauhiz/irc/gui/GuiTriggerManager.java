@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.IrcControl;
+import net.mauhiz.irc.base.IrcClientControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
 import net.mauhiz.util.AbstractRunnable;
@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Display;
  * @author mauhiz
  */
 public class GuiTriggerManager extends DefaultTriggerManager {
-    IIrcClientControl client = new IrcControl(this);
+    IIrcClientControl client = new IrcClientControl(this);
     BlockingQueue<IIrcMessage> incoming = new LinkedBlockingQueue<IIrcMessage>();
 
     /**

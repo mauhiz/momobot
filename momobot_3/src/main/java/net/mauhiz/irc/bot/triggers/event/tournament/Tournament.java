@@ -12,7 +12,7 @@ import java.util.Locale;
 
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.irc.bot.event.ChannelEvent;
+import net.mauhiz.irc.bot.event.AbstractChannelEvent;
 import net.mauhiz.util.MathUtils;
 
 import org.apache.commons.configuration.Configuration;
@@ -31,7 +31,7 @@ import org.apache.velocity.app.VelocityEngine;
 /**
  * @author Topper
  */
-public class Tournament extends ChannelEvent {
+public class Tournament extends AbstractChannelEvent {
     /**
      * config
      */
@@ -360,7 +360,7 @@ public class Tournament extends ChannelEvent {
     }
 
     /**
-     * @see net.mauhiz.irc.bot.event.ChannelEvent#toString()
+     * @see net.mauhiz.irc.bot.event.AbstractChannelEvent#toString()
      */
     @Override
     public String toString() {

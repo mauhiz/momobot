@@ -1,6 +1,5 @@
 package net.mauhiz.irc.base.data;
 
-import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Locale;
@@ -14,48 +13,34 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer {
+public abstract class AbstractIrcNetwork implements IrcNetwork {
 
-    protected static final Logger LOG = Logger.getLogger(AbstractIrcServer.class);
-    private String alias;
+    protected static final Logger LOG = Logger.getLogger(AbstractIrcNetwork.class);
+    private final String alias;
     /**
      * a chaque server sa liste de channels.
      */
     private final Set<IrcChannel> channels = new ConcurrentSkipListSet<IrcChannel>();
 
-    private String ircForm;
-    private IrcUser myself;
-
+    private URI defaultUri;
     /**
      * a chaque server sa liste d users.
      */
     private final Set<IrcUser> users = new ConcurrentSkipListSet<IrcUser>();
 
-    /**
-     * @param uriStr
-     */
-    protected AbstractIrcServer(URI uri) {
+    protected AbstractIrcNetwork(String alias) {
         super();
-        hostPort = new InetSocketAddress(uri.getHost(), uri.getPort());
+        this.alias = alias;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#countUsers()
-     */
     public int countUsers() {
         return users.size();
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#findChannel(java.lang.String)
-     */
     public IrcChannel findChannel(String chanName) {
         return findChannel(chanName, true);
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#findChannel(java.lang.String, boolean)
-     */
     public IrcChannel findChannel(String chanName, boolean addIfNotFound) {
         //
         for (IrcChannel chan : channels) {
@@ -73,9 +58,6 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
         return null;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#findUser(net.mauhiz.irc.base.data.HostMask, boolean)
-     */
     public IrcUser findUser(HostMask mask, boolean addIfNotFound) {
         assert mask != null;
 
@@ -100,9 +82,6 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
         return null;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#findUser(java.lang.String, boolean)
-     */
     public IrcUser findUser(String nick, boolean addIfNotFound) {
         assert nick != null;
         if (nick.contains("!") || nick.contains(" ")) { // TODO better regexp
@@ -119,29 +98,16 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
             users.add(newUser);
         }
         return newUser;
-
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#getAlias()
-     */
     public String getAlias() {
-        if (alias == null) {
-            return hostPort.getHostName();
-        }
         return alias;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#getChannels()
-     */
     public Iterable<IrcChannel> getChannels() {
         return channels;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#getChannelsForUser(net.mauhiz.irc.base.data.IrcUser)
-     */
     public Set<IrcChannel> getChannelsForUser(IrcUser smith) {
         Set<IrcChannel> chans = new HashSet<IrcChannel>();
         for (IrcChannel chan : channels) {
@@ -152,19 +118,12 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
         return chans;
     }
 
-    public String getIrcForm() {
-        return ircForm;
-    }
-
-    /**
-     * @return the myself
-     */
-    public IrcUser getMyself() {
-        return myself;
-    }
-
     @Override
-    protected IrcServer getServer() {
+    public int getLineMaxLength() {
+        return 512;
+    }
+
+    public IrcNetwork getNetwork() {
         return this;
     }
 
@@ -175,6 +134,17 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
         return users;
     }
 
+    public final IIrcServerPeer newServerPeer() {
+        if (defaultUri == null) {
+            throw new IllegalStateException();
+        }
+        return new IrcServerPeer(this, defaultUri);
+    }
+
+    public final IIrcServerPeer newServerPeer(URI uri) {
+        return new IrcServerPeer(this, uri);
+    }
+
     /**
      * @param channel
      */
@@ -182,30 +152,13 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
         channels.remove(channel);
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#remove(net.mauhiz.irc.base.data.IrcUser)
-     */
     public void remove(IrcUser quitter) {
         users.remove(quitter);
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#setAlias(java.lang.String)
-     */
-    public void setAlias(String alias1) {
-        alias = alias1;
-    }
-
-    public void setIrcForm(String ircForm) {
-        this.ircForm = ircForm;
-    }
-
-    /**
-     * @param myself
-     *            the myself to set
-     */
-    public void setMyself(IrcUser myself) {
-        this.myself = myself;
+    @Override
+    public void setDefaultUri(URI defaultUri) {
+        this.defaultUri = defaultUri;
     }
 
     /**
@@ -216,9 +169,6 @@ public abstract class AbstractIrcServer extends IrcDecoder implements IrcServer 
         return getAlias();
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IrcServer#updateNick(net.mauhiz.irc.base.data.IrcUser, java.lang.String)
-     */
     public void updateNick(IrcUser oldUser, String newNick) {
         if (oldUser == null) {
             /* we did not know him anyways. how so? */

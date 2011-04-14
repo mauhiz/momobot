@@ -3,7 +3,7 @@ package net.mauhiz.board.shogi.gui.swt;
 import java.util.Collection;
 
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.swt.SwtBoardGui;
+import net.mauhiz.board.gui.swt.AbstractSwtBoardGui;
 import net.mauhiz.board.shogi.gui.IShogiGui;
 import net.mauhiz.board.shogi.gui.ShogiBoardController;
 import net.mauhiz.board.shogi.model.ShogiBoard;
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.MessageBox;
 /**
  * @author mauhiz
  */
-public class Shogui extends SwtBoardGui<ShogiBoard, ShogiMove> implements IShogiGui {
+public class Shogui extends AbstractSwtBoardGui<ShogiBoard, ShogiMove> implements IShogiGui {
 
     public static void main(String... args) {
         Shogui instance = new Shogui();

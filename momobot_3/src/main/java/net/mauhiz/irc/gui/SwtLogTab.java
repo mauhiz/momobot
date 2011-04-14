@@ -1,8 +1,7 @@
 package net.mauhiz.irc.gui;
 
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.IrcServerFactory;
-import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -15,7 +14,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
-public class SwtLogTab extends SwtTab {
+public class SwtLogTab extends AbstractSwtTab {
 
     static class ConnectHandler implements Listener {
         private final Text connectField;
@@ -28,11 +27,8 @@ public class SwtLogTab extends SwtTab {
 
         @Override
         public void handleEvent(Event event) {
-            IrcServer server = IrcServerFactory.createServer(connectField.getText());
-            IrcUser myself = server.newUser("momobot3");
-            myself.getMask().setUser("mmb");
-            myself.setFullName("momobot le 3eme");
-            server.setMyself(myself);
+            IIrcServerPeer server = IrcServerFactory.createServer(connectField.getText());
+            server.introduceMyself("momo", "mmb", "momobot le 3eme");
             swtIrcClient.doConnect(server);
         }
     }

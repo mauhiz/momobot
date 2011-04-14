@@ -1,6 +1,6 @@
 package net.mauhiz.irc.gui;
 
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.gui.actions.SendAction;
@@ -13,12 +13,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-public class SwtPrivateTab extends SwtTab {
+public class SwtPrivateTab extends AbstractSwtTab {
 
-    IrcServer server;
+    IIrcServerPeer server;
     final IrcUser user;
 
-    public SwtPrivateTab(final SwtIrcClient swtIrcClient, final IrcServer server, final IrcUser user) {
+    public SwtPrivateTab(final SwtIrcClient swtIrcClient, final IIrcServerPeer server, final IrcUser user) {
         super(swtIrcClient);
         this.server = server;
         this.user = user;

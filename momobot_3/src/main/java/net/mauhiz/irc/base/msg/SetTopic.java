@@ -1,21 +1,21 @@
 package net.mauhiz.irc.base.msg;
 
-import java.util.Date;
-
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
-import net.mauhiz.irc.base.data.Topic;
 
 public class SetTopic extends AbstractIrcMessage {
 
     private final String topic;
 
-    public SetTopic(Target from1, Target to1, IrcServer server1, String newTopic) {
-        super(from1, to1, server1);
+    public SetTopic(Target from, Target chan, IIrcServerPeer server, String newTopic) {
+        super(from, chan, server);
         topic = newTopic;
+    }
+
+    @Override
+    public SetTopic copy() {
+        return new SetTopic(from, to, server, topic);
     }
 
     @Override
@@ -26,11 +26,10 @@ public class SetTopic extends AbstractIrcMessage {
             sb.append(super.from);
             sb.append(' ');
         }
-        sb.append("TOPIC ");
-        if (super.to != null) {
-            sb.append(super.to);
-            sb.append(' ');
-        }
+
+        sb.append(IrcCommands.TOPIC).append(' ');
+        sb.append(super.to);
+
         if (topic != null) {
             sb.append(" :");
             sb.append(topic);
@@ -43,14 +42,6 @@ public class SetTopic extends AbstractIrcMessage {
      */
     public String getTopic() {
         return topic;
-    }
-
-    @Override
-    public void process(IIrcControl control) {
-        IrcChannel chan = (IrcChannel) to;
-        IrcUser changer = (IrcUser) from;
-        Topic newTopic = new Topic(changer.getNick(), new Date(), topic);
-        chan.getProperties().setTopic(newTopic);
     }
 
     @Override

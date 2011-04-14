@@ -5,7 +5,7 @@ import java.util.Map;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Part;
@@ -43,15 +43,15 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger {
 
     @Override
     public void doTrigger(Join im, IIrcControl control) {
-        doUpdate(im.getServer(), im.getTo());
+        doUpdate(im.getServerPeer(), im.getTo());
     }
 
     @Override
     public void doTrigger(Part im, IIrcControl control) {
-        doUpdate(im.getServer(), im.getTo());
+        doUpdate(im.getServerPeer(), im.getTo());
     }
 
-    private void doUpdate(IrcServer server, IrcChannel channel) {
+    private void doUpdate(IIrcServerPeer server, IrcChannel channel) {
 
         if (channel != null) {
             final List userList = userLists.get(channel);

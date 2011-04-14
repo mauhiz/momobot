@@ -14,20 +14,20 @@ import org.junit.Test;
  * 
  */
 public class ChannelsTest extends AbstractServerTest {
-    
+
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.IrcServer#getChannelsForUser(IrcUser)}.
+     * Test method for {@link net.mauhiz.irc.base.data.IrcNetwork#getChannelsForUser(IrcUser)}.
      */
     @Test
     public void testGetChannels() {
-        
-        IrcUser truite = QNET.findUser(QNET.getMyself().getNick(), true);
+
+        IrcUser truite = QNET.findUser(TO_QNET.getMyself().getNick(), true);
         QNET.findChannel("#tsi.fr", true).add(truite);
         QNET.findChannel("#-duck-", true).add(truite);
         /* get */
-        IrcUser mmb = QNET.findUser(QNET.getMyself().getNick(), false);
+        IrcUser mmb = QNET.findUser(TO_QNET.getMyself().getNick(), false);
         Set<IrcChannel> myChans = QNET.getChannelsForUser(mmb);
         Assert.assertEquals(2, myChans.size());
     }
-    
+
 }

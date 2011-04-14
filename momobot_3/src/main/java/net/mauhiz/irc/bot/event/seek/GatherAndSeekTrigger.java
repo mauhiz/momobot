@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.triggers.event.gather;
+package net.mauhiz.irc.bot.event.seek;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
@@ -6,8 +6,7 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.fake.FakeUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
-import net.mauhiz.irc.bot.event.GatherAndSeek;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 /**
@@ -27,7 +26,7 @@ public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivms
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcChannel chan = (IrcChannel) cme.getTo();
-        ChannelEvent evt = chan.getEvt();
+        IChannelEvent evt = chan.getEvt();
         String respMsg;
         if (evt == null) {
 

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import net.mauhiz.irc.bot.event.ChannelEvent;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.util.Hooks;
 
 /**
@@ -80,8 +80,8 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * @return running event
      */
-    public ChannelEvent getEvt() {
-        return Hooks.getHook(this, ChannelEvent.class);
+    public IChannelEvent getEvt() {
+        return Hooks.getHook(this, IChannelEvent.class);
     }
 
     @Override
@@ -145,7 +145,7 @@ public abstract class AbstractIrcChannel implements IrcChannel {
      * @return msg
      */
     public String stopEvent() {
-        ChannelEvent localEvent = getEvt();
+        IChannelEvent localEvent = getEvt();
         if (localEvent == null) {
             return "";
         }

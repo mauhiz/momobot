@@ -13,9 +13,9 @@ import net.mauhiz.util.AbstractAction;
 public class SelectAction<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends AbstractAction {
 
     private final Square at;
-    private final GuiBoardController<B, M> controller;
+    private final IGuiBoardController<B, M> controller;
 
-    public SelectAction(GuiBoardController<B, M> controller, Square at) {
+    public SelectAction(IGuiBoardController<B, M> controller, Square at) {
         super();
         this.controller = controller;
         this.at = at;

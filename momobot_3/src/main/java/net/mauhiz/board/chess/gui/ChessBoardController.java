@@ -8,9 +8,9 @@ import net.mauhiz.board.chess.model.ChessMove;
 import net.mauhiz.board.chess.model.ChessOwnedPiece;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessRule;
-import net.mauhiz.board.gui.GuiBoardController;
+import net.mauhiz.board.gui.AbstractGuiBoardController;
 
-public class ChessBoardController extends GuiBoardController<ChessBoard, ChessMove> {
+public class ChessBoardController extends AbstractGuiBoardController<ChessBoard, ChessMove> {
     public ChessBoardController(IChessGui display) {
         super(display, new ChessBoard());
         getBoard().setRule(new ChessRule());

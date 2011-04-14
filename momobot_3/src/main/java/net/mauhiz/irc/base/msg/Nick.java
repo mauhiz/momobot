@@ -1,8 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
 
 /**
@@ -14,21 +13,18 @@ public class Nick extends AbstractIrcMessage {
      */
     private final String newNick;
 
-    /**
-     * @param server1
-     */
-    public Nick(IrcServer server1) {
-        this(server1, null, server1.getMyself().getNick());
+    public Nick(IIrcServerPeer server) {
+        this(server, null, server.getMyself().getNick());
     }
 
-    /**
-     * @param server1
-     * @param from1
-     * @param newNick1
-     */
-    public Nick(IrcServer server1, Target from1, String newNick1) {
-        super(from1, null, server1);
-        newNick = newNick1;
+    public Nick(IIrcServerPeer server, Target from, String newNick) {
+        super(from, null, server);
+        this.newNick = newNick;
+    }
+
+    @Override
+    public Nick copy() {
+        return new Nick(server, from, newNick);
     }
 
     @Override
@@ -39,8 +35,7 @@ public class Nick extends AbstractIrcMessage {
             sb.append(super.from);
             sb.append(' ');
         }
-        sb.append("NICK ");
-        sb.append(newNick);
+        sb.append(IrcCommands.NICK).append(' ').append(newNick);
         return sb.toString();
     }
 
@@ -51,15 +46,6 @@ public class Nick extends AbstractIrcMessage {
         return newNick;
     }
 
-    @Override
-    public void process(IIrcControl control) {
-        IrcUser target = (IrcUser) from;
-        server.updateNick(target, newNick);
-    }
-
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         if (from == null) {

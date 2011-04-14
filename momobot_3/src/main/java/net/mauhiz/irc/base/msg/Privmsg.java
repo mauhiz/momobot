@@ -1,8 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +17,7 @@ public class Privmsg extends AbstractIrcMessage {
      */
     public static Privmsg buildAnswer(IIrcMessage toReply, String msg) {
         if (toReply.isToChannel()) {
-            return new Privmsg(null, toReply.getTo(), toReply.getServer(), msg);
+            return new Privmsg(null, toReply.getTo(), toReply.getServerPeer(), msg);
         }
         return buildPrivateAnswer(toReply, msg);
     }
@@ -29,7 +28,7 @@ public class Privmsg extends AbstractIrcMessage {
      * @return new msg
      */
     public static Privmsg buildPrivateAnswer(IIrcMessage toReply, String msg) {
-        return new Privmsg(null, toReply.getFrom(), toReply.getServer(), msg);
+        return new Privmsg(null, toReply.getFrom(), toReply.getServerPeer(), msg);
     }
 
     /**
@@ -38,16 +37,16 @@ public class Privmsg extends AbstractIrcMessage {
     private final String message;
 
     /**
-     * TODO constr private
-     * 
-     * @param from1
-     * @param to1
-     * @param server1
-     * @param message1
+     * TODO constr private ?
      */
-    public Privmsg(Target from1, Target to1, IrcServer server1, String message1) {
-        super(from1, to1, server1);
-        message = message1;
+    public Privmsg(Target from, Target to, IIrcServerPeer server, String message) {
+        super(from, to, server);
+        this.message = message;
+    }
+
+    @Override
+    public Privmsg copy() {
+        return new Privmsg(from, to, server, message);
     }
 
     @Override
@@ -61,17 +60,9 @@ public class Privmsg extends AbstractIrcMessage {
             sb.append(super.from);
             sb.append(' ');
         }
-        sb.append("PRIVMSG ");
-        if (super.to != null) {
-            if (from == null && !isToChannel()) {
-                IrcUser dest = (IrcUser) to;
-                sb.append(dest.getNick());
-            } else {
-                sb.append(super.to);
-            }
-            sb.append(' ');
-        }
-        sb.append(':');
+        sb.append(IrcCommands.PRIVMSG).append(' ');
+        sb.append(super.to);
+        sb.append(" :");
         sb.append(getMessage()); // important pour les sous classes (CTCP, ACTION...)
         return sb.toString();
     }
@@ -81,11 +72,6 @@ public class Privmsg extends AbstractIrcMessage {
      */
     public String getMessage() {
         return message;
-    }
-
-    @Override
-    public void process(IIrcControl control) {
-        // nothing to do
     }
 
     @Override

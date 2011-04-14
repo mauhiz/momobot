@@ -5,15 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mauhiz.board.Board;
+import net.mauhiz.board.IBoardController;
 import net.mauhiz.board.Move;
 import net.mauhiz.board.Piece;
 import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.AbstractBoardController;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.ExitAction;
 import net.mauhiz.board.gui.StartAction;
-import net.mauhiz.util.AbstractAction;
+import net.mauhiz.util.IAction;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-public abstract class SwtBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
+public abstract class AbstractSwtBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
         AbstractBoardGui<B, M> {
 
     private final Map<Square, Button> buttons = new HashMap<Square, Button>();
@@ -74,7 +74,7 @@ public abstract class SwtBoardGui<B extends Board<? extends Piece, ? extends Pla
     }
 
     @Override
-    protected void enableSquare(Square square, AbstractAction action) {
+    protected void enableSquare(Square square, IAction action) {
         Button button = getButton(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
@@ -119,7 +119,7 @@ public abstract class SwtBoardGui<B extends Board<? extends Piece, ? extends Pla
     }
 
     protected void initMenu() {
-        AbstractBoardController<B, M> controller = newController();
+        IBoardController<B, M> controller = newController();
         Menu menuBar = new Menu(shell, SWT.BAR);
         MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
         fileMenuHeader.setText("&File");

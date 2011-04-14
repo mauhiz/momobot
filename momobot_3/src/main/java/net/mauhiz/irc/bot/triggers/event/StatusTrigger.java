@@ -4,7 +4,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 /**
@@ -30,7 +30,7 @@ public class StatusTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             /* msg prive */
             return;
         }
-        ChannelEvent evt = chan.getEvt();
+        IChannelEvent evt = chan.getEvt();
         String reply;
         if (evt == null) {
             reply = "Il se passe rien ici :x";

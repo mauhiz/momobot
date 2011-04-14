@@ -33,7 +33,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         if (wannabe == null) {
             /* look args to determine channels */
             String args = getArgs(im.getMessage());
-            wannabe = im.getServer().findChannel(args);
+            wannabe = im.getServerPeer().getNetwork().findChannel(args);
             if (wannabe == null) {
                 return;
             }
@@ -44,7 +44,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             uIter.next();
         }
         IrcUser random = uIter.next();
-        Kick kick = new Kick(im.getServer(), null, wannabe, random, "I, I know, how I feel when I'm around you");
+        Kick kick = new Kick(im.getServerPeer(), null, wannabe, random, "I, I know, how I feel when I'm around you");
         control.sendMsg(kick);
     }
 }

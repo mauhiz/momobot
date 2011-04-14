@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.event;
+package net.mauhiz.irc.bot.event.seek;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -7,19 +7,19 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author mauhiz
  */
-public class SeekWarThreadTimeOut extends Timer {
-    
+class SeekWarThreadTimeOut extends Timer {
+
     /**
      * @author mauhiz
      * 
      */
     static class Timeout extends TimerTask {
-        
+
         /**
          * reference
          */
         private final SeekWar2 seekwar;
-        
+
         /**
          * @param seekwar2
          */
@@ -27,7 +27,7 @@ public class SeekWarThreadTimeOut extends Timer {
             super();
             seekwar = seekwar2;
         }
-        
+
         /**
          * @see java.util.TimerTask#run()
          */
@@ -36,12 +36,12 @@ public class SeekWarThreadTimeOut extends Timer {
             seekwar.setStop("TimeOut");
         }
     }
-    
+
     /**
      * @param seekwar1
      * @param timeOutMinutes
      */
-    SeekWarThreadTimeOut(SeekWar2 seekwar1, int timeOutMinutes) {
+    public SeekWarThreadTimeOut(SeekWar2 seekwar1, int timeOutMinutes) {
         super("SeekWar TimeOut");
         long timeOut = TimeUnit.MILLISECONDS.convert(timeOutMinutes, TimeUnit.MINUTES);
         schedule(new Timeout(seekwar1), timeOut);

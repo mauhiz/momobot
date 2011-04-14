@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.event;
+package net.mauhiz.irc.bot.event.seek;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,7 +8,7 @@ import org.junit.Test;
  * 
  */
 public class SeekChannelMessageTest {
-    
+
     /**
      * exemple de test
      */

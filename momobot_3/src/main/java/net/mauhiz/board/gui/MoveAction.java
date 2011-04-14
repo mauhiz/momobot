@@ -12,10 +12,10 @@ import net.mauhiz.util.AbstractAction;
  */
 public class MoveAction<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends AbstractAction {
 
-    private final GuiBoardController<B, M> controller;
+    private final IGuiBoardController<B, M> controller;
     private final Square to;
 
-    public MoveAction(GuiBoardController<B, M> controller, Square to) {
+    public MoveAction(IGuiBoardController<B, M> controller, Square to) {
         super();
         this.to = to;
         this.controller = controller;

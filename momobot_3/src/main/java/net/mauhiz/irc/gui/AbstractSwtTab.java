@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class SwtTab {
+public abstract class AbstractSwtTab {
 
     protected static void setListSize(List list, int numLines, int width) {
         GridData data = new GridData(GridData.FILL_BOTH);
@@ -34,7 +34,7 @@ public abstract class SwtTab {
 
     protected final SwtIrcClient swtIrcClient;
 
-    protected SwtTab(final SwtIrcClient swtIrcClient) {
+    protected AbstractSwtTab(final SwtIrcClient swtIrcClient) {
         this.swtIrcClient = swtIrcClient;
         folder = new CTabItem(swtIrcClient.folderBar, SWT.CLOSE);
         compo = new Composite(swtIrcClient.folderBar, SWT.BORDER | SWT.FILL);

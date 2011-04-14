@@ -1,12 +1,11 @@
-package net.mauhiz.irc.bot.triggers.event.gather;
+package net.mauhiz.irc.bot.event.seek;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
-import net.mauhiz.irc.bot.event.SeekWar2;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +28,7 @@ public class Seek2Trigger extends AbstractTextTrigger implements IPrivmsgTrigger
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = (IrcChannel) im.getTo();
-        ChannelEvent event = chan.getEvt();
+        IChannelEvent event = chan.getEvt();
         if (event == null) {
             String[] args = StringUtils.split(getArgs(im.getMessage()));
             int nbPlayers;
@@ -45,13 +44,13 @@ public class Seek2Trigger extends AbstractTextTrigger implements IPrivmsgTrigger
                 control.sendMsg(resp);
                 return;
             }
-            SeekWar2 skwar = new SeekWar2(chan, control, im.getServer(), nbPlayers, im.getMessage().substring(
+            SeekWar2 skwar = new SeekWar2(chan, control, im.getServerPeer(), nbPlayers, im.getMessage().substring(
                     args[0].length() - 1, im.getMessage().length() - 1));
             Privmsg resp = Privmsg.buildAnswer(im, skwar.toString());
             control.sendMsg(resp);
         } else if (event instanceof Gather) {
             Gather gather = (Gather) event;
-            SeekWar2 skwar = new SeekWar2(chan, control, im.getServer(), gather.getNumberPlayers(),
+            SeekWar2 skwar = new SeekWar2(chan, control, im.getServerPeer(), gather.getNumberPlayers(),
                     getArgs(im.getMessage()));
             Privmsg resp = Privmsg.buildAnswer(im, skwar.toString());
             control.sendMsg(resp);

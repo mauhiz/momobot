@@ -27,7 +27,7 @@ public class JoinTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     public void doTrigger(Privmsg im, IIrcControl control) {
         /* TODO join cross server */
         String chanName = getArgs(im.getMessage());
-        Join go = new Join(im.getServer(), im.getServer().findChannel(chanName));
+        Join go = new Join(im.getServerPeer(), im.getServerPeer().getNetwork().findChannel(chanName));
         control.sendMsg(go);
     }
 }

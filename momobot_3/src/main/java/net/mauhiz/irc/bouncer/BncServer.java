@@ -1,16 +1,15 @@
 package net.mauhiz.irc.bouncer;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 
-import net.mauhiz.irc.base.data.AbstractIrcServer;
+import net.mauhiz.irc.base.data.AbstractIrcNetwork;
 import net.mauhiz.irc.base.data.IrcChannel;
 
-public class BncServer extends AbstractIrcServer {
+public class BncServer extends AbstractIrcNetwork {
 
-    protected BncServer(URI uri) {
-        super(uri);
+    protected BncServer(String alias) {
+        super(alias);
     }
 
     @Override

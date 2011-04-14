@@ -1,10 +1,9 @@
 package net.mauhiz.irc.base.data.qnet;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-import net.mauhiz.irc.base.data.AbstractIrcServer;
+import net.mauhiz.irc.base.data.AbstractIrcNetwork;
 import net.mauhiz.irc.base.data.HostMask;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,13 +11,10 @@ import org.apache.commons.lang.StringUtils;
 /**
  * @author mauhiz
  */
-public class QnetServer extends AbstractIrcServer {
+public class QnetServer extends AbstractIrcNetwork {
 
-    /**
-     * @param uriStr
-     */
-    public QnetServer(URI uri) {
-        super(uri);
+    public QnetServer(String alias) {
+        super(alias);
     }
 
     @Override
@@ -51,7 +47,7 @@ public class QnetServer extends AbstractIrcServer {
     }
 
     /**
-     * @see net.mauhiz.irc.base.data.AbstractIrcServer#newChannel(java.lang.String)
+     * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newChannel(java.lang.String)
      */
     @Override
     public QnetChannel newChannel(String chanLowerCase) {
@@ -59,7 +55,7 @@ public class QnetServer extends AbstractIrcServer {
     }
 
     /**
-     * @see net.mauhiz.irc.base.data.AbstractIrcServer#newUser(java.lang.String)
+     * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newUser(java.lang.String)
      */
     @Override
     public QnetUser newUser(String nick) {

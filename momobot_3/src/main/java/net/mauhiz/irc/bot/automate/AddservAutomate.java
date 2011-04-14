@@ -1,7 +1,7 @@
 package net.mauhiz.irc.bot.automate;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.trigger.AbstractAutomate;
 
@@ -17,7 +17,7 @@ public class AddservAutomate extends AbstractAutomate {
      * @param control
      * @param server
      */
-    public AddservAutomate(IrcUser user1, IIrcControl control, IrcServer server) {
+    public AddservAutomate(IrcUser user1, IIrcControl control, IIrcServerPeer server) {
         super(user1, control, server);
         etat = STARTED;
     }

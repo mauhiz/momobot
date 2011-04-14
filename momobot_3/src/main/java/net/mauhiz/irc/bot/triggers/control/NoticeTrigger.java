@@ -32,8 +32,8 @@ public class NoticeTrigger extends AbstractTextTrigger implements IAdminTrigger,
             control.sendMsg(msg);
         } else {
             /* FIXME cross-server */
-            IrcUser target = im.getServer().findUser(args.substring(0, index), false);
-            Notice msg = new Notice(null, target, im.getServer(), args.substring(index + 1));
+            IrcUser target = im.getServerPeer().getNetwork().findUser(args.substring(0, index), false);
+            Notice msg = new Notice(null, target, im.getServerPeer(), args.substring(index + 1));
             control.sendMsg(msg);
         }
     }

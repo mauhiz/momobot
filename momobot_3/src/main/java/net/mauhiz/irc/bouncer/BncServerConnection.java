@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import net.mauhiz.irc.base.IrcControl;
+import net.mauhiz.irc.base.IrcClientControl;
 import net.mauhiz.util.AbstractRunnable;
 
 import org.apache.log4j.Logger;
@@ -29,17 +28,14 @@ public class BncServerConnection extends AbstractRunnable {
         super();
         this.accountStore = accountStore;
 
-        serverData = new BncServer(URI.create("irc://localhost:" + port + "/"));
-        serverData.setAlias("Bouncer");
-
+        serverData = new BncServer("Bouncer");
         mySelf = serverData.newUser("root");
-        serverData.setMyself(mySelf);
     }
 
     private void connectAccounts() { // TODO implement limit
         for (Account acc : accountStore.getAccounts()) {
-            IrcControl control = new IrcControl(acc.getRelatedManager());
-            control.connect(acc.getServer());
+            IrcClientControl control = new IrcClientControl(acc.getRelatedManager());
+            control.connect(acc.getServer().newServerPeer());
         }
     }
 
@@ -50,7 +46,7 @@ public class BncServerConnection extends AbstractRunnable {
     @Override
     public void run() {
         try {
-            ServerSocket bouncerServer = new ServerSocket(serverData.getAddress().getPort());
+            ServerSocket bouncerServer = new ServerSocket(6667);
             LOG.info("Bouncer server rock steady");
             globalStartTime = System.currentTimeMillis();
             connectAccounts();

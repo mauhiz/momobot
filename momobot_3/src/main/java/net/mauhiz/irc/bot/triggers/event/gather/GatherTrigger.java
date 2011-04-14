@@ -5,8 +5,8 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +28,7 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcChannel chan = (IrcChannel) cme.getTo();
-        ChannelEvent evt = chan.getEvt();
+        IChannelEvent evt = chan.getEvt();
         String respMsg;
         if (evt == null) {
             IrcUser user = (IrcUser) cme.getFrom();
