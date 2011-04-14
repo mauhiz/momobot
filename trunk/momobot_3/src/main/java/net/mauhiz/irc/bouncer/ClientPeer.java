@@ -3,25 +3,27 @@ package net.mauhiz.irc.bouncer;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import net.mauhiz.irc.base.data.IrcDecoder;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.AbstractPeer;
+import net.mauhiz.irc.base.data.IrcNetwork;
+import net.mauhiz.irc.base.data.Target;
 
-public class ClientPeer extends IrcDecoder {
+import org.apache.commons.lang.NotImplementedException;
+
+public class ClientPeer extends AbstractPeer implements Target {
     private final BncServer server;
-    
+
     public ClientPeer(Socket so, BncServer server) {
-        super();
+        super(new InetSocketAddress(so.getInetAddress(), so.getPort()));
         this.server = server;
-        hostPort = new InetSocketAddress(so.getInetAddress(), so.getPort());
     }
-    
+
     @Override
-    public int getLineMaxLength() {
-        return 512;
+    public String getIrcForm() {
+        throw new NotImplementedException("TODO");
     }
-    
+
     @Override
-    protected IrcServer getServer() {
+    public IrcNetwork getNetwork() {
         return server;
     }
 }

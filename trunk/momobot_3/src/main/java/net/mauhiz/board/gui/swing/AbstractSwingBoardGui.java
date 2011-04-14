@@ -15,18 +15,18 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import net.mauhiz.board.Board;
+import net.mauhiz.board.IBoardController;
 import net.mauhiz.board.Move;
 import net.mauhiz.board.Piece;
 import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.AbstractBoardController;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.ExitAction;
 import net.mauhiz.board.gui.StartAction;
 import net.mauhiz.board.gui.remote.NewRemoteGameAction;
-import net.mauhiz.util.AbstractAction;
+import net.mauhiz.util.IAction;
 
-public abstract class SwingBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
+public abstract class AbstractSwingBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
         AbstractBoardGui<B, M> {
 
     private final Map<Square, JButton> buttons = new HashMap<Square, JButton>();
@@ -77,7 +77,7 @@ public abstract class SwingBoardGui<B extends Board<? extends Piece, ? extends P
     }
 
     @Override
-    protected void enableSquare(Square square, AbstractAction action) {
+    protected void enableSquare(Square square, IAction action) {
         JButton button = getButton(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();
@@ -120,7 +120,7 @@ public abstract class SwingBoardGui<B extends Board<? extends Piece, ? extends P
     }
 
     protected void initMenu() {
-        AbstractBoardController<B, M> controller = newController();
+        IBoardController<B, M> controller = newController();
 
         /* menu */
         JMenuBar menuBar = new JMenuBar();

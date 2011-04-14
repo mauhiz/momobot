@@ -5,6 +5,7 @@ import java.util.Arrays;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
+import net.mauhiz.irc.base.trigger.ITriggerManager;
 import net.mauhiz.irc.bot.MmbTriggerManager;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IAdminTrigger;
@@ -38,15 +39,19 @@ public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrig
         } else {
             String className = args[0];
             LOG.info("Deactivating trigger class: " + className);
-            MmbTriggerManager manager = (MmbTriggerManager) control.getManager();
+            ITriggerManager[] managers = control.getManagers();
+            for (ITriggerManager manager : managers) {
+                if (manager instanceof MmbTriggerManager) {
 
-            if (args.length == 1) {
-                /* remove inconditionnel */
-                manager.removeTrigger(className);
-            } else {
-                /* remove de certains triggertext seulement */
-                String[] texts = Arrays.copyOfRange(args, 1, args.length);
-                manager.removeTrigger(className, texts);
+                    if (args.length == 1) {
+                        /* remove inconditionnel */
+                        ((MmbTriggerManager) manager).removeTrigger(className);
+                    } else {
+                        /* remove de certains triggertext seulement */
+                        String[] texts = Arrays.copyOfRange(args, 1, args.length);
+                        ((MmbTriggerManager) manager).removeTrigger(className, texts);
+                    }
+                }
             }
         }
     }

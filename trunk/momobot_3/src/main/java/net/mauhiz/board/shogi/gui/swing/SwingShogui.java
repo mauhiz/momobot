@@ -12,7 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.swing.SwingBoardGui;
+import net.mauhiz.board.gui.swing.AbstractSwingBoardGui;
 import net.mauhiz.board.shogi.gui.IShogiGui;
 import net.mauhiz.board.shogi.gui.ShogiBoardController;
 import net.mauhiz.board.shogi.gui.awt.PocketAction;
@@ -25,7 +25,7 @@ import net.mauhiz.board.shogi.model.ShogiPlayer;
 /**
  * @author mauhiz
  */
-public class SwingShogui extends SwingBoardGui<ShogiBoard, ShogiMove> implements IShogiGui {
+public class SwingShogui extends AbstractSwingBoardGui<ShogiBoard, ShogiMove> implements IShogiGui {
 
     public static void main(String... args) {
         SwingShogui instance = new SwingShogui();

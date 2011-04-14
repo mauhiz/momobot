@@ -72,8 +72,8 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         Collection<String> heure1Pala = new LinkedList<String>();
         Collection<String> heure2Dispo = new LinkedList<String>();
         Collection<String> heure2Pala = new LinkedList<String>();
-        List<Dispo> dispos = DispoDb.getInstance(imsg.getServer()).getDispo(((IrcChannel) imsg.getTo()).fullName(),
-                date);
+        List<Dispo> dispos = DispoDb.getInstance(imsg.getServerPeer().getNetwork()).getDispo(
+                ((IrcChannel) imsg.getTo()).fullName(), date);
         for (Dispo dispo : dispos) {
             if (dispo.getPresent1() == Dispo.Present.LA) {
                 heure1Dispo.add(dispo.getQauth());

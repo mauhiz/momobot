@@ -181,6 +181,9 @@ public enum NumericReplies {
 
     RPL_NONE(300),
 
+    /**
+     * <channel> :No topic is set
+     */
     RPL_NOTOPIC(331),
 
     RPL_NOUSERS(395),
@@ -225,6 +228,9 @@ public enum NumericReplies {
 
     RPL_TIME(391),
 
+    /**
+     * <channel> :<topic>
+     */
     RPL_TOPIC(332),
 
     RPL_TOPICINFO(333),

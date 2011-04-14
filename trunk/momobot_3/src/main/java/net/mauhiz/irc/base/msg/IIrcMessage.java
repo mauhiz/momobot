@@ -1,13 +1,18 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
  */
 public interface IIrcMessage {
+
+    /**
+     * @return a duplicate of this message
+     */
+    IIrcMessage copy();
+
     /**
      * @return from
      */
@@ -21,19 +26,17 @@ public interface IIrcMessage {
     /**
      * @return server
      */
-    IrcServer getServer();
+    IIrcServerPeer getServerPeer();
 
     /**
      * @return to
      */
     Target getTo();
 
-    boolean isToChannel();
-
     /**
-     * @param control
+     * @return true is this message is directed to a channel
      */
-    void process(IIrcControl control);
+    boolean isToChannel();
 
     /**
      * @return message lisible par l'utilisateur

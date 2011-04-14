@@ -8,12 +8,12 @@ import net.mauhiz.board.Piece;
 import net.mauhiz.board.Player;
 import net.mauhiz.board.Square;
 
-public abstract class GuiBoardController<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
-        AbstractBoardController<B, M> {
+public abstract class AbstractGuiBoardController<B extends Board<? extends Piece, ? extends Player>, M extends Move>
+        extends AbstractBoardController<B, M> implements IGuiBoardController<B, M> {
     private final IBoardGui<B, M> display;
     protected Square selectedSquare;
 
-    protected GuiBoardController(IBoardGui<B, M> display, B board) {
+    protected AbstractGuiBoardController(IBoardGui<B, M> display, B board) {
         super(board);
         this.display = display;
     }
@@ -50,8 +50,6 @@ public abstract class GuiBoardController<B extends Board<? extends Piece, ? exte
 
         refresh();
     }
-
-    public abstract void movePiece(Square to);
 
     public abstract void refresh();
 

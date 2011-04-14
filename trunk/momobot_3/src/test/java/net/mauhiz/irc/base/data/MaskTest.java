@@ -8,7 +8,7 @@ import org.junit.Test;
  */
 public class MaskTest {
     /**
-     * Test method for {@link net.mauhiz.irc.base.data.HostMask#Mask(String)}.
+     * Test method for {@link HostMask#getInstance(String)}.
      */
     @Test
     public void testMask1() {
@@ -25,6 +25,4 @@ public class MaskTest {
         Assert.assertEquals("webchat", m.getUser());
         Assert.assertEquals("41.224.168.142", m.getHost());
     }
-
-    //
 }

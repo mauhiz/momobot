@@ -8,11 +8,11 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public abstract class ChannelEvent implements IChannelEvent {
+public abstract class AbstractChannelEvent implements IChannelEvent {
     /**
      * logger.
      */
-    protected static final Logger LOG = Logger.getLogger(Gather.class);
+    protected static final Logger LOG = Logger.getLogger(AbstractChannelEvent.class);
     
     /**
      * running
@@ -23,7 +23,7 @@ public abstract class ChannelEvent implements IChannelEvent {
      * @param chan
      *            le channel
      */
-    public ChannelEvent(IrcChannel chan) {
+    public AbstractChannelEvent(IrcChannel chan) {
         Hooks.addHook(chan, this);
     }
     

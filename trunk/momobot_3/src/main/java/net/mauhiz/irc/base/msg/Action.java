@@ -1,6 +1,6 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
 
 /**
@@ -17,7 +17,7 @@ public class Action extends Ctcp {
      */
     public static Action buildAnswer(IIrcMessage toReply, String msg) {
         if (toReply.isToChannel()) {
-            return new Action(null, toReply.getTo(), toReply.getServer(), msg);
+            return new Action(null, toReply.getTo(), toReply.getServerPeer(), msg);
         }
         return buildPrivateAnswer(toReply, msg);
     }
@@ -28,17 +28,11 @@ public class Action extends Ctcp {
      * @return new msg
      */
     public static Action buildPrivateAnswer(IIrcMessage toReply, String msg) {
-        return new Action(null, toReply.getFrom(), toReply.getServer(), msg);
+        return new Action(null, toReply.getFrom(), toReply.getServerPeer(), msg);
     }
 
-    /**
-     * @param from1
-     * @param to1
-     * @param server1
-     * @param message1
-     */
-    public Action(Target from1, Target to1, IrcServer server1, String message1) {
-        super(from1, to1, server1, message1);
+    public Action(Target from, Target to, IIrcServerPeer server, String message) {
+        super(from, to, server, message);
     }
 
     @Override

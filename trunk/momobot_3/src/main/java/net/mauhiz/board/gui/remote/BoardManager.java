@@ -10,7 +10,7 @@ import net.mauhiz.board.Move;
 import net.mauhiz.board.Piece;
 import net.mauhiz.board.Player;
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Ctcp;
 
@@ -19,7 +19,7 @@ public class BoardManager {
     static class IrcOpponent {
         IIrcControl control;
         IrcUser opponentUser;
-        IrcServer server;
+        IIrcServerPeer server;
     }
 
     private static final BoardManager INSTANCE = new BoardManager();

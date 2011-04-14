@@ -1,16 +1,18 @@
 package net.mauhiz.irc.bot.triggers.base;
 
+import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.IrcControl;
+import net.mauhiz.irc.base.IrcClientControl;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
 import net.mauhiz.irc.base.trigger.INoticeTrigger;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.base.trigger.ITrigger;
-import net.mauhiz.irc.bot.MmbTriggerManager;
+import net.mauhiz.irc.base.trigger.ITriggerManager;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.ICommand;
 import net.mauhiz.util.Messages;
@@ -41,7 +43,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
                 cmds.add(((ICommand) trig).getTriggerText());
             }
         }
-        int maxLen = im.getServer().getLineMaxLength() - 50; // TODO make precise computation of overhead in NOTICE
+        int maxLen = im.getServerPeer().getNetwork().getLineMaxLength() - 50; // TODO make precise computation of overhead in NOTICE
         for (String trig : cmds) {
             if (msg.length() >= maxLen) { // flush
                 Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
@@ -67,7 +69,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
                 cmds.add(((ICommand) trig).getTriggerText());
             }
         }
-        int maxLen = im.getServer().getLineMaxLength(); // TODO make precise computation of overhead in PRIVMSG
+        int maxLen = im.getServerPeer().getNetwork().getLineMaxLength(); // TODO make precise computation of overhead in PRIVMSG
         for (String trig : cmds) {
             if (msg.length() >= maxLen) {
                 Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
@@ -89,8 +91,13 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      * @return triggers view
      */
     private Iterable<ITrigger> getTriggers(IIrcControl control) {
-        IrcControl realControl = (IrcControl) control;
-        MmbTriggerManager manager = (MmbTriggerManager) realControl.getManager();
-        return manager.getTriggers();
+        IrcClientControl realControl = (IrcClientControl) control;
+        ITriggerManager[] managers = realControl.getManagers();
+        for (ITriggerManager manager : managers) {
+            if (manager instanceof DefaultTriggerManager) {
+                return ((DefaultTriggerManager) manager).getTriggers();
+            }
+        }
+        return Collections.emptySet();
     }
 }

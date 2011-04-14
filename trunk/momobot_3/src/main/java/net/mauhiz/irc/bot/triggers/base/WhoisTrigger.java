@@ -30,7 +30,7 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     @Override
     public void doTrigger(Join im, IIrcControl control) {
         IrcUser user = (IrcUser) im.getFrom();
-        WhoisRequest wr = new WhoisRequest(user.getNick(), im.getServer(), control);
+        WhoisRequest wr = new WhoisRequest(user.getNick(), im.getServerPeer(), control);
         wr.startAs("Whois Request");
     }
 
@@ -39,7 +39,7 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {
-        WhoisRequest wr = new WhoisRequest(getArgs(pme.getMessage()), pme.getServer(), control);
+        WhoisRequest wr = new WhoisRequest(getArgs(pme.getMessage()), pme.getServerPeer(), control);
         wr.setReportTo(pme.getFrom());
         wr.startAs("Whois Request");
     }

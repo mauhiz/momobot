@@ -6,11 +6,11 @@ import net.mauhiz.board.checkers.model.CheckersBoard;
 import net.mauhiz.board.checkers.model.CheckersMove;
 import net.mauhiz.board.checkers.model.CheckersOwnedPiece;
 import net.mauhiz.board.checkers.model.CheckersRule;
-import net.mauhiz.board.gui.GuiBoardController;
+import net.mauhiz.board.gui.AbstractGuiBoardController;
 
 import org.apache.commons.lang.NotImplementedException;
 
-public class CheckersBoardController extends GuiBoardController<CheckersBoard, CheckersMove> {
+public class CheckersBoardController extends AbstractGuiBoardController<CheckersBoard, CheckersMove> {
 
     public CheckersBoardController(ICheckersGui display) {
         super(display, new CheckersBoard());

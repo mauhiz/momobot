@@ -3,7 +3,7 @@ package net.mauhiz.irc.bot.triggers.dispo;
 import java.util.Date;
 import java.util.List;
 
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcNetwork;
 import net.mauhiz.util.HibernateUtils;
 import net.mauhiz.util.Hooks;
 
@@ -13,19 +13,19 @@ import org.hibernate.Query;
  * @author mauhiz
  */
 public final class DispoDb {
-    
+
     /**
      * @param server
      * @return instance
      */
-    public static DispoDb getInstance(IrcServer server) {
+    public static DispoDb getInstance(IrcNetwork server) {
         DispoDb ret = Hooks.getHook(server, DispoDb.class);
         if (ret == null) {
             return new DispoDb(server);
         }
         return ret;
     }
-    
+
     /**
      * @param dispo
      */
@@ -43,17 +43,17 @@ public final class DispoDb {
         HibernateUtils.currentSession().save(dispo);
         HibernateUtils.currentSession().getTransaction().commit();
     }
-    
-    private final IrcServer hook;
-    
+
+    private final IrcNetwork hook;
+
     /**
      * @param server
      */
-    private DispoDb(IrcServer server) {
+    private DispoDb(IrcNetwork server) {
         Hooks.addHook(server, this);
         hook = server;
     }
-    
+
     /**
      * @param channel
      * @param when
@@ -67,5 +67,5 @@ public final class DispoDb {
         getQry.setString("serverAlias", hook.getAlias());
         return getQry.list();
     }
-    
+
 }

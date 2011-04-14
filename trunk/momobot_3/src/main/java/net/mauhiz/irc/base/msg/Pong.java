@@ -1,33 +1,29 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 
 /**
  * @author mauhiz
  */
 public class Pong extends AbstractIrcMessage {
     private final String pingId;
-    
-    /**
-     * @param server1
-     * @param pingId1
-     */
-    public Pong(IrcServer server1, String pingId1) {
-        super(null, null, server1);
-        pingId = pingId1;
+
+    public Pong(IIrcServerPeer server, String pingId) {
+        super(null, null, server);
+        this.pingId = pingId;
     }
-    
+
+    @Override
+    public Pong copy() {
+        return new Pong(server, pingId);
+    }
+
     @Override
     public String getIrcForm() {
-        return "PONG " + pingId;
+        return IrcCommands.PONG + " " + pingId;
     }
-    
-    @Override
-    public void process(IIrcControl control) {
-        throw new UnsupportedOperationException("I should not receive PONG msg");
-    }
-    
+
     @Override
     public String toString() {
         return "Answering PING: " + pingId;

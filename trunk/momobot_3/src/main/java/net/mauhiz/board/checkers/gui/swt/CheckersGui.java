@@ -7,7 +7,7 @@ import net.mauhiz.board.checkers.model.CheckersBoard;
 import net.mauhiz.board.checkers.model.CheckersMove;
 import net.mauhiz.board.checkers.model.CheckersOwnedPiece;
 import net.mauhiz.board.checkers.model.CheckersPlayer;
-import net.mauhiz.board.gui.swt.SwtBoardGui;
+import net.mauhiz.board.gui.swt.AbstractSwtBoardGui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * @author mauhiz
  */
-public class CheckersGui extends SwtBoardGui<CheckersBoard, CheckersMove> implements ICheckersGui {
+public class CheckersGui extends AbstractSwtBoardGui<CheckersBoard, CheckersMove> implements ICheckersGui {
     public static void main(String... args) {
         CheckersGui instance = new CheckersGui();
 

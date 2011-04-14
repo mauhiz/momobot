@@ -1,64 +1,52 @@
 package net.mauhiz.irc.base;
 
-import net.mauhiz.irc.base.data.IrcPeer;
+import net.mauhiz.irc.base.data.IrcDecoder;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.io.IIrcIO;
-import net.mauhiz.irc.base.io.IOStatus;
 import net.mauhiz.irc.base.msg.IIrcMessage;
-import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.trigger.ITriggerManager;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
 public abstract class AbstractIrcControl implements IIrcControl {
-    /**
-     * logger.
-     */
-    private static final Logger LOG = Logger.getLogger(AbstractIrcControl.class);
-    private final ITriggerManager manager;
+    private final ITriggerManager[] managers;
 
-    /**
-     * @param mtm
-     */
-    public AbstractIrcControl(ITriggerManager mtm) {
-        manager = mtm;
+    public AbstractIrcControl(ITriggerManager... managers) {
+        this.managers = managers;
     }
 
     /**
      * @see net.mauhiz.irc.base.IIrcControl#decodeIrcRawMsg(java.lang.String, net.mauhiz.irc.base.io.IIrcIO)
      */
     public void decodeIrcRawMsg(String raw, IIrcIO io) {
-        IrcPeer peer = io.getPeer();
-        assert peer != null : "io had no associated server";
+        IIrcServerPeer peer = io.getServerPeer();
+        assert peer != null : "io had no associated decoder";
 
-        IIrcMessage msg = peer.buildFromRaw(raw);
+        IIrcMessage msg = IrcDecoder.getInstance().buildFromRaw(peer, raw);
 
         if (msg == null) {
             throw new NotImplementedException("Unknown msg: " + raw);
         }
 
-        if (msg instanceof Notice && io.getStatus() == IOStatus.CONNECTING) {
-            Notice notice = (Notice) msg;
-            if (notice.getFrom() != null) {
-                io.setStatus(IOStatus.CONNECTED);
-                LOG.info("connected to " + msg.getServer().getAlias());
-            }
-            /* dont let it be processed */
+        // FIXME implement basic processing as a trigger manager
+        if (process(msg, io)) {
             return;
+        } // common actions
+
+        for (ITriggerManager itm : managers) {
+            itm.processMsg(msg, this); // specific client actions
         }
-
-        msg.process(this); // common actions
-
-        getManager().processMsg(msg, this); // specific client actions
     }
 
     /**
      * @return trigger manager
      */
-    public ITriggerManager getManager() {
-        return manager;
+    public ITriggerManager[] getManagers() {
+        return managers;
     }
+
+    protected abstract boolean process(IIrcMessage message, IIrcIO io);
 }

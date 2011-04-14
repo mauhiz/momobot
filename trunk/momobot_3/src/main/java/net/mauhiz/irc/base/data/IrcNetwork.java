@@ -1,5 +1,6 @@
 package net.mauhiz.irc.base.data;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Set;
 
@@ -7,7 +8,7 @@ import java.util.Set;
  * @author mauhiz
  * 
  */
-public interface IrcServer extends IrcPeer, Target {
+public interface IrcNetwork {
 
     int countUsers();
 
@@ -48,11 +49,15 @@ public interface IrcServer extends IrcPeer, Target {
      */
     Set<IrcChannel> getChannelsForUser(IrcUser smith);
 
-    IrcUser getMyself();
+    int getLineMaxLength();
 
     Collection<String> getServiceNicks();
 
     IrcChannel newChannel(String chanLowerCase);
+
+    IIrcServerPeer newServerPeer();
+
+    IIrcServerPeer newServerPeer(URI uri);
 
     IrcUser newUser(String nick);
 
@@ -66,17 +71,7 @@ public interface IrcServer extends IrcPeer, Target {
      */
     void remove(IrcUser quitter);
 
-    /**
-     * @param alias
-     */
-    void setAlias(String alias);
-
-    void setIrcForm(String ircForm);
-
-    /**
-     * @param me
-     */
-    void setMyself(IrcUser me);
+    void setDefaultUri(URI defaultUri);
 
     /**
      * @param target

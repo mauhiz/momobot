@@ -2,7 +2,7 @@ package net.mauhiz.irc.base.io;
 
 import java.io.IOException;
 
-import net.mauhiz.irc.base.data.IrcPeer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 
 /**
  * @author mauhiz
@@ -13,27 +13,27 @@ public interface IIrcIO {
      *                if {@link IOException}
      */
     void disconnect();
-    
+
     /**
      * @return server
      */
-    IrcPeer getPeer();
-    
+    IIrcServerPeer getServerPeer();
+
     /**
      * @return status
      */
     IOStatus getStatus();
-    
+
     /**
      * @param msg
      */
     void processMsg(String msg);
-    
+
     /**
      * @param msg
      */
     void sendMsg(String msg);
-    
+
     /**
      * @param status
      */

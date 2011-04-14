@@ -18,7 +18,7 @@ public class MemoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     public MemoTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -27,15 +27,15 @@ public class MemoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         String msg = getArgs(cme.getMessage());
         String respMsg;
         if (StringUtils.isEmpty(msg)) {
-            respMsg = "Je connais " + MemoDb.getInstance(cme.getServer()).countMemos()
+            respMsg = "Je connais " + MemoDb.getInstance(cme.getServerPeer().getNetwork()).countMemos()
                     + " memos. $listmemos pour avoir une liste";
         } else {
             int index = msg.indexOf(' ');
             if (index < 1) {
-                respMsg = MemoDb.getInstance(cme.getServer()).getMemo(msg);
+                respMsg = MemoDb.getInstance(cme.getServerPeer().getNetwork()).getMemo(msg);
             } else {
                 String cle = msg.substring(0, index);
-                respMsg = MemoDb.getInstance(cme.getServer()).setMemo(cle, msg.substring(index + 1));
+                respMsg = MemoDb.getInstance(cme.getServerPeer().getNetwork()).setMemo(cle, msg.substring(index + 1));
             }
         }
         Privmsg resp = Privmsg.buildAnswer(cme, respMsg);

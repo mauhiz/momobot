@@ -23,9 +23,9 @@ import net.mauhiz.board.Square;
 import net.mauhiz.board.gui.AbstractBoardGui;
 import net.mauhiz.board.gui.ExitAction;
 import net.mauhiz.board.gui.StartAction;
-import net.mauhiz.util.AbstractAction;
+import net.mauhiz.util.IAction;
 
-public abstract class AwtBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
+public abstract class AbstractAwtBoardGui<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends
         AbstractBoardGui<B, M> {
 
     private final Map<Square, Button> buttons = new HashMap<Square, Button>();
@@ -76,7 +76,7 @@ public abstract class AwtBoardGui<B extends Board<? extends Piece, ? extends Pla
     }
 
     @Override
-    protected void enableSquare(Square square, AbstractAction action) {
+    protected void enableSquare(Square square, IAction action) {
         Button button = getButton(square);
         Color fore = button.getForeground();
         Color back = button.getBackground();

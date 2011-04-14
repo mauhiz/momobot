@@ -1,8 +1,9 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Target;
 
 /**
@@ -12,15 +13,14 @@ public class Invite extends AbstractIrcMessage {
 
     private final IrcChannel chan;
 
-    /**
-     * @param from1
-     * @param to1
-     * @param ircServer
-     * @param msg1
-     */
-    public Invite(Target from, Target to, IrcServer ircServer, IrcChannel chan) {
-        super(from, to, ircServer);
+    public Invite(Target from, IrcUser invitedUser, IIrcServerPeer server, IrcChannel chan) {
+        super(from, invitedUser, server);
         this.chan = chan;
+    }
+
+    @Override
+    public Invite copy() {
+        return new Invite(chan, (IrcUser) to, server, chan);
     }
 
     /**
@@ -38,17 +38,12 @@ public class Invite extends AbstractIrcMessage {
             sb.append(super.from);
             sb.append(' ');
         }
-        sb.append("INVITE ");
+        sb.append(IrcCommands.INVITE).append(' ');
         sb.append(super.to);
         sb.append(' ');
 
         sb.append(chan);
         return sb.toString();
-    }
-
-    @Override
-    public void process(IIrcControl control) {
-        // nothing to do
     }
 
     @Override

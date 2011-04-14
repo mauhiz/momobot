@@ -2,16 +2,15 @@ package net.mauhiz.irc.base.data;
 
 import java.net.InetSocketAddress;
 
-import net.mauhiz.irc.base.msg.IIrcMessage;
-
 /**
  * @author mauhiz
  */
 public interface IrcPeer {
-    
-    IIrcMessage buildFromRaw(String raw);
-    
+
     InetSocketAddress getAddress();
-    
-    int getLineMaxLength();
+
+    /**
+     * @return The IRC network it is connected to (as a client or as a server)
+     */
+    IrcNetwork getNetwork();
 }

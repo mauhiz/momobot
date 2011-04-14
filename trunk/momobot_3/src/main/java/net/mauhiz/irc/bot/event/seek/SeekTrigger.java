@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.triggers.event.gather;
+package net.mauhiz.irc.bot.event.seek;
 
 import java.util.List;
 import java.util.Set;
@@ -10,9 +10,8 @@ import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
 import net.mauhiz.irc.bot.event.Gather;
-import net.mauhiz.irc.bot.event.SeekWar;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractGourmandTrigger;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,7 +44,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                 /* msg prive */
                 return;
             }
-            ChannelEvent evt = chan.getEvt();
+            IChannelEvent evt = chan.getEvt();
             if (evt == null) {
                 Privmsg resp = Privmsg.buildAnswer(im, "Aucun gather n'est lance.");
                 control.sendMsg(resp);
@@ -61,15 +60,15 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                         String[] channelSeek = SeekWar.SEEK_CHANS;
 
                         for (String element : channelSeek) {
-                            Join go = new Join(im.getServer(), im.getServer().findChannel(element));
+                            Join go = new Join(im.getServerPeer(), im.getServerPeer().getNetwork().findChannel(element));
                             control.sendMsg(go);
                         }
 
                         // ON ENVOIE LES MSG DE SEEK
 
                         for (String element : channelSeek) {
-                            Privmsg resp = new Privmsg(null, im.getServer().findChannel(element), im.getServer(),
-                                    seek.getMessageForSeeking());
+                            Privmsg resp = new Privmsg(null, im.getServerPeer().getNetwork().findChannel(element),
+                                    im.getServerPeer(), seek.getMessageForSeeking());
                             control.sendMsg(resp);
                         }
 
@@ -106,10 +105,10 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
 
             }
         } else {
-            IrcUser myself = im.getServer().getMyself();
-            Set<IrcChannel> myChans = im.getServer().getChannelsForUser(myself);
+            IrcUser myself = im.getServerPeer().getMyself();
+            Set<IrcChannel> myChans = im.getServerPeer().getNetwork().getChannelsForUser(myself);
             for (IrcChannel chan1 : myChans) {
-                ChannelEvent evt1 = chan1.getEvt();
+                IChannelEvent evt1 = chan1.getEvt();
                 // if (evt instanceof Gather) {
                 if (evt1 instanceof Gather) {
                     Gather gather = (Gather) evt1;
@@ -121,18 +120,18 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                             // !! Time out !!
                             LOG.debug("Seek-Time-Out atteint.");
                             gather.setSeekToNull();
-                            Privmsg resp = new Privmsg(null, seek.getChannel(), im.getServer(),
+                            Privmsg resp = new Privmsg(null, seek.getChannel(), im.getServerPeer(),
                                     "Time out atteint, seek stopper.");
                             control.sendMsg(resp);
                             // LEAVE LES CHANNELS
-                            StopSeekTrigger.leaveSeekChans(control, im.getServer());
+                            StopSeekTrigger.leaveSeekChans(control, im.getServerPeer());
                         } else {
                             // TJS en vie
                             LOG.debug("MSG entrant : " + im);
                             // Si c'est le winner du seek, je transmet le msg PV
                             if (seek.getSeekWinner().equals(kikoolol.getNick())
-                                    && im.getTo().equals(im.getServer().getMyself())) {
-                                Privmsg reply = new Privmsg(null, seek.getChannel(), im.getServer(), kikoolol.getNick()
+                                    && im.getTo().equals(im.getServerPeer().getMyself())) {
+                                Privmsg reply = new Privmsg(null, seek.getChannel(), im.getServerPeer(), kikoolol.getNick()
                                         + " : " + im.getMessage());
                                 control.sendMsg(reply);
                             } else if (seek.isSeekInProgress()) {
@@ -142,7 +141,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                                 }
                             } else if (!seek.isSeekInProgress() && seek.isLaunchedAndQuit) {
                                 seek.isLaunchedAndQuit = false;
-                                StopSeekTrigger.leaveSeekChans(control, im.getServer());
+                                StopSeekTrigger.leaveSeekChans(control, im.getServerPeer());
                             }
 
                         }

@@ -15,12 +15,12 @@ import net.mauhiz.board.chess.model.ChessBoard;
 import net.mauhiz.board.chess.model.ChessMove;
 import net.mauhiz.board.chess.model.ChessPiece;
 import net.mauhiz.board.chess.model.ChessPlayer;
-import net.mauhiz.board.gui.awt.AwtBoardGui;
+import net.mauhiz.board.gui.awt.AbstractAwtBoardGui;
 
 /**
  * @author mauhiz
  */
-public class ChessGui extends AwtBoardGui<ChessBoard, ChessMove> implements IChessGui {
+public class ChessGui extends AbstractAwtBoardGui<ChessBoard, ChessMove> implements IChessGui {
 
     public static void main(String... args) {
         ChessGui instance = new ChessGui();

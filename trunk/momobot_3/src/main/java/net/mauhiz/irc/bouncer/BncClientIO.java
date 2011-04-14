@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 import net.mauhiz.irc.base.ColorUtils;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcDecoder;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.io.AbstractIrcIO;
@@ -54,22 +56,22 @@ public class BncClientIO extends AbstractIrcIO {
         return socket.getInetAddress().getHostName();
     }
 
-    @Override
-    public ClientPeer getPeer() {
-        return (ClientPeer) super.getPeer();
-    }
-
     // private long connectionTime = System.currentTimeMillis();
+
+    @Override
+    public IIrcServerPeer getServerPeer() {
+        return null; // myself
+    }
 
     @Override
     public void processMsg(String raw) {
         if (status == IOStatus.CONNECTING) {
-            IIrcMessage msg = getPeer().buildFromRaw(raw);
+            IIrcMessage msg = IrcDecoder.getInstance().buildFromRaw(null, raw);
 
             if (nick == null) {
                 if (msg instanceof Nick) {
                     nick = ((Nick) msg).getNewNick();
-                    sendGreetings(server.mySelf);
+                    sendGreetings(server.mySelf, server.serverData, msg.getServerPeer());
                 } else {
                     super.processMsg(raw);
                 }
@@ -106,15 +108,14 @@ public class BncClientIO extends AbstractIrcIO {
 
                 LOG.info("Failed login attempt from " + getHostName() + " (" + login + "/" + password + ")");
             }
-            NoticeAuth pasBon = new NoticeAuth(server.serverData, "Invalid login or password.");
+            NoticeAuth pasBon = new NoticeAuth(pmsg.getServerPeer(), "Invalid login or password.");
             sendMsg(pasBon.getIrcForm());
         }
     }
 
-    void sendGreetings(Target myNick) {
-        BncServer bncServer = server.serverData;
+    void sendGreetings(Target myNick, BncServer nw, IIrcServerPeer bncServer) {
         // TODO review this stuff
-        IrcUser targetNick = bncServer.findUser(nick, false);
+        IrcUser targetNick = nw.findUser(nick, false);
         ServerMsg smsg1 = new ServerMsg(myNick, targetNick, bncServer, "001", "Welcome to MomoBouncer");
         sendMsg(smsg1.getIrcForm());
 

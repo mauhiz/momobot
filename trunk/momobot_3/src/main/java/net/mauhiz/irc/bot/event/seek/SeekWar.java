@@ -1,4 +1,4 @@
-package net.mauhiz.irc.bot.event;
+package net.mauhiz.irc.bot.event.seek;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.util.NetUtils;
@@ -187,7 +187,7 @@ public class SeekWar {
             // Si c'est "S" on se calme!
             if ("S".equalsIgnoreCase(provenance.getNick())) {
                 sWarning = true;
-                Privmsg msg1 = new Privmsg(null, channel, im.getServer(), "S vient me faire ch**r. J'y vais calmos");
+                Privmsg msg1 = new Privmsg(null, channel, im.getServerPeer(), "S vient me faire ch**r. J'y vais calmos");
                 resultPrivmsg.add(msg1);
             }
 
@@ -213,7 +213,7 @@ public class SeekWar {
                         resultPrivmsg.add(msg1);
                         Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "GOGOGO");
                         resultPrivmsg.add(msg2);
-                        Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance.getNick()
+                        Privmsg msg3 = new Privmsg(null, channel, im.getServerPeer(), provenance.getNick()
                                 + " a mordu! GOGOGO o//");
                         resultPrivmsg.add(msg3);
 
@@ -250,7 +250,7 @@ public class SeekWar {
                         resultPrivmsg.add(msg2);
                     }
 
-                    Privmsg msg1 = new Privmsg(null, channel, im.getServer(), provenance.getNick() + " :" + msg);
+                    Privmsg msg1 = new Privmsg(null, channel, im.getServerPeer(), provenance.getNick() + " :" + msg);
                     resultPrivmsg.add(msg1);
                     return resultPrivmsg;
                 }
@@ -272,7 +272,7 @@ public class SeekWar {
                         resultPrivmsg.add(msg1);
                         Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go!");
                         resultPrivmsg.add(msg2);
-                        Privmsg msg3 = new Privmsg(null, channel, im.getServer(), provenance.getNick() + " :" + msg);
+                        Privmsg msg3 = new Privmsg(null, channel, im.getServerPeer(), provenance.getNick() + " :" + msg);
                         resultPrivmsg.add(msg3);
                     }
 
@@ -569,20 +569,22 @@ public class SeekWar {
         // On test si il faut renvoyer le msg de seek au channel
 
         if (sw.getTime() > TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS)) {
-            IrcServer server = im.getServer();
+            IIrcServerPeer server = im.getServerPeer();
             if (split) {
                 if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) && !sWarning) {
                     sw.split();
                     seekMessage = "." + seekMessage + ".";
                     for (String seekChan : SEEK_CHANS) {
 
-                        Privmsg msg1 = new Privmsg(null, server.findChannel(seekChan), server, getMessageForSeeking());
+                        Privmsg msg1 = new Privmsg(null, server.getNetwork().findChannel(seekChan), server,
+                                getMessageForSeeking());
                         resultPrivmsg.add(msg1);
                     }
                     // un deuxieme msg
                     seekMessage = "." + seekMessage + ".";
                     for (String seekChan : SEEK_CHANS) {
-                        Privmsg msg1 = new Privmsg(null, server.findChannel(seekChan), server, getMessageForSeeking());
+                        Privmsg msg1 = new Privmsg(null, server.getNetwork().findChannel(seekChan), server,
+                                getMessageForSeeking());
                         resultPrivmsg.add(msg1);
                     }
 
@@ -592,7 +594,8 @@ public class SeekWar {
                 split = true;
                 seekMessage = ":" + seekMessage + ":";
                 for (String seekChan : SEEK_CHANS) {
-                    Privmsg msg1 = new Privmsg(null, server.findChannel(seekChan), server, getMessageForSeeking());
+                    Privmsg msg1 = new Privmsg(null, server.getNetwork().findChannel(seekChan), server,
+                            getMessageForSeeking());
                     resultPrivmsg.add(msg1);
                 }
             }

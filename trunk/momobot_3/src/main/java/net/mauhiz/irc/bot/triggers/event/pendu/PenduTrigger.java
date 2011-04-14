@@ -6,7 +6,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.event.ChannelEvent;
+import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.event.Pendu;
 import net.mauhiz.irc.bot.triggers.AbstractGourmandTrigger;
 
@@ -34,7 +34,7 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
             /* c est un msg prive */
             return;
         }
-        ChannelEvent evt = chan.getEvt();
+        IChannelEvent evt = chan.getEvt();
         if (isCommandMsg(cme.getMessage())) {
             String respMsg;
             if (evt == null) {

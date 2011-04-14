@@ -1,10 +1,9 @@
 package net.mauhiz.irc.base.data.defaut;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
-import net.mauhiz.irc.base.data.AbstractIrcServer;
+import net.mauhiz.irc.base.data.AbstractIrcNetwork;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 
@@ -12,13 +11,10 @@ import net.mauhiz.irc.base.data.IrcUser;
  * @author mauhiz
  * 
  */
-public class DefaultServer extends AbstractIrcServer {
+public class DefaultServer extends AbstractIrcNetwork {
 
-    /**
-     * @param uri
-     */
-    public DefaultServer(URI uri) {
-        super(uri);
+    public DefaultServer(String alias) {
+        super(alias);
     }
 
     @Override
@@ -32,7 +28,7 @@ public class DefaultServer extends AbstractIrcServer {
     }
 
     /**
-     * @see net.mauhiz.irc.base.data.AbstractIrcServer#newChannel(java.lang.String)
+     * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newChannel(java.lang.String)
      */
     @Override
     public IrcChannel newChannel(String chanLowerCase) {
@@ -40,7 +36,7 @@ public class DefaultServer extends AbstractIrcServer {
     }
 
     /**
-     * @see net.mauhiz.irc.base.data.AbstractIrcServer#newUser(java.lang.String)
+     * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newUser(java.lang.String)
      */
     @Override
     public IrcUser newUser(String nick) {

@@ -16,7 +16,7 @@ public class WelcomeTrigger implements IJoinTrigger {
     @Override
     public void doTrigger(Join im, IIrcControl control) {
         IrcUser joiner = (IrcUser) im.getFrom();
-        if (!joiner.equals(im.getServer().getMyself())) {
+        if (!joiner.equals(im.getServerPeer().getMyself())) {
             Notice notice = Notice.buildAnswer(im, "Bienvenue sur " + im.getTo());
             control.sendMsg(notice);
         }

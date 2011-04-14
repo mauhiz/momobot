@@ -16,20 +16,11 @@ public abstract class AbstractIrcIO implements IIrcIO {
 
     protected IOStatus status = IOStatus.DISCONNECTED;
 
-    /**
-     * @param ircControl
-     * @param server1
-     */
-    protected AbstractIrcIO(IIrcControl ircControl, IrcPeer server1) {
+    protected AbstractIrcIO(IIrcControl control, IrcPeer peer) {
         super();
-        control = ircControl;
+        this.control = control;
         status = IOStatus.CONNECTING;
-        peer = server1;
-    }
-
-    @Override
-    public IrcPeer getPeer() {
-        return peer;
+        this.peer = peer;
     }
 
     /**
@@ -57,7 +48,7 @@ public abstract class AbstractIrcIO implements IIrcIO {
      * @see net.mauhiz.irc.base.io.IIrcIO#sendMsg(String)
      */
     public final void sendMsg(String msg) {
-        int maxLen = peer.getLineMaxLength();
+        int maxLen = peer.getNetwork().getLineMaxLength();
         String trimmedMsg = msg.length() > maxLen ? msg.substring(0, maxLen) : msg;
 
         output.sendRawMsg(trimmedMsg);

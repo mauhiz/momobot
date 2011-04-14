@@ -4,8 +4,9 @@ import java.util.Arrays;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
-import net.mauhiz.irc.bot.MmbTriggerManager;
+import net.mauhiz.irc.base.trigger.ITriggerManager;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.IAdminTrigger;
 
@@ -38,8 +39,14 @@ public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigge
         } else {
             String className = args[0];
             LOG.info("Activate trigger class = " + className);
-            ((MmbTriggerManager) control.getManager()).loadTrigClass(className, "",
-                    Arrays.copyOfRange(args, 1, args.length));
+            ITriggerManager[] managers = control.getManagers();
+            for (ITriggerManager manager : managers) {
+                if (manager instanceof DefaultTriggerManager) {
+                    ((DefaultTriggerManager) manager).loadTrigClass(className, "",
+                            Arrays.copyOfRange(args, 1, args.length));
+                    break;
+                }
+            }
         }
     }
 }

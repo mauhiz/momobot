@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import net.mauhiz.irc.base.IrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.IrcClientControl;
+import net.mauhiz.irc.base.data.IrcPeer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.User;
 import net.mauhiz.util.AbstractRunnable;
@@ -16,23 +17,19 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class IrcIO extends AbstractIrcIO {
+public class IrcClientIO extends AbstractIrcIO {
     static class IrcClient extends SocketClient {
         Socket getSocket() {
             return _socket_;
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(IrcIO.class);
+    private static final Logger LOG = Logger.getLogger(IrcClientIO.class);
     private IIrcInput input;
     private final IrcClient sclient = new IrcClient();
 
-    /**
-     * @param ircControl
-     * @param server1
-     */
-    public IrcIO(IrcControl ircControl, IrcServer server1) {
-        super(ircControl, server1);
+    public IrcClientIO(IrcClientControl control, IrcPeer server) {
+        super(control, server);
     }
 
     /**
@@ -49,8 +46,9 @@ public class IrcIO extends AbstractIrcIO {
         output.start();
         input = new IrcInput(this, sclient.getSocket());
         input.start();
-        sendMsg(new Nick(getPeer()).getIrcForm());
-        sendMsg(new User(getPeer()).getIrcForm());
+        IIrcServerPeer server = getServerPeer();
+        sendMsg(new Nick(server).getIrcForm());
+        sendMsg(new User(server).getIrcForm());
     }
 
     /**
@@ -77,8 +75,8 @@ public class IrcIO extends AbstractIrcIO {
     }
 
     @Override
-    public IrcServer getPeer() {
-        return (IrcServer) peer;
+    public IIrcServerPeer getServerPeer() {
+        return (IIrcServerPeer) peer; // server is my partner.
     }
 
     public void reconnect() throws IOException {

@@ -29,9 +29,6 @@ public class HostMask implements Target {
     private String nick;
     private String user = "?";
 
-    /**
-     * @param raw
-     */
     private HostMask() {
         super();
     }

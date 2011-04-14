@@ -11,9 +11,9 @@ import net.mauhiz.util.AbstractAction;
  */
 public class CancelAction<B extends Board<? extends Piece, ? extends Player>, M extends Move> extends AbstractAction {
 
-    private final GuiBoardController<B, M> gui;
+    private final IGuiBoardController<B, M> gui;
 
-    public CancelAction(GuiBoardController<B, M> gui) {
+    public CancelAction(IGuiBoardController<B, M> gui) {
         super();
         this.gui = gui;
     }

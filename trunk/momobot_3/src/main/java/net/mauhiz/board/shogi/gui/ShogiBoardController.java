@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import net.mauhiz.board.MoveReader;
 import net.mauhiz.board.Square;
-import net.mauhiz.board.gui.GuiBoardController;
+import net.mauhiz.board.gui.AbstractGuiBoardController;
 import net.mauhiz.board.shogi.model.Drop;
 import net.mauhiz.board.shogi.model.ShogiBoard;
 import net.mauhiz.board.shogi.model.ShogiMove;
@@ -17,7 +17,7 @@ import net.mauhiz.board.shogi.model.ShogiRule;
 
 import org.apache.commons.lang.NotImplementedException;
 
-public class ShogiBoardController extends GuiBoardController<ShogiBoard, ShogiMove> {
+public class ShogiBoardController extends AbstractGuiBoardController<ShogiBoard, ShogiMove> {
 
     private ShogiPiece selectedPiece;
 

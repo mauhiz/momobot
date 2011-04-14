@@ -1,8 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcServer;
-import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +17,7 @@ public class Notice extends AbstractIrcMessage {
      */
     public static Notice buildAnswer(IIrcMessage toReply, String msg) {
         if (toReply.isToChannel()) {
-            return new Notice(null, toReply.getTo(), toReply.getServer(), msg);
+            return new Notice(null, toReply.getTo(), toReply.getServerPeer(), msg);
         }
         return buildPrivateAnswer(toReply, msg);
     }
@@ -29,20 +28,25 @@ public class Notice extends AbstractIrcMessage {
      * @return private answer
      */
     public static Notice buildPrivateAnswer(IIrcMessage toReply, String msg) {
-        return new Notice(null, toReply.getFrom(), toReply.getServer(), msg);
+        return new Notice(null, toReply.getFrom(), toReply.getServerPeer(), msg);
     }
 
     private final String message;
 
     /**
-     * @param from1
-     * @param to1
-     * @param ircServer
-     * @param msg1
+     * @param from
+     * @param to
+     * @param server
+     * @param msg
      */
-    public Notice(Target from1, Target to1, IrcServer ircServer, String msg1) {
-        super(from1, to1, ircServer);
-        message = msg1;
+    public Notice(Target from, Target to, IIrcServerPeer server, String msg) {
+        super(from, to, server);
+        message = msg;
+    }
+
+    @Override
+    public Notice copy() {
+        return new Notice(from, to, server, message);
     }
 
     @Override
@@ -56,17 +60,9 @@ public class Notice extends AbstractIrcMessage {
             sb.append(super.from);
             sb.append(' ');
         }
-        sb.append("NOTICE ");
-        if (super.to != null) {
-            if (super.from == null && !isToChannel()) {
-                IrcUser dest = (IrcUser) to;
-                sb.append(dest.getNick());
-            } else {
-                sb.append(super.to);
-            }
-            sb.append(' ');
-        }
-        sb.append(':');
+        sb.append(IrcCommands.NOTICE).append(' ');
+        sb.append(super.to);
+        sb.append(" :");
         sb.append(message);
         return sb.toString();
     }
@@ -76,11 +72,6 @@ public class Notice extends AbstractIrcMessage {
      */
     public String getMessage() {
         return message;
-    }
-
-    @Override
-    public void process(IIrcControl control) {
-        // nothing to do here
     }
 
     @Override

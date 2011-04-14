@@ -1,13 +1,13 @@
 package net.mauhiz.board.gui.remote;
 
-import net.mauhiz.irc.base.data.IrcServer;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.msg.Ctcp;
 
 public class CtcpMove extends Ctcp {
 
-    public CtcpMove(Target from1, Target to1, IrcServer server1, String message1) {
-        super(from1, to1, server1, message1);
+    public CtcpMove(Target from, Target to, IIrcServerPeer server, String message) {
+        super(from, to, server, message);
     }
 
     @Override

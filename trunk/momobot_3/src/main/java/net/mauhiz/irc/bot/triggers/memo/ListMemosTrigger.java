@@ -16,14 +16,14 @@ public class ListMemosTrigger extends AbstractTextTrigger implements IPrivmsgTri
     public ListMemosTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        Privmsg msg = Privmsg.buildAnswer(im, MemoDb.getInstance(im.getServer()).getMemos());
+        Privmsg msg = Privmsg.buildAnswer(im, MemoDb.getInstance(im.getServerPeer().getNetwork()).getMemos());
         control.sendMsg(msg);
     }
 }

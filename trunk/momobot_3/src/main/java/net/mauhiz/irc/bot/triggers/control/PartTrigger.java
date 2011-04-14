@@ -35,7 +35,7 @@ public class PartTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
             reason = null;
         }
         /* TODO part cross servers */
-        Part leave = new Part(im.getServer(), im.getServer().findChannel(args), reason);
+        Part leave = new Part(im.getServerPeer(), im.getServerPeer().getNetwork().findChannel(args), reason);
         control.sendMsg(leave);
     }
 }

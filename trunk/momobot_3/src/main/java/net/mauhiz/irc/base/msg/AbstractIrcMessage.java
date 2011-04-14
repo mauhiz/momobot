@@ -1,7 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.data.IrcServer;
 import net.mauhiz.irc.base.data.Target;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -12,19 +12,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author mauhiz
  */
 public abstract class AbstractIrcMessage implements IIrcMessage {
-    protected Target from;
-    protected IrcServer server;
-    protected Target to;
+    protected final Target from;
+    protected final IIrcServerPeer server;
+    protected final Target to;
 
-    /**
-     * @param from1
-     * @param to1
-     * @param server1
-     */
-    public AbstractIrcMessage(Target from1, Target to1, IrcServer server1) {
-        from = from1;
-        to = to1;
-        server = server1;
+    public AbstractIrcMessage(Target from, Target to, IIrcServerPeer server) {
+        this.from = from;
+        this.to = to;
+        this.server = server;
     }
 
     /**
@@ -35,9 +30,9 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
     }
 
     /**
-     * @see net.mauhiz.irc.base.msg.IIrcMessage#getServer()
+     * @see net.mauhiz.irc.base.msg.IIrcMessage#getServerPeer()
      */
-    public IrcServer getServer() {
+    public IIrcServerPeer getServerPeer() {
         return server;
     }
 

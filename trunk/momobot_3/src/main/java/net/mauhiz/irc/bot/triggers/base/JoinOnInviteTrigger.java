@@ -20,7 +20,7 @@ public class JoinOnInviteTrigger implements IInviteTrigger {
      */
     @Override
     public void doTrigger(Invite im, IIrcControl control) {
-        Join join = new Join(im.getServer(), im.getChan());
+        Join join = new Join(im.getServerPeer(), im.getChan());
         control.sendMsg(join);
         Notice notice = Notice.buildPrivateAnswer(im, Messages.get(getClass(), "join.on.invite")); //$NON-NLS-1$
         control.sendMsg(notice);

@@ -52,7 +52,7 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
                 /* no caller */
                 LOG.debug("skipping caller : " + nextIrcUser.getNick());
                 continue;
-            } else if (nextIrcUser.equals(cme.getServer().getMyself())) {
+            } else if (nextIrcUser.equals(cme.getServerPeer().getMyself())) {
                 /* no self */
                 LOG.debug("skipping myself : " + nextIrcUser.getNick());
                 continue;
