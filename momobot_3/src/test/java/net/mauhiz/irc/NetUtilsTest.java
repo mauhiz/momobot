@@ -91,7 +91,7 @@ public class NetUtilsTest {
      * Test method for {@link net.mauhiz.util.NetUtils#makeISA(java.lang.String)}.
      */
     @Test
-    public void testMakeISA() throws UnknownHostException {
+    public void testMakeISA() {
         InetSocketAddress add1 = NetUtils.makeISA("127.0.0.1:27015");
         Assert.assertEquals(27015, add1.getPort());
         Assert.assertEquals("127.0.0.1", add1.getAddress().getCanonicalHostName());

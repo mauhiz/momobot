@@ -191,7 +191,7 @@ public class SeekWar2 extends AbstractChannelEvent {
         }
 
         // On envoie le msg
-        Privmsg msg = new Privmsg(ircServer, channel, null, resp);
+        Privmsg msg = new Privmsg(ircServer, null, channel, resp);
         control.sendMsg(msg);
 
         // On join les #chans de seek
@@ -216,15 +216,15 @@ public class SeekWar2 extends AbstractChannelEvent {
                 } else {
                     if (DEFAULT_SERV) {
                         if (isMatchLVLMessage(st)) {
-                            Privmsg msg = new Privmsg(null, user.getUser(), ircServer, level);
-                            Privmsg msg1 = new Privmsg(null, user.getUser(), ircServer, "rdy?");
+                            Privmsg msg = new Privmsg(ircServer, null, user.getUser(), level);
+                            Privmsg msg1 = new Privmsg(ircServer, null, user.getUser(), "rdy?");
                             control.sendMsg(msg);
                             control.sendMsg(msg1);
                             user.setId(SeekStatus.GOT_MATCH_LVL);
                             break;
                         }
-                        Privmsg msg = new Privmsg(null, user.getUser(), ircServer, user.getNick());
-                        Privmsg msg1 = new Privmsg(null, user.getUser(), ircServer, "lvl?");
+                        Privmsg msg = new Privmsg(ircServer, null, user.getUser(), user.getNick());
+                        Privmsg msg1 = new Privmsg(ircServer, null, user.getUser(), "lvl?");
                         control.sendMsg(msg);
                         control.sendMsg(msg1);
                         user.setId(SeekStatus.GOT_ANSWER);
@@ -232,15 +232,15 @@ public class SeekWar2 extends AbstractChannelEvent {
                     }
                     // serv off
                     if (isMatchLVLMessage(st)) {
-                        Privmsg msg = new Privmsg(null, user.getUser(), ircServer, level);
-                        Privmsg msg1 = new Privmsg(null, user.getUser(), ircServer, "ip pass??");
+                        Privmsg msg = new Privmsg(ircServer, null, user.getUser(), level);
+                        Privmsg msg1 = new Privmsg(ircServer, null, user.getUser(), "ip pass??");
                         control.sendMsg(msg);
                         control.sendMsg(msg1);
                         user.setId(SeekStatus.GOT_MATCH_LVL_SRV_OFF);
                         break;
                     }
-                    Privmsg msg = new Privmsg(null, user.getUser(), ircServer, user.getNick());
-                    Privmsg msg1 = new Privmsg(null, user.getUser(), ircServer, "ip pass?");
+                    Privmsg msg = new Privmsg(ircServer, null, user.getUser(), user.getNick());
+                    Privmsg msg1 = new Privmsg(ircServer, null, user.getUser(), "ip pass?");
                     control.sendMsg(msg);
                     control.sendMsg(msg1);
                     user.setId(SeekStatus.GOT_ANSWER_SRV_OFF);
@@ -256,8 +256,8 @@ public class SeekWar2 extends AbstractChannelEvent {
                         break;
                     }
                     if (isMatchLVLMessage(st)) {
-                        Privmsg msg = new Privmsg(null, user.getUser(), ircServer, level);
-                        Privmsg msg1 = new Privmsg(null, user.getUser(), ircServer, "rdy?");
+                        Privmsg msg = new Privmsg(ircServer, null, user.getUser(), level);
+                        Privmsg msg1 = new Privmsg(ircServer, null, user.getUser(), "rdy?");
                         control.sendMsg(msg);
                         control.sendMsg(msg1);
                         user.setId(SeekStatus.GOT_MATCH_LVL);
@@ -282,8 +282,8 @@ public class SeekWar2 extends AbstractChannelEvent {
                     user.setId(SeekStatus.GOT_IP);
                 } else {
                     if (isMatchLVLMessage(st)) {
-                        Privmsg msg = new Privmsg(null, user.getUser(), ircServer, level);
-                        Privmsg msg1 = new Privmsg(null, user.getUser(), ircServer, "ip?");
+                        Privmsg msg = new Privmsg(ircServer, null, user.getUser(), level);
+                        Privmsg msg1 = new Privmsg(ircServer, null, user.getUser(), "ip?");
                         control.sendMsg(msg);
                         control.sendMsg(msg1);
                         user.setId(SeekStatus.ASKED_IP);
@@ -300,8 +300,8 @@ public class SeekWar2 extends AbstractChannelEvent {
                 break;
             case GOT_MATCH_LVL_ANSWER:
                 // seek reussi
-                Privmsg msg = new Privmsg(null, user.getUser(), ircServer, DEFAULT_IP_PW);
-                Privmsg msg1 = new Privmsg(null, user.getUser(), ircServer, "go go!");
+                Privmsg msg = new Privmsg(ircServer, null, user.getUser(), DEFAULT_IP_PW);
+                Privmsg msg1 = new Privmsg(ircServer, null, user.getUser(), "go go!");
                 control.sendMsg(msg);
                 control.sendMsg(msg1);
                 user.setId(SeekStatus.GOT_IP);
@@ -310,16 +310,16 @@ public class SeekWar2 extends AbstractChannelEvent {
                 // Le bot PV le mec qui a envoie un msg de seek qui match
                 user.add(privmsg.getTo() + " :" + privmsg.getMessage());
                 if (DEFAULT_SERV) {
-                    Privmsg msga = new Privmsg(null, user.getUser(), ircServer, user.getNick());
-                    Privmsg msga1 = new Privmsg(null, user.getUser(), ircServer, "lvl?");
+                    Privmsg msga = new Privmsg(ircServer, null, user.getUser(), user.getNick());
+                    Privmsg msga1 = new Privmsg(ircServer, null, user.getUser(), "lvl?");
                     control.sendMsg(msga);
                     control.sendMsg(msga1);
                     user.setId(SeekStatus.ASKED_MATCH_LVL);
                     break;
 
                 }
-                Privmsg msgb = new Privmsg(null, user.getUser(), ircServer, user.getNick());
-                Privmsg msgb1 = new Privmsg(null, user.getUser(), ircServer, "ip pass?");
+                Privmsg msgb = new Privmsg(ircServer, null, user.getUser(), user.getNick());
+                Privmsg msgb1 = new Privmsg(ircServer, null, user.getUser(), "ip pass?");
                 control.sendMsg(msgb);
                 control.sendMsg(msgb1);
                 user.setId(SeekStatus.ASKED_IP2);
@@ -333,8 +333,8 @@ public class SeekWar2 extends AbstractChannelEvent {
                     user.setId(SeekStatus.GOT_IP);
                 } else if (st.contains("lvl")) {
                     // Il me demande mon lvl
-                    Privmsg msg0 = new Privmsg(null, user.getUser(), ircServer, level);
-                    Privmsg msg01 = new Privmsg(null, user.getUser(), ircServer, "ip pass??");
+                    Privmsg msg0 = new Privmsg(ircServer, null, user.getUser(), level);
+                    Privmsg msg01 = new Privmsg(ircServer, null, user.getUser(), "ip pass??");
                     control.sendMsg(msg0);
                     control.sendMsg(msg01);
                     user.setId(SeekStatus.GOT_IP);
@@ -343,12 +343,12 @@ public class SeekWar2 extends AbstractChannelEvent {
                 break;
             case UNK_98:
                 // Seek Reussi
-                Privmsg msgc = new Privmsg(null, user.getUser(), ircServer, "ok go");
+                Privmsg msgc = new Privmsg(ircServer, null, user.getUser(), "ok go");
                 control.sendMsg(msgc);
                 user.setId(SeekStatus.GOT_IP);
                 break;
             case GOT_IP:
-                Privmsg msgd = new Privmsg(null, channel, ircServer, "Seek reussi. " + user.getNick() + ":"
+                Privmsg msgd = new Privmsg(ircServer, null, channel, "Seek reussi. " + user.getNick() + ":"
                         + privmsg.getMessage());
                 control.sendMsg(msgd);
                 // on leave les channels de seek
@@ -482,7 +482,7 @@ public class SeekWar2 extends AbstractChannelEvent {
             str = MomoStringUtils.genereSeekMessage(RAW_SEEK_MSG, nbPlayers, "off", level);
         }
         for (String element : SEEK_CHANNELS) {
-            Privmsg msg = new Privmsg(null, ircServer.getNetwork().findChannel(element), ircServer, str);
+            Privmsg msg = new Privmsg(ircServer, null, ircServer.getNetwork().findChannel(element), str);
             control.sendMsg(msg);
         }
     }
@@ -509,7 +509,7 @@ public class SeekWar2 extends AbstractChannelEvent {
         setExpired();
 
         // on envoie relai le msg
-        Privmsg msg = new Privmsg(null, channel, ircServer, reason);
+        Privmsg msg = new Privmsg(ircServer, null, channel, reason);
         control.sendMsg(msg);
     }
 

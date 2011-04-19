@@ -17,7 +17,7 @@ import net.mauhiz.util.NetUtils;
 public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     private static final String CONNECT = "connect";
     private static final String DISCONNECT = "disconnect";
-    private static RconServer hltv;
+    private static IRconServer hltv;
     private static boolean recording;
     private static final String SELECT = "select";
     private static final String START = "start";

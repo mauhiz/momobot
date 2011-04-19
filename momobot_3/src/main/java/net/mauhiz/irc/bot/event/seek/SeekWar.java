@@ -188,7 +188,7 @@ public class SeekWar {
             // Si c'est "S" on se calme!
             if ("S".equalsIgnoreCase(provenance.getNick())) {
                 sWarning = true;
-                Privmsg msg1 = new Privmsg(null, channel, im.getServerPeer(), "S vient me faire ch**r. J'y vais calmos");
+                Privmsg msg1 = new Privmsg(im.getServerPeer(), null, channel, "S vient me faire ch**r. J'y vais calmos");
                 resultPrivmsg.add(msg1);
             }
 
@@ -214,7 +214,7 @@ public class SeekWar {
                         resultPrivmsg.add(msg1);
                         Privmsg msg2 = new Privmsg(im, "GOGOGO", true);
                         resultPrivmsg.add(msg2);
-                        Privmsg msg3 = new Privmsg(null, channel, im.getServerPeer(), provenance.getNick()
+                        Privmsg msg3 = new Privmsg(im.getServerPeer(), null, channel, provenance.getNick()
                                 + " a mordu! GOGOGO o//");
                         resultPrivmsg.add(msg3);
 
@@ -251,7 +251,7 @@ public class SeekWar {
                         resultPrivmsg.add(msg2);
                     }
 
-                    Privmsg msg1 = new Privmsg(null, channel, im.getServerPeer(), provenance.getNick() + " :" + msg);
+                    Privmsg msg1 = new Privmsg(im.getServerPeer(), null, channel, provenance.getNick() + " :" + msg);
                     resultPrivmsg.add(msg1);
                     return resultPrivmsg;
                 }
@@ -273,7 +273,7 @@ public class SeekWar {
                         resultPrivmsg.add(msg1);
                         Privmsg msg2 = new Privmsg(im, "go!", true);
                         resultPrivmsg.add(msg2);
-                        Privmsg msg3 = new Privmsg(null, channel, im.getServerPeer(), provenance.getNick() + " :" + msg);
+                        Privmsg msg3 = new Privmsg(im.getServerPeer(), null, channel, provenance.getNick() + " :" + msg);
                         resultPrivmsg.add(msg3);
                     }
 
@@ -505,14 +505,14 @@ public class SeekWar {
                     seekMessage = "." + seekMessage + ".";
                     for (String seekChan : SEEK_CHANS) {
 
-                        Privmsg msg1 = new Privmsg(null, server.getNetwork().findChannel(seekChan), server,
+                        Privmsg msg1 = new Privmsg(server, null, server.getNetwork().findChannel(seekChan),
                                 getMessageForSeeking());
                         resultPrivmsg.add(msg1);
                     }
                     // un deuxieme msg
                     seekMessage = "." + seekMessage + ".";
                     for (String seekChan : SEEK_CHANS) {
-                        Privmsg msg1 = new Privmsg(null, server.getNetwork().findChannel(seekChan), server,
+                        Privmsg msg1 = new Privmsg(server, null, server.getNetwork().findChannel(seekChan),
                                 getMessageForSeeking());
                         resultPrivmsg.add(msg1);
                     }
@@ -523,7 +523,7 @@ public class SeekWar {
                 split = true;
                 seekMessage = ":" + seekMessage + ":";
                 for (String seekChan : SEEK_CHANS) {
-                    Privmsg msg1 = new Privmsg(null, server.getNetwork().findChannel(seekChan), server,
+                    Privmsg msg1 = new Privmsg(server, null, server.getNetwork().findChannel(seekChan),
                             getMessageForSeeking());
                     resultPrivmsg.add(msg1);
                 }

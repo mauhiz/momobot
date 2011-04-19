@@ -1,13 +1,16 @@
 package net.mauhiz.util;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.net.io.Util;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -85,6 +88,14 @@ public class NetUtils {
             LOG.warn(uhe, uhe);
         }
         return null;
+    }
+
+    /**
+     * @return un nouveau paquet UDP
+     */
+    public static DatagramPacket createDatagramPacket() {
+        ByteBuffer receiveBuf = ByteBuffer.allocate(Util.DEFAULT_COPY_BUFFER_SIZE);
+        return new DatagramPacket(receiveBuf.array(), receiveBuf.capacity());
     }
 
     public static String doHttpGet(String url) throws IOException, URISyntaxException {

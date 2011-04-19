@@ -25,7 +25,7 @@ public class ServStatusTrigger extends AbstractTextTrigger implements IPrivmsgTr
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         String args = getTriggerContent(im);
-        Server server = new Server(NetUtils.makeISA(args));
+        IServer server = new Server(NetUtils.makeISA(args));
         String reply = server.toString();
         Privmsg msg = new Privmsg(im, reply);
         control.sendMsg(msg);

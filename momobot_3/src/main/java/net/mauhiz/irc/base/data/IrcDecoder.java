@@ -25,12 +25,8 @@ import org.apache.log4j.Logger;
  */
 public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
 
-    public static final IIrcDecoder INSTANCE;
+    private static final IIrcDecoder INSTANCE = new IrcDecoder();
     private static final Logger LOG = Logger.getLogger(IrcDecoder.class);
-
-    static {
-        INSTANCE = new IrcDecoder();
-    }
 
     public static IIrcDecoder getInstance() {
         return INSTANCE;
@@ -74,10 +70,6 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
         }
 
         IrcCommands command = IrcCommands.valueOf(cmd);
-
-        if (command == null) {
-            throw new NotImplementedException("Unknown message on network " + server.getNetwork() + ": " + raw);
-        }
 
         switch (command) {
             case NOTICE:

@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 
 import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.NetUtils;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.log4j.Logger;
@@ -12,7 +13,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-class RconListener extends AbstractRunnable {
+class RconListener extends AbstractRunnable implements IRconListener {
     private static final Logger LOGGER = Logger.getLogger(RconListener.class);
     /**
      * port mini
@@ -29,13 +30,13 @@ class RconListener extends AbstractRunnable {
     /**
      * my mastah.
      */
-    private final RconClient rc;
+    private final IRconClient rc;
 
     /**
      * @param vuc1
      *            mon maitre!
      */
-    protected RconListener(RconClient vuc1) throws IOException {
+    protected RconListener(IRconClient vuc1) throws IOException {
         super();
         rc = vuc1;
         int localPort = generateRandomPort();
@@ -54,14 +55,14 @@ class RconListener extends AbstractRunnable {
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        DatagramPacket receivePacket = ValveUdpClient.createDatagramPacket();
+        DatagramPacket receivePacket = NetUtils.createDatagramPacket();
         runLoop(receivePacket);
     }
 
     private void runLoop(DatagramPacket receivePacket) {
         while (isRunning()) {
             try {
-                rc.getSocket().receive(receivePacket);
+                rc.receive(receivePacket);
                 processLine(receivePacket);
             } catch (IOException ioe) {
                 LOGGER.error(ioe, ioe);

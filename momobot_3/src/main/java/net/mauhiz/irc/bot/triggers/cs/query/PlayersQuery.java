@@ -2,8 +2,8 @@ package net.mauhiz.irc.bot.triggers.cs.query;
 
 import java.nio.ByteBuffer;
 
+import net.mauhiz.irc.bot.triggers.cs.IServer;
 import net.mauhiz.irc.bot.triggers.cs.Player;
-import net.mauhiz.irc.bot.triggers.cs.Server;
 import net.mauhiz.irc.bot.triggers.cs.ServerFlags;
 import net.mauhiz.util.FileUtil;
 
@@ -12,10 +12,11 @@ public class PlayersQuery extends AbstractQuery implements ServerFlags {
      * char info
      */
     private static final char A2S_PLAYERS = 'U';
-    public PlayersQuery(Server server) {
+
+    public PlayersQuery(IServer server) {
         super(server);
     }
-    
+
     @Override
     public void afterReceive(byte[] resp) {
         ByteBuffer result = ByteBuffer.wrap(resp);
@@ -39,19 +40,19 @@ public class PlayersQuery extends AbstractQuery implements ServerFlags {
             LOG.debug("frags: " + frags);
             float timeConnected = result.getFloat(); // skip float time connected
             LOG.debug("time connected: " + timeConnected);
-            
+
             Player player = new Player(null);
             player.setName(name);
             player.setFrags(frags);
             server.setPlayer(index, player);
         }
     }
-    
+
     @Override
     public void beforeSend() {
         server.resetPlayers();
     }
-    
+
     @Override
     public byte[] getCmd() {
         byte[] cmd = Character.toString(A2S_PLAYERS).getBytes(FileUtil.ASCII);
