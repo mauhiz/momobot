@@ -1,12 +1,15 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
  */
 public class ServerMsg extends AbstractIrcMessage {
+    private final ArgumentList args;
     /**
      * code numerique
      */
@@ -16,15 +19,20 @@ public class ServerMsg extends AbstractIrcMessage {
      */
     private final String msg;
 
-    public ServerMsg(Target from, Target to, IIrcServerPeer server, String codeStr, String msg) {
-        super(from, to, server);
-        code = Integer.parseInt(codeStr);
+    public ServerMsg(IIrcServerPeer server, Target from, int code, ArgumentList args, String msg) {
+        super(server, from);
+        this.code = code;
         this.msg = msg;
+        this.args = args;
     }
 
     @Override
     public IIrcMessage copy() {
-        return new ServerMsg(from, to, server, Integer.toString(code), msg);
+        return new ServerMsg(server, from, code, args.copy(), msg);
+    }
+
+    public ArgumentList getArgs() {
+        return args.copy();
     }
 
     /**
@@ -35,8 +43,13 @@ public class ServerMsg extends AbstractIrcMessage {
     }
 
     @Override
+    public IrcCommands getIrcCommand() {
+        return null; // uses numeric replies
+    }
+
+    @Override
     public String getIrcForm() {
-        return ":" + from.getIrcForm() + " " + code + " " + to + " :" + msg;
+        return ircFromDisplay() + code + " " + args.getRemainingData() + " :" + msg;
     }
 
     /**
@@ -51,6 +64,6 @@ public class ServerMsg extends AbstractIrcMessage {
      */
     @Override
     public String toString() {
-        return "code=" + code + " msg=" + msg;
+        return getIrcForm();
     }
 }

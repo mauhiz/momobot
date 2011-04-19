@@ -1,5 +1,7 @@
 package net.mauhiz.irc;
 
+import net.mauhiz.util.Morse;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,7 +12,7 @@ import org.junit.Test;
 public class MorseTest {
     
     /**
-     * Test method for {@link net.mauhiz.irc.Morse#fromMorse(java.lang.String)}.
+     * Test method for {@link net.mauhiz.util.Morse#fromMorse(java.lang.String)}.
      */
     @Test
     public void testFromMorse() {
@@ -20,7 +22,7 @@ public class MorseTest {
     }
     
     /**
-     * Test method for {@link net.mauhiz.irc.Morse#toMorse(java.lang.String)}.
+     * Test method for {@link net.mauhiz.util.Morse#toMorse(java.lang.String)}.
      */
     @Test
     public void testToMorse() {

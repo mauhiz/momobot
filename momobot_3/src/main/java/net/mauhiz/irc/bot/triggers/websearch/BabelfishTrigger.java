@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -26,7 +26,7 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
      * ma methode de post.
      */
     private static final HttpPost POST = new HttpPost("http://babelfish.altavista.com/tr");
-    
+
     /**
      * @param langue1
      *            la langue de depart
@@ -39,10 +39,10 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
      *             si le site est en mousse
      */
     public static String result(String langue1, String langue2, String toTranslate) throws IOException {
-        NameValuePair[] data = {new BasicNameValuePair("trtext", toTranslate),
+        NameValuePair[] data = { new BasicNameValuePair("trtext", toTranslate),
                 new BasicNameValuePair("lp", langue1 + '_' + langue2), new BasicNameValuePair("tt", "urltext"),
-                new BasicNameValuePair("intl", "tt"), new BasicNameValuePair("doit", "done")};
-        
+                new BasicNameValuePair("intl", "tt"), new BasicNameValuePair("doit", "done") };
+
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(Arrays.asList(data));
         POST.setEntity(entity);
         HttpResponse resp = new DefaultHttpClient().execute(POST);
@@ -58,7 +58,7 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
         index = page.indexOf(bound2);
         return page.substring(0, index);
     }
-    
+
     /**
      * @param trigger
      *            le trigger
@@ -66,25 +66,24 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
     public BabelfishTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        
-        String msg = getArgs(cme.getMessage());
-        String lang1 = StringUtils.substringBefore(msg, " ");
-        msg = StringUtils.substringAfter(msg, " ");
-        String lang2 = StringUtils.substringBefore(msg, " ");
-        msg = StringUtils.substringAfter(msg, " ");
+
+        ArgumentList args = getArgs(cme);
+        String lang1 = args.poll();
+        String lang2 = args.poll();
+        String msg = args.getRemainingData();
         Notice notice;
         try {
-            notice = Notice.buildAnswer(cme, result(lang1, lang2, msg));
+            notice = new Notice(cme, result(lang1, lang2, msg), false);
         } catch (IOException ioe) {
             LOG.error(ioe, ioe);
-            notice = Notice.buildPrivateAnswer(cme, "syntaxe : " + this + " lang1[fr/en/..] lang2[fr/en/...] texte");
+            notice = new Notice(cme, "syntaxe : " + this + " lang1[fr/en/..] lang2[fr/en/...] texte", true);
         }
         control.sendMsg(notice);
     }

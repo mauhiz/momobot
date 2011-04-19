@@ -46,13 +46,13 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         int maxLen = im.getServerPeer().getNetwork().getLineMaxLength() - 50; // TODO make precise computation of overhead in NOTICE
         for (String trig : cmds) {
             if (msg.length() >= maxLen) { // flush
-                Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
+                Notice resp = new Notice(im, msg.toString(), true);
                 control.sendMsg(resp);
                 msg = new StringBuilder(getHeader());
             }
             msg.append(trig).append(' ');
         }
-        Notice resp = Notice.buildPrivateAnswer(im, msg.toString());
+        Notice resp = new Notice(im, msg.toString(), true);
         control.sendMsg(resp);
     }
 
@@ -72,13 +72,13 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         int maxLen = im.getServerPeer().getNetwork().getLineMaxLength(); // TODO make precise computation of overhead in PRIVMSG
         for (String trig : cmds) {
             if (msg.length() >= maxLen) {
-                Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
+                Privmsg resp = new Privmsg(im, msg.toString());
                 control.sendMsg(resp);
                 msg = new StringBuilder(getHeader());
             }
             msg.append(trig).append(' ');
         }
-        Privmsg resp = Privmsg.buildAnswer(im, msg.toString());
+        Privmsg resp = new Privmsg(im, msg.toString());
         control.sendMsg(resp);
     }
 

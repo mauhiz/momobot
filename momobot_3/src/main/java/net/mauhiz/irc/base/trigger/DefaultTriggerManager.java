@@ -1,6 +1,7 @@
 package net.mauhiz.irc.base.trigger;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -8,13 +9,13 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Invite;
 import net.mauhiz.irc.base.msg.Join;
+import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.util.AbstractRunnable;
 
 import org.apache.commons.beanutils.ConstructorUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -64,6 +65,8 @@ public class DefaultTriggerManager implements ITriggerManager {
                         ((IPartTrigger) trigger).doTrigger((Part) msg, control);
                     } else if (msg instanceof Invite && trigger instanceof IInviteTrigger) {
                         ((IInviteTrigger) trigger).doTrigger((Invite) msg, control);
+                    } else if (msg instanceof Kick && trigger instanceof IKickTrigger) {
+                        ((IKickTrigger) trigger).doTrigger((Kick) msg, control);
                     }
                 }
 
@@ -125,9 +128,9 @@ public class DefaultTriggerManager implements ITriggerManager {
     /**
      * @param trigClassFull
      * @param prefix
-     * @param trigTexts
+     * @param args
      */
-    public void loadTrigClass(String trigClassFull, String prefix, String[] trigTexts) {
+    public void loadTrigClass(String trigClassFull, String prefix, Collection<String> args) {
         Class<? extends ITrigger> trigClass;
         try {
             Class<?> wannabe = Class.forName(trigClassFull);
@@ -141,11 +144,11 @@ public class DefaultTriggerManager implements ITriggerManager {
             return;
         }
 
-        if (ArrayUtils.isEmpty(trigTexts)) {
+        if (args.isEmpty()) {
             LOG.debug("loading trigger: " + trigClass.getSimpleName());
             addTrigger(trigClass, (Object[]) null);
         } else {
-            for (String trigText : trigTexts) {
+            for (String trigText : args) {
                 if (prefix != null) {
                     trigText = prefix + trigText;
                 }

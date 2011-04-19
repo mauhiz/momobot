@@ -1,75 +1,44 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
  */
-public class Notice extends AbstractIrcMessage {
+public class Notice extends AbstractPrivateIrcMessage {
+
     /**
-     * @param toReply
-     * @param msg
-     * @return answer
+     * @deprecated
      */
-    public static Notice buildAnswer(IIrcMessage toReply, String msg) {
-        if (toReply.isToChannel()) {
-            return new Notice(null, toReply.getTo(), toReply.getServerPeer(), msg);
-        }
-        return buildPrivateAnswer(toReply, msg);
+    @Deprecated
+    public Notice(IIrcServerPeer server, Target from, IIrcServerPeer to, String msg) {
+        super(server, from, to, msg);
     }
 
-    /**
-     * @param toReply
-     * @param msg
-     * @return private answer
-     */
-    public static Notice buildPrivateAnswer(IIrcMessage toReply, String msg) {
-        return new Notice(null, toReply.getFrom(), toReply.getServerPeer(), msg);
+    public Notice(IIrcServerPeer server, Target from, Target to, String msg) {
+        super(server, from, to, msg);
     }
 
-    private final String message;
-
-    /**
-     * @param from
-     * @param to
-     * @param server
-     * @param msg
-     */
-    public Notice(Target from, Target to, IIrcServerPeer server, String msg) {
-        super(from, to, server);
-        message = msg;
+    public Notice(IPrivateIrcMessage toReply, String msg, boolean priv) {
+        super(toReply, msg, priv);
     }
 
     @Override
     public Notice copy() {
-        return new Notice(from, to, server, message);
+        return new Notice(server, from, to, message);
     }
 
     @Override
-    public String getIrcForm() {
-        if (StringUtils.isEmpty(message)) {
-            return null;
-        }
-        StringBuilder sb = new StringBuilder();
-        if (super.from != null) {
-            sb.append(':');
-            sb.append(super.from);
-            sb.append(' ');
-        }
-        sb.append(IrcCommands.NOTICE).append(' ');
-        sb.append(super.to);
-        sb.append(" :");
-        sb.append(message);
-        return sb.toString();
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.NOTICE;
     }
 
     /**
      * @return the message
      */
+    @Override
     public String getMessage() {
         return message;
     }

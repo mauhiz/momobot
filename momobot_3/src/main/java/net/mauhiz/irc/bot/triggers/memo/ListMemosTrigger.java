@@ -23,7 +23,7 @@ public class ListMemosTrigger extends AbstractTextTrigger implements IPrivmsgTri
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        Privmsg msg = Privmsg.buildAnswer(im, MemoDb.getInstance(im.getServerPeer().getNetwork()).getMemos());
+        Privmsg msg = new Privmsg(im, MemoDb.getInstance(im.getServerPeer().getNetwork()).getMemos());
         control.sendMsg(msg);
     }
 }

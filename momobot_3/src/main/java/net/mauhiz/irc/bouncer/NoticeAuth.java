@@ -1,15 +1,14 @@
 package net.mauhiz.irc.bouncer;
 
 import net.mauhiz.irc.base.data.IIrcServerPeer;
-import net.mauhiz.irc.base.data.Target;
-import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.msg.AbstractIrcMessage;
 
-public class NoticeAuth implements IIrcMessage {
+public class NoticeAuth extends AbstractIrcMessage {
     private final String msg;
-    private final IIrcServerPeer server;
 
     public NoticeAuth(IIrcServerPeer server, String msg) {
-        this.server = server;
+        super(server, null);
         this.msg = msg;
     }
 
@@ -19,27 +18,12 @@ public class NoticeAuth implements IIrcMessage {
     }
 
     @Override
-    public Target getFrom() {
-        return null;
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.NOTICE; // not a real IRC command anyways 
     }
 
     @Override
     public String getIrcForm() {
         return "NOTICE AUTH :" + msg;
-    }
-
-    @Override
-    public IIrcServerPeer getServerPeer() {
-        return server;
-    }
-
-    @Override
-    public Target getTo() {
-        return null;
-    }
-
-    @Override
-    public boolean isToChannel() {
-        return false;
     }
 }

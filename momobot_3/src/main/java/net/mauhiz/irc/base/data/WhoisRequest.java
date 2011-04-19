@@ -32,23 +32,39 @@ public class WhoisRequest extends AbstractRunnable {
      */
     private static final long TIMEOUT = TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS);
 
-    public static void end(String nick, boolean ok) {
-        WhoisRequest wr = ALL_WHOIS.get(nick);
-        if (wr != null) {
-            wr.setSuccess(ok);
+    public static void end(ArgumentList args, boolean ok) {
+        for (String whois : args) {
+            WhoisRequest wr = get(whois);
+            if (wr != null) {
+                wr.setSuccess(ok);
+            }
+        }
+    }
+
+    public static WhoisRequest get(String target2) {
+        return ALL_WHOIS.get(target2);
+    }
+
+    public static void startWhois(IIrcServerPeer server, IIrcControl control, Iterable<String> args, Target reportTo) {
+        for (String arg : args) {
+            WhoisRequest wr = new WhoisRequest(server, control, arg);
+            wr.setReportTo(reportTo);
+            wr.startAs("Whois Request");
         }
     }
 
     private final IIrcControl control;
     private boolean purgatory;
+
     private Target reportTo;
     protected final IIrcServerPeer server;
-
     /**
      * fait attendre la reponse.
      */
     private boolean success;
+
     private final StopWatch sw = new StopWatch();
+
     /**
      * ma cible.
      */
@@ -60,7 +76,7 @@ public class WhoisRequest extends AbstractRunnable {
      * @param nick
      *            le nom
      */
-    public WhoisRequest(String nick, IIrcServerPeer server, IIrcControl control) {
+    protected WhoisRequest(IIrcServerPeer server, IIrcControl control, String nick) {
         super();
         target = nick;
         this.server = server;
@@ -86,7 +102,7 @@ public class WhoisRequest extends AbstractRunnable {
             purgatory = true;
         }
         /* frequence maximale de whois */
-        WhoisRequest oldWr = ALL_WHOIS.get(target);
+        WhoisRequest oldWr = get(target);
         /* whois en cours */
         if (oldWr != null && oldWr.getElapsedTime() < TIMEOUT) {
             /* whois precedent en cours */
@@ -114,7 +130,7 @@ public class WhoisRequest extends AbstractRunnable {
             // le user s'est deconnecte on dirait.
         }
         if (reportTo != null) {
-            IIrcMessage resp = new Privmsg(null, reportTo, server, respMsg);
+            IIrcMessage resp = new Privmsg(server, null, reportTo, respMsg);
             control.sendMsg(resp);
         }
         sw.split();
@@ -127,7 +143,7 @@ public class WhoisRequest extends AbstractRunnable {
         sw.start();
 
         ALL_WHOIS.put(target, this);
-        Whois who = new Whois(null, null, server, target);
+        Whois who = new Whois(server, null, target);
         control.sendMsg(who);
         while (isRunning()) {
             while (!success) {

@@ -38,7 +38,7 @@ public class PickupTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         } else {
             resp = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + chan;
         }
-        Privmsg msg = Privmsg.buildAnswer(im, resp);
+        Privmsg msg = new Privmsg(im, resp);
         control.sendMsg(msg);
     }
 }

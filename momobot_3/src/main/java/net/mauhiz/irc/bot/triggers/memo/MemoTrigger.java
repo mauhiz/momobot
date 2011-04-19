@@ -1,11 +1,10 @@
 package net.mauhiz.irc.bot.triggers.memo;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
@@ -24,21 +23,20 @@ public class MemoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String msg = getArgs(cme.getMessage());
+        ArgumentList msg = getArgs(cme);
         String respMsg;
-        if (StringUtils.isEmpty(msg)) {
+        if (msg.isEmpty()) {
             respMsg = "Je connais " + MemoDb.getInstance(cme.getServerPeer().getNetwork()).countMemos()
                     + " memos. $listmemos pour avoir une liste";
         } else {
-            int index = msg.indexOf(' ');
-            if (index < 1) {
-                respMsg = MemoDb.getInstance(cme.getServerPeer().getNetwork()).getMemo(msg);
+            String cle = msg.poll();
+            if (msg.isEmpty()) {
+                respMsg = MemoDb.getInstance(cme.getServerPeer().getNetwork()).getMemo(cle);
             } else {
-                String cle = msg.substring(0, index);
-                respMsg = MemoDb.getInstance(cme.getServerPeer().getNetwork()).setMemo(cle, msg.substring(index + 1));
+                respMsg = MemoDb.getInstance(cme.getServerPeer().getNetwork()).setMemo(cle, msg.getRemainingData());
             }
         }
-        Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
+        Privmsg resp = new Privmsg(cme, respMsg);
         control.sendMsg(resp);
     }
 }

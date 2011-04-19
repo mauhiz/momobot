@@ -42,7 +42,7 @@ public class RmvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
                 return;
             }
         }
-        Privmsg msg = Privmsg.buildAnswer(im, reply);
+        Privmsg msg = new Privmsg(im, reply);
         control.sendMsg(msg);
     }
 }

@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
  * @author mauhiz
  */
 public class Sha512Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
-    
+
     /**
      * @param input
      * @return le md5
@@ -28,14 +28,14 @@ public class Sha512Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
         byte[] output = MessageDigest.getInstance("SHA-512").digest(input);
         return new String(Hex.encodeHex(output));
     }
-    
+
     /**
      * @param trigger
      */
     public Sha512Trigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * MessageDigest
      * 
@@ -44,16 +44,15 @@ public class Sha512Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String args = getArgs(cme.getMessage());
+        String args = getTriggerContent(cme);
         Privmsg resp;
         if (StringUtils.isEmpty(args)) {
-            resp = Privmsg.buildAnswer(cme, "sha-512 de quoi ?");
+            resp = new Privmsg(cme, "sha-512 de quoi ?");
         } else {
             try {
-                resp = Privmsg.buildAnswer(cme,
-                        "sha-512 de " + args + ": " + computeSha512(args.getBytes(FileUtil.ISO8859_15)));
+                resp = new Privmsg(cme, "sha-512 de " + args + ": " + computeSha512(args.getBytes(FileUtil.ISO8859_15)));
             } catch (NoSuchAlgorithmException nsae) {
-                resp = Privmsg.buildAnswer(cme, "J'ai pas de sha-512. Sry.");
+                resp = new Privmsg(cme, "J'ai pas de sha-512. Sry.");
             }
         }
         control.sendMsg(resp);

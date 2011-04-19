@@ -1,12 +1,12 @@
 package net.mauhiz.irc.bot;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
 import net.mauhiz.irc.base.trigger.ITrigger;
 import net.mauhiz.irc.bot.triggers.ICommand;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -18,9 +18,9 @@ public class MmbTriggerManager extends DefaultTriggerManager {
 
     /**
      * @param className
-     * @param texts
+     * @param args
      */
-    public void removeTrigger(String className, String... texts) {
+    public void removeTrigger(String className, Collection<String> args) {
         try {
             Class<?> toRemove = Class.forName(className);
             if (!ITrigger.class.isAssignableFrom(toRemove)) {
@@ -32,9 +32,9 @@ public class MmbTriggerManager extends DefaultTriggerManager {
                 if (toRemove.equals(every.getClass())) {
                     // remove only specified triggers
 
-                    if (every instanceof ICommand && !ArrayUtils.isEmpty(texts)) {
+                    if (every instanceof ICommand && args != null && !args.isEmpty()) {
                         ICommand textTrigger = (ICommand) every;
-                        for (String text : texts) {
+                        for (String text : args) {
                             if (textTrigger.getTriggerText().equals(text)) {
                                 trigIt.remove();
                             }

@@ -28,7 +28,7 @@ public class QuitTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String args = getArgs(im.getMessage());
+        String args = getTriggerContent(im);
         /* TODO quit cross servers */
         Quit quit;
         if (StringUtils.isEmpty(args)) {

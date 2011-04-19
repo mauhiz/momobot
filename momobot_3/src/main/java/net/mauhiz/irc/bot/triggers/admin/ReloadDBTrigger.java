@@ -18,7 +18,7 @@ public class ReloadDBTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     public ReloadDBTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
@@ -27,7 +27,7 @@ public class ReloadDBTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         HibernateUtils.closeSession();
         HibernateUtils.currentSession();
         String resp = "DB reloaded";
-        Privmsg msg = Privmsg.buildPrivateAnswer(pme, resp);
+        Privmsg msg = new Privmsg(pme, resp, true);
         control.sendMsg(msg);
     }
 }

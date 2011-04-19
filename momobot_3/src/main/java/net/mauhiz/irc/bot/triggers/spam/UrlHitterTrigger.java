@@ -20,7 +20,7 @@ public class UrlHitterTrigger extends AbstractTextTrigger implements IPrivmsgTri
     public UrlHitterTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * TODO cron pour le url hitter ?
      * 
@@ -29,7 +29,7 @@ public class UrlHitterTrigger extends AbstractTextTrigger implements IPrivmsgTri
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String urlStr = getArgs(im.getMessage());
+        String urlStr = getTriggerContent(im);
         DefaultHttpClient client = new DefaultHttpClient();
         HttpGet get = new HttpGet(urlStr);
         String resp;
@@ -39,7 +39,7 @@ public class UrlHitterTrigger extends AbstractTextTrigger implements IPrivmsgTri
         } catch (IOException e) {
             resp = "erreur : " + e;
         }
-        Privmsg reply = Privmsg.buildAnswer(im, resp);
+        Privmsg reply = new Privmsg(im, resp);
         control.sendMsg(reply);
     }
 }

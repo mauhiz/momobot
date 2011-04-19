@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.control;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -24,15 +25,17 @@ public class SayTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
      */
     @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {
-        String args = getArgs(pme.getMessage());
-        int index = args.indexOf(' ');
-        if (index < 1) {
-            Privmsg msg = Privmsg.buildAnswer(pme, "pas assez de parametres. " + getTriggerHelp());
+        ArgumentList args = getArgs(pme);
+        String targetNick = args.poll();
+        String message = args.getRemainingData();
+
+        if (targetNick == null || message.isEmpty()) {
+            Privmsg msg = new Privmsg(pme, "pas assez de parametres. " + getTriggerHelp());
             control.sendMsg(msg);
         } else {
             /* TODO say cross-server ? */
-            IrcUser target = pme.getServerPeer().getNetwork().findUser(args.substring(0, index), false);
-            Privmsg msg = new Privmsg(null, target, pme.getServerPeer(), args.substring(index + 1));
+            IrcUser target = pme.getServerPeer().getNetwork().findUser(targetNick, false);
+            Privmsg msg = new Privmsg(null, target, pme.getServerPeer(), message);
             control.sendMsg(msg);
         }
     }

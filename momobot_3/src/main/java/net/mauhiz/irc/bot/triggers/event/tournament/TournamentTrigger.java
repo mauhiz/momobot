@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -31,13 +32,13 @@ public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTr
         if (evt == null) {
             // ON cree le tn en fonction des parametres
             // On pecho les params
-            String[] params = getArgs(cme.getMessage()).split(" ");
+            ArgumentList params = getArgs(cme);
 
             // Tcheck si les params st ok
-            if (params.length == 0) {
+            if (params.isEmpty()) {
                 respMsg = "Parametre(s) invalide(s)";
             } else {
-                Tournament tn = new Tournament(chan, params);
+                Tournament tn = new Tournament(chan, params.asList());
                 tn.generateTemplate();
                 respMsg = tn.toString();
             }
@@ -46,7 +47,7 @@ public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTr
         } else {
             respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
         }
-        Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
+        Privmsg resp = new Privmsg(cme, respMsg);
         control.sendMsg(resp);
     }
 }

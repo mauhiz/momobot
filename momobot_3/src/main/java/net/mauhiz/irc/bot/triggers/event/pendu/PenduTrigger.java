@@ -42,7 +42,7 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
             } else {
                 respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
             }
-            Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
+            Privmsg resp = new Privmsg(cme, respMsg);
             control.sendMsg(resp);
         }
         if (evt instanceof Pendu) {
@@ -54,7 +54,7 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
                 respMsg = pendu.submitMot(cme.getMessage()).toString();
             }
             if (StringUtils.isNotBlank(respMsg)) {
-                Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
+                Privmsg resp = new Privmsg(cme, respMsg);
                 control.sendMsg(resp);
             }
             if (!pendu.isRunning()) {

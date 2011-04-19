@@ -14,15 +14,12 @@ public class JoinOnInviteTrigger implements IInviteTrigger {
 
     /**
      * On est sympa, on join tout.
-     * 
-     * @see net.mauhiz.irc.base.trigger.IInviteTrigger#doTrigger(net.mauhiz.irc.base.msg.Invite,
-     *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Invite im, IIrcControl control) {
         Join join = new Join(im.getServerPeer(), im.getChan());
         control.sendMsg(join);
-        Notice notice = Notice.buildPrivateAnswer(im, Messages.get(getClass(), "join.on.invite")); //$NON-NLS-1$
+        Notice notice = new Notice(im.getServerPeer(), null, im.getChan(), Messages.get(getClass(), "join.on.invite")); //$NON-NLS-1$
         control.sendMsg(notice);
     }
 }

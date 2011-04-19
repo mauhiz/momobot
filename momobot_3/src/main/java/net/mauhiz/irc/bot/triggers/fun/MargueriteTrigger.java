@@ -14,25 +14,25 @@ public class MargueriteTrigger extends AbstractTextTrigger implements IPrivmsgTr
     /**
      * 
      */
-    private static final String[] MARGUERITE = {"un peu", "beaucoup", "passionement", "a la folie", "pas du tout",};
-    
+    private static final String[] MARGUERITE = { "un peu", "beaucoup", "passionement", "a la folie", "pas du tout", };
+
     /**
      * @param trigger
      */
     public MargueriteTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String nom = getArgs(cme.getMessage());
-        Privmsg msg = Privmsg.buildAnswer(cme, generateResponse(nom));
+        String nom = getTriggerContent(cme);
+        Privmsg msg = new Privmsg(cme, generateResponse(nom));
         control.sendMsg(msg);
     }
-    
+
     /**
      * @param nom
      * @return un messsage

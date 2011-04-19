@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.mauhiz.irc.MomoStringUtils;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcNetwork;
@@ -21,6 +22,7 @@ import net.mauhiz.irc.base.io.IIrcIO;
 import net.mauhiz.irc.base.io.IOStatus;
 import net.mauhiz.irc.base.io.IrcClientIO;
 import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.irc.base.msg.IPrivateIrcMessage;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Mode;
@@ -30,7 +32,6 @@ import net.mauhiz.irc.base.msg.NumericReplies;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Ping;
 import net.mauhiz.irc.base.msg.Pong;
-import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Quit;
 import net.mauhiz.irc.base.msg.ServerError;
 import net.mauhiz.irc.base.msg.ServerMsg;
@@ -90,30 +91,29 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         serverToIo.clear();
     }
 
-    private void handleNamReply(String msg, IrcNetwork network) {
-        int sep = msg.indexOf(" :");
-        String chanName = msg.substring(2, sep);
+    private void handleNamReply(ServerMsg msg, IrcNetwork network) {
+        String chanName = msg.getArgs().poll();
         IrcChannel chan = network.findChannel(chanName);
         if (chan == null) {
             return;
         }
 
-        String[] prefixedNames = StringUtils.split(msg.substring(sep + 2));
+        ArgumentList prefixedNames = new ArgumentList(msg.getMsg());
         for (String prefixedName : prefixedNames) {
             char prefix = prefixedName.charAt(0);
-            if (prefix == '+' || prefix == '@' || prefix == '%') {
+            if (UserChannelMode.isDisplay(prefix)) {
                 prefixedName = prefixedName.substring(1);
             }
             IrcUser next = network.findUser(prefixedName, true);
             chan.add(next);
+            chan.getModes(next).add(UserChannelMode.fromDisplay(prefix));
         }
-        LOG.debug("Names Reply on " + chan + ": " + StringUtils.join(prefixedNames, ' '));
+        LOG.debug("Names Reply on " + chan + ": " + prefixedNames);
     }
 
-    private void handleRplTopic(String msg, IrcNetwork network) {
-        int sep = msg.indexOf(" :");
-        String chanName = msg.substring(0, sep);
-        String topic = msg.substring(sep + 2);
+    private void handleRplTopic(ServerMsg rplTopic, IrcNetwork network) {
+        String chanName = rplTopic.getArgs().peek();
+        String topic = rplTopic.getMsg();
         LOG.debug("topic set on " + chanName + " : " + topic);
         IrcChannel chan = network.findChannel(chanName);
         if (chan != null) {
@@ -121,12 +121,11 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         }
     }
 
-    private void handleWhoisChannels(String msg, IrcNetwork server) {
-        String nick = StringUtils.substringBefore(msg, " ");
+    private void handleWhoisChannels(ServerMsg whoisChannels, IrcNetwork server) {
+        String nick = whoisChannels.getArgs().peek();
         IrcUser ircUser = server.findUser(nick, true);
 
-        String lstChanNames = StringUtils.substringAfter(msg, " :");
-        String[] chanNames = StringUtils.split(lstChanNames, " ");
+        ArgumentList chanNames = new ArgumentList(whoisChannels.getMsg());
         for (String chanName : chanNames) {
             if (!MomoStringUtils.isChannelName(chanName)) {
                 chanName = chanName.substring(1);
@@ -138,20 +137,13 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         }
     }
 
-    private void handleWhoisUser(String msg, IrcNetwork server) {
-        String nick = StringUtils.substringBefore(msg, " ");
+    private void handleWhoisUser(ServerMsg whoisUser, IrcNetwork server) {
+        ArgumentList args = whoisUser.getArgs();
+        String nick = args.poll();
         IrcUser ircUser = server.findUser(nick, true);
-
-        String remaining = StringUtils.substringAfter(msg, " ");
-        String user = StringUtils.substringBefore(remaining, " ");
-        ircUser.getMask().setUser(user);
-
-        remaining = StringUtils.substringAfter(remaining, " ");
-        String host = StringUtils.substringBefore(remaining, " ");
-        ircUser.getMask().setHost(host);
-
-        String fullName = StringUtils.substringAfter(remaining, " :");
-        ircUser.setFullName(fullName);
+        ircUser.getMask().setUser(args.poll());
+        ircUser.getMask().setHost(args.poll());
+        ircUser.setFullName(whoisUser.getMsg());
     }
 
     @Override
@@ -163,11 +155,13 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
             sendMsg(new Pong(serverPeer, ((Ping) message).getPingId()));
             return true;
         } else if (message instanceof Join) {
-            IrcChannel joined = (IrcChannel) message.getTo();
-            IrcUser joiner = (IrcUser) message.getFrom();
-            joined.add(joiner);
+            IrcChannel[] joined = ((Join) message).getChans();
+            IrcUser joiner = ((Join) message).getFrom();
+            for (IrcChannel channel : joined) {
+                channel.add(joiner);
+            }
         } else if (message instanceof Kick) {
-            IrcChannel chan = (IrcChannel) message.getTo();
+            IrcChannel chan = ((Kick) message).getChan();
             IrcUser target = ((Kick) message).getTarget();
             chan.remove(target);
             if (target.equals(serverPeer.getMyself())) {
@@ -177,13 +171,15 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
             processMode((Mode) message);
 
         } else if (message instanceof Nick) {
-            IrcUser target = (IrcUser) message.getFrom();
+            IrcUser target = ((Nick) message).getFrom();
             network.updateNick(target, ((Nick) message).getNewNick());
         } else if (message instanceof Part) {
-            IrcChannel fromChan = (IrcChannel) message.getTo();
+            IrcChannel[] fromChan = ((Part) message).getChannels();
             if (fromChan != null) {
-                IrcUser leaver = (IrcUser) message.getFrom();
-                fromChan.remove(leaver);
+                IrcUser leaver = ((Part) message).getFrom();
+                for (IrcChannel channel : fromChan) {
+                    channel.remove(leaver);
+                }
             }
         } else if (message instanceof Quit) {
             IrcUser quitter = (IrcUser) message.getFrom();
@@ -198,7 +194,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         } else if (message instanceof ServerMsg) {
             processServerMsg((ServerMsg) message);
         } else if (message instanceof SetTopic) {
-            IrcChannel chan = (IrcChannel) message.getTo();
+            IrcChannel chan = ((SetTopic) message).getChan();
             IrcUser changer = (IrcUser) message.getFrom();
             Topic newTopic = new Topic(changer.getNick(), new Date(), ((SetTopic) message).getTopic());
             chan.getProperties().setTopic(newTopic);
@@ -218,13 +214,11 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
     }
 
     private void processMode(Mode message) {
-        String modeQuery = message.getMessage();
-        String[] toks = StringUtils.split(modeQuery, ' ');
+        ArgumentList toks = message.getArgs();
 
-        if (message.isToChannel()) {
-            IrcChannel chan = (IrcChannel) message.getTo();
-            int argIdx = 0;
-            String modeInfo = toks[argIdx++]; // consume 1st argument
+        if (message.getModifiedObject() instanceof IrcChannel) {
+            IrcChannel chan = (IrcChannel) message.getModifiedObject();
+            String modeInfo = toks.poll(); // consume 1st argument
             boolean set = false;
 
             for (int idx = 0; idx < modeInfo.length(); idx++) {
@@ -244,7 +238,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
 
                 } else {
                     // user mode
-                    String target = toks[argIdx++];
+                    String target = toks.poll();
                     IrcUser targetUser = message.getServerPeer().getNetwork().findUser(target, true);
                     Set<UserChannelMode> userModes = chan.getModes(targetUser);
 
@@ -257,7 +251,8 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
                 }
             }
         } else {
-            IrcUser target = (IrcUser) message.getTo();
+            IrcUser target = (IrcUser) message.getModifiedObject();
+            String modeQuery = toks.poll();
             char modifier = modeQuery.charAt(0);
             char mode = modeQuery.charAt(1);
             if (mode == 'i') {
@@ -270,10 +265,10 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
     }
 
     private void processServerMsg(ServerMsg message) {
-        String msg = message.getMsg();
+        ArgumentList args = message.getArgs();
         int code = message.getCode();
         if (code <= 5) {
-            LOG.info("Greeting #" + code + ": " + msg);
+            LOG.info("Greeting #" + code + ": " + message.getMsg());
             return;
         }
         NumericReplies reply = NumericReplies.fromCode(code);
@@ -285,38 +280,38 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         IrcNetwork network = message.getServerPeer().getNetwork();
         switch (reply) {
             case RPL_UMODEIS:
-                Mode mode = new Mode(peer, peer.getMyself(), peer, msg);
+                Mode mode = new Mode(peer, peer, peer.getMyself(), args);
                 processMode(mode);
                 break;
             case RPL_TOPIC:
-                handleRplTopic(msg, network);
+                handleRplTopic(message, network);
                 break;
             case RPL_TOPICINFO:
-                LOG.info("topic info: " + msg);
+                LOG.info("topic info: " + args);
                 break;
             case RPL_LUSERCLIENT:
-                LOG.info("number of clients: " + msg);
+                LOG.info("client statistics: " + message.getMsg());
                 break;
             case RPL_LUSERCHANNELS:
-                LOG.info("number of channels: " + msg);
+                LOG.info("number of channels: " + args);
                 break;
             case RPL_LUSERME:
-                LOG.info("server userme: " + msg);
+                LOG.info("server userme: " + message.getMsg());
                 break;
             case RPL_MOTD:
-                LOG.info("Motd LINE: " + msg);
+                LOG.info("Motd LINE: " + message.getMsg());
                 break;
             case RPL_NAMREPLY:
-                handleNamReply(msg, network);
+                handleNamReply(message, network);
                 break;
             case RPL_ENDOFNAMES:
                 LOG.debug("End of Names Reply");
                 break;
             case RPL_LUSEROP:
-                LOG.info("list of operators: " + msg);
+                LOG.info("number of operators: " + args);
                 break;
             case RPL_MOTDSTART:
-                LOG.debug("Start of MOTD: " + msg);
+                LOG.debug("Start of MOTD: " + args);
                 break;
             case ERR_NOTEXTTOSEND:
                 LOG.warn("Server told me that I tried to send an empty msg");
@@ -325,50 +320,46 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
                 LOG.debug("End of MOTD");
                 break;
             case RPL_LUSERUNKNOWN:
-                LOG.info("list of unknown users: " + msg);
+                LOG.info("number of unknown users: " + args);
                 break;
             case ERR_QNETSERVICEIMMUNE:
-                LOG.warn("I cannot do harm to a service! " + msg);
+                LOG.warn("I cannot do harm to a service! " + args);
                 break;
             case RPL_WHOISUSER:
-                handleWhoisUser(msg, network);
+                handleWhoisUser(message, network);
                 break;
             case ERR_NOSUCHNICK:
-                String unkNick = StringUtils.substringBefore(msg, " :");
-                WhoisRequest.end(unkNick, false);
+                WhoisRequest.end(args, false);
                 break;
             case RPL_WHOISCHANNELS:
-                handleWhoisChannels(msg, network);
+                handleWhoisChannels(message, network);
                 break;
             case RPL_WHOISSERVER:
-                LOG.warn("TODO whois server : " + msg);
+                LOG.warn("TODO whois server : " + args);
                 // msg = mauhiz *.quakenet.org :QuakeNet IRC Server
                 break;
             case RPL_WHOISAUTH: // this message is specific to Qnet Servers
-                ((QnetServer) network).handleWhois(msg);
+                ((QnetServer) network).handleWhois(args);
                 break;
             case RPL_ENDOFWHOIS:
-                String nick = StringUtils.substringBefore(msg, " ");
-                WhoisRequest.end(nick, true);
+                WhoisRequest.end(args, true);
                 break;
             case ERR_CHANOPRIVSNEEDED:
-                LOG.warn("I am not channel operator. " + StringUtils.substringBefore(msg, " "));
+                LOG.warn("I am not channel operator. " + args.peek());
                 break;
             case ERR_NOTREGISTERED:
                 LOG.warn("I should register before sending commands!");
                 break;
             case RPL_WHOISIDLE:
-                LOG.debug("User has been idle : " + StringUtils.substringAfter(msg, " "));
+                LOG.debug("User has been idle : " + args.peek());
                 break;
             case RPL_WHOISOPERATOR:
-                String opNick = StringUtils.substringBefore(msg, " ");
-                WhoisRequest.end(opNick, true);
+                WhoisRequest.end(args, true);
 
-                String opText = StringUtils.substringAfter(msg, ":");
-                LOG.debug(opNick + " " + opText);
+                LOG.debug(args + " " + message.getMsg());
                 break;
             case ERR_NICKNAMEINUSE:
-                String nickInUse = StringUtils.substringBefore(msg, " ");
+                String nickInUse = args.peek();
                 LOG.warn(nickInUse + " is already in use");
 
                 // TODO use alternate nicknames from config ?
@@ -377,10 +368,10 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
 
                 break;
             case ERR_NOTONCHANNEL:
-                LOG.warn("[TODO process] " + msg);
+                LOG.warn("[TODO process] " + args);
                 break;
             case ERR_NOSUCHCHANNEL:
-                LOG.warn("[TODO process] " + msg);
+                LOG.warn("[TODO process] " + args);
                 break;
             default:
                 // TODO 42, 265, 266, 439 on Rizon
@@ -401,25 +392,23 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
      * @see net.mauhiz.irc.base.IIrcControl#sendMsg(net.mauhiz.irc.base.msg.IIrcMessage)
      */
     public void sendMsg(IIrcMessage msg) {
-        assert msg != null : "null msg";
-        if (msg instanceof Privmsg) {
-            if (StringUtils.isEmpty(((Privmsg) msg).getMessage())) {
-                LOG.info("Not sending empty msg", new IllegalArgumentException());
-                return;
-            }
-        } else if (msg instanceof Notice) {
-            if (StringUtils.isEmpty(((Notice) msg).getMessage())) {
+        LOG.info(msg);
+        IIrcIO io = serverToIo.get(msg.getServerPeer());
+
+        if (msg instanceof IPrivateIrcMessage) {
+            if (StringUtils.isEmpty(((IPrivateIrcMessage) msg).getMessage())) {
                 LOG.info("Not sending empty msg", new IllegalArgumentException());
                 return;
             }
         }
 
-        LOG.info(msg);
+        String ircForm = msg.getIrcForm();
+        io.sendMsg(ircForm);
 
-        IIrcIO io = serverToIo.get(msg.getServerPeer());
-        assert io != null : "not connected to " + msg.getServerPeer().getNetwork().getAlias();
+        if (msg instanceof IPrivateIrcMessage) {
+            io.processMsg(ircForm); // process it back
+        }
 
-        io.sendMsg(msg.getIrcForm());
         if (msg instanceof Quit) {
             quit(msg.getServerPeer());
         }

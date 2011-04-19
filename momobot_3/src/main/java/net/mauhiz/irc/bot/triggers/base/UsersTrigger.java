@@ -1,12 +1,12 @@
 package net.mauhiz.irc.bot.triggers.base;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -26,22 +26,21 @@ public class UsersTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String args = getArgs(im.getMessage());
-        String[] chanNames = StringUtils.split(args);
-        if (ArrayUtils.isEmpty(chanNames)) {
-            chanNames = new String[] { ((IrcChannel) im.getTo()).fullName() };
+        ArgumentList chanNames = getArgs(im);
+        if (chanNames.isEmpty()) {
+            chanNames = new ArgumentList(((IrcChannel) im.getTo()).fullName());
         }
 
         for (String chanName : chanNames) {
             IrcChannel channel = im.getServerPeer().getNetwork().findChannel(chanName, false);
             if (channel == null) { // TODO /NAMES
                 String chanMsg = "I am not on " + chanName;
-                control.sendMsg(Privmsg.buildAnswer(im, chanMsg));
+                control.sendMsg(new Privmsg(im, chanMsg));
 
             } else {
                 String chanMsg = channel.size() + " users on " + channel.fullName() + " : "
                         + StringUtils.join(channel.iterator(), " ");
-                control.sendMsg(Privmsg.buildAnswer(im, chanMsg));
+                control.sendMsg(new Privmsg(im, chanMsg));
             }
         }
     }

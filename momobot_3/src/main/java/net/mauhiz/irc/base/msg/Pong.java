@@ -1,7 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcCommands;
 
 /**
  * @author mauhiz
@@ -10,7 +10,7 @@ public class Pong extends AbstractIrcMessage {
     private final String pingId;
 
     public Pong(IIrcServerPeer server, String pingId) {
-        super(null, null, server);
+        super(server, null);
         this.pingId = pingId;
     }
 
@@ -20,8 +20,13 @@ public class Pong extends AbstractIrcMessage {
     }
 
     @Override
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.PONG;
+    }
+
+    @Override
     public String getIrcForm() {
-        return IrcCommands.PONG + " " + pingId;
+        return super.getIrcForm() + ' ' + pingId;
     }
 
     @Override

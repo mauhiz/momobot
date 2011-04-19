@@ -32,7 +32,7 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
         IrcChannel chan = (IrcChannel) im.getTo();
         IChannelEvent event = chan.getEvt();
         if (event == null) {
-            Privmsg msg = Privmsg.buildAnswer(im, "Aucun tournoi n'est lance.");
+            Privmsg msg = new Privmsg(im, "Aucun tournoi n'est lance.");
             control.sendMsg(msg);
             return;
         }
@@ -41,7 +41,7 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
             List<String> reply = ((Tournament) event).getListTeam();
             if (!reply.isEmpty()) {
                 for (String element : reply) {
-                    Notice msg = Notice.buildPrivateAnswer(im, element);
+                    Notice msg = new Notice(im, element, true);
                     control.sendMsg(msg);
                 }
             }

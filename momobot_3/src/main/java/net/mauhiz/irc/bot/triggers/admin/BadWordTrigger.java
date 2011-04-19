@@ -4,17 +4,17 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.UserChannelMode;
 import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.irc.base.msg.IPrivateIrcMessage;
 import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 
 /**
@@ -45,13 +45,13 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
         if (im.getMessage().startsWith(getTriggerText())) {
             /* mode controle */
             /* TODO admin mode */
-            String args = getArgs(im.getMessage());
+            String args = getTriggerContent(im);
             Privmsg resp;
-            if (StringUtils.isEmpty(args)) {
-                resp = Privmsg.buildPrivateAnswer(im, "Syntaxe: " + getTriggerText() + " badword");
+            if (args.isEmpty()) {
+                resp = new Privmsg(im, "Syntaxe: " + getTriggerText() + " badword", true);
             } else {
                 BADWORDS.add(args);
-                resp = Privmsg.buildPrivateAnswer(im, "Badword ajoute: " + args);
+                resp = new Privmsg(im, "Badword ajoute: " + args, true);
             }
             control.sendMsg(resp);
         } else {
@@ -71,7 +71,7 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
      * @param control
      * @param badword
      */
-    private void getAngry(IIrcMessage toReply, IIrcControl control, String badword) {
+    private void getAngry(IPrivateIrcMessage toReply, IIrcControl control, String badword) {
         IIrcMessage resp;
         IIrcServerPeer server = toReply.getServerPeer();
         IrcChannel targetChan = (IrcChannel) toReply.getTo();
@@ -82,7 +82,7 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
                     "You shall not use bad words such as " + badword);
         } else {
             /* je rage quand meme */
-            resp = Privmsg.buildAnswer(toReply, toReply.getFrom() + " is so rude, he said " + badword + "!!");
+            resp = new Privmsg(toReply, toReply.getFrom() + " is so rude, he said " + badword + "!!");
         }
         control.sendMsg(resp);
     }

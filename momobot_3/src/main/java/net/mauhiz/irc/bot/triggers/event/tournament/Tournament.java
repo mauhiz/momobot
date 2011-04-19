@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,7 +20,6 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.commons.net.ftp.FTP;
@@ -122,14 +122,14 @@ public class Tournament extends AbstractChannelEvent {
      * @param chan
      * @param maps
      */
-    public Tournament(IrcChannel chan, String[] maps) {
+    public Tournament(IrcChannel chan, Collection<String> maps) {
         super(chan);
         sw.start();
         numberPlayerPerTeam = CFG.getInt("tn.numberPlayerPerTeam");
-        numberTeams = MathUtils.power(2, maps.length); // 2^4=16
+        numberTeams = MathUtils.power(2, maps.size()); // 2^4=16
         // On cree les teams
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Lancement d'un tn sur: " + chan.fullName() + " maps: " + StringUtils.join(maps));
+            LOG.debug("Lancement d'un tn sur: " + chan.fullName() + " maps: " + StringUtils.join(maps, ' '));
         }
 
         // On cree la liste de map
@@ -320,11 +320,11 @@ public class Tournament extends AbstractChannelEvent {
      * @param ircuser
      * @param loc
      * @param tag
-     * @param nicknames
+     * @param args
      *            REM : $tn-register IDTEAM COUNTRY TAG PLAYER1 PLAYER2 PLAYER..
      * @return string
      */
-    public String setTeam(IrcUser ircuser, Locale loc, String tag, String[] nicknames) {
+    public String setTeam(IrcUser ircuser, Locale loc, String tag, Collection<String> args) {
         for (TournamentTeam element : teamList) {
             if (element.isOwner(ircuser)) {
                 TournamentTeam team = element;
@@ -333,27 +333,20 @@ public class Tournament extends AbstractChannelEvent {
 
                 // On clean pour tout remettre
                 team.clear();
+                team.addAll(args);
 
-                if (nicknames.length < team.getCapacity()) {
-                    team.addAll(nicknames);
-                    for (int i = nicknames.length + 1; i <= team.getCapacity(); i++) {
-                        team.add("?");
-                    }
-                } else {
-                    team.addAll((String[]) ArrayUtils.subarray(nicknames, 0, team.getCapacity()));
+                while (team.size() < team.getCapacity()) {
+                    team.add("?");
                 }
 
                 return team.toString();
             }
         }
         TournamentTeam team = new TournamentTeam(numberPlayerPerTeam, teamList.size(), tag, loc, ircuser);
-        if (nicknames.length < team.getCapacity()) {
-            team.addAll(nicknames);
-            for (int i = nicknames.length + 1; i <= team.getCapacity(); i++) {
-                team.add("?");
-            }
-        } else {
-            team.addAll((String[]) ArrayUtils.subarray(nicknames, 0, team.getCapacity()));
+        team.addAll(args);
+
+        while (team.size() < team.getCapacity()) {
+            team.add("?");
         }
         teamList.add(team);
         return team.toString();

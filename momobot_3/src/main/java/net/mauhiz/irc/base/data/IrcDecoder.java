@@ -1,8 +1,5 @@
 package net.mauhiz.irc.base.data;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.msg.IIrcMessage;
@@ -19,6 +16,7 @@ import net.mauhiz.irc.base.msg.ServerError;
 import net.mauhiz.irc.base.msg.ServerMsg;
 import net.mauhiz.irc.base.msg.SetTopic;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -27,11 +25,8 @@ import org.apache.log4j.Logger;
  */
 public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
 
-    static final Pattern CMD = Pattern.compile("([\\S^:]+) (.*)");
-    static final Pattern FROM = Pattern.compile(":([\\S^:]+) (.*)");
     public static final IIrcDecoder INSTANCE;
     private static final Logger LOG = Logger.getLogger(IrcDecoder.class);
-    static final Pattern TO = Pattern.compile("([\\S^:]+) (.*)");
 
     static {
         INSTANCE = new IrcDecoder();
@@ -39,6 +34,10 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
 
     public static IIrcDecoder getInstance() {
         return INSTANCE;
+    }
+
+    public static ArgumentList tokenizeArgs(String argumentStr) {
+        return new ArgumentList(argumentStr);
     }
 
     private IrcDecoder() {
@@ -50,89 +49,96 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
      * @return raw IRC msg
      */
     public IIrcMessage buildFromRaw(IIrcServerPeer server, String raw) {
-        String work = raw;
-        String fromStr = null;
-        String toStr = null;
-        Matcher m = FROM.matcher(work);
-        if (m.matches()) {
-            fromStr = m.group(1);
-            work = m.group(2);
+        String argumentStr = StringUtils.substringBefore(raw, " :");
+        ArgumentList args = tokenizeArgs(argumentStr);
+
+        if (args.isEmpty()) {
+            throw new IllegalArgumentException("Malformed IRC message: " + raw);
         }
-        m = CMD.matcher(work);
-        if (m.matches()) {
-            String cmd = m.group(1);
-            work = m.group(2);
-            m = TO.matcher(work);
-            String msg;
-            if (m.matches()) {
-                toStr = m.group(1);
-                msg = m.group(2);
-            } else {
-                msg = work;
-            }
-            /* remove semicolon */
-            if (msg.charAt(0) == ':') {
-                msg = msg.substring(1);
-            }
-            Target from = decodeTarget(server, fromStr);
-            Target to = decodeTarget(server, toStr);
-            if (StringUtils.isNumeric(cmd)) {
-                return new ServerMsg(from, to, server, cmd, msg);
-            }
 
-            IrcCommands command = IrcCommands.valueOf(cmd);
+        String next = args.peek();
+        String fromStr = next != null && next.charAt(0) == ':' ? args.poll().substring(1) : null;
+        String cmd = args.poll();
 
-            switch (command) {
-                case NOTICE:
-                    return new Notice(from, to, server, msg);
-
-                case PING:
-                    return new Ping(from, server, msg);
-
-                case MODE:
-                    return new Mode(from, to, server, msg);
-
-                case JOIN:
-                    IrcChannel channel = server.getNetwork().findChannel(msg);
-                    return new Join(from, server, channel);
-
-                case PART:
-                    String partReason = StringUtils.substringAfter(msg, " :");
-                    return new Part(server, (IrcUser) from, (IrcChannel) to, partReason);
-
-                case PRIVMSG:
-                    if (msg.charAt(0) == QUOTE_STX) {
-                        msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
-                        return CtcpFactory.decode(from, to, server, msg);
-                    }
-                    return new Privmsg(from, to, server, msg);
-
-                case QUIT:
-                    // FIXME the pattern for Quit is wrong, 'to' is actually the beginning of the message
-                    return new Quit(from, server, toStr + " " + msg);
-
-                case NICK:
-                    return new Nick(server, from, msg);
-
-                case KICK:
-                    String reason = StringUtils.substringAfter(msg, " :");
-                    String nick = StringUtils.substringBefore(msg, " :");
-                    IrcUser target = server.getNetwork().findUser(nick, false);
-                    return new Kick(server, from, (IrcChannel) to, target, reason);
-
-                case ERROR:
-                    // TODO ERROR :Closing Link: by underworld2.no.quakenet.org (Registration Timeout)
-                    return new ServerError(server, cmd);
-
-                case TOPIC:
-                    return new SetTopic(from, to, server, msg);
-
-                default:
-                    break;
-            }
+        if (cmd == null) {
+            throw new IllegalArgumentException("Malformed IRC message: " + raw);
         }
-        LOG.warn("Unknown message on server " + server + ": " + raw);
-        return null;
+
+        String msg = StringUtils.substringAfter(raw, " :");
+        Target from = decodeTarget(server, fromStr);
+
+        if (StringUtils.isNumeric(cmd)) {
+            // skip the 'to'
+            args.poll();
+            return new ServerMsg(server, from, Integer.parseInt(cmd), args, msg);
+        }
+
+        IrcCommands command = IrcCommands.valueOf(cmd);
+
+        if (command == null) {
+            throw new NotImplementedException("Unknown message on network " + server.getNetwork() + ": " + raw);
+        }
+
+        switch (command) {
+            case NOTICE:
+                Target to = decodeTarget(server, args.poll());
+                return new Notice(server, from, to, msg);
+
+            case PING:
+                return new Ping(server, from, msg);
+
+            case MODE:
+                Target modifiedObject = decodeTarget(server, args.poll());
+                return new Mode(server, from, modifiedObject, args);
+
+            case JOIN:
+                String[] chans = StringUtils.split(args.poll(), ',');
+                String[] keys = StringUtils.split(args.poll(), ',');
+                IrcChannel[] channels = new IrcChannel[chans.length];
+                for (int i = 0; i < chans.length; i++) {
+                    channels[i] = server.getNetwork().findChannel(chans[i]);
+                }
+                return new Join(server, (IrcUser) from, channels, keys);
+
+            case PART:
+                chans = StringUtils.split(args.poll(), ',');
+                channels = new IrcChannel[chans.length];
+                for (int i = 0; i < chans.length; i++) {
+                    channels[i] = server.getNetwork().findChannel(chans[i]);
+                }
+                return new Part(server, (IrcUser) from, msg, channels);
+
+            case PRIVMSG:
+                to = decodeTarget(server, args.poll());
+                if (msg.charAt(0) == QUOTE_STX) {
+                    msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
+                    return CtcpFactory.decode(server, from, to, msg);
+                }
+                return new Privmsg(server, from, to, msg);
+
+            case QUIT:
+                return new Quit(server, from, msg);
+
+            case NICK:
+                return new Nick(server, (IrcUser) from, msg);
+
+            case KICK:
+                to = decodeTarget(server, args.poll());
+                String nick = args.poll();
+                IrcUser target = server.getNetwork().findUser(nick, false);
+                return new Kick(server, from, (IrcChannel) to, target, msg);
+
+            case ERROR:
+                // TODO ERROR :Closing Link: by underworld2.no.quakenet.org (Registration Timeout)
+                return new ServerError(server, cmd);
+
+            case TOPIC:
+                to = decodeTarget(server, args.poll());
+                return new SetTopic(server, from, (IrcChannel) to, msg);
+
+            default:
+                throw new NotImplementedException("Unknown message on network " + server.getNetwork() + ": " + raw);
+        }
     }
 
     protected Target decodeTarget(IIrcServerPeer peer, String fromStr) {

@@ -1,84 +1,49 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
  */
-public class Privmsg extends AbstractIrcMessage {
+public class Privmsg extends AbstractPrivateIrcMessage {
+
     /**
-     * @param toReply
-     * @param msg
-     * @return new msg
+     * @deprecated
      */
-    public static Privmsg buildAnswer(IIrcMessage toReply, String msg) {
-        if (toReply.isToChannel()) {
-            return new Privmsg(null, toReply.getTo(), toReply.getServerPeer(), msg);
-        }
-        return buildPrivateAnswer(toReply, msg);
+    @Deprecated
+    public Privmsg(IIrcServerPeer server, Target from, IIrcServerPeer to, String msg) {
+        super(server, from, to, msg);
+    }
+
+    public Privmsg(IIrcServerPeer server, Target from, Target to, String message) {
+        super(server, from, to, message);
+    }
+
+    public Privmsg(IPrivateIrcMessage replyTo, String respMsg) {
+        this(replyTo, respMsg, false);
     }
 
     /**
-     * @param toReply
-     * @param msg
-     * @return new msg
+     * Builds an answer
      */
-    public static Privmsg buildPrivateAnswer(IIrcMessage toReply, String msg) {
-        return new Privmsg(null, toReply.getFrom(), toReply.getServerPeer(), msg);
-    }
-
-    /**
-     * message
-     */
-    private final String message;
-
-    /**
-     * TODO constr private ?
-     */
-    public Privmsg(Target from, Target to, IIrcServerPeer server, String message) {
-        super(from, to, server);
-        this.message = message;
+    public Privmsg(IPrivateIrcMessage replyTo, String respMsg, boolean priv) {
+        super(replyTo, respMsg, priv);
     }
 
     @Override
     public Privmsg copy() {
-        return new Privmsg(from, to, server, message);
+        return new Privmsg(server, from, to, message);
     }
 
     @Override
-    public String getIrcForm() {
-        if (StringUtils.isEmpty(message)) {
-            return null;
-        }
-        StringBuilder sb = new StringBuilder();
-        if (super.from != null) {
-            sb.append(':');
-            sb.append(super.from);
-            sb.append(' ');
-        }
-        sb.append(IrcCommands.PRIVMSG).append(' ');
-        sb.append(super.to);
-        sb.append(" :");
-        sb.append(getMessage()); // important pour les sous classes (CTCP, ACTION...)
-        return sb.toString();
-    }
-
-    /**
-     * @return le message
-     */
-    public String getMessage() {
-        return message;
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.PRIVMSG;
     }
 
     @Override
     public String toString() {
-        if (from == null) { // self
-            return "Saying to " + to + " : " + message;
-        }
         return "<" + niceFromDisplay() + "> " + message;
     }
 }

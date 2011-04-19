@@ -2,6 +2,7 @@ package net.mauhiz.irc.bot.triggers.math;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.irc.base.msg.IPrivateIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -19,9 +20,9 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param base
      * @return si la base est acceptable
      */
-    private static boolean checkBase(IIrcMessage toReply, IIrcControl control, int base) {
+    private static boolean checkBase(IPrivateIrcMessage toReply, IIrcControl control, int base) {
         if (base < Character.MIN_RADIX) {
-            Notice not = Notice.buildPrivateAnswer(toReply, "La base " + base + " est trop petite");
+            Notice not = new Notice(toReply, "La base " + base + " est trop petite", true);
             control.sendMsg(not);
             return false;
         } else if (base > Character.MAX_RADIX) {
@@ -29,21 +30,21 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         }
         return true;
     }
-    
+
     /**
      * @param trigger
      */
     public BaseConvTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String args = getArgs(cme.getMessage());
+        String args = getTriggerContent(cme);
         if (args.trim().isEmpty()) {
             showUsage(control, cme);
             return;
@@ -62,22 +63,21 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 return;
             }
             String resultat = Integer.toString(intNombre, base2);
-            resp = Privmsg.buildAnswer(cme, nombre + " en base " + base1 + " = " + resultat + " en base " + base2);
+            resp = new Privmsg(cme, nombre + " en base " + base1 + " = " + resultat + " en base " + base2);
         } catch (NumberFormatException nfe) {
-            resp = Notice.buildPrivateAnswer(cme, "Le nombre " + nombre + " est illisible en base " + base1);
+            resp = new Notice(cme, "Le nombre " + nombre + " est illisible en base " + base1, true);
         }
         control.sendMsg(resp);
     }
-    
+
     /**
      * @param control
      * @param toReply
      */
-    private void showUsage(IIrcControl control, IIrcMessage toReply) {
-        Notice notice = Notice.buildPrivateAnswer(toReply, "Syntaxe : " + getTriggerText()
-                + " nombre base_from base_to");
+    private void showUsage(IIrcControl control, IPrivateIrcMessage toReply) {
+        Notice notice = new Notice(toReply, "Syntaxe : " + getTriggerText() + " nombre base_from base_to", true);
         control.sendMsg(notice);
-        notice = Notice.buildPrivateAnswer(toReply, "Exemple : " + getTriggerText() + " ff 16 10");
+        notice = new Notice(toReply, "Exemple : " + getTriggerText() + " ff 16 10", true);
         control.sendMsg(notice);
     }
 }

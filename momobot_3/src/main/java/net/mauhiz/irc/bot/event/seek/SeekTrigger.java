@@ -14,8 +14,6 @@ import net.mauhiz.irc.bot.event.Gather;
 import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.triggers.AbstractGourmandTrigger;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * MEMO: de chose a revoir:<br>
  * 1) charger les valeurs avec le xml<br>
@@ -46,7 +44,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
             }
             IChannelEvent evt = chan.getEvt();
             if (evt == null) {
-                Privmsg resp = Privmsg.buildAnswer(im, "Aucun gather n'est lance.");
+                Privmsg resp = new Privmsg(im, "Aucun gather n'est lance.", false);
                 control.sendMsg(resp);
             } else if (evt instanceof Gather) {
                 String reply;
@@ -54,7 +52,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                 SeekWar seek = gather.getSeek();
                 if (seek == null) {
                     seek = gather.createSeekWar();
-                    reply = seek.start(StringUtils.split(getArgs(im.getMessage())), chan, gather.getNumberPlayers());
+                    reply = seek.start(getArgs(im), chan, gather.getNumberPlayers());
                     if (seek.isSeekInProgress()) {
                         // L'initialisation a reussi
                         String[] channelSeek = SeekWar.SEEK_CHANS;
@@ -90,7 +88,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                                         + getTriggerText()
                                         + " on \"ip+pass\" level \"message de seek entre crochet :: %P=nombre de joueur, %L = level, %S = serv(off ici) \"" };
                         for (String element : noticeListHelp) {
-                            notice = Notice.buildPrivateAnswer(im, element);
+                            notice = new Notice(im, element, true);
                             control.sendMsg(notice);
                         }
                     }
@@ -100,7 +98,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                     reply = "";
                 }
 
-                Privmsg resp = Privmsg.buildAnswer(im, reply);
+                Privmsg resp = new Privmsg(im, reply, false);
                 control.sendMsg(resp);
 
             }
@@ -131,8 +129,8 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                             // Si c'est le winner du seek, je transmet le msg PV
                             if (seek.getSeekWinner().equals(kikoolol.getNick())
                                     && im.getTo().equals(im.getServerPeer().getMyself())) {
-                                Privmsg reply = new Privmsg(null, seek.getChannel(), im.getServerPeer(), kikoolol.getNick()
-                                        + " : " + im.getMessage());
+                                Privmsg reply = new Privmsg(null, seek.getChannel(), im.getServerPeer(),
+                                        kikoolol.getNick() + " : " + im.getMessage());
                                 control.sendMsg(reply);
                             } else if (seek.isSeekInProgress()) {
                                 List<Privmsg> replies = seek.submitSeekMessage(im);

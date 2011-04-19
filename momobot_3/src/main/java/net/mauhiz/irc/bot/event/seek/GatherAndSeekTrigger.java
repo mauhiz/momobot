@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.event.seek;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.fake.FakeUser;
@@ -28,11 +29,11 @@ public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivms
         IrcChannel chan = (IrcChannel) cme.getTo();
         IChannelEvent evt = chan.getEvt();
         String respMsg;
-        if (evt == null) {
 
-            respMsg = "Erreur : L'argument qui suit doit etre un chiffre entre 1 et 5";
+        if (evt == null) {
             try {
-                int nbPlayers = Integer.parseInt(getArgs(cme.getMessage()));
+                ArgumentList args = getArgs(cme);
+                int nbPlayers = Integer.parseInt(args.poll());
                 if (nbPlayers > 0 && nbPlayers < 5) {
                     IrcUser user = (IrcUser) cme.getFrom();
                     respMsg = "Gather lance par " + user.getNick();
@@ -41,16 +42,19 @@ public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivms
                         IrcUser ircuser = new FakeUser("P" + (i + 1));
                         gath.add(ircuser);
                     }
+                } else {
+                    respMsg = "Erreur : L'argument qui suit doit etre un chiffre entre 1 et 5";
                 }
             } catch (NumberFormatException e) {
                 // invalid arg
+                respMsg = "Erreur : L'argument qui suit doit etre un chiffre";
             }
 
         } else {
             respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
-
         }
-        Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
+
+        Privmsg resp = new Privmsg(cme, respMsg, false);
         control.sendMsg(resp);
     }
 }

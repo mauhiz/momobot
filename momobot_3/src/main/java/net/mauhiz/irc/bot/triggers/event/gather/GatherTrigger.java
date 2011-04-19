@@ -33,7 +33,7 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         if (evt == null) {
             IrcUser user = (IrcUser) cme.getFrom();
             Gather gather;
-            String arg = getArgs(cme.getMessage());
+            String arg = getTriggerContent(cme);
             if (StringUtils.isNumeric(arg) && StringUtils.isNotBlank(arg)) {
                 int nbPlayers = Integer.parseInt(arg);
                 if (nbPlayers > 0) {
@@ -49,7 +49,7 @@ public class GatherTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         } else {
             respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
         }
-        Privmsg resp = Privmsg.buildAnswer(cme, respMsg);
+        Privmsg resp = new Privmsg(cme, respMsg);
         control.sendMsg(resp);
     }
 }

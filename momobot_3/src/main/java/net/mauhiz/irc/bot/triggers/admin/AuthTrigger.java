@@ -16,7 +16,7 @@ public class AuthTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     public AuthTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
@@ -24,9 +24,9 @@ public class AuthTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {
         /* pour l'instant je hard code le pw. La secu attendra ;x */
-        if (getArgs(pme.getMessage()).equals("boulz")) {
+        if ("boulz".equals(getTriggerContent(pme))) {
             pme.getFrom()/* FIXME .setAdmin(true) */;
-            Privmsg msg = Privmsg.buildPrivateAnswer(pme, "Oui, maitre");
+            Privmsg msg = new Privmsg(pme, "Oui, maitre", true);
             control.sendMsg(msg);
         }
     }

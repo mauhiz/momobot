@@ -1,5 +1,7 @@
 package net.mauhiz.irc.bot.automate;
 
+import java.util.Collections;
+
 import net.mauhiz.irc.base.IrcClientControl;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.WhoisRequest;
@@ -48,17 +50,17 @@ public class RegisterAutomate extends AbstractAutomate {
      * @see Runnable#run()
      */
     public void run() {
-        WhoisRequest whois = null;
         while (isRunning()) {
             pause(SLEEPTIME);
             switch (etat) {
                 case STARTED:
-                    whois = new WhoisRequest(getUser().getNick(), getServer(), control);
-                    whois.startAs("Whois");
+                    WhoisRequest.startWhois(getServer(), control, Collections.singleton(getUser().getNick()), null);
+
                     sendMsgToUser("Detection de ton auth Qnet...");
                     etat = WHOISING;
                     break;
                 case WHOISING:
+                    WhoisRequest whois = WhoisRequest.get(getUser().getNick());
                     if (whois != null && whois.isRunning()) {
                         continue;
                     }

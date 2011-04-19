@@ -6,7 +6,6 @@ import java.net.Socket;
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcDecoder;
-import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.io.AbstractIrcIO;
 import net.mauhiz.irc.base.io.IIrcInput;
@@ -115,22 +114,21 @@ public class BncClientIO extends AbstractIrcIO {
 
     void sendGreetings(Target myNick, BncServer nw, IIrcServerPeer bncServer) {
         // TODO review this stuff
-        IrcUser targetNick = nw.findUser(nick, false);
-        ServerMsg smsg1 = new ServerMsg(myNick, targetNick, bncServer, "001", "Welcome to MomoBouncer");
+        ServerMsg smsg1 = new ServerMsg(bncServer, myNick, 1, null, "Welcome to MomoBouncer");
         sendMsg(smsg1.getIrcForm());
 
-        ServerMsg smsg2 = new ServerMsg(myNick, targetNick, bncServer, "002",
+        ServerMsg smsg2 = new ServerMsg(bncServer, myNick, 2, null,
                 "This is an IRC proxy/bouncer. Unauthorized users must disconnect immediately.");
         sendMsg(smsg2.getIrcForm());
 
-        ServerMsg smsg3 = new ServerMsg(myNick, targetNick, bncServer, "003", "This bouncer has been up since ??");
+        ServerMsg smsg3 = new ServerMsg(bncServer, myNick, 3, null, "This bouncer has been up since ??");
         // TODO smth like server.getGlobalStartTime()
         sendMsg(smsg3.getIrcForm());
 
-        ServerMsg smsg4 = new ServerMsg(myNick, targetNick, bncServer, "004", "");
+        ServerMsg smsg4 = new ServerMsg(bncServer, myNick, 4, null, "");
         sendMsg(smsg4.getIrcForm());
 
-        ServerMsg smsg5 = new ServerMsg(myNick, targetNick, bncServer, "005", "");
+        ServerMsg smsg5 = new ServerMsg(bncServer, myNick, 5, null, "");
         sendMsg(smsg5.getIrcForm());
 
         NoticeAuth na1 = new NoticeAuth(bncServer, "Welcome to JBouncer. http://www.jibble.org/jbouncer/");

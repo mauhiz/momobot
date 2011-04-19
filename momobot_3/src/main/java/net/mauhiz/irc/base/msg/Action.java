@@ -11,28 +11,19 @@ public class Action extends Ctcp {
     public static final String COMMAND = "ACTION";
 
     /**
-     * @param toReply
-     * @param msg
-     * @return new msg
+     * @deprecated
      */
-    public static Action buildAnswer(IIrcMessage toReply, String msg) {
-        if (toReply.isToChannel()) {
-            return new Action(null, toReply.getTo(), toReply.getServerPeer(), msg);
-        }
-        return buildPrivateAnswer(toReply, msg);
+    @Deprecated
+    public Action(IIrcServerPeer server, Target from, IIrcServerPeer to, String msg) {
+        super(server, from, to, msg);
     }
 
-    /**
-     * @param toReply
-     * @param msg
-     * @return new msg
-     */
-    public static Action buildPrivateAnswer(IIrcMessage toReply, String msg) {
-        return new Action(null, toReply.getFrom(), toReply.getServerPeer(), msg);
+    public Action(IIrcServerPeer server, Target from, Target to, String message) {
+        super(server, from, to, message);
     }
 
-    public Action(Target from, Target to, IIrcServerPeer server, String message) {
-        super(from, to, server, message);
+    public Action(IPrivateIrcMessage replyTo, String respMsg, boolean priv) {
+        super(replyTo, respMsg, priv);
     }
 
     @Override

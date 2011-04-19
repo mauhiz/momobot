@@ -71,7 +71,7 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             msg.append(user.getNick());
         }
 
-        Action pmsg = Action.buildAnswer(cme, msg.toString());
+        Action pmsg = new Action(cme, msg.toString(), false);
         control.sendMsg(pmsg);
     }
 }

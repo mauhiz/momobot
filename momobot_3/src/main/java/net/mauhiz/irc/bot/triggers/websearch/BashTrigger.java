@@ -32,13 +32,13 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             }
             return lignes;
         } catch (IOException e) {
-            return new String[]{e.getMessage()};
-            
+            return new String[] { e.getMessage() };
+
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
     }
-    
+
     /**
      * @return next bash quote
      */
@@ -54,26 +54,26 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             }
             return lignes;
         } catch (IOException e) {
-            return new String[]{e.getMessage()};
-            
+            return new String[] { e.getMessage() };
+
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
     }
-    
+
     /**
      * @param trigger
      */
     public BashTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String args = getArgs(im.getMessage());
+        String args = getTriggerContent(im);
         String[] quote;
         if ("fr".equals(args)) {
             quote = getNextFrQuote();
@@ -81,7 +81,7 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             quote = getNextQuote();
         }
         for (String quoteLine : quote) {
-            Privmsg reply = Privmsg.buildAnswer(im, quoteLine);
+            Privmsg reply = new Privmsg(im, quoteLine);
             control.sendMsg(reply);
         }
     }

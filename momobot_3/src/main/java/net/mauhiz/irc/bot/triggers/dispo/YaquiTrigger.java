@@ -11,7 +11,7 @@ import net.mauhiz.irc.base.Color;
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
-import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.irc.base.msg.IPrivateIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -66,7 +66,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * @param cal
      * @return msg
      */
-    private String doTrigger(IIrcMessage imsg, Calendar cal) {
+    private String doTrigger(IPrivateIrcMessage imsg, Calendar cal) {
         Date date = new java.sql.Date(cal.getTimeInMillis());
         Collection<String> heure1Dispo = new LinkedList<String>();
         Collection<String> heure1Pala = new LinkedList<String>();
@@ -99,28 +99,28 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String msg = getArgs(cme.getMessage()).toLowerCase(Locale.FRANCE);
+        String msg = getTriggerContent(cme).toLowerCase(Locale.FRANCE);
         Calendar date;
         if ("semaine".equals(msg)) {
             date = Calendar.getInstance(Locale.FRANCE);
             for (int i = date.getMinimum(Calendar.DAY_OF_WEEK); i < date.getMaximum(Calendar.DAY_OF_WEEK); i++) {
-                Privmsg resp = Privmsg.buildAnswer(cme, doTrigger(cme, date));
+                Privmsg resp = new Privmsg(cme, doTrigger(cme, date));
                 control.sendMsg(resp);
                 date.setTimeInMillis(date.getTimeInMillis() + DateUtils.MILLIS_PER_DAY);
             }
         } else if (StringUtils.isBlank(msg)) {
             /* dispo pour le jour meme */
             date = Calendar.getInstance(Locale.FRANCE);
-            Privmsg resp = Privmsg.buildAnswer(cme, doTrigger(cme, date));
+            Privmsg resp = new Privmsg(cme, doTrigger(cme, date));
             control.sendMsg(resp);
         } else {
             /* dispo pour plus tard */
             try {
                 date = DateUtil.getDateFromJour(msg, Locale.FRANCE);
-                Privmsg resp = Privmsg.buildAnswer(cme, doTrigger(cme, date));
+                Privmsg resp = new Privmsg(cme, doTrigger(cme, date));
                 control.sendMsg(resp);
             } catch (IllegalArgumentException iae) {
-                Notice notice = Notice.buildPrivateAnswer(cme, getTriggerHelp());
+                Notice notice = new Notice(cme, getTriggerHelp(), true);
                 control.sendMsg(notice);
             }
         }

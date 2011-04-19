@@ -4,9 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.mauhiz.irc.base.data.AbstractIrcNetwork;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.HostMask;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
@@ -37,13 +36,10 @@ public class QnetServer extends AbstractIrcNetwork {
         return Arrays.asList("Q", "L");
     }
 
-    public void handleWhois(String msg) {
-        String nick = StringUtils.substringBefore(msg, " ");
+    public void handleWhois(ArgumentList args) {
+        String nick = args.poll();
         QnetUser ircUser = findUser(nick, true);
-
-        String remaining = StringUtils.substringAfter(msg, " ");
-        String auth = StringUtils.substringBefore(remaining, " :");
-        ircUser.setAuth(auth);
+        ircUser.setAuth(args.poll());
     }
 
     /**

@@ -1,7 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
 
 /**
@@ -10,19 +10,24 @@ import net.mauhiz.irc.base.data.Target;
 public class Ping extends AbstractIrcMessage {
     private final String pingId;
 
-    public Ping(Target from, IIrcServerPeer server, String pingId) {
-        super(from, null, server);
+    public Ping(IIrcServerPeer server, Target from, String pingId) {
+        super(server, from);
         this.pingId = pingId;
     }
 
     @Override
     public Ping copy() {
-        return new Ping(from, server, pingId);
+        return new Ping(server, from, pingId);
+    }
+
+    @Override
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.PING;
     }
 
     @Override
     public String getIrcForm() {
-        return IrcCommands.PING + " " + pingId;
+        return super.getIrcForm() + ' ' + pingId;
     }
 
     /**

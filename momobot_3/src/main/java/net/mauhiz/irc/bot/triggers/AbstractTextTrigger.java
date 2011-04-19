@@ -2,6 +2,8 @@ package net.mauhiz.irc.bot.triggers;
 
 import java.util.Locale;
 
+import net.mauhiz.irc.base.data.ArgumentList;
+import net.mauhiz.irc.base.msg.IPrivateIrcMessage;
 import net.mauhiz.irc.base.trigger.ITextTrigger;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,13 +44,17 @@ public abstract class AbstractTextTrigger implements ITextTrigger, ICommand {
         return getClass().equals(obj.getClass()) && triggerText.equals(((AbstractTextTrigger) obj).getTriggerText());
     }
 
+    protected ArgumentList getArgs(IPrivateIrcMessage im) {
+        return new ArgumentList(getTriggerContent(im));
+    }
+
     /**
-     * @param message
+     * @param im
      *            le message
      * @return les params du msg
      */
-    public String getArgs(String message) {
-        return StringUtils.substringAfter(message, triggerText).trim();
+    protected String getTriggerContent(IPrivateIrcMessage im) {
+        return StringUtils.substringAfter(im.getMessage(), triggerText).trim();
     }
 
     /**
