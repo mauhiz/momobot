@@ -23,7 +23,7 @@ public class CountUsersTrigger extends AbstractTextTrigger implements IPrivmsgTr
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         /* TODO cross server */
-        Privmsg retour = Privmsg.buildAnswer(im,
+        Privmsg retour = new Privmsg(im,
                 Messages.get(getClass(), "count.users", Integer.valueOf(im.getServerPeer().getNetwork().countUsers()))); //$NON-NLS-1$
         control.sendMsg(retour);
     }

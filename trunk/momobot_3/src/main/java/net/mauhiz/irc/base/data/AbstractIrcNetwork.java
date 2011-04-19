@@ -59,17 +59,13 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
     }
 
     public IrcUser findUser(HostMask mask, boolean addIfNotFound) {
-        assert mask != null;
-
         String nick = mask.getNick();
         if (nick == null) {
             throw new IllegalArgumentException("Invalid mask (no nick): " + mask);
         }
         for (IrcUser user : users) {
             if (nick.equalsIgnoreCase(user.getNick())) {
-                if (user.getMask() == null) {
-                    user.setMask(mask);
-                }
+                user.setMask(mask);
                 return user;
             }
         }

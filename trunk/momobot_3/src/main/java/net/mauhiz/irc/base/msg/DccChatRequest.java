@@ -16,14 +16,14 @@ public class DccChatRequest extends Ctcp {
     private final InetAddress address;
     private final int port;
 
-    public DccChatRequest(Target from, Target to, IIrcServerPeer server, InetAddress address, int port) {
-        super(from, to, server, "CHAT CHAT " + NetUtils.iaToLong(address) + " " + port);
+    public DccChatRequest(IIrcServerPeer server, Target from, Target to, InetAddress address, int port) {
+        super(server, from, to, "CHAT CHAT " + NetUtils.iaToLong(address) + " " + port);
         this.address = address;
         this.port = port;
     }
 
-    public DccChatRequest(Target from, Target to, IIrcServerPeer server, String ctcpContent) {
-        super(from, to, server, ctcpContent);
+    public DccChatRequest(IIrcServerPeer server, Target from, Target to, String ctcpContent) {
+        super(server, from, to, ctcpContent);
         String[] tokens = StringUtils.split(ctcpContent, ' ');
         long addrLong = Long.parseLong(tokens[2]);
         address = NetUtils.longToIa(addrLong);

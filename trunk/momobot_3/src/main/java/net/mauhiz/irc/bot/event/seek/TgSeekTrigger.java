@@ -46,7 +46,7 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             return;
         }
 
-        Privmsg msg = Privmsg.buildAnswer(im, reply);
+        Privmsg msg = new Privmsg(im, reply, false);
         control.sendMsg(msg);
     }
 }

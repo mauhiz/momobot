@@ -1,38 +1,48 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
 
-public class SetTopic extends AbstractIrcMessage {
+public class SetTopic extends AbstractIrcMessage implements IrcChannelMessage {
 
+    private final IrcChannel chan;
     private final String topic;
 
-    public SetTopic(Target from, Target chan, IIrcServerPeer server, String newTopic) {
-        super(from, chan, server);
+    public SetTopic(IIrcServerPeer server, Target from, IrcChannel chan, String newTopic) {
+        super(server, from);
         topic = newTopic;
+        this.chan = chan;
     }
 
     @Override
     public SetTopic copy() {
-        return new SetTopic(from, to, server, topic);
+        return new SetTopic(server, from, chan, topic);
+    }
+
+    public IrcChannel getChan() {
+        return chan;
+    }
+
+    @Override
+    public IrcChannel[] getChans() {
+        return new IrcChannel[] { chan };
+    }
+
+    @Override
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.TOPIC;
     }
 
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
-        if (super.from != null) {
-            sb.append(':');
-            sb.append(super.from);
-            sb.append(' ');
-        }
-
-        sb.append(IrcCommands.TOPIC).append(' ');
-        sb.append(super.to);
+        sb.append(super.getIrcForm());
+        sb.append(' ').append(chan);
 
         if (topic != null) {
-            sb.append(" :");
-            sb.append(topic);
+            sb.append(" :").append(topic);
         }
         return sb.toString();
     }
@@ -46,6 +56,6 @@ public class SetTopic extends AbstractIrcMessage {
 
     @Override
     public String toString() {
-        return niceFromDisplay() + " changed the topic on " + to;
+        return niceFromDisplay() + " changed the topic on " + chan;
     }
 }

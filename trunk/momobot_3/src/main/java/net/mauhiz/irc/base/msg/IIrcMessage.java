@@ -29,16 +29,6 @@ public interface IIrcMessage {
     IIrcServerPeer getServerPeer();
 
     /**
-     * @return to
-     */
-    Target getTo();
-
-    /**
-     * @return true is this message is directed to a channel
-     */
-    boolean isToChannel();
-
-    /**
      * @return message lisible par l'utilisateur
      */
     @Override

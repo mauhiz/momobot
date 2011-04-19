@@ -27,7 +27,7 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertTrue(notice.getFrom() instanceof IIrcServerPeer);
         Assert.assertEquals("port80a.se.quakenet.org", notice.getFrom().getIrcForm());
         Assert.assertTrue(notice.getTo() instanceof IrcUser);
-        Assert.assertEquals("momobot3", notice.getTo().getIrcForm());
+        Assert.assertEquals("momobot3", notice.getTo().toString());
         Assert.assertEquals("on 4 ca 1(4) ft 20(20) tr", notice.getMessage());
     }
 
@@ -37,7 +37,7 @@ public class IrcServerTest extends AbstractServerTest {
         IIrcMessage msg = DECODER.buildFromRaw(TO_QNET, test);
         Assert.assertTrue(msg instanceof ServerMsg);
         ServerMsg smsg = (ServerMsg) msg;
-        Assert.assertEquals("#truite :End of /NAMES list.", smsg.getMsg());
+        Assert.assertEquals("End of /NAMES list.", smsg.getMsg());
         Assert.assertEquals(NumericReplies.RPL_ENDOFNAMES.getCode(), smsg.getCode());
     }
 
@@ -48,8 +48,8 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertTrue(msg instanceof Mode);
         Mode mode = (Mode) msg;
         Assert.assertEquals("momobot3!~mmb@40.178.119-80.rev.gaoland.net", mode.getFrom().getIrcForm());
-        Assert.assertEquals("momobot3", mode.getTo().toString());
-        Assert.assertEquals("+i", mode.getMessage());
+        Assert.assertEquals("momobot3", mode.getModifiedObject().toString());
+        Assert.assertEquals("+i", mode.getArgs().peek());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class IrcServerTest extends AbstractServerTest {
         Assert.assertTrue(msg instanceof Join);
         Join join = (Join) msg;
         Assert.assertEquals("HP|Angie!~mauhiz@86.255.97-84.rev.gaoland.net", join.getFrom().getIrcForm());
-        Assert.assertEquals("#truite", join.getTo().getIrcForm());
+        Assert.assertEquals("#truite", join.getChans()[0].getIrcForm());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class IrcServerTest extends AbstractServerTest {
         IIrcMessage msg = DECODER.buildFromRaw(TO_QNET, test);
         Assert.assertTrue(msg instanceof Kick);
         Kick kick = (Kick) msg;
-        Assert.assertEquals("#truite", kick.getTo().getIrcForm());
+        Assert.assertEquals("#truite", kick.getChan().getIrcForm());
         Assert.assertEquals("momobot3", kick.getTarget().toString());
         Assert.assertEquals("go away", kick.getReason());
     }
@@ -79,7 +79,7 @@ public class IrcServerTest extends AbstractServerTest {
         IIrcMessage msg = DECODER.buildFromRaw(TO_QNET, test);
         Assert.assertTrue(msg instanceof ServerMsg);
         ServerMsg smsg = (ServerMsg) msg;
-        Assert.assertEquals("= #truite :@HP|Angie", smsg.getMsg());
+        Assert.assertEquals("@HP|Angie", smsg.getMsg());
         Assert.assertEquals(NumericReplies.RPL_NAMREPLY.getCode(), smsg.getCode());
     }
 
@@ -89,7 +89,7 @@ public class IrcServerTest extends AbstractServerTest {
         IIrcMessage msg = DECODER.buildFromRaw(TO_QNET, test);
         Assert.assertTrue(msg instanceof SetTopic);
         SetTopic topic = (SetTopic) msg;
-        Assert.assertEquals("#truite", topic.getTo().toString());
+        Assert.assertEquals("#truite", topic.getChan().toString());
         Assert.assertEquals("lol @ youtube!!", topic.getTopic());
     }
 

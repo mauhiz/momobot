@@ -29,7 +29,7 @@ public class StopTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         IrcChannel chan = (IrcChannel) im.getTo();
         IChannelEvent evt = chan.getEvt();
         if (evt != null) {
-            Privmsg msg = Privmsg.buildAnswer(im, chan.stopEvent());
+            Privmsg msg = new Privmsg(im, chan.stopEvent());
             control.sendMsg(msg);
         }
     }

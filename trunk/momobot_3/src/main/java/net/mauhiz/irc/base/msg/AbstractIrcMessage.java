@@ -1,7 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
 import net.mauhiz.irc.base.data.IIrcServerPeer;
-import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -14,11 +14,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public abstract class AbstractIrcMessage implements IIrcMessage {
     protected final Target from;
     protected final IIrcServerPeer server;
-    protected final Target to;
 
-    public AbstractIrcMessage(Target from, Target to, IIrcServerPeer server) {
+    public AbstractIrcMessage(IIrcServerPeer server, Target from) {
         this.from = from;
-        this.to = to;
         this.server = server;
     }
 
@@ -29,6 +27,13 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
         return from;
     }
 
+    public abstract IrcCommands getIrcCommand();
+
+    @Override
+    public String getIrcForm() {
+        return ircFromDisplay() + getIrcCommand();
+    }
+
     /**
      * @see net.mauhiz.irc.base.msg.IIrcMessage#getServerPeer()
      */
@@ -36,15 +41,8 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
         return server;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.msg.IIrcMessage#getTo()
-     */
-    public Target getTo() {
-        return to;
-    }
-
-    public boolean isToChannel() {
-        return to instanceof IrcChannel;
+    protected String ircFromDisplay() {
+        return from == null ? "" : ':' + from.getIrcForm() + ' ';
     }
 
     protected String niceFromDisplay() {

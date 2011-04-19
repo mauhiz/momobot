@@ -37,7 +37,7 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
      * @see net.mauhiz.irc.base.trigger.IPartTrigger#doTrigger(Part, IIrcControl)
      */
     public void doTrigger(Part im, IIrcControl control) {
-        removeSeekFromUser((IrcUser) im.getFrom());
+        removeSeekFromUser(im.getFrom());
     }
 
     /**

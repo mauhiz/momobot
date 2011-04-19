@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IrcClientControl;
@@ -113,7 +114,7 @@ public class Launcher {
                     String[] trigTexts = config.getStringArray(packCriteria + "/trigger[@class='" + trigClassName
                             + "']/command");
                     String trigClassFull = pack + trigClassName;
-                    mtm.loadTrigClass(trigClassFull, prefix, trigTexts);
+                    mtm.loadTrigClass(trigClassFull, prefix, Arrays.asList(trigTexts));
                 }
             }
         }

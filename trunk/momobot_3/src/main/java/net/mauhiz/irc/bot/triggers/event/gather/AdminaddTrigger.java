@@ -1,6 +1,9 @@
 package net.mauhiz.irc.bot.triggers.event.gather;
 
+import java.util.List;
+
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -10,7 +13,6 @@ import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.event.Pickup;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -44,44 +46,45 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         IrcChannel chan = (IrcChannel) im.getTo();
         IChannelEvent event = chan.getEvt();
         if (event == null) {
-            Privmsg msg = Privmsg.buildAnswer(im, "Aucun gather ou pickup n'est lance.");
+            Privmsg msg = new Privmsg(im, "Aucun gather ou pickup n'est lance.");
             control.sendMsg(msg);
             return;
         }
-        String[] whos = StringUtils.split(getArgs(im.getMessage()), ' ');
-        if (ArrayUtils.isEmpty(whos)) {
+        ArgumentList args = getArgs(im);
+        if (args.isEmpty()) {
             return;
         }
 
         if (event instanceof Gather) {
-            for (String who : whos) {
+            for (String who : args) {
                 IrcUser target = im.getServerPeer().getNetwork().findUser(who, false);
                 if (target == null) {
-                    Privmsg msg = Privmsg.buildAnswer(im, who + " n'est pas sur " + chan);
+                    Privmsg msg = new Privmsg(im, who + " n'est pas sur " + chan);
                     control.sendMsg(msg);
                     continue;
                 }
                 String resp = replaceTu(((Gather) event).add(target), target.getNick());
-                Privmsg msg = Privmsg.buildAnswer(im, resp);
+                Privmsg msg = new Privmsg(im, resp);
                 control.sendMsg(msg);
             }
 
         } else if (event instanceof Pickup) {
-            String team = whos[whos.length - 1];
+            List<String> whos = args.asList();
+            String team = whos.get(whos.size() - 1);
             Pickup pick = (Pickup) event;
-            int max = whos.length;
+            int max = whos.size();
             if (pick.assignTeam(team) != null) {
                 --max;
             }
             for (int i = 0; i < max; i++) {
-                IrcUser target = im.getServerPeer().getNetwork().findUser(whos[i], false);
+                IrcUser target = im.getServerPeer().getNetwork().findUser(whos.get(i), false);
                 if (target == null) {
-                    Privmsg msg = Privmsg.buildAnswer(im, whos[i] + " n'est pas sur " + chan);
+                    Privmsg msg = new Privmsg(im, whos.get(i) + " n'est pas sur " + chan);
                     control.sendMsg(msg);
                     continue;
                 }
                 String resp = replaceTu(pick.add(target, team), target.getNick());
-                Privmsg msg = Privmsg.buildAnswer(im, resp);
+                Privmsg msg = new Privmsg(im, resp);
                 control.sendMsg(msg);
             }
 

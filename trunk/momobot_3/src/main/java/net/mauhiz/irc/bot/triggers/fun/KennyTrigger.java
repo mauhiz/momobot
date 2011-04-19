@@ -33,7 +33,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * 
      */
     private static final Map<Character, String> NORMAL_TO_KENNY = new TreeMap<Character, String>();
-    
+
     /**
      * @param toTest
      *            la chaine a tester
@@ -54,7 +54,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         }
         return true;
     }
-    
+
     /**
      * La map kenny est formee ainsi...
      * 
@@ -86,7 +86,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             LOG.warn(ioe, ioe);
         }
     }
-    
+
     /**
      * @param toTranslate
      *            String to Translate
@@ -98,7 +98,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         }
         return translateNormalToKenny(toTranslate);
     }
-    
+
     /**
      * @param toTranslate
      *            la string a traduire
@@ -117,7 +117,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         }
         return retour;
     }
-    
+
     /**
      * @param toTranslate
      * @return ...
@@ -136,9 +136,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
                 }
             }
             try {
-                result
-                        .append(translateKennyLetterToNormalLetter(toTranslate.substring(index, index
-                                + KENNY_LETTER_LEN)));
+                result.append(translateKennyLetterToNormalLetter(toTranslate.substring(index, index + KENNY_LETTER_LEN)));
             } catch (IllegalArgumentException iae) {
                 LOG.error(iae, iae);
             }
@@ -146,7 +144,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         }
         return result;
     }
-    
+
     /**
      * @param ch
      *            un caractere.
@@ -162,6 +160,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         }
         return retour;
     }
+
     /**
      * @param toTranslate
      *            un string
@@ -179,7 +178,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         }
         return result;
     }
-    
+
     /**
      * @param trigger
      *            le trigger
@@ -187,21 +186,21 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     public KennyTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String args = getArgs(im.getMessage());
+        String args = getTriggerContent(im);
         if (StringUtils.isBlank(args)) {
             String kennyResponse = translate(args).toString();
-            Privmsg retour = Privmsg.buildAnswer(im, kennyResponse);
+            Privmsg retour = new Privmsg(im, kennyResponse);
             control.sendMsg(retour);
         } else {
-            Privmsg retour = Privmsg.buildAnswer(im, getTriggerHelp());
+            Privmsg retour = new Privmsg(im, getTriggerHelp());
             control.sendMsg(retour);
         }
-        
+
     }
 }

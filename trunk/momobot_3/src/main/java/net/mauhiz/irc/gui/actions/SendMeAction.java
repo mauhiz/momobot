@@ -2,7 +2,7 @@ package net.mauhiz.irc.gui.actions;
 
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
-import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.gui.GuiTriggerManager;
 import net.mauhiz.util.AbstractAction;
 
@@ -12,13 +12,13 @@ import org.eclipse.swt.widgets.Text;
 /**
  * @author mauhiz
  */
-public class SendAction extends AbstractAction {
+public class SendMeAction extends AbstractAction {
     private final Text bar;
     private final GuiTriggerManager gtm;
     private final IIrcServerPeer server;
     private final Target target;
 
-    public SendAction(Text bar1, GuiTriggerManager gtm1, IIrcServerPeer server1, Target target) {
+    public SendMeAction(Text bar1, GuiTriggerManager gtm1, IIrcServerPeer server1, Target target) {
         super();
         gtm = gtm1;
         bar = bar1;
@@ -32,7 +32,7 @@ public class SendAction extends AbstractAction {
         if (StringUtils.isEmpty(toSend)) {
             return;
         }
-        Privmsg msg = new Privmsg(server, null, target, toSend);
+        Action msg = new Action(server, null, target, toSend);
         gtm.getClient().sendMsg(msg);
         bar.setText("");
     }

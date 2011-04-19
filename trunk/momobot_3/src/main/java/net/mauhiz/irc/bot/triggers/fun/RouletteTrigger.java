@@ -32,7 +32,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         IrcChannel wannabe = (IrcChannel) im.getTo();
         if (wannabe == null) {
             /* look args to determine channels */
-            String args = getArgs(im.getMessage());
+            String args = getTriggerContent(im);
             wannabe = im.getServerPeer().getNetwork().findChannel(args);
             if (wannabe == null) {
                 return;

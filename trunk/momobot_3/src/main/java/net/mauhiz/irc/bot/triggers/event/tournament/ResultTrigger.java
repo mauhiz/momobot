@@ -3,6 +3,7 @@ package net.mauhiz.irc.bot.triggers.event.tournament;
 import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -31,31 +32,32 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         IrcChannel chan = (IrcChannel) im.getTo();
         IChannelEvent event = chan.getEvt();
         if (event == null) {
-            Privmsg msg = Privmsg.buildAnswer(im, "Aucun tournois n'est lance.");
+            Privmsg msg = new Privmsg(im, "Aucun tournois n'est lance.");
             control.sendMsg(msg);
             return;
         }
         if (event instanceof Tournament) {
-            String[] args = getArgs(im.getMessage()).split(" ");
-            if (args.length == 3 && Integer.parseInt(args[0]) > -1 && Integer.parseInt(args[1]) > -1
-                    && Integer.parseInt(args[2]) > -1) {
-                int id = Integer.parseInt(args[0]);
-                int score1 = Integer.parseInt(args[1]);
-                int score2 = Integer.parseInt(args[2]);
-                Tournament tn = (Tournament) event;
-                List<String> str = tn.setScore(id, score1, score2);
-                for (String element : str) {
-                    Privmsg msg = Privmsg.buildAnswer(im, element);
-                    control.sendMsg(msg);
-                }
-                tn.generateTemplate();
-                return;
+            ArgumentList args = getArgs(im);
 
+            try {
+                int id = Integer.parseInt(args.poll());
+                int score1 = Integer.parseInt(args.poll());
+                int score2 = Integer.parseInt(args.poll());
+                if (id > -1 && score1 > -1 && score2 > -1) {
+                    Tournament tn = (Tournament) event;
+                    List<String> str = tn.setScore(id, score1, score2);
+                    for (String element : str) {
+                        Privmsg msg = new Privmsg(im, element);
+                        control.sendMsg(msg);
+                    }
+                    tn.generateTemplate();
+                    return;
+                }
+            } catch (NumberFormatException nfe) {
+                // handled later
             }
-            Privmsg msg = Privmsg.buildAnswer(im,
-                    "Erreur : Parametre(s) Incorrect(s). ex : $tn-result id_team score1 score2");
+            Privmsg msg = new Privmsg(im, "Erreur : Parametre(s) Incorrect(s). ex : $tn-result id_team score1 score2");
             control.sendMsg(msg);
-            return;
         }
     }
 }

@@ -28,7 +28,7 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String args = getArgs(im.getMessage());
+        String args = getTriggerContent(im);
         boolean engueuler = false;
 
         // 1000 par defaut;
@@ -56,11 +56,10 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
 
         // Un parametre est incorrect, on s'arrete la avec un message d'erreur.
         if (engueuler) {
-            Privmsg msg = Privmsg
-                    .buildAnswer(
-                            im,
-                            user.getNick()
-                                    + ", me prend pas pour un con, je suis quand meme le momobot, et je lance les des entre 2 et 10000.");
+            Privmsg msg = new Privmsg(
+                    im,
+                    user.getNick()
+                            + ", me prend pas pour un con, je suis quand meme le momobot, et je lance les des entre 2 et 10000.");
             control.sendMsg(msg);
             return;
         }
@@ -71,8 +70,7 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
         // Petits commentaires futes
         String commentaire = getCommentaire(diceRoll, max);
 
-        Privmsg msg = Privmsg.buildAnswer(im, commentaire + user.getNick() + " a obtenu un " + diceRoll + " (sur "
-                + max + ')');
+        Privmsg msg = new Privmsg(im, commentaire + user.getNick() + " a obtenu un " + diceRoll + " (sur " + max + ')');
         control.sendMsg(msg);
     }
 

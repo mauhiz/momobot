@@ -19,19 +19,19 @@ public class LengthTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
     public LengthTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String args = getArgs(cme.getMessage());
+        String args = getTriggerContent(cme);
         if (null == args || StringUtils.isEmpty(args.trim())) {
             return;
         }
-        Privmsg msg = Privmsg.buildAnswer(cme, "longueur = " + args.length());
+        Privmsg msg = new Privmsg(cme, "longueur = " + args.length());
         control.sendMsg(msg);
-        
+
     }
 }

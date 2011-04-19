@@ -1,7 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcCommands;
 
 /**
  * @author mauhiz
@@ -13,7 +13,7 @@ public class ServerError extends AbstractIrcMessage {
     private final String msg;
 
     public ServerError(IIrcServerPeer server, String msg) {
-        super(null, null, server);
+        super(server, null);
         this.msg = msg;
     }
 
@@ -23,8 +23,13 @@ public class ServerError extends AbstractIrcMessage {
     }
 
     @Override
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.ERROR;
+    }
+
+    @Override
     public String getIrcForm() {
-        return IrcCommands.ERROR + " :" + msg;
+        return super.getIrcForm() + " :" + msg;
     }
 
     /**

@@ -13,8 +13,27 @@ public enum UserChannelMode {
         return null;
     }
 
-    private final char cmdFlag;
+    public static UserChannelMode fromDisplay(char display) {
+        for (UserChannelMode ucm : values()) {
+            if (ucm.getDisplay() == display) {
+                return ucm;
+            }
+        }
 
+        return null;
+    }
+
+    public static boolean isDisplay(char display) {
+        for (UserChannelMode ucm : values()) {
+            if (ucm.getDisplay() == display) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private final char cmdFlag;
     private final char displayFlag;
 
     private UserChannelMode(char cmdFlag, char displayFlag) {

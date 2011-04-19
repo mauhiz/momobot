@@ -20,7 +20,7 @@ public class MomoStringUtils {
         String temp = Normalizer.normalize(input, Normalizer.Form.NFD);
         return temp.replaceAll("[^\\p{ASCII}]", "");
     }
-    
+
     /**
      * TODO utiliser un MessageFormat
      * 
@@ -32,11 +32,9 @@ public class MomoStringUtils {
      * @return la chaine randomisee
      */
     public static String genereSeekMessage(String seekmsg, int nbPlayer, String server, String level) {
-        String str = seekmsg.replace("%P", String.valueOf(nbPlayer));
-        str = str.replace("%S", server);
-        str = str.replace("%L", level);
-        return str;
+        return seekmsg.replace("%P", String.valueOf(nbPlayer)).replace("%S", server).replace("%L", level);
     }
+
     /**
      * @param toTest
      *            le nom a tester
@@ -48,6 +46,7 @@ public class MomoStringUtils {
         }
         return toTest.charAt(0) == IrcSpecialChars.CHAN_DEFAULT || toTest.charAt(0) == IrcSpecialChars.CHAN_LOCAL;
     }
+
     /**
      * methode pour le wquizz.
      * 
@@ -56,28 +55,16 @@ public class MomoStringUtils {
      * @return un string propre.
      */
     public static String nettoieReponse(String work) {
-        String temp = effaceAccents(work).replace('-', ' ');
-        temp = temp.replace('\'', ' ');
-        temp = temp.trim();
-        temp = StringUtils.removeStart(temp, "l ");
-        temp = StringUtils.removeStart(temp, "la ");
-        temp = StringUtils.removeStart(temp, "le ");
-        temp = StringUtils.removeStart(temp, "les ");
-        temp = StringUtils.removeStart(temp, "un ");
-        temp = StringUtils.removeStart(temp, "une ");
-        temp = StringUtils.removeStart(temp, "des ");
-        temp = StringUtils.removeStart(temp, "du ");
-        temp = StringUtils.removeStart(temp, "d ");
-        temp = StringUtils.removeStart(temp, "a ");
-        temp = StringUtils.removeStart(temp, "au ");
-        temp = StringUtils.removeStart(temp, "aux ");
-        temp = StringUtils.removeStart(temp, "en ");
-        temp = StringUtils.removeStart(temp, "vers ");
-        temp = StringUtils.removeStart(temp, "chez ");
-        temp = StringUtils.removeStart(temp, "dans ");
+        String temp = effaceAccents(work).replace('-', ' ').replace('\'', ' ').trim();
+        String[] uselessWords = { "l ", "la ", "le ", "les ", "un ", "une ", "des ", "du ", "d ", "a ", "au ", "aux ",
+                "en ", "vers ", "chez ", "dans " };
+        for (String toRemove : uselessWords) {
+            temp = StringUtils.removeStart(temp, toRemove);
+        }
+
         return StringUtils.removeEnd(temp, "?");
     }
-    
+
     /**
      * @param seq
      *            une chaine a shaker
@@ -93,5 +80,5 @@ public class MomoStringUtils {
         }
         return output.toString();
     }
-    
+
 }

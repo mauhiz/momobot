@@ -52,11 +52,11 @@ public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
         int maxLen = im.getServerPeer().getNetwork().getLineMaxLength() - 50; // TODO make precise computation of overhead in PRIVMSG
         while (vdm.length() > maxLen) {
             int spc = StringUtils.indexOf(vdm, ' ', maxLen);
-            Privmsg reply = Privmsg.buildAnswer(im, vdm.substring(0, spc));
+            Privmsg reply = new Privmsg(im, vdm.substring(0, spc));
             control.sendMsg(reply);
             vdm = vdm.substring(spc + 1);
         }
-        Privmsg reply = Privmsg.buildAnswer(im, vdm);
+        Privmsg reply = new Privmsg(im, vdm);
         control.sendMsg(reply);
     }
 }

@@ -1,5 +1,6 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import net.mauhiz.irc.base.data.IrcUser;
@@ -41,8 +42,11 @@ public class TournamentTeam extends Team {
         return super.add(new FakeUser(ele));
     }
 
-    public void addAll(String[] elems) {
+    public void addAll(Collection<String> elems) {
         for (String elem : elems) {
+            if (isFull()) {
+                return;
+            }
             add(elem);
         }
     }

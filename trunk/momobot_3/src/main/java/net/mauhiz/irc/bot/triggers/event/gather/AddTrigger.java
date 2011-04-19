@@ -31,16 +31,16 @@ public class AddTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
         IrcChannel chan = (IrcChannel) im.getTo();
         IChannelEvent event = chan.getEvt();
         if (event == null) {
-            Privmsg msg = Privmsg.buildAnswer(im, "Aucun gather ou pickup n'est lance.");
+            Privmsg msg = new Privmsg(im, "Aucun gather ou pickup n'est lance.");
             control.sendMsg(msg);
             return;
         }
         IrcUser user = (IrcUser) im.getFrom();
         if (event instanceof Gather) {
-            Privmsg msg = Privmsg.buildAnswer(im, ((Gather) event).add(user));
+            Privmsg msg = new Privmsg(im, ((Gather) event).add(user));
             control.sendMsg(msg);
         } else if (event instanceof Pickup) {
-            Privmsg msg = Privmsg.buildAnswer(im, ((Pickup) event).add(user, getArgs(im.getMessage())));
+            Privmsg msg = new Privmsg(im, ((Pickup) event).add(user, getTriggerContent(im)));
             control.sendMsg(msg);
         }
     }

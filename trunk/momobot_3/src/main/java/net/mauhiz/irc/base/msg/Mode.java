@@ -1,56 +1,69 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcCommands;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
 
 /**
  * @author mauhiz
  */
-public class Mode extends AbstractIrcMessage {
+public class Mode extends AbstractIrcMessage implements IrcChannelMessage {
 
     public static boolean isModifier(char c) {
         return c == '+' || c == '-';
     }
 
-    private final String modeQuery;
+    private final ArgumentList modeArgs;
+    private final Target modifiedObject;
 
-    public Mode(Target from, Target modifiedObject, IIrcServerPeer server) {
-        this(from, modifiedObject, server, null);
+    public Mode(IIrcServerPeer server, Target from, Target modifiedObject) {
+        this(server, from, modifiedObject, null);
     }
 
-    /**
-     * TODO refine modeQuery?
-     */
-    public Mode(Target from, Target modifiedObject, IIrcServerPeer server, String modeQuery) {
-        super(from, modifiedObject, server);
-        this.modeQuery = modeQuery;
+    public Mode(IIrcServerPeer server, Target from, Target modifiedObject, ArgumentList modeArgs) {
+        super(server, from);
+        this.modifiedObject = modifiedObject;
+        this.modeArgs = modeArgs;
     }
 
     @Override
     public Mode copy() {
-        return new Mode(from, to, server, modeQuery);
+        return new Mode(server, from, modifiedObject, modeArgs.copy());
+    }
+
+    /**
+     * @return a copy of the arguments
+     */
+    public ArgumentList getArgs() {
+        return modeArgs.copy();
+    }
+
+    @Override
+    public IrcChannel[] getChans() {
+        if (modifiedObject instanceof IrcChannel) {
+            return new IrcChannel[] { (IrcChannel) modifiedObject };
+        }
+        return new IrcChannel[0];
+    }
+
+    @Override
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.MODE;
     }
 
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
-        if (super.from != null) {
-            sb.append(':');
-            sb.append(super.from);
-            sb.append(' ');
-        }
-        sb.append(IrcCommands.MODE).append(' ');
-        sb.append(super.to).append(' ');
-        sb.append(modeQuery);
+        sb.append(super.getIrcForm());
+        sb.append(' ').append(modifiedObject);
+        sb.append(' ').append(modeArgs.getMessage());
         return sb.toString();
     }
 
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return modeQuery;
+    public Target getModifiedObject() {
+        return modifiedObject;
     }
 
     /**
@@ -58,6 +71,9 @@ public class Mode extends AbstractIrcMessage {
      */
     @Override
     public String toString() {
-        return "* " + niceFromDisplay() + " sets mode: " + modeQuery + " " + to;
+        if (from == null) {
+            return "* Setting mode: " + modeArgs.getRemainingData() + " " + modifiedObject;
+        }
+        return "* " + niceFromDisplay() + " sets mode: " + modeArgs.getRemainingData() + " " + modifiedObject;
     }
 }

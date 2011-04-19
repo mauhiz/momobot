@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.control;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -25,15 +26,18 @@ public class NoticeTrigger extends AbstractTextTrigger implements IAdminTrigger,
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String args = getArgs(im.getMessage());
-        int index = args.indexOf(' ');
-        if (index < 1) {
-            Privmsg msg = Privmsg.buildPrivateAnswer(im, "pas assez de parametres. " + getTriggerHelp());
+        ArgumentList args = getArgs(im);
+        String targetNick = args.poll();
+        String message = args.getRemainingData();
+
+        if (targetNick == null || message.isEmpty()) {
+            Privmsg msg = new Privmsg(im, "pas assez de parametres. " + getTriggerHelp(), true);
             control.sendMsg(msg);
         } else {
+            IrcUser target = im.getServerPeer().getNetwork().findUser(targetNick, false);
+
             /* FIXME cross-server */
-            IrcUser target = im.getServerPeer().getNetwork().findUser(args.substring(0, index), false);
-            Notice msg = new Notice(null, target, im.getServerPeer(), args.substring(index + 1));
+            Notice msg = new Notice(im.getServerPeer(), null, target, message);
             control.sendMsg(msg);
         }
     }

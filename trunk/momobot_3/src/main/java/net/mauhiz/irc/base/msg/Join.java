@@ -1,51 +1,62 @@
 package net.mauhiz.irc.base.msg;
 
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcCommands;
-import net.mauhiz.irc.base.data.IIrcServerPeer;
-import net.mauhiz.irc.base.data.Target;
+import net.mauhiz.irc.base.data.IrcUser;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author mauhiz
  */
-public class Join extends AbstractIrcMessage {
-    private final String key;
+public class Join extends AbstractIrcMessage implements IrcChannelMessage {
+    private final IrcChannel[] chans;
+    private final String[] keys;
 
-    public Join(IIrcServerPeer server, IrcChannel channel) {
-        this(null, server, channel);
+    public Join(IIrcServerPeer server, IrcChannel... chans) {
+        this(server, null, chans);
     }
 
-    public Join(Target from, IIrcServerPeer server, IrcChannel chan) {
-        this(from, server, chan, null);
+    public Join(IIrcServerPeer server, IrcUser from, IrcChannel... chans) {
+        this(server, from, chans, null);
     }
 
     /**
      * TODO join multiple chans with different keys
      */
-    public Join(Target from, IIrcServerPeer server, IrcChannel chan, String key) {
-        super(from, chan, server);
-        this.key = key;
+    public Join(IIrcServerPeer server, IrcUser from, IrcChannel[] chans, String[] keys) {
+        super(server, from);
+        this.keys = keys;
+        this.chans = chans;
+    }
+
+    public Join copy() {
+        return new Join(server, getFrom(), chans, keys);
+    }
+
+    public IrcChannel[] getChans() {
+        return chans;
     }
 
     @Override
-    public Join copy() {
-        return new Join(from, server, (IrcChannel) to, key);
+    public IrcUser getFrom() {
+        return (IrcUser) super.getFrom();
+    }
+
+    @Override
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.JOIN;
     }
 
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
-        if (super.from != null) {
-            sb.append(':');
-            sb.append(super.from);
-            sb.append(' ');
-        }
-        sb.append(IrcCommands.JOIN).append(' ');
-        sb.append(super.to);
+        sb.append(super.getIrcForm());
+        sb.append(' ').append(StringUtils.join(chans, ','));
 
-        if (key != null) {
-            sb.append(' ');
-            sb.append(key);
+        if (keys != null) {
+            sb.append(' ').append(StringUtils.join(keys, ','));
         }
         return sb.toString();
     }
@@ -53,16 +64,8 @@ public class Join extends AbstractIrcMessage {
     /**
      * @return the message
      */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * The channel this JOIN joins
-     */
-    @Override
-    public IrcChannel getTo() {
-        return (IrcChannel) super.getTo();
+    public String[] getKeys() {
+        return keys;
     }
 
     /**
@@ -71,8 +74,8 @@ public class Join extends AbstractIrcMessage {
     @Override
     public String toString() {
         if (from == null) { // self
-            return "Joining " + to;
+            return "Joining " + StringUtils.join(chans, ' ');
         }
-        return "* Joins " + to + " : " + niceFromDisplay();
+        return "* Joins " + chans[0] + " : " + niceFromDisplay();
     }
 }

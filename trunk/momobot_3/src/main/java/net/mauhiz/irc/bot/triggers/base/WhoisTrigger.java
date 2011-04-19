@@ -1,7 +1,8 @@
 package net.mauhiz.irc.bot.triggers.base;
 
+import java.util.Collections;
+
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.WhoisRequest;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -29,9 +30,7 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(Join im, IIrcControl control) {
-        IrcUser user = (IrcUser) im.getFrom();
-        WhoisRequest wr = new WhoisRequest(user.getNick(), im.getServerPeer(), control);
-        wr.startAs("Whois Request");
+        WhoisRequest.startWhois(im.getServerPeer(), control, Collections.singleton(im.getFrom().getNick()), null);
     }
 
     /**
@@ -39,8 +38,6 @@ public class WhoisTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {
-        WhoisRequest wr = new WhoisRequest(getArgs(pme.getMessage()), pme.getServerPeer(), control);
-        wr.setReportTo(pme.getFrom());
-        wr.startAs("Whois Request");
+        WhoisRequest.startWhois(pme.getServerPeer(), control, getArgs(pme), pme.getFrom());
     }
 }

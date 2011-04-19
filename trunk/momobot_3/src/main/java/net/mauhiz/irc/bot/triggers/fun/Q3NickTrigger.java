@@ -28,7 +28,7 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         }
         return "^" + q3Code;
     }
-    
+
     /**
      * @param args
      * @return un nick q3
@@ -60,21 +60,21 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         }
         return q3nick.toString();
     }
-    
+
     /**
      * @param trigger
      */
     public Q3NickTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        Privmsg msg = Privmsg.buildAnswer(im, createq3nick(getArgs(im.getMessage())));
+        Privmsg msg = new Privmsg(im, createq3nick(getTriggerContent(im)));
         control.sendMsg(msg);
     }
 }

@@ -9,8 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.mauhiz.irc.MomoStringUtils;
-import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.util.NetUtils;
@@ -203,15 +204,15 @@ public class SeekWar {
                         if (msg.toLowerCase(Locale.FRENCH).contains("lvl")
                                 || msg.toLowerCase(Locale.FRENCH).contains("level")) {
 
-                            Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
+                            Privmsg msg1 = new Privmsg(im, seekLevel, true);
                             resultPrivmsg.add(msg1);
-                            Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go?");
+                            Privmsg msg2 = new Privmsg(im, "go?", true);
                             resultPrivmsg.add(msg2);
 
                         }
-                        Privmsg msg1 = Privmsg.buildPrivateAnswer(im, ippass);
+                        Privmsg msg1 = new Privmsg(im, ippass, true);
                         resultPrivmsg.add(msg1);
-                        Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "GOGOGO");
+                        Privmsg msg2 = new Privmsg(im, "GOGOGO", true);
                         resultPrivmsg.add(msg2);
                         Privmsg msg3 = new Privmsg(null, channel, im.getServerPeer(), provenance.getNick()
                                 + " a mordu! GOGOGO o//");
@@ -233,9 +234,9 @@ public class SeekWar {
                 // On le slap
                 // Ensuite On lui demande si il est RDY
                 userpv.add(provenance);
-                Privmsg msg1 = Privmsg.buildPrivateAnswer(im, provenance.getNick());
+                Privmsg msg1 = new Privmsg(im, provenance.getNick(), true);
                 resultPrivmsg.add(msg1);
-                Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "lvl?");
+                Privmsg msg2 = new Privmsg(im, "lvl?", true);
                 resultPrivmsg.add(msg2);
                 return resultPrivmsg;
 
@@ -244,9 +245,9 @@ public class SeekWar {
                 if (userpv.contains(provenance)) {
                     if (msg.toLowerCase(Locale.FRENCH).contains("lvl")
                             || msg.toLowerCase(Locale.FRENCH).contains("level")) {
-                        Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
+                        Privmsg msg1 = new Privmsg(im, seekLevel, true);
                         resultPrivmsg.add(msg1);
-                        Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go?");
+                        Privmsg msg2 = new Privmsg(im, "go?", true);
                         resultPrivmsg.add(msg2);
                     }
 
@@ -262,15 +263,15 @@ public class SeekWar {
                     userpv.add(provenance);
                     if (msg.toLowerCase(Locale.FRENCH).contains("lvl")
                             || msg.toLowerCase(Locale.FRENCH).contains("level")) {
-                        Privmsg msg1 = Privmsg.buildPrivateAnswer(im, seekLevel);
+                        Privmsg msg1 = new Privmsg(im, seekLevel, true);
                         resultPrivmsg.add(msg1);
-                        Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go?");
+                        Privmsg msg2 = new Privmsg(im, "go?", true);
                         resultPrivmsg.add(msg2);
 
                     } else {
-                        Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "ok");
+                        Privmsg msg1 = new Privmsg(im, "ok", true);
                         resultPrivmsg.add(msg1);
-                        Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "go!");
+                        Privmsg msg2 = new Privmsg(im, "go!", true);
                         resultPrivmsg.add(msg2);
                         Privmsg msg3 = new Privmsg(null, channel, im.getServerPeer(), provenance.getNick() + " :" + msg);
                         resultPrivmsg.add(msg3);
@@ -291,15 +292,15 @@ public class SeekWar {
 
             if (userpv.contains(provenance)) {
                 // Cas chelou :O ??!??!!??
-                Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "go?");
+                Privmsg msg1 = new Privmsg(im, "go?", true);
                 resultPrivmsg.add(msg1);
                 return resultPrivmsg;
             }
             // On pv le mec pr lui dire rdy?
-            Privmsg msg1 = Privmsg.buildPrivateAnswer(im, "rdy?");
+            Privmsg msg1 = new Privmsg(im, "rdy?", true);
             resultPrivmsg.add(msg1);
             if ("off".equalsIgnoreCase(seekServ)) {
-                Privmsg msg2 = Privmsg.buildPrivateAnswer(im, "ip&pass?");
+                Privmsg msg2 = new Privmsg(im, "ip&pass?", true);
                 resultPrivmsg.add(msg2);
             }
             return resultPrivmsg;
@@ -340,104 +341,32 @@ public class SeekWar {
     }
 
     /**
-     * @param commandSeek
+     * @param args
      *            1) RIEN 2) ON IPPASS LVL 3) OFF LVL 4) ON IPPASS LVL MSGSEEK 5) OFF LVL MSGSEEK
      * @param chan
      * @param nbPlayers
      * @return String
      */
-    public String start(String[] commandSeek, IrcChannel chan, int nbPlayers) {
+    public String start(ArgumentList args, IrcChannel chan, int nbPlayers) {
         sw.start();
         channel = chan;
         numberPlayers = nbPlayers;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Lancement d'un seek = " + StringUtils.join(commandSeek));
+            LOG.debug("Lancement d'un seek = " + args.getMessage());
         }
 
-        List<String> cmdSeek = split(commandSeek);
-
-        // On CFG le seek avec les param
-        switch (cmdSeek.size()) {
-            case 0:
-                // Seek sans parametre
-                seekInProgress = true;
-                isLaunchedAndQuit = true;
-                return "Seek Par Defaut >> " + getSeekInfo() + " ippass = " + ippass;
-
-            case 1:
-                if ("on".equalsIgnoreCase(cmdSeek.get(0)) || "off".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLaunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
-                        return getSeekInfo() + " ippass = " + ippass;
-                    }
-                    return getSeekInfo();
-                }
-                sw.stop();
-                sw.reset();
-                return "Parametre(s) Incorrect";
-
-            case 2:
-                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLaunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    ippass = cmdSeek.get(1);
-                    return getSeekInfo() + " ippass = " + ippass;
-                } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLaunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    seekLevel = cmdSeek.get(1);
-                    return getSeekInfo();
-                } else {
-                    sw.stop();
-                    sw.reset();
-                    return "Parametre(s) Incorrect";
-                }
-
-            case 3:
-                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLaunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    ippass = cmdSeek.get(1);
-                    seekLevel = cmdSeek.get(2);
-                    return getSeekInfo() + " ippass = " + ippass;
-                } else if ("off".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLaunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    seekLevel = cmdSeek.get(1);
-                    seekMessage = cmdSeek.get(2);
-                    return getSeekInfo() + " MSGSeek = " + seekMessage;
-                } else {
-                    sw.stop();
-                    sw.reset();
-                    return "Parametre(s) Incorrect";
-                }
-
-            case 4:
-                if ("on".equalsIgnoreCase(cmdSeek.get(0))) {
-                    seekInProgress = true;
-                    isLaunchedAndQuit = true;
-                    seekServ = cmdSeek.get(0);
-                    ippass = cmdSeek.get(1);
-                    seekLevel = cmdSeek.get(2);
-                    seekMessage = cmdSeek.get(3);
-                    return getSeekInfo() + " ippass = " + ippass + " MSGSeek = " + seekMessage;
-                }
-                sw.stop();
-                sw.reset();
-                return "Parametre(s) Incorrect";
-
-            default:
-                sw.stop();
-                sw.reset();
-                return "Parametre(s) Incorrect";
-
+        seekServ = args.poll();
+        if ("on".equalsIgnoreCase(seekServ)) {
+            ippass = args.poll();
+        } else if (!"off".equalsIgnoreCase(seekServ)) {
+            sw.stop();
+            sw.reset();
+            return "Parametre(s) Incorrect";
         }
+        seekLevel = args.poll();
+        seekMessage = args.poll();
+
+        return getSeekInfo();
     }
 
     /**

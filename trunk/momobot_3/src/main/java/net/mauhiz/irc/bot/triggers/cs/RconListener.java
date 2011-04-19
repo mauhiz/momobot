@@ -18,17 +18,19 @@ class RconListener extends AbstractRunnable {
      * port mini
      */
     private static final int MIN_PORT = 1024;
+
     /**
      * @return un port au hasard, > {@link #MIN_PORT}.
      */
     static int generateRandomPort() {
         return MIN_PORT + RandomUtils.nextInt(5000); // TODO ensure port availability
     }
+
     /**
      * my mastah.
      */
     private final RconClient rc;
-    
+
     /**
      * @param vuc1
      *            mon maitre!
@@ -40,19 +42,23 @@ class RconListener extends AbstractRunnable {
         rc.getRconChallenge();
         rc.rconCmd("logaddress " + InetAddress.getLocalHost().getHostAddress() + ' ' + localPort);
     }
-    
+
     /**
      * @param receivePacket
      */
     private void processLine(DatagramPacket receivePacket) {
         rc.processLine(new String(receivePacket.getData(), 0, receivePacket.getLength()));
     }
-    
+
     /**
      * @see java.lang.Runnable#run()
      */
     public void run() {
         DatagramPacket receivePacket = ValveUdpClient.createDatagramPacket();
+        runLoop(receivePacket);
+    }
+
+    private void runLoop(DatagramPacket receivePacket) {
         while (isRunning()) {
             try {
                 rc.getSocket().receive(receivePacket);

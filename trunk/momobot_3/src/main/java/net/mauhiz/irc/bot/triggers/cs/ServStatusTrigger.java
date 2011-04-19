@@ -17,17 +17,17 @@ public class ServStatusTrigger extends AbstractTextTrigger implements IPrivmsgTr
     public ServStatusTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String args = getArgs(im.getMessage());
+        String args = getTriggerContent(im);
         Server server = new Server(NetUtils.makeISA(args));
         String reply = server.toString();
-        Privmsg msg = Privmsg.buildAnswer(im, reply);
+        Privmsg msg = new Privmsg(im, reply);
         control.sendMsg(msg);
     }
 }

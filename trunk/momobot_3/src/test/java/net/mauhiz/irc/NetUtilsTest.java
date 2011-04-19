@@ -94,6 +94,6 @@ public class NetUtilsTest {
     public void testMakeISA() throws UnknownHostException {
         InetSocketAddress add1 = NetUtils.makeISA("127.0.0.1:27015");
         Assert.assertEquals(27015, add1.getPort());
-        Assert.assertEquals(InetAddress.getLocalHost(), add1.getAddress());
+        Assert.assertEquals("127.0.0.1", add1.getAddress().getCanonicalHostName());
     }
 }

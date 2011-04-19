@@ -21,44 +21,44 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
     public TopFraggerTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String args = getArgs(im.getMessage());
+        String args = getTriggerContent(im);
         if (StringUtils.isBlank(args)) {
-            Privmsg help = Privmsg.buildPrivateAnswer(im, getTriggerHelp());
+            Privmsg help = new Privmsg(im, getTriggerHelp(), true);
             control.sendMsg(help);
             return;
         }
-        
+
         Server server = new Server(NetUtils.makeISA(args));
         try {
             server.getDetails();
         } catch (IOException ioe) {
             LOG.warn(ioe, ioe);
-            Privmsg help = Privmsg.buildPrivateAnswer(im, "Could not connect to server");
+            Privmsg help = new Privmsg(im, "Could not connect to server", true);
             control.sendMsg(help);
             return;
         }
         Player best = findBestPlayer(server);
-        
+
         String reply;
         if (best == null) {
             reply = "There is no player on this server";
-            
+
         } else {
             reply = "Best fragger on " + server.getName() + " : " + best.getName() + " with " + best.getFrags()
                     + " frags";
         }
-        
-        Privmsg msg = Privmsg.buildAnswer(im, reply);
+
+        Privmsg msg = new Privmsg(im, reply);
         control.sendMsg(msg);
     }
-    
+
     private Player findBestPlayer(Server server) {
         Player best = null;
         int bestScore = Integer.MIN_VALUE;

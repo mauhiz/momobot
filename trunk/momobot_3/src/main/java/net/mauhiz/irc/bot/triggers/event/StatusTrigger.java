@@ -38,7 +38,7 @@ public class StatusTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             reply = evt.toString();
         }
 
-        Privmsg msg = Privmsg.buildAnswer(im, reply);
+        Privmsg msg = new Privmsg(im, reply);
         control.sendMsg(msg);
     }
 }

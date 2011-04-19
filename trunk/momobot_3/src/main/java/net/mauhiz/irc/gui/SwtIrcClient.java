@@ -10,9 +10,10 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.msg.IIrcMessage;
+import net.mauhiz.irc.base.msg.IrcChannelMessage;
 import net.mauhiz.irc.base.msg.Join;
-import net.mauhiz.irc.base.msg.Notice;
-import net.mauhiz.irc.base.msg.Privmsg;
+import net.mauhiz.irc.base.msg.Kick;
+import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.SetTopic;
 import net.mauhiz.irc.gui.actions.ExitAction;
 
@@ -43,19 +44,31 @@ public class SwtIrcClient {
     }
 
     public SwtChanTab createChanTab(IIrcServerPeer server, IrcChannel channel) {
-        SwtChanTab tab = new SwtChanTab(this, server, channel);
+        SwtChanTab tab = chanTabs.get(channel);
+        if (tab != null) {
+            return tab;
+        }
+        tab = new SwtChanTab(this, server, channel);
         chanTabs.put(channel, tab);
         return tab;
     }
 
     public SwtPrivateTab createPrivateTab(IIrcServerPeer server, IrcUser user) {
-        SwtPrivateTab tab = new SwtPrivateTab(this, server, user);
+        SwtPrivateTab tab = privateTabs.get(user);
+        if (tab != null) {
+            return tab;
+        }
+        tab = new SwtPrivateTab(this, server, user);
         privateTabs.put(user, tab);
         return tab;
     }
 
     public SwtServerTab createServerTab(IIrcServerPeer server) {
-        SwtServerTab tab = new SwtServerTab(this, server);
+        SwtServerTab tab = serverTabs.get(server);
+        if (tab != null) {
+            return tab;
+        }
+        tab = new SwtServerTab(this, server);
         serverTabs.put(server, tab);
         return tab;
     }
@@ -109,26 +122,40 @@ public class SwtIrcClient {
     }
 
     private boolean processChanLog(IIrcMessage msg) {
-        IrcChannel channel;
+        IrcChannel[] channels;
 
-        if (msg.getTo() instanceof IrcChannel) {
-            channel = (IrcChannel) msg.getTo();
+        if (msg instanceof IrcChannelMessage) {
+            channels = ((IrcChannelMessage) msg).getChans();
 
         } else {
             return false;
         }
 
-        SwtChanTab chanTab = chanTabs.get(channel);
-
-        if (chanTab == null) {
-            LOG.warn("Missing chan tab: " + channel);
+        if (channels == null || channels.length == 0) {
             return false;
         }
 
-        chanTab.appendText(msg.toString());
+        for (IrcChannel channel : channels) {
+            SwtChanTab chanTab = chanTabs.get(channel);
 
-        if (msg instanceof SetTopic) {
-            chanTab.updateTopic(channel.getProperties().getTopic());
+            if (chanTab == null) {
+                if (msg instanceof Part && msg.getServerPeer().getMyself().equals(msg.getFrom())) {
+                    // this is me parting
+                    return true;
+                } else if (msg instanceof Kick && msg.getServerPeer().getMyself().equals(((Kick) msg).getTarget())) {
+                    // this is me being kicked
+                    return true;
+                }
+
+                LOG.warn("Missing chan tab: " + channel);
+                return false;
+            }
+
+            chanTab.appendText(msg.toString());
+
+            if (msg instanceof SetTopic) {
+                chanTab.updateTopic(channel.getProperties().getTopic());
+            }
         }
 
         return true;
@@ -201,11 +228,7 @@ public class SwtIrcClient {
         boolean processed = processChanLog(msg);
 
         if (!processed) {
-            if (msg instanceof Notice || msg instanceof Privmsg) {
-                // TODO private msgs
-                processed = processPrivateLog(msg);
-            }
-
+            processed = processPrivateLog(msg);
         }
         if (!processed) {
             processed = processServerLog(msg);

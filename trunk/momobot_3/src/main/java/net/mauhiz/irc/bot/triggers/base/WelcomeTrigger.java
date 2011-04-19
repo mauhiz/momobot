@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.base;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.msg.Notice;
@@ -15,10 +16,12 @@ public class WelcomeTrigger implements IJoinTrigger {
      */
     @Override
     public void doTrigger(Join im, IIrcControl control) {
-        IrcUser joiner = (IrcUser) im.getFrom();
+        IrcUser joiner = im.getFrom();
         if (!joiner.equals(im.getServerPeer().getMyself())) {
-            Notice notice = Notice.buildAnswer(im, "Bienvenue sur " + im.getTo());
-            control.sendMsg(notice);
+            for (IrcChannel channel : im.getChans()) {
+                Notice notice = new Notice(im.getServerPeer(), null, channel, "Bienvenue sur " + channel);
+                control.sendMsg(notice);
+            }
         }
     }
 }

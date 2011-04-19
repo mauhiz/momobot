@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
@@ -160,10 +161,10 @@ public class SeekWar2 extends AbstractChannelEvent {
      * @param ircServer1
      * @param nbPlayers1
      * 
-     * @param param
+     * @param args
      */
     public SeekWar2(final IrcChannel chan, final IIrcControl control1, final IIrcServerPeer ircServer1,
-            final int nbPlayers1, final String param) {
+            final int nbPlayers1, final ArgumentList args) {
         super(chan);
         channel = chan;
         control = control1;
@@ -174,56 +175,23 @@ public class SeekWar2 extends AbstractChannelEvent {
         threadTimeOut = new SeekWarThreadTimeOut(this, SEEK_TIMEOUT);
 
         // on traite les parametres entrants
-        // FIXME : Qu'est-ce que c'est que ste Regex ?
-        Pattern pat = Pattern.compile("(abc)");
-        Matcher match = pat.matcher(param);
-        boolean b = match.matches();
-        String resp = null;
-        if (b) {
-            switch (match.groupCount()) {
-                case 0:
-                    // msg de seek par defaut
-                    resp = "Lancement d'un seek = vars default";
-                    LOG.debug(resp);
-                    break;
-                case 1:
-                    resp = "Lancement d'un seek = " + match.group();
-                    LOG.debug(resp);
-                    serv = "on".equals(match.group().toLowerCase(Locale.FRENCH));
-                    break;
+        String resp;
+        if (args.isEmpty()) {
 
-                case 2:
-                    LOG.debug("Lancement d'un seek = " + match.toString());
-                    level = match.group(1);
-                    serv = "on".equals(match.group().toLowerCase(Locale.FRENCH));
-                    break;
-
-                case 3:
-                    resp = "Lancement d'un seek = " + match.toString();
-                    LOG.debug(resp);
-                    ipPw = match.group(2);
-                    level = match.group(1);
-                    serv = "on".equals(match.group().toLowerCase(Locale.FRENCH));
-                    // FIXME /!\ DEBILE
-                    break;
-
-                default:
-                    resp = "Erreur : syntaxe incorrecte.";
-                    Privmsg msg = new Privmsg(null, channel, ircServer, resp);
-                    control.sendMsg(msg);
-                    return;
-
-            }
+            // msg de seek par defaut
+            resp = "Lancement d'un seek = vars default";
         } else {
-            // erreur : match !=
-            resp = "Erreur : syntaxe incorrecte.";
-            Privmsg msg = new Privmsg(null, channel, ircServer, resp);
-            control.sendMsg(msg);
-            return;
+
+            String server = args.poll();
+            serv = "on".equals(server.toLowerCase(Locale.FRENCH));
+            level = args.poll();
+            ipPw = args.poll();
+
+            resp = "Lancement d'un seek = " + args.getMessage();
         }
 
         // On envoie le msg
-        Privmsg msg = new Privmsg(null, channel, ircServer, resp);
+        Privmsg msg = new Privmsg(ircServer, channel, null, resp);
         control.sendMsg(msg);
 
         // On join les #chans de seek
@@ -385,7 +353,7 @@ public class SeekWar2 extends AbstractChannelEvent {
                 control.sendMsg(msgd);
                 // on leave les channels de seek
                 for (String element : SEEK_CHANNELS) {
-                    Part leave = new Part(ircServer, ircServer.getNetwork().findChannel(element), null);
+                    Part leave = new Part(ircServer, ircServer.getNetwork().findChannel(element));
                     control.sendMsg(leave);
                 }
                 winner = user;

@@ -90,7 +90,7 @@ public abstract class AbstractAutomate extends AbstractRunnable {
      * @param text
      */
     protected void sendMsgToUser(String text) {
-        Privmsg msg = new Privmsg(null, getUser(), server, text);
+        Privmsg msg = new Privmsg(server, null, getUser(), text);
         control.sendMsg(msg);
     }
 }

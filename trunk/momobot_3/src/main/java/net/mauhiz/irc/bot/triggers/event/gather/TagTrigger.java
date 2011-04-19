@@ -29,7 +29,7 @@ public class TagTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
         IrcChannel chan = (IrcChannel) im.getTo();
         IChannelEvent evt = chan.getEvt();
         if (evt instanceof Gather) {
-            Privmsg msg = Privmsg.buildAnswer(im, ((Gather) evt).setTag(getArgs(im.getMessage())));
+            Privmsg msg = new Privmsg(im, ((Gather) evt).setTag(getTriggerContent(im)));
             control.sendMsg(msg);
         }
     }

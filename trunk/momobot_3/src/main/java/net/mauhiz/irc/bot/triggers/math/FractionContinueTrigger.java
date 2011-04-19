@@ -15,7 +15,7 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
  */
 public class FractionContinueTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     static final int LIMIT = 10;
-    
+
     /**
      * TODO un critere d'arret base sur epsilon.
      * 
@@ -25,7 +25,7 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
     static String computeFractionContinue(double nombre) {
         List<Integer> fraction = new LinkedList<Integer>();
         double work = nombre;
-        
+
         for (int count = 0; count < LIMIT; ++count) {
             // LOG.debug("work = " + work);
             int floor = (int) Math.floor(work);
@@ -34,18 +34,18 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
             }
             // LOG.debug("floor = " + floor);
             fraction.add(Integer.valueOf(floor));
-            
+
             if (Double.compare(work, floor) == 0) {
                 return displayFraction(fraction, true);
             }
-            
+
             work = 1 / (work - floor);
             // LOG.debug("work = " + work);
         }
-        
+
         return displayFraction(fraction, false);
     }
-    
+
     /**
      * @param fraction
      * @param exactMatch
@@ -69,35 +69,35 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
                 } else {
                     retour.append("...");
                 }
-                
+
             }
             retour.append(']');
         }
         return retour.toString();
     }
-    
+
     /**
      * @param trigger
      */
     public FractionContinueTrigger(String trigger) {
         super(trigger);
     }
-    
+
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String args = getArgs(cme.getMessage());
+        String args = getTriggerContent(cme);
         Privmsg resp;
         try {
             double nombre = Double.parseDouble(args);
             String fraction = computeFractionContinue(nombre);
-            resp = Privmsg.buildAnswer(cme, "fraction continue de " + nombre + ": " + fraction);
+            resp = new Privmsg(cme, "fraction continue de " + nombre + ": " + fraction);
         } catch (NumberFormatException nfe) {
-            resp = Privmsg.buildAnswer(cme, "l'argument doit etre un nombre (recu : " + args + ")");
+            resp = new Privmsg(cme, "l'argument doit etre un nombre (recu : " + args + ")");
         }
         control.sendMsg(resp);
-        
+
     }
 }

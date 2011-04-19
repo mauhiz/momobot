@@ -32,7 +32,7 @@ public class SendNoticeAction extends AbstractAction {
         if (StringUtils.isEmpty(toSend)) {
             return;
         }
-        Notice msg = new Notice(null, target, server, toSend);
+        Notice msg = new Notice(server, null, target, toSend);
         gtm.getClient().sendMsg(msg);
         bar.setText("");
     }

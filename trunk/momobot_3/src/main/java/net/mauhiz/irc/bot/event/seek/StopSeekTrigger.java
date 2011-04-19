@@ -1,8 +1,8 @@
 package net.mauhiz.irc.bot.event.seek;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
@@ -63,7 +63,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 return;
             }
         }
-        Privmsg msg = Privmsg.buildAnswer(im, reply);
+        Privmsg msg = new Privmsg(im, reply, false);
         control.sendMsg(msg);
     }
 }

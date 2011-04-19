@@ -9,8 +9,12 @@ import net.mauhiz.irc.base.data.Target;
  */
 public abstract class Ctcp extends Privmsg implements IrcSpecialChars {
 
-    protected Ctcp(Target from, Target to, IIrcServerPeer server, String message) {
-        super(from, to, server, message);
+    protected Ctcp(IIrcServerPeer server, Target from, Target to, String message) {
+        super(server, from, to, message);
+    }
+
+    public Ctcp(IPrivateIrcMessage replyTo, String respMsg, boolean priv) {
+        super(replyTo, respMsg, priv);
     }
 
     protected abstract String getCommand();

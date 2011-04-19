@@ -1,7 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
-import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
 
 /**
@@ -18,25 +18,25 @@ public class Quit extends AbstractIrcMessage {
         this(null, server, msg);
     }
 
-    public Quit(Target from, IIrcServerPeer server, String reason) {
-        super(from, null, server);
+    public Quit(IIrcServerPeer server, Target from, String reason) {
+        super(server, from);
         message = reason;
     }
 
     @Override
     public Quit copy() {
-        return new Quit(from, server, message);
+        return new Quit(server, from, message);
+    }
+
+    @Override
+    public IrcCommands getIrcCommand() {
+        return IrcCommands.QUIT;
     }
 
     @Override
     public String getIrcForm() {
         StringBuilder sb = new StringBuilder();
-        if (super.from != null) {
-            sb.append(':');
-            sb.append(super.from);
-            sb.append(' ');
-        }
-        sb.append(IrcCommands.QUIT);
+        sb.append(super.getIrcForm());
         if (message != null) {
             sb.append(" :").append(message);
         }
