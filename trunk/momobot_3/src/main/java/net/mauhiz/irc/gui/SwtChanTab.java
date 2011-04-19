@@ -17,6 +17,7 @@ import net.mauhiz.irc.gui.actions.SendNoticeAction;
 import net.mauhiz.util.AbstractAction;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
@@ -28,6 +29,20 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 
 public class SwtChanTab extends AbstractSwtTab {
+
+    class CloseHandler extends CTabFolder2Adapter {
+
+        @Override
+        public void close(CTabFolderEvent event) {
+            if (event.item == folder && channel.contains(server.getMyself())) {
+                Part msg = new Part(server, "@+", channel);
+                swtIrcClient.gtm.client.sendMsg(msg);
+                swtIrcClient.cut.removeChannel(channel);
+                swtIrcClient.chanTabs.remove(channel);
+                Logger.getLogger(SwtChanTab.class).info("Closed channel tab: " + channel);
+            }
+        }
+    }
 
     class KickAction extends UserMenuAction {
 
@@ -112,17 +127,7 @@ public class SwtChanTab extends AbstractSwtTab {
         initTypeBar();
 
         // leave channel on close tab
-        swtIrcClient.folderBar.addCTabFolder2Listener(new CTabFolder2Adapter() {
-            @Override
-            public void close(CTabFolderEvent event) {
-                if (event.item == folder && channel.contains(server.getMyself())) {
-                    Part msg = new Part(server, "@+", channel);
-                    swtIrcClient.gtm.client.sendMsg(msg);
-                    swtIrcClient.cut.removeChannel(channel);
-                    swtIrcClient.chanTabs.remove(channel);
-                }
-            }
-        });
+        swtIrcClient.folderBar.addCTabFolder2Listener(new CloseHandler());
     }
 
     public org.eclipse.swt.widgets.List getUsersInChan() {

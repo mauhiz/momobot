@@ -56,7 +56,9 @@ public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
             control.sendMsg(reply);
             vdm = vdm.substring(spc + 1);
         }
-        Privmsg reply = new Privmsg(im, vdm);
-        control.sendMsg(reply);
+        if (!vdm.isEmpty()) {
+            Privmsg reply = new Privmsg(im, vdm);
+            control.sendMsg(reply);
+        }
     }
 }
