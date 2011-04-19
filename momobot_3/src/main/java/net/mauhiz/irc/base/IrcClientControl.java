@@ -92,7 +92,9 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
     }
 
     private void handleNamReply(ServerMsg msg, IrcNetwork network) {
-        String chanName = msg.getArgs().poll();
+        ArgumentList args = msg.getArgs();
+        args.poll(); // =
+        String chanName = args.poll();
         IrcChannel chan = network.findChannel(chanName);
         if (chan == null) {
             return;
@@ -335,8 +337,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
                 handleWhoisChannels(message, network);
                 break;
             case RPL_WHOISSERVER:
-                LOG.warn("TODO whois server : " + args);
-                // msg = mauhiz *.quakenet.org :QuakeNet IRC Server
+                LOG.info(args.poll() + " is on node " + args.poll());
                 break;
             case RPL_WHOISAUTH: // this message is specific to Qnet Servers
                 ((QnetServer) network).handleWhois(args);
@@ -362,10 +363,14 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
                 String nickInUse = args.peek();
                 LOG.warn(nickInUse + " is already in use");
 
+                // TODO do nothing if already have a valid nickname
                 // TODO use alternate nicknames from config ?
                 String newNick = nickInUse + "_";
-                sendMsg(new Nick(message.getServerPeer(), null, newNick));
-
+                IIrcServerPeer server = message.getServerPeer();
+                sendMsg(new Nick(server, null, newNick));
+                IrcUser oldMyself = server.getMyself();
+                message.getServerPeer()
+                        .introduceMyself(newNick, oldMyself.getMask().getUser(), oldMyself.getFullName());
                 break;
             case ERR_NOTONCHANNEL:
                 LOG.warn("[TODO process] " + args);

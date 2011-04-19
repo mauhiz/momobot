@@ -29,36 +29,34 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        IrcChannel chan = (IrcChannel) cme.getTo();
-        if (chan == null) {
-            /* c est un msg prive */
-            return;
-        }
-        IChannelEvent evt = chan.getEvt();
-        if (isCommandMsg(cme.getMessage())) {
-            String respMsg;
-            if (evt == null) {
-                respMsg = "Devinez ce mot: " + new Pendu(chan).getDevinage();
-            } else {
-                respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
-            }
-            Privmsg resp = new Privmsg(cme, respMsg);
-            control.sendMsg(resp);
-        }
-        if (evt instanceof Pendu) {
-            Pendu pendu = (Pendu) evt;
-            String respMsg;
-            if (cme.getMessage().length() == 1) {
-                respMsg = pendu.submitLettre(cme.getMessage().toLowerCase(Locale.FRANCE).charAt(0));
-            } else {
-                respMsg = pendu.submitMot(cme.getMessage()).toString();
-            }
-            if (StringUtils.isNotBlank(respMsg)) {
+        if (cme.isToChannel()) {
+            IrcChannel chan = (IrcChannel) cme.getTo();
+            IChannelEvent evt = chan.getEvt();
+            if (isCommandMsg(cme.getMessage())) {
+                String respMsg;
+                if (evt == null) {
+                    respMsg = "Devinez ce mot: " + new Pendu(chan).getDevinage();
+                } else {
+                    respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
+                }
                 Privmsg resp = new Privmsg(cme, respMsg);
                 control.sendMsg(resp);
             }
-            if (!pendu.isRunning()) {
-                chan.stopEvent();
+            if (evt instanceof Pendu) {
+                Pendu pendu = (Pendu) evt;
+                String respMsg;
+                if (cme.getMessage().length() == 1) {
+                    respMsg = pendu.submitLettre(cme.getMessage().toLowerCase(Locale.FRANCE).charAt(0));
+                } else {
+                    respMsg = pendu.submitMot(cme.getMessage()).toString();
+                }
+                if (StringUtils.isNotBlank(respMsg)) {
+                    Privmsg resp = new Privmsg(cme, respMsg);
+                    control.sendMsg(resp);
+                }
+                if (!pendu.isRunning()) {
+                    chan.stopEvent();
+                }
             }
         }
     }
