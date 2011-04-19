@@ -2,7 +2,7 @@ package net.mauhiz.irc.bot.triggers.cs.query;
 
 import java.nio.ByteBuffer;
 
-import net.mauhiz.irc.bot.triggers.cs.Server;
+import net.mauhiz.irc.bot.triggers.cs.IServer;
 import net.mauhiz.irc.bot.triggers.cs.ServerFlags;
 import net.mauhiz.util.FileUtil;
 
@@ -11,10 +11,11 @@ public class RulesQuery extends AbstractQuery implements ServerFlags {
      * char info
      */
     private static final char A2S_RULES = 'V';
-    public RulesQuery(Server server) {
+
+    public RulesQuery(IServer server) {
         super(server);
     }
-    
+
     @Override
     public void afterReceive(byte[] resp) {
         ByteBuffer result = ByteBuffer.wrap(resp);
@@ -34,7 +35,7 @@ public class RulesQuery extends AbstractQuery implements ServerFlags {
             LOG.debug(name + "=" + value);
         }
     }
-    
+
     @Override
     public byte[] getCmd() {
         byte[] cmd = Character.toString(A2S_RULES).getBytes(FileUtil.ASCII);
@@ -42,6 +43,6 @@ public class RulesQuery extends AbstractQuery implements ServerFlags {
         buf.put(cmd);
         buf.putInt(server.getChallenge());
         return buf.array();
-        
+
     }
 }

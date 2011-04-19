@@ -35,7 +35,7 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
             return;
         }
 
-        Server server = new Server(NetUtils.makeISA(args));
+        IServer server = new Server(NetUtils.makeISA(args));
         try {
             server.getDetails();
         } catch (IOException ioe) {
@@ -59,7 +59,7 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
         control.sendMsg(msg);
     }
 
-    private Player findBestPlayer(Server server) {
+    private Player findBestPlayer(IServer server) {
         Player best = null;
         int bestScore = Integer.MIN_VALUE;
         for (Player player : server.getPlayers()) {

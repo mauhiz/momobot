@@ -8,8 +8,8 @@ import java.net.InetSocketAddress;
  * 
  * @author mauhiz
  */
-public class RconServer extends Server {
-    
+public class RconServer extends Server implements IRconServer {
+
     /**
      * Constructeur.
      * 
@@ -20,7 +20,7 @@ public class RconServer extends Server {
         super(ipay1);
         vuc = new RconClient(this, rcon);
     }
-    
+
     /**
      * @param cvar
      *            la cvar a demander
@@ -28,7 +28,7 @@ public class RconServer extends Server {
     public void askCvar(String cvar) throws IOException {
         getClient().rconCmd(cvar);
     }
-    
+
     /**
      * @param newmap
      *            la nouvelle map
@@ -41,12 +41,12 @@ public class RconServer extends Server {
         getClient().rconCmd("changelevel " + newmap);
         return true;
     }
-    
+
     @Override
-    public RconClient getClient() {
-        return (RconClient) super.getClient();
+    public IRconClient getClient() {
+        return (IRconClient) super.getClient();
     }
-    
+
     /**
      * @param steamid
      *            le SteamId
@@ -61,14 +61,14 @@ public class RconServer extends Server {
         }
         return null;
     }
-    
+
     /**
      * Affiche le status.
      */
     public void rconStatus() throws IOException {
         getClient().rconCmd("status");
     }
-    
+
     /**
      * @param cvar
      *            la cvar
@@ -78,14 +78,14 @@ public class RconServer extends Server {
     public void setCvar(String cvar, String value) throws IOException {
         getClient().rconCmd('"' + cvar + "\" \"" + value + '"');
     }
-    
+
     /**
      * recupere le password.
      */
     public void svPassword() throws IOException {
         askCvar("sv_password");
     }
-    
+
     /**
      * Fixe un password.
      * 
@@ -95,7 +95,7 @@ public class RconServer extends Server {
     public void svPassword(String pwd) throws IOException {
         setCvar("sv_password", pwd);
     }
-    
+
     /**
      * @param delay
      *            le delai avant le restart

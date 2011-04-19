@@ -10,7 +10,7 @@ import org.apache.commons.lang.text.StrTokenizer;
 /**
  * @author mauhiz
  */
-class RconClient extends ValveUdpClient {
+class RconClient extends ValveUdpClient implements IRconClient {
 
     /**
      * challenger!
@@ -34,13 +34,13 @@ class RconClient extends ValveUdpClient {
     /**
      * ah, mon ecouteur prefere.
      */
-    private final RconListener rl;
+    private final IRconListener rl;
 
     /**
      * @param server1
      *            le serveur
      */
-    public RconClient(RconServer server1, String rcon) throws IOException {
+    public RconClient(IRconServer server1, String rcon) throws IOException {
         super(server1);
         this.rcon = rcon;
         rl = new RconListener(this);
@@ -68,6 +68,10 @@ class RconClient extends ValveUdpClient {
         rconChallenge = substringAfter(new String(sendAndRcvValveCmd(CHALLENGE)), CHALLENGE + " ");
     }
 
+    IRconServer getServer() {
+        return (IRconServer) server;
+    }
+
     /**
      */
     public void initLogThread() {
@@ -79,7 +83,7 @@ class RconClient extends ValveUdpClient {
      * @param string
      *            la ligne e etudier
      */
-    protected void processLine(String string) {
+    public void processLine(String string) {
         String line = StringUtils.trim(string.substring(Integer.SIZE / Byte.SIZE));
         if (line.startsWith("log ")) {
             try {
@@ -124,7 +128,7 @@ class RconClient extends ValveUdpClient {
         steamid = steamid.substring(0, steamid.indexOf('>'));
         String action = temp.substring(temp.indexOf('"') + 2);
         if (action.startsWith("say_team") && PlayerDB.isMaster(steamid)) {
-            RconServer rcs = (RconServer) server;
+            IRconServer rcs = getServer();
             action = action.substring(10, action.lastIndexOf('"'));
             LOG.info(playerName + " (" + steamid + ") orders me :" + action);
             if ("!rs".equals(action)) {
@@ -189,7 +193,7 @@ class RconClient extends ValveUdpClient {
      * @param cmd
      *            la commande rcon
      */
-    protected void rconCmd(String cmd) throws IOException {
+    public void rconCmd(String cmd) throws IOException {
         /* antiban */
         if (StringUtils.isEmpty(rcon)) {
             LOG.warn("Pas de rcon defini");

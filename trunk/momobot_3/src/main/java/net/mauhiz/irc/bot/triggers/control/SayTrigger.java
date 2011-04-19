@@ -35,7 +35,7 @@ public class SayTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
         } else {
             /* TODO say cross-server ? */
             IrcUser target = pme.getServerPeer().getNetwork().findUser(targetNick, false);
-            Privmsg msg = new Privmsg(null, target, pme.getServerPeer(), message);
+            Privmsg msg = new Privmsg(pme.getServerPeer(), null, target, message);
             control.sendMsg(msg);
         }
     }

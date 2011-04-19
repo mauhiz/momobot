@@ -2,31 +2,32 @@ package net.mauhiz.irc.bot.triggers.cs.query;
 
 import java.nio.ByteBuffer;
 
-import net.mauhiz.irc.bot.triggers.cs.Server;
+import net.mauhiz.irc.bot.triggers.cs.IServer;
 import net.mauhiz.irc.bot.triggers.cs.ServerFlags;
 import net.mauhiz.util.FileUtil;
 
 import org.apache.commons.lang.time.StopWatch;
 
 public class InfoQuery extends AbstractQuery implements ServerFlags {
-    
+
     /**
      * char info
      */
     private static final char A2S_INFO = 'T';
-    
+
     private final StopWatch sw = new StopWatch();
-    
-    public InfoQuery(Server server) {
+
+    public InfoQuery(IServer server) {
         super(server);
     }
+
     @Override
     public void afterReceive(byte[] resp) {
         // ignore response
         server.setPing(sw.getTime());
         sw.reset();
         ByteBuffer result = ByteBuffer.wrap(resp);
-        
+
         result.getInt(); // ignore that
         char type = (char) result.get();
         LOG.debug("Type: " + Character.toString(type));
@@ -38,17 +39,18 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
             LOG.warn("Serveur inconnu (type = " + type + ")");
         }
     }
+
     @Override
     public void beforeSend() {
         server.setPing(-1);
         sw.start();
     }
-    
+
     @Override
     public byte[] getCmd() {
         return (A2S_INFO + QUERY).getBytes(FileUtil.ASCII);
     }
-    
+
     /**
      * @param result
      */
@@ -86,7 +88,7 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
         LOG.debug("secure: " + secure);
         short nbBots = result.get();
         LOG.debug("nbBots: " + nbBots);
-        
+
         int remaining = result.remaining();
         if (remaining > 0) {
             LOG.warn("remaining bytes: " + remaining);
@@ -95,17 +97,17 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
             // LOG.warn("remaining text: " + new String(remain));
         }
     }
-    
+
     /**
      * @param result
      */
     private void getDetailsModGoldSource(ByteBuffer result) {
         String urlInfo = getNextString(result);
         LOG.debug("urlInfo? " + urlInfo);
-        
+
         String urlDl = getNextString(result);
         LOG.debug("urlDl? " + urlDl);
-        
+
         /* byte nul */
         result.get();
         int modVersion = result.getInt();
@@ -116,9 +118,9 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
         LOG.debug("svOnly? " + svOnly);
         boolean clDll = result.get() == 0x1;
         LOG.debug("clDll? " + clDll);
-        
+
     }
-    
+
     /**
      * @param result
      */

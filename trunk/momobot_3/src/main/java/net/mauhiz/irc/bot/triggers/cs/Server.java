@@ -12,12 +12,12 @@ import org.apache.log4j.Logger;
  * 
  * @author mauhiz
  */
-public class Server {
+public class Server implements IServer {
     /**
      * logger.
      */
     protected static final Logger LOG = Logger.getLogger(Server.class);
-    
+
     private int challenge = -1;
     /**
      * Ip et port du serveur.
@@ -54,8 +54,8 @@ public class Server {
     /**
      * Le client Valve UDP.
      */
-    protected ValveUdpClient vuc;
-    
+    protected IClient vuc;
+
     /**
      * Constructeur.
      * 
@@ -67,18 +67,18 @@ public class Server {
         ipay = ipay1;
         vuc = new ValveUdpClient(this);
     }
-    
+
     /**
      * @return the challenge
      */
     public int getChallenge() {
         return challenge;
     }
-    
-    public ValveUdpClient getClient() {
+
+    public IClient getClient() {
         return vuc;
     }
-    
+
     /**
      * affiche les details du serveur. Voir <a href="http://developer.valvesoftware.com/wiki/Server_Queries#A2S_INFO">
      * VDW </a>
@@ -89,63 +89,63 @@ public class Server {
         vuc.getPlayers(); // 2eme fois pour utiliser le Challenge
         vuc.getRules();
     }
-    
+
     /**
      * @return ip
      */
     public String getIp() {
         return ipay.getAddress().getHostAddress();
     }
-    
+
     /**
      * @return ipay
      */
     public InetSocketAddress getIpay() {
         return ipay;
     }
-    
+
     /**
      * @return Returns the map.
      */
     public String getMap() {
         return map;
     }
-    
+
     /**
      * @return maxPlayers
      */
     public String getMaxPlayers() {
         return Integer.toString(maxPlayers);
     }
-    
+
     /**
      * @return Returns the name.
      */
     public String getName() {
         return name;
     }
-    
+
     /**
      * @return Returns the pass.
      */
     public String getPass() {
         return pass;
     }
-    
+
     /**
      * @return Returns the ping.
      */
     public long getPing() {
         return ping;
     }
-    
+
     /**
      * @return playerCount
      */
     public String getPlayerCount() {
         return Integer.toString(playerCount);
     }
-    
+
     /**
      * @param steamid
      *            le SteamId
@@ -159,25 +159,25 @@ public class Server {
         }
         return null;
     }
-    
+
     /**
      * @return {@link #players}
      */
     public List<Player> getPlayers() {
         return players;
     }
-    
+
     /**
      * @return port
      */
     public int getPort() {
         return ipay.getPort();
     }
-    
+
     public void resetPlayers() {
         players.clear();
     }
-    
+
     /**
      * @param int1
      *            challenge
@@ -185,7 +185,7 @@ public class Server {
     public void setChallenge(int int1) {
         challenge = int1;
     }
-    
+
     /**
      * @param ipay1
      *            the ipay to set
@@ -193,7 +193,7 @@ public class Server {
     protected void setIpay(InetSocketAddress ipay1) {
         ipay = ipay1;
     }
-    
+
     /**
      * @param map1
      *            The map to set.
@@ -201,7 +201,7 @@ public class Server {
     public void setMap(String map1) {
         map = map1;
     }
-    
+
     /**
      * @param maxPlayers1
      *            le nombre maxi de players
@@ -209,7 +209,7 @@ public class Server {
     public void setMaxPlayers(int maxPlayers1) {
         maxPlayers = maxPlayers1;
     }
-    
+
     /**
      * @param name1
      *            The name to set.
@@ -217,7 +217,7 @@ public class Server {
     public void setName(String name1) {
         name = name1;
     }
-    
+
     /**
      * @param pass1
      *            The pass to set.
@@ -225,7 +225,7 @@ public class Server {
     public void setPass(String pass1) {
         pass = pass1;
     }
-    
+
     /**
      * @param ping1
      *            The ping to set.
@@ -233,7 +233,7 @@ public class Server {
     public void setPing(long ping1) {
         ping = ping1;
     }
-    
+
     /**
      * @param index
      * @param player
@@ -249,9 +249,9 @@ public class Server {
         } else {
             players.set(index, player);
         }
-        
+
     }
-    
+
     /**
      * @param playerCount1
      *            le nombre de joueurs courants
@@ -259,7 +259,7 @@ public class Server {
     public void setPlayerCount(int playerCount1) {
         playerCount = playerCount1;
     }
-    
+
     /**
      * @return un affichage
      * @see Object#toString()

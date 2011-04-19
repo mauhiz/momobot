@@ -65,8 +65,8 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                         // ON ENVOIE LES MSG DE SEEK
 
                         for (String element : channelSeek) {
-                            Privmsg resp = new Privmsg(null, im.getServerPeer().getNetwork().findChannel(element),
-                                    im.getServerPeer(), seek.getMessageForSeeking());
+                            Privmsg resp = new Privmsg(im.getServerPeer(), null, im.getServerPeer().getNetwork()
+                                    .findChannel(element), seek.getMessageForSeeking());
                             control.sendMsg(resp);
                         }
 
@@ -118,7 +118,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                             // !! Time out !!
                             LOG.debug("Seek-Time-Out atteint.");
                             gather.setSeekToNull();
-                            Privmsg resp = new Privmsg(null, seek.getChannel(), im.getServerPeer(),
+                            Privmsg resp = new Privmsg(im.getServerPeer(), null, seek.getChannel(),
                                     "Time out atteint, seek stopper.");
                             control.sendMsg(resp);
                             // LEAVE LES CHANNELS
@@ -129,7 +129,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                             // Si c'est le winner du seek, je transmet le msg PV
                             if (seek.getSeekWinner().equals(kikoolol.getNick())
                                     && im.getTo().equals(im.getServerPeer().getMyself())) {
-                                Privmsg reply = new Privmsg(null, seek.getChannel(), im.getServerPeer(),
+                                Privmsg reply = new Privmsg(im.getServerPeer(), null, seek.getChannel(),
                                         kikoolol.getNick() + " : " + im.getMessage());
                                 control.sendMsg(reply);
                             } else if (seek.isSeekInProgress()) {
