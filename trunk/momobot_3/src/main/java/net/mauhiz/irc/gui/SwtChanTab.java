@@ -11,6 +11,7 @@ import net.mauhiz.irc.base.data.Topic;
 import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Mode;
 import net.mauhiz.irc.base.msg.Part;
+import net.mauhiz.irc.base.msg.Whois;
 import net.mauhiz.irc.gui.actions.SendAction;
 import net.mauhiz.irc.gui.actions.SendMeAction;
 import net.mauhiz.irc.gui.actions.SendNoticeAction;
@@ -29,6 +30,19 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 
 public class SwtChanTab extends AbstractSwtTab {
+
+    class BanAction extends UserMenuAction {
+
+        @Override
+        protected void doAction() {
+            List<IrcUser> users = findUsers();
+            for (IrcUser user : users) {
+                String modeStr = "+b " + user.getMask(); // TODO make this higher level
+                Mode ban = new Mode(server, null, channel, new ArgumentList(modeStr));
+                swtIrcClient.gtm.client.sendMsg(ban);
+            }
+        }
+    }
 
     class CloseHandler extends CTabFolder2Adapter {
 
@@ -95,6 +109,29 @@ public class SwtChanTab extends AbstractSwtTab {
         @Override
         protected boolean isAsynchronous() {
             return false;
+        }
+    }
+
+    class VoiceAction extends UserMenuAction {
+
+        @Override
+        protected void doAction() {
+            List<IrcUser> users = findUsers();
+            for (IrcUser user : users) {
+                String modeStr = "+v " + user; // TODO make this higher level
+                Mode voice = new Mode(server, null, channel, new ArgumentList(modeStr));
+                swtIrcClient.gtm.client.sendMsg(voice);
+            }
+        }
+    }
+
+    class WhoisAction extends UserMenuAction {
+
+        @Override
+        protected void doAction() {
+            String[] selectedNicks = usersInChan.getSelection();
+            Whois whois = new Whois(server, null, selectedNicks);
+            swtIrcClient.gtm.client.sendMsg(whois);
         }
     }
 
@@ -174,9 +211,21 @@ public class SwtChanTab extends AbstractSwtTab {
         kick.setText("&Kick");
         kick.addSelectionListener(new KickAction());
 
+        MenuItem ban = new MenuItem(userActions, SWT.DEFAULT);
+        ban.setText("&Ban");
+        ban.addSelectionListener(new BanAction());
+
         MenuItem op = new MenuItem(userActions, SWT.DEFAULT);
         op.setText("&Op");
         op.addSelectionListener(new OpAction());
+
+        MenuItem voice = new MenuItem(userActions, SWT.DEFAULT);
+        voice.setText("&Voice");
+        voice.addSelectionListener(new VoiceAction());
+
+        MenuItem whois = new MenuItem(userActions, SWT.DEFAULT);
+        whois.setText("&Whois");
+        whois.addSelectionListener(new WhoisAction());
 
         usersInChan.setMenu(userActions);
     }
