@@ -107,27 +107,33 @@ public class SwtChanTab extends AbstractSwtTab {
         super(swtIrcClient);
         this.server = server;
         this.channel = channel;
-        folder.setText(channel.fullName());
 
-        /* layout */
-        GridLayout gridLayout = new GridLayout(2, false);
-        compo.setLayout(gridLayout);
+        Composite titleBar = new Composite(compo, SWT.BORDER);
+        titleBar.setLayout(new GridLayout(2, false));
 
         // topic bar
-        topicBar = new Text(compo, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
+        topicBar = new Text(titleBar, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
 
         // control buttons (chan flags...)
-        Composite controlGroup = new Composite(compo, SWT.BORDER);
+        Composite controlGroup = new Composite(titleBar, SWT.BORDER);
         controlGroup.setBackground(controlGroup.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 
-        initReceiveBox();
-        usersInChan = new org.eclipse.swt.widgets.List(compo, SWT.BORDER | SWT.V_SCROLL);
+        Composite mainPanel = new Composite(compo, SWT.BORDER);
+        initReceiveBox(mainPanel);
+        usersInChan = new org.eclipse.swt.widgets.List(mainPanel, SWT.BORDER | SWT.V_SCROLL);
         setListSize(usersInChan, 15, 150);
         initUserActionsMenu();
         initTypeBar();
 
         // leave channel on close tab
         swtIrcClient.folderBar.addCTabFolder2Listener(new CloseHandler());
+
+        folder.setText(getFolderName());
+    }
+
+    @Override
+    protected final String getFolderName() {
+        return channel.fullName();
     }
 
     public org.eclipse.swt.widgets.List getUsersInChan() {
@@ -135,24 +141,25 @@ public class SwtChanTab extends AbstractSwtTab {
     }
 
     protected final void initTypeBar() {
+        Composite typeBar = new Composite(compo, SWT.BORDER);
+        typeBar.setLayout(new GridLayout(4, false));
+
         /* Affichage de la barre de saisie */
-        Text inputBar = new Text(compo, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
+        Text inputBar = new Text(typeBar, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
         inputBar.setText(StringUtils.EMPTY);
         inputBar.setEditable(true);
         setTextSize(inputBar, 1, 400);
         inputBar.setBackground(inputBar.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 
-        Composite buttonZone = new Composite(compo, SWT.BORDER);
-        buttonZone.setLayout(new GridLayout(3, false));
-        Button sendText = new Button(buttonZone, SWT.PUSH);
+        Button sendText = new Button(typeBar, SWT.PUSH);
         sendText.setText("Send text");
         sendText.addSelectionListener(new SendAction(inputBar, swtIrcClient.gtm, server, channel));
 
-        Button sendNotice = new Button(buttonZone, SWT.PUSH);
+        Button sendNotice = new Button(typeBar, SWT.PUSH);
         sendNotice.setText("Send notice");
         sendNotice.addSelectionListener(new SendNoticeAction(inputBar, swtIrcClient.gtm, server, channel));
 
-        Button sendAction = new Button(buttonZone, SWT.PUSH);
+        Button sendAction = new Button(typeBar, SWT.PUSH);
         sendAction.setText("Send action");
         sendAction.addSelectionListener(new SendMeAction(inputBar, swtIrcClient.gtm, server, channel));
     }

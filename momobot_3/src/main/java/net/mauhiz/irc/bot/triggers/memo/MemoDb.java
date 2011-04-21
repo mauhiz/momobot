@@ -13,6 +13,8 @@ import org.hibernate.Query;
  * @author mauhiz
  */
 public class MemoDb {
+    private static final String SERVER_ALIAS = "serverAlias";
+
     /**
      * @param server
      * @return instance
@@ -41,7 +43,7 @@ public class MemoDb {
     public int countMemos() {
         Query countQry = HibernateUtils.currentSession().createQuery(
                 "select count(*) from Memo where serverAlias = :serverAlias");
-        countQry.setString("serverAlias", hook.getAlias());
+        countQry.setString(SERVER_ALIAS, hook.getAlias());
         Integer uniqueResult = (Integer) countQry.uniqueResult();
         if (uniqueResult == null) {
             return 0;
@@ -68,7 +70,7 @@ public class MemoDb {
     public String getMemos() {
         Query getQry = HibernateUtils.currentSession().createQuery(
                 "select key from Memo where serverAlias = :serverAlias");
-        getQry.setString("serverAlias", hook.getAlias());
+        getQry.setString(SERVER_ALIAS, hook.getAlias());
         List<String> results = getQry.list();
         if (results.isEmpty()) {
             return "Pas de memo pour l'instant";
@@ -85,7 +87,7 @@ public class MemoDb {
     public String getValue(String key) {
         Query getQry = HibernateUtils.currentSession().createQuery(
                 "select value from Memo where serverAlias = :serverAlias and key = :key");
-        getQry.setString("serverAlias", hook.getAlias());
+        getQry.setString(SERVER_ALIAS, hook.getAlias());
         getQry.setString("key", key);
         return (String) getQry.uniqueResult();
     }
@@ -112,7 +114,7 @@ public class MemoDb {
             /* TODO mise a jour */
             Query getQry = HibernateUtils.currentSession().createQuery(
                     "update Memo set value = :value where serverAlias = :serverAlias and key = :key");
-            getQry.setString("serverAlias", hook.getAlias());
+            getQry.setString(SERVER_ALIAS, hook.getAlias());
             getQry.setString("key", key);
             getQry.setString("value", value);
             int updated = getQry.executeUpdate();

@@ -13,7 +13,9 @@ public class Topic {
 
     public Topic(String byWhom, Date lastModif, String value) {
         this.byWhom = byWhom;
-        this.lastModif = lastModif.getTime();
+        if (lastModif != null) {
+            this.lastModif = lastModif.getTime();
+        }
         this.value = value;
     }
 

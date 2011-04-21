@@ -215,28 +215,27 @@ public class SwtIrcClient {
     }
 
     private void swtLoop(SwtLogTab logTab) {
-        final IIrcMessage msg = gtm.nextMsg();
 
-        if (msg == null) { // booh, no new message
-            return;
-        }
+        long maxLoopTime = 500;
+        for (long startTime = System.currentTimeMillis(); startTime + maxLoopTime <= System.currentTimeMillis();) {
+            final IIrcMessage msg = gtm.nextMsg();
 
-        if (logTab != null) {
-            logTab.appendText(msg.getIrcForm());
-        }
+            if (msg == null) { // booh, no new message
+                return;
+            }
 
-        boolean processed = processChanLog(msg);
+            if (logTab != null) {
+                logTab.appendText(msg.getIrcForm());
+            }
 
-        if (!processed) {
-            processed = processPrivateLog(msg);
-        }
-        if (!processed) {
-            processed = processServerLog(msg);
-        }
-        if (!processed) {
+            boolean processed = processChanLog(msg);
 
-            // TODO private msgs
-            LOG.warn("Unhandled msg on GUI: " + msg.getIrcForm());
+            if (!processed) {
+                processed = processPrivateLog(msg);
+            }
+            if (!processed) {
+                processed = processServerLog(msg);
+            }
         }
     }
 }
