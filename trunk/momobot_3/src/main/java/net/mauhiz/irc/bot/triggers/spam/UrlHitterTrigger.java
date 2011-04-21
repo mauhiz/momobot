@@ -37,7 +37,7 @@ public class UrlHitterTrigger extends AbstractTextTrigger implements IPrivmsgTri
             client.execute(get);
             resp = "done";
         } catch (IOException e) {
-            resp = "erreur : " + e;
+            resp = "erreur : " + e.getLocalizedMessage();
         }
         Privmsg reply = new Privmsg(im, resp);
         control.sendMsg(reply);

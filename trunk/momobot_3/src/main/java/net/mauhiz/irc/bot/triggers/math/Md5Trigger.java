@@ -29,14 +29,19 @@ public class Md5Trigger extends AbstractTextTrigger implements IPrivmsgTrigger {
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String args = getTriggerContent(cme);
-        String resp;
-        if (StringUtils.isEmpty(args)) {
-            resp = "md5 de quoi ?";
+        String content = getTriggerContent(cme);
+
+        if (StringUtils.isEmpty(content)) {
+            showHelp(control, cme);
         } else {
-            resp = "md5 de " + args + ": " + DigestUtils.md5Hex(args);
+            String resp = "md5 de " + content + ": " + DigestUtils.md5Hex(content);
+            Privmsg msg = new Privmsg(cme, resp);
+            control.sendMsg(msg);
         }
-        Privmsg msg = new Privmsg(cme, resp);
-        control.sendMsg(msg);
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <data>";
     }
 }

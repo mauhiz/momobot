@@ -40,7 +40,7 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
             server.getDetails();
         } catch (IOException ioe) {
             LOG.warn(ioe, ioe);
-            Privmsg help = new Privmsg(im, "Could not connect to server", true);
+            Privmsg help = new Privmsg(im, "Could not connect to server: " + ioe.getLocalizedMessage(), true);
             control.sendMsg(help);
             return;
         }

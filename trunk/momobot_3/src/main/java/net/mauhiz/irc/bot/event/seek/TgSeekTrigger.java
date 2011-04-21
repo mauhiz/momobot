@@ -33,7 +33,7 @@ public class TgSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             reply = "Aucun gather n'est lance.";
         } else if (evt instanceof Gather) {
             if (((Gather) evt).getSeek() == null) {
-                reply = "Pas de seek en cour.";
+                reply = "Pas de seek en cours.";
 
             } else if (((Gather) evt).getSeek().isSeekInProgress()) {
                 reply = "Le seek est en cours.";

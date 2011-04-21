@@ -61,6 +61,6 @@ public class Seek2Trigger extends AbstractTextTrigger implements IPrivmsgTrigger
 
     @Override
     public String getTriggerHelp() {
-        return "Syntaxe: " + getTriggerText() + " [n (n>1)] [lvl]";
+        return super.getTriggerHelp() + " <players-number> <level>";
     }
 }

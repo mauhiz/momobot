@@ -32,7 +32,7 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             }
             return lignes;
         } catch (IOException e) {
-            return new String[] { e.getMessage() };
+            return new String[] { e.getLocalizedMessage() };
 
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
@@ -54,7 +54,7 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             }
             return lignes;
         } catch (IOException e) {
-            return new String[] { e.getMessage() };
+            return new String[] { e.getLocalizedMessage() };
 
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);

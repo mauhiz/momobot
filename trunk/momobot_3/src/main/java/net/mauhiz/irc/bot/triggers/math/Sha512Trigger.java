@@ -38,23 +38,26 @@ public class Sha512Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
 
     /**
      * MessageDigest
-     * 
-     * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
-     *      net.mauhiz.irc.base.IIrcControl)
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
         String args = getTriggerContent(cme);
-        Privmsg resp;
+
         if (StringUtils.isEmpty(args)) {
-            resp = new Privmsg(cme, "sha-512 de quoi ?");
+            showHelp(control, cme);
         } else {
+            Privmsg resp;
             try {
                 resp = new Privmsg(cme, "sha-512 de " + args + ": " + computeSha512(args.getBytes(FileUtil.ISO8859_15)));
             } catch (NoSuchAlgorithmException nsae) {
                 resp = new Privmsg(cme, "J'ai pas de sha-512. Sry.");
             }
+            control.sendMsg(resp);
         }
-        control.sendMsg(resp);
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <data>";
     }
 }

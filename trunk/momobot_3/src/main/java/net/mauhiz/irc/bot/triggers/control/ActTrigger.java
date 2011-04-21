@@ -31,8 +31,7 @@ public class ActTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
         String message = args.getRemainingData();
 
         if (targetNick == null || message.isEmpty()) {
-            Privmsg msg = new Privmsg(im, "pas assez de parametres. " + getTriggerHelp(), true);
-            control.sendMsg(msg);
+            showHelp(control, im);
         } else {
             /* FIXME cross-server */
             IrcUser target = im.getServerPeer().getNetwork().findUser(targetNick, false);
@@ -43,6 +42,6 @@ public class ActTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
 
     @Override
     public String getTriggerHelp() {
-        return "syntaxe $" + getTriggerText() + " target msg";
+        return super.getTriggerText() + " <target> <msg>";
     }
 }

@@ -28,10 +28,7 @@ public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrig
     public void doTrigger(Privmsg pme, IIrcControl control) {
         ArgumentList args = getArgs(pme);
         if (args.isEmpty()) {
-            Privmsg retour = new Privmsg(pme, "you need to specify Trigger class name", true);
-            Privmsg retour2 = new Privmsg(pme, "for instance : " + this + " " + getClass().getName(), true);
-            control.sendMsg(retour);
-            control.sendMsg(retour2);
+            showHelp(control, pme);
         } else {
             String className = args.poll();
             LOG.info("Deactivating trigger class: " + className);
@@ -49,5 +46,10 @@ public class DeActivateTrigger extends AbstractTextTrigger implements IAdminTrig
                 }
             }
         }
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <class>";
     }
 }

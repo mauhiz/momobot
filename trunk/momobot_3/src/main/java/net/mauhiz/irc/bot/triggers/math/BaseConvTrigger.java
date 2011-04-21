@@ -46,7 +46,7 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
     public void doTrigger(Privmsg cme, IIrcControl control) {
         String args = getTriggerContent(cme);
         if (args.trim().isEmpty()) {
-            showUsage(control, cme);
+            showHelp(control, cme);
             return;
         }
         StrTokenizer tok = new StrTokenizer(args);
@@ -70,14 +70,8 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         control.sendMsg(resp);
     }
 
-    /**
-     * @param control
-     * @param toReply
-     */
-    private void showUsage(IIrcControl control, IPrivateIrcMessage toReply) {
-        Notice notice = new Notice(toReply, "Syntaxe : " + getTriggerText() + " nombre base_from base_to", true);
-        control.sendMsg(notice);
-        notice = new Notice(toReply, "Exemple : " + getTriggerText() + " ff 16 10", true);
-        control.sendMsg(notice);
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <number> <from-base> <to-base>";
     }
 }

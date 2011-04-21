@@ -28,10 +28,7 @@ public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigge
     public void doTrigger(Privmsg pme, IIrcControl control) {
         ArgumentList args = getArgs(pme);
         if (args.isEmpty()) {
-            Privmsg retour = new Privmsg(pme, "you need to specify Trigger class name", true);
-            control.sendMsg(retour);
-            Privmsg retour2 = new Privmsg(pme, "for instance : " + this + " " + getClass().getName(), true);
-            control.sendMsg(retour2);
+            showHelp(control, pme);
         } else {
             String className = args.poll();
             LOG.info("Activate trigger class = " + className);
@@ -43,5 +40,10 @@ public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigge
                 }
             }
         }
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <class> [<text>]+";
     }
 }
