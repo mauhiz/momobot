@@ -56,8 +56,14 @@ public class ResultTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
             } catch (NumberFormatException nfe) {
                 // handled later
             }
-            Privmsg msg = new Privmsg(im, "Erreur : Parametre(s) Incorrect(s). ex : $tn-result id_team score1 score2");
-            control.sendMsg(msg);
+
+            showHelp(control, im);
         }
+
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <team-id> <score-home> <score-visitor>";
     }
 }

@@ -26,6 +26,5 @@ public class AboutTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         /* TODO cross server */
         Privmsg retour = new Privmsg(im, Messages.get(getClass(), "about"), true); //$NON-NLS-1$
         control.sendMsg(retour);
-
     }
 }

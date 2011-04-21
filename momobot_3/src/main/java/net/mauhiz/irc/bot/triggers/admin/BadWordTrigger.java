@@ -46,14 +46,13 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
             /* mode controle */
             /* TODO admin mode */
             String args = getTriggerContent(im);
-            Privmsg resp;
             if (args.isEmpty()) {
-                resp = new Privmsg(im, "Syntaxe: " + getTriggerText() + " badword", true);
+                showHelp(control, im);
             } else {
                 BADWORDS.add(args);
-                resp = new Privmsg(im, "Badword ajoute: " + args, true);
+                Privmsg resp = new Privmsg(im, "Badword ajoute: " + args, true);
+                control.sendMsg(resp);
             }
-            control.sendMsg(resp);
         } else {
             for (String word : new StrTokenizer(im.getMessage()).getTokenArray()) {
                 for (String badword : BADWORDS) {
@@ -63,7 +62,6 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
                 }
             }
         }
-
     }
 
     /**
@@ -85,5 +83,10 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
             resp = new Privmsg(toReply, toReply.getFrom() + " is so rude, he said " + badword + "!!");
         }
         control.sendMsg(resp);
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <badword>";
     }
 }

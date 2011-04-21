@@ -42,51 +42,62 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcUser user = (IrcUser) cme.getFrom();
+
         if (!(user instanceof QnetUser)) {
             LOG.error("user non Qnet: " + user);
             return;
         }
+
         QnetUser quser = (QnetUser) user;
         whoisUser(quser, cme, control);
 
         ArgumentList args = getArgs(cme);
-        Calendar date = null;
-        if (!args.isEmpty()) {
-            date = DateUtil.getDateFromJour(args.poll(), Locale.FRANCE); /* tokens finis */
-        }
 
-        Notice notice;
-        if (date == null) {
-            StringBuilder msg = new StringBuilder();
-            msg.append("syntaxe : ").append(this).append(" jour[");
-            msg.append(StringUtils.join(DateUtil.getWeekDays(Locale.FRANCE), '/'));
-            msg.append("] ");
-            for (String heure : HEURES) {
-                msg.append(heure).append("[").append(StringUtils.join(DISPOS, '/')).append("] ");
-            }
-            notice = new Notice(cme, msg.toString(), true);
+        if (args.isEmpty()) {
+            showHelp(control, cme);
+
         } else {
-            Dispo dispo = new Dispo();
-            dispo.setChannel(((IrcChannel) cme.getTo()).fullName());
-            Present[] heures = new Present[HEURES.length];
-            List<String> ouinons = args.asList();
-            for (int i = 0; i < HEURES.length && i < ouinons.size(); i++) {
-                String nextArg = ouinons.get(i);
-                if (nextArg.equalsIgnoreCase("oui")) {
-                    heures[i] = Present.LA;
-                } else if (nextArg.equalsIgnoreCase("non")) {
-                    heures[i] = Present.PAS_LA;
+            Calendar date = DateUtil.getDateFromJour(args.poll(), Locale.FRANCE); /* tokens finis */
+
+            if (date == null) {
+                showHelp(control, cme);
+
+            } else {
+                Dispo dispo = new Dispo();
+                dispo.setChannel(((IrcChannel) cme.getTo()).fullName());
+                Present[] heures = new Present[HEURES.length];
+                List<String> ouinons = args.asList();
+                for (int i = 0; i < HEURES.length && i < ouinons.size(); i++) {
+                    String nextArg = ouinons.get(i);
+                    if (nextArg.equalsIgnoreCase("oui")) {
+                        heures[i] = Present.LA;
+                    } else if (nextArg.equalsIgnoreCase("non")) {
+                        heures[i] = Present.PAS_LA;
+                    }
                 }
+                dispo.setPresent1(heures[0]);
+                dispo.setPresent2(heures[1]);
+                dispo.setQauth(quser.getAuth());
+                dispo.setServerAlias(cme.getServerPeer().getNetwork().getAlias());
+                dispo.setQuand(new java.sql.Date(date.getTimeInMillis()));
+                DispoDb.updateDispo(dispo);
+                Notice notice = new Notice(cme, "dispo enregistree pour le " + DateUtil.DATE_FORMAT.format(date), true);
+                control.sendMsg(notice);
             }
-            dispo.setPresent1(heures[0]);
-            dispo.setPresent2(heures[1]);
-            dispo.setQauth(quser.getAuth());
-            dispo.setServerAlias(cme.getServerPeer().getNetwork().getAlias());
-            dispo.setQuand(new java.sql.Date(date.getTimeInMillis()));
-            DispoDb.updateDispo(dispo);
-            notice = new Notice(cme, "dispo enregistree pour le " + DateUtil.DATE_FORMAT.format(date), true);
         }
-        control.sendMsg(notice);
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        StringBuilder msg = new StringBuilder();
+        msg.append(super.getTriggerHelp());
+        msg.append(" jour[");
+        msg.append(StringUtils.join(DateUtil.getWeekDays(Locale.FRANCE), '/'));
+        msg.append("] ");
+        for (String heure : HEURES) {
+            msg.append(heure).append("[").append(StringUtils.join(DISPOS, '/')).append("] ");
+        }
+        return msg.toString();
     }
 
     private void whoisUser(QnetUser quser, IPrivateIrcMessage cme, IIrcControl control) {

@@ -30,8 +30,7 @@ public class SayTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
         String message = args.getRemainingData();
 
         if (targetNick == null || message.isEmpty()) {
-            Privmsg msg = new Privmsg(pme, "pas assez de parametres. " + getTriggerHelp());
-            control.sendMsg(msg);
+            control.sendMsg(new Privmsg(pme, getTriggerHelp()));
         } else {
             /* TODO say cross-server ? */
             IrcUser target = pme.getServerPeer().getNetwork().findUser(targetNick, false);
@@ -42,6 +41,6 @@ public class SayTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
 
     @Override
     public String getTriggerHelp() {
-        return "syntaxe $" + getTriggerText() + " target msg";
+        return super.getTriggerHelp() + " <target> <message>";
     }
 }

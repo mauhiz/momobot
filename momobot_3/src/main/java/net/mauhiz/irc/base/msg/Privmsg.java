@@ -9,14 +9,6 @@ import net.mauhiz.irc.base.data.Target;
  */
 public class Privmsg extends AbstractPrivateIrcMessage {
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public Privmsg(IIrcServerPeer server, Target from, IIrcServerPeer to, String msg) {
-        super(server, from, to, msg);
-    }
-
     public Privmsg(IIrcServerPeer server, Target from, Target to, String message) {
         super(server, from, to, message);
     }

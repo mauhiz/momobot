@@ -7,7 +7,6 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Join;
-import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.event.Gather;
@@ -73,24 +72,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                     } else {
                         // Le seek a foire! on notice le noob pour lui donner la syntaxe
                         gather.setSeekToNull();
-                        Notice notice;
-                        String[] noticeListHelp = {
-                                "syntaxe : " + getTriggerText() + " [on/off] (sans les [])",
-                                "syntaxe : " + getTriggerText()
-                                        + " off [low,mid,skilled,pgm,high,autre level] (sans les [])",
-                                "syntaxe : "
-                                        + getTriggerText()
-                                        + " off level \"message de seek entre crochet :: %P=nombre de joueur, %L = level, %S = serv(off ici) \"",
-                                "syntaxe : " + getTriggerText() + " on \"adresse ip + mdp entre crochet\"",
-                                "syntaxe : " + getTriggerText()
-                                        + " on \"ip+pass\" [low,mid,skilled,pgm,high,autre level] (sans les [])",
-                                "syntaxe : "
-                                        + getTriggerText()
-                                        + " on \"ip+pass\" level \"message de seek entre crochet :: %P=nombre de joueur, %L = level, %S = serv(off ici) \"" };
-                        for (String element : noticeListHelp) {
-                            notice = new Notice(im, element, true);
-                            control.sendMsg(notice);
-                        }
+                        showHelp(control, im);
                     }
                 } else if (seek.isSeekInProgress()) {
                     reply = "Seek deja en cours.";
@@ -147,5 +129,10 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                 }
             }
         }
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " (<on|off>) (<ip-pass>) (<level>) (<seek-message>)";
     }
 }

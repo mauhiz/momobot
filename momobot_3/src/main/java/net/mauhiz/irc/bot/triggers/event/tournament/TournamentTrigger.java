@@ -30,24 +30,29 @@ public class TournamentTrigger extends AbstractTextTrigger implements IPrivmsgTr
         IChannelEvent evt = chan.getEvt();
         String respMsg;
         if (evt == null) {
-            // ON cree le tn en fonction des parametres
+            // On cree le tn en fonction des parametres
             // On pecho les params
             ArgumentList params = getArgs(cme);
 
-            // Tcheck si les params st ok
+            // Check si les params st ok
             if (params.isEmpty()) {
-                respMsg = "Parametre(s) invalide(s)";
-            } else {
-                Tournament tn = new Tournament(chan, params.asList());
-                tn.generateTemplate();
-                respMsg = tn.toString();
+                showHelp(control, cme);
+                return;
             }
 
-            // new Gather(chan).add(user);
+            Tournament tn = new Tournament(chan, params.asList());
+            tn.generateTemplate();
+            respMsg = tn.toString();
+
         } else {
             respMsg = "Un " + evt.getClass().getSimpleName() + " est deja lance sur " + cme.getTo();
         }
         Privmsg resp = new Privmsg(cme, respMsg);
         control.sendMsg(resp);
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " [<map>]+";
     }
 }

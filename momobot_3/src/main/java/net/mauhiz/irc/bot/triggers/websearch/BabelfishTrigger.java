@@ -5,12 +5,12 @@ import java.util.Arrays;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.ArgumentList;
-import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -73,18 +73,27 @@ public class BabelfishTrigger extends AbstractTextTrigger implements IPrivmsgTri
      */
     @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-
         ArgumentList args = getArgs(cme);
         String lang1 = args.poll();
         String lang2 = args.poll();
         String msg = args.getRemainingData();
-        Notice notice;
-        try {
-            notice = new Notice(cme, result(lang1, lang2, msg), false);
-        } catch (IOException ioe) {
-            LOG.error(ioe, ioe);
-            notice = new Notice(cme, "syntaxe : " + this + " lang1[fr/en/..] lang2[fr/en/...] texte", true);
+
+        if (StringUtils.isEmpty(msg)) {
+            showHelp(control, cme);
+            return;
         }
-        control.sendMsg(notice);
+
+        try {
+            Privmsg notice = new Privmsg(cme, result(lang1, lang2, msg), false);
+            control.sendMsg(notice);
+        } catch (IOException ioe) {
+            LOG.warn(ioe, ioe);
+            control.sendMsg(new Privmsg(cme, "I failed: " + ioe.getLocalizedMessage(), false));
+        }
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <from{fr|en|..}> <to{fr|en|..}> <text>";
     }
 }

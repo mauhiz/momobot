@@ -59,9 +59,7 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 String locStr = args.poll();
                 String tag = args.poll();
                 if (tag == null || args.isEmpty()) {
-                    Privmsg msg = new Privmsg(im,
-                            "Erreur : parametre(s) insuffisant(s). ex : $tn-register FR eule joueur1 joueur2 joueur3 joueur4 joueur5");
-                    control.sendMsg(msg);
+                    showHelp(control, im);
                     return;
                 }
 
@@ -94,10 +92,15 @@ public class RegisterTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 return;
 
             }
-            Privmsg msg = new Privmsg(im, "Erreur : Tournois deja complet.");
+            Privmsg msg = new Privmsg(im, "Erreur : Tournoi deja complet.");
             control.sendMsg(msg);
             return;
 
         }
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <pays{FR|EN|..}> <tag> [<player>]+";
     }
 }

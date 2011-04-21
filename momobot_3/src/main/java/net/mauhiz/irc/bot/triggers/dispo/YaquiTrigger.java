@@ -131,7 +131,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     @Override
     public String getTriggerHelp() {
-        return "syntaxe : " + getTriggerText() + " jour[" + StringUtils.join(DateUtil.getWeekDays(Locale.FRANCE), '/')
+        return super.getTriggerHelp() + " jour[" + StringUtils.join(DateUtil.getWeekDays(Locale.FRANCE), '/')
                 + "] ou $" + getTriggerText() + " semaine";
     }
 }

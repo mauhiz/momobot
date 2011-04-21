@@ -90,6 +90,7 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
     public void doTrigger(Privmsg cme, IIrcControl control) {
         String args = getTriggerContent(cme);
         Privmsg resp;
+
         try {
             double nombre = Double.parseDouble(args);
             String fraction = computeFractionContinue(nombre);
@@ -97,7 +98,12 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
         } catch (NumberFormatException nfe) {
             resp = new Privmsg(cme, "l'argument doit etre un nombre (recu : " + args + ")");
         }
-        control.sendMsg(resp);
 
+        control.sendMsg(resp);
+    }
+
+    @Override
+    public String getTriggerHelp() {
+        return super.getTriggerHelp() + " <number>";
     }
 }

@@ -113,7 +113,7 @@ public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
 
     @Override
     public String getTriggerHelp() {
-        return "Syntaxe: " + getTriggerText()
+        return super.getTriggerHelp()
                 + " [select ip:port rcon | connect ip:port pw | disconnect | start demoname | stop | status]";
     }
 }

@@ -2,8 +2,10 @@ package net.mauhiz.irc.bot.triggers;
 
 import java.util.Locale;
 
+import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.msg.IPrivateIrcMessage;
+import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.trigger.ITextTrigger;
 
 import org.apache.commons.lang.StringUtils;
@@ -92,6 +94,10 @@ public abstract class AbstractTextTrigger implements ITextTrigger, ICommand {
             LOG.debug("Trigger " + getClass().getSimpleName() + " activated");
         }
         return activated;
+    }
+
+    protected void showHelp(IIrcControl control, IPrivateIrcMessage replyTo) {
+        control.sendMsg(new Notice(replyTo, getTriggerHelp(), true));
     }
 
     /**
