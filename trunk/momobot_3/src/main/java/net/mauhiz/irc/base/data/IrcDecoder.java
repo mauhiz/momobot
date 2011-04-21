@@ -40,36 +40,8 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
         super();
     }
 
-    /**
-     * @param raw
-     * @return raw IRC msg
-     */
-    public IIrcMessage buildFromRaw(IIrcServerPeer server, String raw) {
-        String argumentStr = StringUtils.substringBefore(raw, " :");
-        ArgumentList args = tokenizeArgs(argumentStr);
-
-        if (args.isEmpty()) {
-            throw new IllegalArgumentException("Malformed IRC message: " + raw);
-        }
-
-        String next = args.peek();
-        String fromStr = next != null && next.charAt(0) == ':' ? args.poll().substring(1) : null;
-        String cmd = args.poll();
-
-        if (cmd == null) {
-            throw new IllegalArgumentException("Malformed IRC message: " + raw);
-        }
-
-        String msg = StringUtils.substringAfter(raw, " :");
-        Target from = decodeTarget(server, fromStr);
-
-        if (StringUtils.isNumeric(cmd)) {
-            // skip the 'to'
-            args.poll();
-            return new ServerMsg(server, from, Integer.parseInt(cmd), args, msg);
-        }
-
-        IrcCommands command = IrcCommands.valueOf(cmd);
+    private IIrcMessage buildFromCommand(IrcCommands command, IIrcServerPeer server, ArgumentList args, Target from,
+            String msg) {
 
         switch (command) {
             case NOTICE:
@@ -103,8 +75,8 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
             case PRIVMSG:
                 to = decodeTarget(server, args.poll());
                 if (msg.charAt(0) == QUOTE_STX) {
-                    msg = StringUtils.strip(msg, Character.toString(QUOTE_STX));
-                    return CtcpFactory.decode(server, from, to, msg);
+                    String ctcpContent = StringUtils.strip(msg, Character.toString(QUOTE_STX));
+                    return CtcpFactory.decode(server, from, to, ctcpContent);
                 }
                 return new Privmsg(server, from, to, msg);
 
@@ -121,16 +93,53 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
                 return new Kick(server, from, (IrcChannel) to, target, msg);
 
             case ERROR:
-                // TODO ERROR :Closing Link: by underworld2.no.quakenet.org (Registration Timeout)
-                return new ServerError(server, cmd);
+                return new ServerError(server, msg);
 
             case TOPIC:
                 to = decodeTarget(server, args.poll());
                 return new SetTopic(server, from, (IrcChannel) to, msg);
 
             default:
-                throw new NotImplementedException("Unknown message on network " + server.getNetwork() + ": " + raw);
+                return null;
         }
+    }
+
+    /**
+     * @param raw
+     * @return raw IRC msg
+     */
+    public IIrcMessage buildFromRaw(IIrcServerPeer server, String raw) {
+        String argumentStr = StringUtils.substringBefore(raw, " :");
+        ArgumentList args = tokenizeArgs(argumentStr);
+
+        if (args.isEmpty()) {
+            throw new IllegalArgumentException("Malformed IRC message: " + raw);
+        }
+
+        String next = args.peek();
+        String fromStr = next != null && next.charAt(0) == ':' ? args.poll().substring(1) : null;
+        String cmd = args.poll();
+
+        if (cmd == null) {
+            throw new IllegalArgumentException("Malformed IRC message: " + raw);
+        }
+
+        String msg = StringUtils.substringAfter(raw, " :");
+        Target from = decodeTarget(server, fromStr);
+
+        if (StringUtils.isNumeric(cmd)) {
+            // skip the 'to'
+            args.poll();
+            return new ServerMsg(server, from, Integer.parseInt(cmd), args, msg);
+        }
+
+        IrcCommands command = IrcCommands.valueOf(cmd);
+        IIrcMessage ircMessage = buildFromCommand(command, server, args, from, msg);
+        if (ircMessage == null) {
+            throw new NotImplementedException("Unknown message on network " + server.getNetwork() + ": " + raw);
+        }
+
+        return ircMessage;
     }
 
     protected Target decodeTarget(IIrcServerPeer peer, String fromStr) {

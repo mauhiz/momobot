@@ -438,6 +438,7 @@ public class SeekWar2 extends AbstractChannelEvent {
         } else {
             if (st.contains("pracc") || st.contains("pcw")) {
                 // FIXME
+                LOG.debug("Not found but...");
             }
         }
         return false;

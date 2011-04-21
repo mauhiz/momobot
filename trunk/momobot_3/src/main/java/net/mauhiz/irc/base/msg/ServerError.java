@@ -6,6 +6,7 @@ import net.mauhiz.irc.base.data.IrcCommands;
 /**
  * @author mauhiz
  */
+// ERROR :Closing Link: by underworld2.no.quakenet.org (Registration Timeout)
 public class ServerError extends AbstractIrcMessage {
     /**
      * contenu de l erreur

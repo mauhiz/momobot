@@ -1,7 +1,7 @@
 package net.mauhiz.irc.gui;
 
-import net.mauhiz.irc.base.data.IrcServerFactory;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcServerFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -35,12 +35,8 @@ public class SwtLogTab extends AbstractSwtTab {
 
     public SwtLogTab(final SwtIrcClient swtIrcClient) {
         super(swtIrcClient);
-
-        folder.setText("Console");
-
-        GridLayout gridLayout = new GridLayout(1, false);
-        compo.setLayout(gridLayout);
-        initReceiveBox();
+        folder.setText(getFolderName());
+        initReceiveBox(compo);
 
         Composite connectBar = new Composite(compo, SWT.BORDER);
         connectBar.setLayoutData(new GridData(SWT.FILL));
@@ -63,5 +59,10 @@ public class SwtLogTab extends AbstractSwtTab {
                 }
             }
         });
+    }
+
+    @Override
+    protected final String getFolderName() {
+        return "Console";
     }
 }

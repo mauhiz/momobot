@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.ArgumentList;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -35,6 +36,26 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      */
     public AdminaddTrigger(String trigger) {
         super(trigger);
+    }
+
+    private void addToPickup(Pickup pick, ArgumentList args, IIrcControl control, IrcChannel chan, IIrcServerPeer server) {
+        List<String> whos = args.asList();
+        String team = whos.get(whos.size() - 1);
+        int max = whos.size();
+        if (pick.assignTeam(team) != null) {
+            --max;
+        }
+        for (int i = 0; i < max; i++) {
+            IrcUser target = server.getNetwork().findUser(whos.get(i), false);
+            if (target == null) {
+                Privmsg msg = new Privmsg(server, null, chan, whos.get(i) + " n'est pas sur " + chan);
+                control.sendMsg(msg);
+                continue;
+            }
+            String resp = replaceTu(pick.add(target, team), target.getNick());
+            Privmsg msg = new Privmsg(server, null, chan, resp);
+            control.sendMsg(msg);
+        }
     }
 
     /**
@@ -69,25 +90,7 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
             }
 
         } else if (event instanceof Pickup) {
-            List<String> whos = args.asList();
-            String team = whos.get(whos.size() - 1);
-            Pickup pick = (Pickup) event;
-            int max = whos.size();
-            if (pick.assignTeam(team) != null) {
-                --max;
-            }
-            for (int i = 0; i < max; i++) {
-                IrcUser target = im.getServerPeer().getNetwork().findUser(whos.get(i), false);
-                if (target == null) {
-                    Privmsg msg = new Privmsg(im, whos.get(i) + " n'est pas sur " + chan);
-                    control.sendMsg(msg);
-                    continue;
-                }
-                String resp = replaceTu(pick.add(target, team), target.getNick());
-                Privmsg msg = new Privmsg(im, resp);
-                control.sendMsg(msg);
-            }
-
+            addToPickup((Pickup) event, args, control, chan, im.getServerPeer());
         }
     }
 }

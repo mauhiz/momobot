@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class GuiTriggerManager extends DefaultTriggerManager {
     IIrcClientControl client = new IrcClientControl(this);
-    BlockingQueue<IIrcMessage> incoming = new LinkedBlockingQueue<IIrcMessage>();
+    private final BlockingQueue<IIrcMessage> incoming = new LinkedBlockingQueue<IIrcMessage>();
 
     /**
      * @return the client

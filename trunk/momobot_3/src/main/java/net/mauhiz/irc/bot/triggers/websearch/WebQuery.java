@@ -65,7 +65,7 @@ public class WebQuery {
      * url.
      */
     private URI url;
-    
+
     /**
      * @param type1
      *            le type
@@ -84,7 +84,7 @@ public class WebQuery {
         }
         len = resultSep.length();
     }
-    
+
     /**
      * @return un iterateur sur les resultats
      */
@@ -96,15 +96,15 @@ public class WebQuery {
             LOG.error(ioe, ioe);
             return null;
         }
-        
+
         if (StringUtils.isBlank(page)) {
             return null;
         }
-        
+
         List<String> results = new ArrayList<String>(numResult);
         int index;
         String work;
-        if (type.equals(GAMETIGER)) {
+        if (GAMETIGER.equals(type)) {
             for (int k = 0; k < numResult; ++k) {
                 index = page.indexOf(resultSep);
                 if (index == -1) {
@@ -119,9 +119,9 @@ public class WebQuery {
                 page = page.substring(index);
                 results.add(work);
             }
-        } else if (type.equals(YAHOO)) {
+        } else if (YAHOO.equals(type)) {
             page = page.substring(page.indexOf("<h2>RESULTATS WEB</h2>"));
-            forloop : for (int k = 0; k < numResult; ++k) {
+            forloop: for (int k = 0; k < numResult; ++k) {
                 while (!page.startsWith(HTTP) && !page.startsWith(FTP)) {
                     index = page.indexOf(resultSep);
                     if (index < 0) {
@@ -139,11 +139,11 @@ public class WebQuery {
                 }
                 page = page.substring(index);
             }
-        } else if (type.equals(GOOGLE)) {
+        } else if (GOOGLE.equals(type)) {
             int start = page.indexOf("<h2 class=hd>Resultats de recherche</h2>");
             if (start >= 0) {
                 page = page.substring(start);
-                forloop : for (int k = 0; k < numResult; ++k) {
+                forloop: for (int k = 0; k < numResult; ++k) {
                     while (true) {
                         index = page.indexOf(resultSep);
                         if (index == -1) {
@@ -164,22 +164,22 @@ public class WebQuery {
         }
         return results;
     }
-    
+
     /**
      * @throws URISyntaxException
      */
     private void setUrl() throws URISyntaxException {
-        if (type.equals(GAMETIGER)) {
+        if (GAMETIGER.equals(type)) {
             resultSep = "/search?address=";
-            url = new URI("http", "gametiger.net", "/search", "game=cstrike&player=" + query, null);
-        } else if (type.equals(GOOGLE)) {
+            url = new URI(HTTP, "gametiger.net", "/search", "game=cstrike&player=" + query, null);
+        } else if (GOOGLE.equals(type)) {
             resultSep = "<a href=\"";
             numResult = 2;
-            url = new URI("http", "www.google.fr", "/search", "hl=fr&ie=UTF-8&oe=UTF-8&num=" + numResult + "&q="
-                    + query, null);
-        } else if (type.equals(YAHOO)) {
+            url = new URI(HTTP, "www.google.fr", "/search", "hl=fr&ie=UTF-8&oe=UTF-8&num=" + numResult + "&q=" + query,
+                    null);
+        } else if (YAHOO.equals(type)) {
             resultSep = "<a class=yschttl  href=\"";
-            url = new URI("http", "fr.search.yahoo.com", "/search", "ie=UTF-8&num=" + numResult + "&p=" + query, null);
+            url = new URI(HTTP, "fr.search.yahoo.com", "/search", "ie=UTF-8&num=" + numResult + "&p=" + query, null);
         }
     }
 }

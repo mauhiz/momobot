@@ -15,15 +15,11 @@ import org.eclipse.swt.widgets.Text;
 
 public class SwtServerTab extends AbstractSwtTab {
 
-    static class JoinHandler implements Listener {
+    class JoinHandler implements Listener {
         private final Text joinField;
-        private final IIrcServerPeer server;
-        private final SwtIrcClient swtIrcClient;
 
-        JoinHandler(Text joinField, SwtIrcClient swtIrcClient, IIrcServerPeer server) {
+        JoinHandler(Text joinField) {
             this.joinField = joinField;
-            this.swtIrcClient = swtIrcClient;
-            this.server = server;
         }
 
         @Override
@@ -32,15 +28,25 @@ public class SwtServerTab extends AbstractSwtTab {
         }
     }
 
+    class ListHandler implements Listener {
+
+        @Override
+        public void handleEvent(Event arg0) {
+            swtIrcClient.gtm.client.sendMsg(new net.mauhiz.irc.base.msg.List(server, null));
+        }
+    }
+
+    final IIrcServerPeer server;
+
     public SwtServerTab(final SwtIrcClient swtIrcClient, final IIrcServerPeer server) {
         super(swtIrcClient);
+        this.server = server;
 
-        folder.setText(server.getNetwork().getAlias());
-
-        GridLayout gridLayout = new GridLayout(1, false);
-        compo.setLayout(gridLayout);
-        initReceiveBox();
-
+        folder.setText(getFolderName());
+        Composite mainPanel = new Composite(compo, SWT.BORDER | SWT.FILL);
+        mainPanel.setLayout(new GridLayout(2, false));
+        initReceiveBox(mainPanel);
+        initChanList(mainPanel);
         Composite joinBar = new Composite(compo, SWT.BORDER);
         joinBar.setLayoutData(new GridData(SWT.FILL));
         joinBar.setLayout(new GridLayout(2, false));
@@ -48,7 +54,7 @@ public class SwtServerTab extends AbstractSwtTab {
         joinField.setEditable(true);
         Button joinButton = new Button(joinBar, SWT.PUSH);
         joinButton.setText("Join");
-        joinButton.addListener(SWT.Selection, new JoinHandler(joinField, swtIrcClient, server));
+        joinButton.addListener(SWT.Selection, new JoinHandler(joinField));
 
         swtIrcClient.folderBar.addCTabFolder2Listener(new CTabFolder2Adapter() {
 
@@ -59,5 +65,21 @@ public class SwtServerTab extends AbstractSwtTab {
                 }
             }
         });
+    }
+
+    @Override
+    protected final String getFolderName() {
+        return server.getNetwork().getAlias();
+    }
+
+    private void initChanList(Composite parent) {
+        Composite chanListAndButtons = new Composite(parent, SWT.BORDER);
+        chanListAndButtons.setLayout(new GridLayout(1, false));
+        org.eclipse.swt.widgets.List chanList = new org.eclipse.swt.widgets.List(chanListAndButtons, SWT.BORDER
+                | SWT.V_SCROLL);
+        setListSize(chanList, 20, 150);
+        Button listButton = new Button(chanListAndButtons, SWT.PUSH);
+        listButton.setText("Refresh channel list");
+        listButton.addListener(SWT.Selection, new ListHandler());
     }
 }

@@ -4,6 +4,7 @@ import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.gui.actions.SendAction;
+import net.mauhiz.irc.gui.actions.SendMeAction;
 import net.mauhiz.irc.gui.actions.SendNoticeAction;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,14 +23,15 @@ public class SwtPrivateTab extends AbstractSwtTab {
         super(swtIrcClient);
         this.server = server;
         this.user = user;
-        folder.setText(user.getNick());
 
-        /* layout */
-        GridLayout gridLayout = new GridLayout(1, false);
-        compo.setLayout(gridLayout);
-
-        initReceiveBox();
+        folder.setText(getFolderName());
+        initReceiveBox(compo);
         initTypeBar();
+    }
+
+    @Override
+    protected final String getFolderName() {
+        return user.getNick();
     }
 
     protected final Target getTarget() {
@@ -38,7 +40,7 @@ public class SwtPrivateTab extends AbstractSwtTab {
 
     protected final void initTypeBar() {
         Composite typeZone = new Composite(compo, SWT.BORDER);
-        typeZone.setLayout(new GridLayout(3, false));
+        typeZone.setLayout(new GridLayout(4, false));
 
         /* Affichage de la barre de saisie */
         Text inputBar = new Text(typeZone, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
@@ -54,5 +56,9 @@ public class SwtPrivateTab extends AbstractSwtTab {
         Button sendNotice = new Button(typeZone, SWT.PUSH);
         sendNotice.setText("Send notice");
         sendNotice.addSelectionListener(new SendNoticeAction(inputBar, swtIrcClient.gtm, server, getTarget()));
+
+        Button sendAction = new Button(typeZone, SWT.PUSH);
+        sendAction.setText("Send action");
+        sendAction.addSelectionListener(new SendMeAction(inputBar, swtIrcClient.gtm, server, getTarget()));
     }
 }

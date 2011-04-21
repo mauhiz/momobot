@@ -5,6 +5,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
@@ -28,10 +29,9 @@ public abstract class AbstractSwtTab {
     }
 
     protected final Composite compo;
+
     protected final CTabItem folder;
-
     protected Text receiveBox;
-
     protected final SwtIrcClient swtIrcClient;
 
     protected AbstractSwtTab(final SwtIrcClient swtIrcClient) {
@@ -39,6 +39,10 @@ public abstract class AbstractSwtTab {
         folder = new CTabItem(swtIrcClient.folderBar, SWT.CLOSE);
         compo = new Composite(swtIrcClient.folderBar, SWT.BORDER | SWT.FILL);
         compo.setBackground(compo.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
+
+        GridLayout gridLayout = new GridLayout(1, false);
+        compo.setLayout(gridLayout);
+
         folder.setControl(compo);
     }
 
@@ -46,8 +50,10 @@ public abstract class AbstractSwtTab {
         receiveBox.append(msg + SystemUtils.LINE_SEPARATOR);
     }
 
-    protected void initReceiveBox() {
-        receiveBox = new Text(compo, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+    protected abstract String getFolderName();
+
+    protected void initReceiveBox(Composite parent) {
+        receiveBox = new Text(parent, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
         receiveBox.setBackground(receiveBox.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
         receiveBox.setText(StringUtils.EMPTY);
         receiveBox.setEditable(false);

@@ -32,6 +32,18 @@ public class BncServerConnection extends AbstractRunnable {
         mySelf = serverData.newUser("root");
     }
 
+    private void bouncerLoop(ServerSocket bouncerServer) throws IOException {
+        while (isRunning()) {
+            Socket socket = bouncerServer.accept();
+            socket.setSoTimeout(SO_TIMEOUT);
+
+            ClientPeer peer = new ClientPeer(socket, serverData);
+            BncClientControl control = new BncClientControl();
+            BncClientIO bcl = new BncClientIO(control, socket, peer, this);
+            bcl.start();
+        }
+    }
+
     private void connectAccounts() { // TODO implement limit
         for (Account acc : accountStore.getAccounts()) {
             IrcClientControl control = new IrcClientControl(acc.getRelatedManager());
@@ -43,6 +55,10 @@ public class BncServerConnection extends AbstractRunnable {
         return accountStore;
     }
 
+    public long getGlobalStartTime() {
+        return globalStartTime;
+    }
+
     @Override
     public void run() {
         try {
@@ -50,17 +66,11 @@ public class BncServerConnection extends AbstractRunnable {
             LOG.info("Bouncer server rock steady");
             globalStartTime = System.currentTimeMillis();
             connectAccounts();
-            while (isRunning()) {
-                Socket socket = bouncerServer.accept();
-                socket.setSoTimeout(SO_TIMEOUT);
+            bouncerLoop(bouncerServer);
 
-                ClientPeer peer = new ClientPeer(socket, serverData);
-                BncClientControl control = new BncClientControl();
-                BncClientIO bcl = new BncClientIO(control, socket, peer, this);
-                bcl.start();
-            }
         } catch (SocketTimeoutException ste) {
             // nevermind
+            LOG.debug(ste, ste);
         } catch (IOException ioe) {
             LOG.error(ioe, ioe);
         }
