@@ -1,6 +1,7 @@
 package net.mauhiz.irc.gui.actions;
 
 import net.mauhiz.util.AbstractAction;
+import net.mauhiz.util.ExecutionType;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -24,7 +25,7 @@ public class ExitAction extends AbstractAction {
     }
 
     @Override
-    protected boolean isAsynchronous() {
-        return false; // I want to quit now!
+    protected ExecutionType getExecutionType() {
+        return ExecutionType.GUI_SYNCHRONOUS; // I want to quit now!
     }
 }

@@ -30,4 +30,9 @@ public class Action extends Ctcp {
     protected String getCommand() {
         return COMMAND;
     }
+
+    @Override
+    public String toString() {
+        return ">> " + niceFromDisplay() + " " + getCtcpContent();
+    }
 }

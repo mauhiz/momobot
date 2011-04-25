@@ -16,6 +16,7 @@ import net.mauhiz.irc.gui.actions.SendAction;
 import net.mauhiz.irc.gui.actions.SendMeAction;
 import net.mauhiz.irc.gui.actions.SendNoticeAction;
 import net.mauhiz.util.AbstractAction;
+import net.mauhiz.util.ExecutionType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -107,8 +108,8 @@ public class SwtChanTab extends AbstractSwtTab {
         }
 
         @Override
-        protected boolean isAsynchronous() {
-            return false;
+        protected ExecutionType getExecutionType() {
+            return ExecutionType.GUI_SYNCHRONOUS;
         }
     }
 
