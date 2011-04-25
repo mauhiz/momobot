@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -20,6 +21,14 @@ public abstract class AbstractSwtTab {
         list.setLayoutData(data);
     }
 
+    protected static void setTextSize(StyledText text, int numLines, int width) {
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.heightHint = numLines * text.getLineHeight(); // height for 10 rows
+        data.widthHint = width;
+        text.setSize(data.widthHint, data.heightHint);
+        text.setLayoutData(data);
+    }
+
     protected static void setTextSize(Text text, int numLines, int width) {
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = numLines * text.getLineHeight(); // height for 10 rows
@@ -31,7 +40,7 @@ public abstract class AbstractSwtTab {
     protected final Composite compo;
 
     protected final CTabItem folder;
-    protected Text receiveBox;
+    protected StyledText receiveBox;
     protected final SwtIrcClient swtIrcClient;
 
     protected AbstractSwtTab(final SwtIrcClient swtIrcClient) {
@@ -48,13 +57,15 @@ public abstract class AbstractSwtTab {
 
     public void appendText(String msg) {
         receiveBox.append(msg + SystemUtils.LINE_SEPARATOR);
+        // TODO replaceStyleRange
+        //        receiveBox.append(ColorUtils.toHTML(msg) + "<br />");
     }
 
     protected abstract String getFolderName();
 
     protected void initReceiveBox(Composite parent) {
-        receiveBox = new Text(parent, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
-        receiveBox.setBackground(receiveBox.getDisplay().getSystemColor(SWT.COLOR_DARK_GREEN));
+        receiveBox = new StyledText(parent, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+        receiveBox.setBackground(receiveBox.getDisplay().getSystemColor(SWT.COLOR_WHITE));
         receiveBox.setText(StringUtils.EMPTY);
         receiveBox.setEditable(false);
         setTextSize(receiveBox, 25, 400);

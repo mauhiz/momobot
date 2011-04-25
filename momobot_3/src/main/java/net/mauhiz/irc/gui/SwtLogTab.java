@@ -15,6 +15,15 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 public class SwtLogTab extends AbstractSwtTab {
+    class CloseHandler extends CTabFolder2Adapter {
+
+        @Override
+        public void close(CTabFolderEvent event) {
+            if (folder == event.item) {
+                event.doit = false;
+            }
+        }
+    }
 
     static class ConnectHandler implements Listener {
         private final Text connectField;
@@ -50,15 +59,7 @@ public class SwtLogTab extends AbstractSwtTab {
         joinButton.setText("Connect");
         joinButton.addListener(SWT.Selection, new ConnectHandler(connectField, swtIrcClient));
 
-        swtIrcClient.folderBar.addCTabFolder2Listener(new CTabFolder2Adapter() {
-
-            @Override
-            public void close(CTabFolderEvent event) {
-                if (folder == event.item) {
-                    event.doit = false;
-                }
-            }
-        });
+        swtIrcClient.folderBar.addCTabFolder2Listener(new CloseHandler());
     }
 
     @Override

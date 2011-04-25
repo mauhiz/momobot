@@ -8,7 +8,12 @@ import net.mauhiz.irc.gui.actions.SendMeAction;
 import net.mauhiz.irc.gui.actions.SendNoticeAction;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -16,7 +21,19 @@ import org.eclipse.swt.widgets.Text;
 
 public class SwtPrivateTab extends AbstractSwtTab {
 
+    class CloseHandler extends CTabFolder2Adapter {
+
+        @Override
+        public void close(CTabFolderEvent event) {
+            if (event.item == folder) {
+                swtIrcClient.privateTabs.remove(user);
+                Logger.getLogger(SwtChanTab.class).info("Closed query tab: " + user);
+            }
+        }
+    }
+
     IIrcServerPeer server;
+
     final IrcUser user;
 
     public SwtPrivateTab(final SwtIrcClient swtIrcClient, final IIrcServerPeer server, final IrcUser user) {
@@ -27,6 +44,8 @@ public class SwtPrivateTab extends AbstractSwtTab {
         folder.setText(getFolderName());
         initReceiveBox(compo);
         initTypeBar();
+
+        swtIrcClient.folderBar.addCTabFolder2Listener(new CloseHandler());
     }
 
     @Override
@@ -43,7 +62,7 @@ public class SwtPrivateTab extends AbstractSwtTab {
         typeZone.setLayout(new GridLayout(4, false));
 
         /* Affichage de la barre de saisie */
-        Text inputBar = new Text(typeZone, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
+        final Text inputBar = new Text(typeZone, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
         inputBar.setText(StringUtils.EMPTY);
         inputBar.setEditable(true);
         setTextSize(inputBar, 1, 400);
@@ -52,6 +71,16 @@ public class SwtPrivateTab extends AbstractSwtTab {
         Button sendText = new Button(typeZone, SWT.PUSH);
         sendText.setText("Send text");
         sendText.addSelectionListener(new SendAction(inputBar, swtIrcClient.gtm, server, getTarget()));
+
+        inputBar.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent arg0) {
+                if (arg0.keyCode == '\r') {
+                    new SendAction(inputBar, swtIrcClient.gtm, server, user).doSwtAction(arg0);
+                }
+            }
+        });
 
         Button sendNotice = new Button(typeZone, SWT.PUSH);
         sendNotice.setText("Send notice");
