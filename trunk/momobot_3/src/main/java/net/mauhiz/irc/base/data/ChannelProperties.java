@@ -94,7 +94,22 @@ public class ChannelProperties implements IChannelProperties {
      * @see net.mauhiz.irc.base.data.IChannelProperties#process(boolean, char, java.lang.String[])
      */
     public void process(boolean set, char mode, String... args) {
-        if (mode == 'n') {
+        if (mode == 'b') {
+            HostMask hm = HostMask.getInstance(args[0]);
+            if (set) {
+                bans.add(hm);
+            } else {
+                bans.remove(hm);
+            }
+        } else if (mode == 'i') {
+            inviteOnly = set;
+        } else if (mode == 'k') {
+            key = set ? args[0] : null;
+        } else if (mode == 'l') {
+            limit = set ? Integer.valueOf(args[0]) : null;
+        } else if (mode == 'm') {
+            moderated = set;
+        } else if (mode == 'n') {
             noExt = set;
         } else if (mode == 't') {
             opTopic = set;

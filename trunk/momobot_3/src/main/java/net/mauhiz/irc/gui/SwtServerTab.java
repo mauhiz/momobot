@@ -2,6 +2,7 @@ package net.mauhiz.irc.gui;
 
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
@@ -14,6 +15,17 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 public class SwtServerTab extends AbstractSwtTab {
+
+    class CloseHandler extends CTabFolder2Adapter {
+
+        @Override
+        public void close(CTabFolderEvent event) {
+            if (event.item == folder) {
+                swtIrcClient.doDisconnect(server);
+                Logger.getLogger(SwtChanTab.class).info("Closed server tab: " + server);
+            }
+        }
+    }
 
     class JoinHandler implements Listener {
         private final Text joinField;
@@ -56,15 +68,7 @@ public class SwtServerTab extends AbstractSwtTab {
         joinButton.setText("Join");
         joinButton.addListener(SWT.Selection, new JoinHandler(joinField));
 
-        swtIrcClient.folderBar.addCTabFolder2Listener(new CTabFolder2Adapter() {
-
-            @Override
-            public void close(CTabFolderEvent event) {
-                if (folder == event.item) {
-                    swtIrcClient.doDisconnect(server);
-                }
-            }
-        });
+        swtIrcClient.folderBar.addCTabFolder2Listener(new CloseHandler());
     }
 
     @Override

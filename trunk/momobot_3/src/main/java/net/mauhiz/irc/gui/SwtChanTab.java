@@ -11,6 +11,7 @@ import net.mauhiz.irc.base.data.Topic;
 import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Mode;
 import net.mauhiz.irc.base.msg.Part;
+import net.mauhiz.irc.base.msg.SetTopic;
 import net.mauhiz.irc.base.msg.Whois;
 import net.mauhiz.irc.gui.actions.SendAction;
 import net.mauhiz.irc.gui.actions.SendMeAction;
@@ -23,6 +24,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -32,7 +35,24 @@ import org.eclipse.swt.widgets.Text;
 
 public class SwtChanTab extends AbstractSwtTab {
 
-    class BanAction extends UserMenuAction {
+    abstract class AbstractUserMenuAction extends AbstractAction {
+        protected List<IrcUser> findUsers() {
+            List<IrcUser> users = new ArrayList<IrcUser>();
+
+            String[] selectedNicks = usersInChan.getSelection();
+            for (String selectedNick : selectedNicks) {
+                users.add(server.getNetwork().findUser(selectedNick, false));
+            }
+            return users;
+        }
+
+        @Override
+        protected ExecutionType getExecutionType() {
+            return ExecutionType.GUI_SYNCHRONOUS;
+        }
+    }
+
+    class BanAction extends AbstractUserMenuAction {
 
         @Override
         protected void doAction() {
@@ -59,7 +79,7 @@ public class SwtChanTab extends AbstractSwtTab {
         }
     }
 
-    class KickAction extends UserMenuAction {
+    class KickAction extends AbstractUserMenuAction {
 
         @Override
         protected void doAction() {
@@ -71,7 +91,7 @@ public class SwtChanTab extends AbstractSwtTab {
         }
     }
 
-    class OpAction extends UserMenuAction {
+    class OpAction extends AbstractUserMenuAction {
 
         @Override
         protected void doAction() {
@@ -84,7 +104,7 @@ public class SwtChanTab extends AbstractSwtTab {
         }
     }
 
-    class QueryAction extends UserMenuAction {
+    class QueryAction extends AbstractUserMenuAction {
 
         @Override
         protected void doAction() {
@@ -93,27 +113,36 @@ public class SwtChanTab extends AbstractSwtTab {
                 swtIrcClient.createPrivateTab(server, user);
             }
         }
-
     }
 
-    abstract class UserMenuAction extends AbstractAction {
-        protected List<IrcUser> findUsers() {
-            List<IrcUser> users = new ArrayList<IrcUser>();
+    class SetTopicAction extends AbstractAction {
 
-            String[] selectedNicks = usersInChan.getSelection();
-            for (String selectedNick : selectedNicks) {
-                users.add(server.getNetwork().findUser(selectedNick, false));
+        @Override
+        protected void doAction() {
+            if (topicBar.getEditable()) {
+                SetTopic setTopic = new SetTopic(server, null, channel, topicBar.getText());
+                swtIrcClient.gtm.client.sendMsg(setTopic);
             }
-            return users;
         }
 
         @Override
         protected ExecutionType getExecutionType() {
-            return ExecutionType.GUI_SYNCHRONOUS;
+            return ExecutionType.GUI_ASYNCHRONOUS;
         }
     }
 
-    class VoiceAction extends UserMenuAction {
+    class ToggleModerateAction extends AbstractUserMenuAction {
+
+        @Override
+        protected void doAction() {
+            String modeStr = channel.getProperties().isModerated() ? "-m" : "+m"; // TODO make this higher level
+            Mode mute = new Mode(server, null, channel, new ArgumentList(modeStr));
+            swtIrcClient.gtm.client.sendMsg(mute);
+        }
+
+    }
+
+    class VoiceAction extends AbstractUserMenuAction {
 
         @Override
         protected void doAction() {
@@ -126,7 +155,7 @@ public class SwtChanTab extends AbstractSwtTab {
         }
     }
 
-    class WhoisAction extends UserMenuAction {
+    class WhoisAction extends AbstractUserMenuAction {
 
         @Override
         protected void doAction() {
@@ -153,10 +182,19 @@ public class SwtChanTab extends AbstractSwtTab {
         topicBar = new Text(titleBar, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
 
         // control buttons (chan flags...)
-        Composite controlGroup = new Composite(titleBar, SWT.BORDER);
+        Composite controlGroup = new Composite(titleBar, SWT.BORDER | SWT.FILL);
+        controlGroup.setLayout(new GridLayout(4, false));
         controlGroup.setBackground(controlGroup.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+        Button setTopic = new Button(controlGroup, SWT.PUSH);
+        setTopic.setText("Set topic");
+        setTopic.addSelectionListener(new SetTopicAction());
+
+        Button setModerate = new Button(controlGroup, SWT.PUSH);
+        setModerate.setText("Toggle mod.");
+        setModerate.addSelectionListener(new ToggleModerateAction());
 
         Composite mainPanel = new Composite(compo, SWT.BORDER);
+        mainPanel.setLayout(new GridLayout(2, false));
         initReceiveBox(mainPanel);
         usersInChan = new org.eclipse.swt.widgets.List(mainPanel, SWT.BORDER | SWT.V_SCROLL);
         setListSize(usersInChan, 15, 150);
@@ -183,7 +221,7 @@ public class SwtChanTab extends AbstractSwtTab {
         typeBar.setLayout(new GridLayout(4, false));
 
         /* Affichage de la barre de saisie */
-        Text inputBar = new Text(typeBar, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
+        final Text inputBar = new Text(typeBar, SWT.WRAP | SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
         inputBar.setText(StringUtils.EMPTY);
         inputBar.setEditable(true);
         setTextSize(inputBar, 1, 400);
@@ -192,6 +230,16 @@ public class SwtChanTab extends AbstractSwtTab {
         Button sendText = new Button(typeBar, SWT.PUSH);
         sendText.setText("Send text");
         sendText.addSelectionListener(new SendAction(inputBar, swtIrcClient.gtm, server, channel));
+
+        inputBar.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent arg0) {
+                if (arg0.keyCode == '\r') {
+                    new SendAction(inputBar, swtIrcClient.gtm, server, channel).doSwtAction(arg0);
+                }
+            }
+        });
 
         Button sendNotice = new Button(typeBar, SWT.PUSH);
         sendNotice.setText("Send notice");
