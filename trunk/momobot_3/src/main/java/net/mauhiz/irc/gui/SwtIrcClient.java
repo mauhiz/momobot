@@ -216,26 +216,26 @@ public class SwtIrcClient {
 
     private void swtLoop(SwtLogTab logTab) {
 
-        long maxLoopTime = 500;
-        for (long startTime = System.currentTimeMillis(); startTime + maxLoopTime <= System.currentTimeMillis();) {
-            final IIrcMessage msg = gtm.nextMsg();
+        //        long maxLoopTime = 5000;
+        //        for (long startTime = System.currentTimeMillis(); startTime + maxLoopTime <= System.currentTimeMillis();) {
+        final IIrcMessage msg = gtm.nextMsg();
 
-            if (msg == null) { // booh, no new message
-                return;
-            }
-
-            if (logTab != null) {
-                logTab.appendText(msg.getIrcForm());
-            }
-
-            boolean processed = processChanLog(msg);
-
-            if (!processed) {
-                processed = processPrivateLog(msg);
-            }
-            if (!processed) {
-                processed = processServerLog(msg);
-            }
+        if (msg == null) { // booh, no new message
+            return;
         }
+
+        if (logTab != null) {
+            logTab.appendText(msg.getIrcForm());
+        }
+
+        boolean processed = processChanLog(msg);
+
+        if (!processed) {
+            processed = processPrivateLog(msg);
+        }
+        if (!processed) {
+            processed = processServerLog(msg);
+        }
+        //        }
     }
 }

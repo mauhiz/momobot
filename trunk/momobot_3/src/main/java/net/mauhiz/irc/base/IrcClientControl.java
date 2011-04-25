@@ -9,7 +9,7 @@ import java.util.Set;
 
 import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.data.ArgumentList;
-import net.mauhiz.irc.base.data.ChannelProperties;
+import net.mauhiz.irc.base.data.IChannelProperties;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcNetwork;
@@ -177,7 +177,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
             processMode(new Mode(peer, peer, chan, new ArgumentList(modes)));
         }
         String topic = chanDetails.getRemainingData();
-        ChannelProperties props = chan.getProperties();
+        IChannelProperties props = chan.getProperties();
         if (props.getTopic() == null) {
             props.setTopic(new Topic(null, null, topic));
         } else {
@@ -343,104 +343,104 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
             return;
         }
         switch (reply) {
-            case RPL_UMODEIS:
-                handleYourModeIs(message);
-                break;
-            case RPL_TOPIC:
-                handleRplTopic(message);
-                break;
-            case RPL_TOPICINFO:
-                LOG.info("topic info: " + message.getArgs());
-                break;
-            case RPL_LUSERCLIENT:
-                LOG.info("client statistics: " + message.getMsg());
-                break;
-            case RPL_LUSERCHANNELS:
-                LOG.info("number of channels: " + message.getArgs());
-                break;
-            case RPL_LUSERME:
-                LOG.info("server userme: " + message.getMsg());
-                break;
-            case RPL_MOTD:
-                LOG.info("Motd LINE: " + message.getMsg());
-                break;
-            case RPL_NAMREPLY:
-                handleNamReply(message);
-                break;
-            case RPL_ENDOFNAMES:
-                LOG.debug("End of Names Reply");
-                break;
-            case RPL_LUSEROP:
-                LOG.info("number of operators: " + message.getArgs());
-                break;
-            case RPL_MOTDSTART:
-                LOG.debug("Start of MOTD: " + message.getArgs());
-                break;
-            case ERR_NOTEXTTOSEND:
-                LOG.warn("Server told me that I tried to send an empty msg");
-                break;
-            case RPL_ENDOFMOTD:
-                LOG.debug("End of MOTD");
-                break;
-            case RPL_LUSERUNKNOWN:
-                LOG.info("number of unknown users: " + message.getArgs());
-                break;
-            case ERR_QNETSERVICEIMMUNE:
-                LOG.warn("I cannot do harm to a service! " + message.getArgs());
-                break;
-            case RPL_WHOISUSER:
-                handleWhoisUser(message);
-                break;
-            case ERR_NOSUCHNICK:
-                WhoisRequest.end(message.getArgs(), false);
-                break;
-            case RPL_WHOISCHANNELS:
-                handleWhoisChannels(message);
-                break;
-            case RPL_WHOISSERVER:
-                ArgumentList args = message.getArgs();
-                LOG.info(args.poll() + " is on node " + args.poll());
-                break;
-            case RPL_WHOISAUTH: // this message is specific to Qnet Servers
-                ((QnetServer) message.getServerPeer().getNetwork()).handleWhois(message.getArgs());
-                break;
-            case RPL_ENDOFWHOIS:
-                WhoisRequest.end(message.getArgs(), true);
-                break;
-            case ERR_CHANOPRIVSNEEDED:
-                LOG.warn("I am not channel operator. " + message.getArgs().peek());
-                break;
-            case ERR_NOTREGISTERED:
-                LOG.warn("I should register before sending commands!");
-                break;
-            case RPL_WHOISIDLE:
-                LOG.debug("User has been idle : " + message.getArgs().peek());
-                break;
-            case RPL_WHOISOPERATOR:
-                args = message.getArgs();
-                WhoisRequest.end(args, true);
-                LOG.debug(args + " " + message.getMsg());
-                break;
-            case ERR_NICKNAMEINUSE:
-                handleNickInUse(message);
-                break;
-            case ERR_NOTONCHANNEL:
-            case ERR_NOSUCHCHANNEL:
-                LOG.warn("[TODO process] " + message.getArgs());
-                break;
-            case RPL_LISTSTART:
-                LOG.info("Starting to receive channels list");
-                break;
-            case RPL_LISTEND:
-                LOG.info("Finished receiving channels list");
-                break;
-            case RPL_LIST:
-                handleRplList(message);
-                break;
-            default:
-                // TODO 42, 265, 266, 439 on Rizon
-                LOG.warn("Unhandled server reply : " + message);
-                break;
+        case RPL_UMODEIS:
+            handleYourModeIs(message);
+            break;
+        case RPL_TOPIC:
+            handleRplTopic(message);
+            break;
+        case RPL_TOPICINFO:
+            LOG.info("topic info: " + message.getArgs());
+            break;
+        case RPL_LUSERCLIENT:
+            LOG.info("client statistics: " + message.getMsg());
+            break;
+        case RPL_LUSERCHANNELS:
+            LOG.info("number of channels: " + message.getArgs());
+            break;
+        case RPL_LUSERME:
+            LOG.info("server userme: " + message.getMsg());
+            break;
+        case RPL_MOTD:
+            LOG.info("Motd LINE: " + message.getMsg());
+            break;
+        case RPL_NAMREPLY:
+            handleNamReply(message);
+            break;
+        case RPL_ENDOFNAMES:
+            LOG.debug("End of Names Reply");
+            break;
+        case RPL_LUSEROP:
+            LOG.info("number of operators: " + message.getArgs());
+            break;
+        case RPL_MOTDSTART:
+            LOG.debug("Start of MOTD: " + message.getArgs());
+            break;
+        case ERR_NOTEXTTOSEND:
+            LOG.warn("Server told me that I tried to send an empty msg");
+            break;
+        case RPL_ENDOFMOTD:
+            LOG.debug("End of MOTD");
+            break;
+        case RPL_LUSERUNKNOWN:
+            LOG.info("number of unknown users: " + message.getArgs());
+            break;
+        case ERR_QNETSERVICEIMMUNE:
+            LOG.warn("I cannot do harm to a service! " + message.getArgs());
+            break;
+        case RPL_WHOISUSER:
+            handleWhoisUser(message);
+            break;
+        case ERR_NOSUCHNICK:
+            WhoisRequest.end(message.getArgs(), false);
+            break;
+        case RPL_WHOISCHANNELS:
+            handleWhoisChannels(message);
+            break;
+        case RPL_WHOISSERVER:
+            ArgumentList args = message.getArgs();
+            LOG.info(args.poll() + " is on node " + args.poll());
+            break;
+        case RPL_WHOISAUTH: // this message is specific to Qnet Servers
+            ((QnetServer) message.getServerPeer().getNetwork()).handleWhois(message.getArgs());
+            break;
+        case RPL_ENDOFWHOIS:
+            WhoisRequest.end(message.getArgs(), true);
+            break;
+        case ERR_CHANOPRIVSNEEDED:
+            LOG.warn("I am not channel operator. " + message.getArgs().peek());
+            break;
+        case ERR_NOTREGISTERED:
+            LOG.warn("I should register before sending commands!");
+            break;
+        case RPL_WHOISIDLE:
+            LOG.debug("User has been idle : " + message.getArgs().peek());
+            break;
+        case RPL_WHOISOPERATOR:
+            args = message.getArgs();
+            WhoisRequest.end(args, true);
+            LOG.debug(args + " " + message.getMsg());
+            break;
+        case ERR_NICKNAMEINUSE:
+            handleNickInUse(message);
+            break;
+        case ERR_NOTONCHANNEL:
+        case ERR_NOSUCHCHANNEL:
+            LOG.warn("[TODO process] " + message.getArgs());
+            break;
+        case RPL_LISTSTART:
+            LOG.info("Starting to receive channels list");
+            break;
+        case RPL_LISTEND:
+            LOG.info("Finished receiving channels list");
+            break;
+        case RPL_LIST:
+            handleRplList(message);
+            break;
+        default:
+            // TODO 42, 265, 266, 439 on Rizon
+            LOG.warn("Unhandled server reply : " + message);
+            break;
         }
     }
 

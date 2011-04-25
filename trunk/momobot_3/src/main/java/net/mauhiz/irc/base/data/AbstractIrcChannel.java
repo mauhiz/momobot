@@ -24,7 +24,7 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * flags du chan
      */
-    protected ChannelProperties props;
+    protected IChannelProperties props;
 
     /**
      * users sur le channel
@@ -100,7 +100,7 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * @return {@link #props}
      */
-    public ChannelProperties getProperties() {
+    public IChannelProperties getProperties() {
         return props;
     }
 

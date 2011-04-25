@@ -92,9 +92,9 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
         int remaining = result.remaining();
         if (remaining > 0) {
             LOG.warn("remaining bytes: " + remaining);
-            // byte[] remain = new byte[remaining];
-            // System.arraycopy(result.array(), result.position(), remain, 0, remaining);
-            // LOG.warn("remaining text: " + new String(remain));
+            byte[] remain = new byte[remaining];
+            System.arraycopy(result.array(), result.position(), remain, 0, remaining);
+            LOG.warn("remaining text: " + new String(remain));
         }
     }
 

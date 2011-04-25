@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class ChannelProperties {
+public class ChannelProperties implements IChannelProperties {
     private static final Logger LOG = Logger.getLogger(ChannelProperties.class);
     private final List<HostMask> bans = new ArrayList<HostMask>();
     private boolean inviteOnly;
@@ -21,73 +21,78 @@ public class ChannelProperties {
     private Topic topic;
 
     /**
-     * @param ban
-     *            the ban to set
+     * @see net.mauhiz.irc.base.data.IChannelProperties#addBan(net.mauhiz.irc.base.data.HostMask)
      */
     public void addBan(HostMask ban) {
         bans.add(ban);
     }
 
     /**
-     * @return the bans
+     * @see net.mauhiz.irc.base.data.IChannelProperties#getBans()
      */
     public List<HostMask> getBans() {
         return bans;
     }
 
     /**
-     * @return the key
+     * @see net.mauhiz.irc.base.data.IChannelProperties#getKey()
      */
     public String getKey() {
         return key;
     }
 
     /**
-     * @return the limit
+     * @see net.mauhiz.irc.base.data.IChannelProperties#getLimit()
      */
     public Integer getLimit() {
         return limit;
     }
 
     /**
-     * @return the topic
+     * @see net.mauhiz.irc.base.data.IChannelProperties#getTopic()
      */
     public Topic getTopic() {
         return topic;
     }
 
     /**
-     * @return the inviteOnly
+     * @see net.mauhiz.irc.base.data.IChannelProperties#isInviteOnly()
      */
     public boolean isInviteOnly() {
         return inviteOnly;
     }
 
     /**
-     * @return the moderated
+     * @see net.mauhiz.irc.base.data.IChannelProperties#isModerated()
      */
     public boolean isModerated() {
         return moderated;
     }
 
     /**
-     * @return the noExt
+     * @see net.mauhiz.irc.base.data.IChannelProperties#isNoExt()
      */
     public boolean isNoExt() {
         return noExt;
     }
 
+    /**
+     * @see net.mauhiz.irc.base.data.IChannelProperties#isOpTopic()
+     */
     public boolean isOpTopic() {
         return opTopic;
     }
 
     /**
-     * @return the prive
+     * @see net.mauhiz.irc.base.data.IChannelProperties#isPrive()
      */
     public boolean isPrive() {
         return prive;
     }
 
+    /**
+     * @see net.mauhiz.irc.base.data.IChannelProperties#process(boolean, char, java.lang.String[])
+     */
     public void process(boolean set, char mode, String... args) {
         if (mode == 'n') {
             noExt = set;
@@ -99,60 +104,56 @@ public class ChannelProperties {
     }
 
     /**
-     * @param inviteOnly
-     *            the inviteOnly to set
+     * @see net.mauhiz.irc.base.data.IChannelProperties#setInviteOnly(boolean)
      */
     public void setInviteOnly(boolean inviteOnly) {
         this.inviteOnly = inviteOnly;
     }
 
     /**
-     * @param key
-     *            the key to set
+     * @see net.mauhiz.irc.base.data.IChannelProperties#setKey(java.lang.String)
      */
     public void setKey(String key) {
         this.key = key;
     }
 
     /**
-     * @param limit
-     *            the limit to set
+     * @see net.mauhiz.irc.base.data.IChannelProperties#setLimit(java.lang.Integer)
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
 
     /**
-     * @param moderated
-     *            the moderated to set
+     * @see net.mauhiz.irc.base.data.IChannelProperties#setModerated(boolean)
      */
     public void setModerated(boolean moderated) {
         this.moderated = moderated;
     }
 
     /**
-     * @param noExt
-     *            the noExt to set
+     * @see net.mauhiz.irc.base.data.IChannelProperties#setNoExt(boolean)
      */
     public void setNoExt(boolean noExt) {
         this.noExt = noExt;
     }
 
+    /**
+     * @see net.mauhiz.irc.base.data.IChannelProperties#setOpTopic(boolean)
+     */
     public void setOpTopic(boolean opTopic) {
         this.opTopic = opTopic;
     }
 
     /**
-     * @param prive
-     *            the prive to set
+     * @see net.mauhiz.irc.base.data.IChannelProperties#setPrive(boolean)
      */
     public void setPrive(boolean prive) {
         this.prive = prive;
     }
 
     /**
-     * @param topic
-     *            the topic to set
+     * @see net.mauhiz.irc.base.data.IChannelProperties#setTopic(net.mauhiz.irc.base.data.Topic)
      */
     public void setTopic(Topic topic) {
         this.topic = topic;

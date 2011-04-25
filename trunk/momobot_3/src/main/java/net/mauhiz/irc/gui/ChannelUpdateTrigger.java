@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mauhiz.irc.base.IIrcControl;
-import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Join;
@@ -47,31 +46,31 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTr
 
     @Override
     public void doTrigger(Join im, IIrcControl control) {
-        doUpdate(im.getServerPeer(), im.getChans());
+        doUpdate(im.getChans());
     }
 
     @Override
     public void doTrigger(Kick im, IIrcControl control) {
-        doUpdate(im.getServerPeer(), im.getChans());
+        doUpdate(im.getChans());
     }
 
     @Override
     public void doTrigger(Part im, IIrcControl control) {
-        doUpdate(im.getServerPeer(), im.getChans());
+        doUpdate(im.getChans());
     }
 
     @Override
     public void doTrigger(Quit im, IIrcControl control) {
-        doUpdate(im.getServerPeer(), null);
+        doUpdate(null);
     }
 
-    private void doUpdate(IIrcServerPeer server, IrcChannel[] channels) {
+    private void doUpdate(IrcChannel[] channels) {
         Collection<IrcChannel> chans = channels == null ? userLists.keySet() : Arrays.asList(channels);
         for (IrcChannel channel : chans) {
             org.eclipse.swt.widgets.List userList = userLists.get(channel);
 
             if (userList != null) {
-                userList.getDisplay().syncExec(new UserListUpdater(userList, channel));
+                userList.getDisplay().asyncExec(new UserListUpdater(userList, channel));
             }
         }
     }

@@ -5,6 +5,7 @@ import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.msg.Action;
 import net.mauhiz.irc.gui.GuiTriggerManager;
 import net.mauhiz.util.AbstractAction;
+import net.mauhiz.util.ExecutionType;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.widgets.Text;
@@ -38,7 +39,7 @@ public class SendMeAction extends AbstractAction {
     }
 
     @Override
-    protected boolean isAsynchronous() {
-        return false; // this should be quick 
+    protected ExecutionType getExecutionType() {
+        return ExecutionType.GUI_SYNCHRONOUS;
     }
 }

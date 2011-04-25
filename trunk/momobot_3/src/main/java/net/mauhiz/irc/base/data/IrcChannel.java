@@ -19,7 +19,7 @@ public interface IrcChannel extends Iterable<IrcUser>, Comparable<IrcChannel>, T
 
     Set<UserChannelMode> getModes(IrcUser smith);
 
-    ChannelProperties getProperties();
+    IChannelProperties getProperties();
 
     boolean isTopicEditable(IrcUser user);
 
