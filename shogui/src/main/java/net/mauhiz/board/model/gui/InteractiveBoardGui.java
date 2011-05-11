@@ -1,5 +1,6 @@
 package net.mauhiz.board.model.gui;
 
+import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.Square;
 
 public interface InteractiveBoardGui extends BoardGui {
@@ -8,7 +9,7 @@ public interface InteractiveBoardGui extends BoardGui {
 
 	void addCancelAction(Square square);
 
-	void addMoveAction(Square square);
+	void addMoveAction(Square square, Move move);
 
 	void addSelectAction(Square square);
 

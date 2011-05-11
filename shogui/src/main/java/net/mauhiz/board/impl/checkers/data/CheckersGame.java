@@ -10,58 +10,57 @@ import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PlayerType;
 
 public class CheckersGame implements Game {
-	private PlayerType turn;
-	private final CheckersRule rule;
-	private final CheckersBoard board;
-	private final List<Move> history = new ArrayList<Move>();
-	
-	
-	public CheckersGame(CheckersRule rule) {
-		this.rule = rule;
-		this.board = rule.newBoard();
-		turn = rule.getStartingPlayer();
-		rule.initPieces(board);
-	}
+    private final CheckersBoard board;
+    private final List<Move> history = new ArrayList<Move>();
+    private final CheckersRule rule;
+    private PlayerType turn;
 
-	@Override
-	public CheckersBoard getBoard() {
-		return board;
-	}
+    public CheckersGame(CheckersRule rule) {
+        this.rule = rule;
+        board = rule.newBoard();
+        turn = rule.getStartingPlayer();
+        rule.initPieces(board);
+    }
 
-	@Override
-	public List<Move> getMoves() {
-		return history;
-	}
+    @Override
+    public PlayerType applyMove(Move move) {
+        if (rule.isValid(move, this)) {
+            Move realMove = move;
 
-	@Override
-	public CheckersRule getRule() {
-		return rule;
-	}
+            if (move instanceof NormalMove) {
+                NormalMove nmove = (NormalMove) move;
+                if (rule.canPromote(nmove)) {
+                    realMove = new PromoteMove(nmove);
+                }
+            }
+            history.add(realMove);
+            board.applyMove(realMove);
+            turn = realMove.getPlayerType().other();
+            // TODO can capture again with same piece if capture
+            return turn;
+        }
 
-	@Override
-	public PlayerType applyMove(Move move) {
-		if (rule.isValid(move, board, history)) {
-			Move realMove = move;
+        return null;
+    }
 
-			if (move instanceof NormalMove) {
-				NormalMove nmove = (NormalMove) move;
-				if (rule.canPromote(nmove)) {
-					realMove = new PromoteMove(nmove);
-				}
-			}
-			history.add(realMove);
-			board.applyMove(realMove);
-			turn = realMove.getPlayerType().other();
-			// TODO can capture again with same piece if capture
-			return turn;
-		}
-		
-		return null;
-	}
+    @Override
+    public CheckersBoard getBoard() {
+        return board;
+    }
 
-	@Override
-	public PlayerType getTurn() {
-		return turn;
-	}
+    @Override
+    public List<Move> getMoves() {
+        return history;
+    }
+
+    @Override
+    public CheckersRule getRule() {
+        return rule;
+    }
+
+    @Override
+    public PlayerType getTurn() {
+        return turn;
+    }
 
 }
