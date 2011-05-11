@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.shogi.data;
+package net.mauhiz.board.impl.go.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,14 +7,14 @@ import net.mauhiz.board.model.data.Game;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.PlayerType;
 
-public class ShogiGame implements Game {
+public class GoGame implements Game {
 	private PlayerType turn;
-	private final ShogiRule rule;
-	private final ShogiBoard board;
+	private final GoRule rule;
+	private final GoBoard board;
 	private final List<Move> history = new ArrayList<Move>();
 	
 	
-	public ShogiGame(ShogiRule rule) {
+	public GoGame(GoRule rule) {
 		this.rule = rule;
 		this.board = rule.newBoard();
 		turn = rule.getStartingPlayer();
@@ -22,7 +22,7 @@ public class ShogiGame implements Game {
 	}
 
 	@Override
-	public ShogiBoard getBoard() {
+	public GoBoard getBoard() {
 		return board;
 	}
 
@@ -32,7 +32,7 @@ public class ShogiGame implements Game {
 	}
 
 	@Override
-	public ShogiRule getRule() {
+	public GoRule getRule() {
 		return rule;
 	}
 

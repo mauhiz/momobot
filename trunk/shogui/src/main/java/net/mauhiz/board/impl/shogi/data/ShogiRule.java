@@ -1,199 +1,199 @@
 package net.mauhiz.board.impl.shogi.data;
 
 import static java.lang.Math.abs;
-
-import java.util.List;
-
 import net.mauhiz.board.impl.common.data.AbstractBoard;
+import net.mauhiz.board.impl.common.data.AbstractPocketRule;
 import net.mauhiz.board.impl.common.data.NormalMoveImpl;
 import net.mauhiz.board.impl.shogi.PromoteMove;
 import net.mauhiz.board.model.data.Board;
 import net.mauhiz.board.model.data.Drop;
+import net.mauhiz.board.model.data.Game;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PlayerType;
-import net.mauhiz.board.model.data.Rule;
 import net.mauhiz.board.model.data.Square;
 
-public class ShogiRule implements Rule {
+public class ShogiRule extends AbstractPocketRule {
 
-	@Override
-	public ShogiBoard newBoard() {
-		return new ShogiBoard();
-	}
+    private static boolean isPromotionZone(ShogiPlayerType player, Square square) {
+        return player == ShogiPlayerType.SENTE ? square.getY() >= 6 : square.getY() <= 2;
+    }
 
-	@Override
-	public PlayerType[] getPlayerTypes() {
-		return ShogiPlayerType.values();
-	}
+    private boolean canDrop(Board board, Square to) {
+        return board.getPieceAt(to) == null;
+    }
 
-	public boolean canDrop(Board board, Square to) {
-		return board.getPieceAt(to) == null;
-	}
+    /**
+     * @param from
+     * @param to
+     *            is different from 'from'
+     * @return
+     */
+    private boolean canGo(ShogiBoard board, Square from, Square to) {
+        Piece piece = board.getPieceAt(from);
+        ShogiPlayerType playerType = (ShogiPlayerType) piece.getPlayerType();
 
-	/**
-	 * @param from
-	 * @param to
-	 *            is different from 'from'
-	 * @return
-	 */
-	public boolean canGo(ShogiBoard board, Square from, Square to) {
-		Piece piece = board.getPieceAt(from);
-		ShogiPlayerType playerType = (ShogiPlayerType) piece.getPlayerType();
+        if (board.isFriendlyPieceOn(piece.getPlayerType(), to)) {
+            return false;
+        }
 
-		if (board.isFriendlyPieceOn(piece.getPlayerType(), to)) {
-			return false;
-		}
+        ShogiPieceType pieceType = (ShogiPieceType) piece.getPieceType();
 
-		ShogiPieceType pieceType = (ShogiPieceType) piece.getPieceType();
+        switch (pieceType) {
+        case PAWN:
+            return isPawnMove(from, to, playerType);
+        case LANCE:
+            return !board.isObstruction(from, to) && AbstractBoard.getXmove(from, to) == 0
+                    && AbstractBoard.getYmove(from, to) * (playerType == ShogiPlayerType.SENTE ? 1 : -1) > 0;
+        case SILVER:
+            return AbstractBoard.isCorner(from, to) || isPawnMove(from, to, playerType);
+        case KNIGHT:
+            return abs(AbstractBoard.getXmove(from, to)) == 1
+                    && AbstractBoard.getYmove(from, to) == (playerType == ShogiPlayerType.SENTE ? 2 : -2);
 
-		switch (pieceType) {
-			case PAWN:
-				return isPawnMove(from, to, playerType);
-			case LANCE:
-				return !board.isObstruction(from, to) && AbstractBoard.getXmove(from, to) == 0
-						&& AbstractBoard.getYmove(from, to) * (playerType == ShogiPlayerType.SENTE ? 1 : -1) > 0;
-			case SILVER:
-				return AbstractBoard.isCorner(from, to) || isPawnMove(from, to, playerType);
-			case KNIGHT:
-				return abs(AbstractBoard.getXmove(from, to)) == 1
-						&& AbstractBoard.getYmove(from, to) == (playerType == ShogiPlayerType.SENTE ? 2 : -2);
-			case GOLD:
-				return isGoldMove(from, to, playerType);
-			case BISHOP:
-				return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to);
-			case ROOK:
-				return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to);
-			case KING:
-				return abs(AbstractBoard.getXmove(from, to)) <= 1 && abs(AbstractBoard.getYmove(from, to)) <= 1;
-			case TOKIN:
-			case PROMOTED_LANCE:
-			case PROMOTED_SILVER:
-			case PROMOTED_KNIGHT:
-				return isGoldMove(from, to, playerType);
-			case HORSE:
-				return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to)
-						|| AbstractBoard.isCross(from, to);
-			case DRAGON:
-				return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to)
-						|| AbstractBoard.isCorner(from, to);
-			default:
-				throw new IllegalStateException();
-		}
-	}
+        case BISHOP:
+            return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to);
+        case ROOK:
+            return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to);
+        case KING:
+            return abs(AbstractBoard.getXmove(from, to)) <= 1 && abs(AbstractBoard.getYmove(from, to)) <= 1;
+        case TOKIN:
+        case GOLD:
+        case PROMOTED_LANCE:
+        case PROMOTED_SILVER:
+        case PROMOTED_KNIGHT:
+            return isGoldMove(from, to, playerType);
+        case HORSE:
+            return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to)
+                    || AbstractBoard.isCross(from, to);
+        case DRAGON:
+            return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to)
+                    || AbstractBoard.isCorner(from, to);
+        default:
+            throw new IllegalStateException();
+        }
+    }
 
-	public boolean canPromote(ShogiBoard board, Square from, Square to) {
-		Piece piece = board.getPieceAt(from);
-		ShogiPieceType pieceType = (ShogiPieceType) piece.getPieceType();
+    public boolean canPromote(ShogiBoard board, Square from, Square to) {
+        Piece piece = board.getPieceAt(from);
+        ShogiPieceType pieceType = (ShogiPieceType) piece.getPieceType();
 
-		if (!pieceType.canPromote()) {
-			return false;
-		}
+        if (!pieceType.canPromote()) {
+            return false;
+        }
 
-		ShogiPlayerType playerType = (ShogiPlayerType) piece.getPlayerType();
-		return isPromotionZone(playerType, from) || isPromotionZone(playerType, to);
-	}
+        ShogiPlayerType playerType = (ShogiPlayerType) piece.getPlayerType();
+        return isPromotionZone(playerType, from) || isPromotionZone(playerType, to);
+    }
 
-	static boolean isPromotionZone(ShogiPlayerType player, Square square) {
-		return player == ShogiPlayerType.SENTE ? square.getY() >= 6 : square.getY() <= 2;
-	}
+    @Override
+    public PlayerType[] getPlayerTypes() {
+        return ShogiPlayerType.values();
+    }
 
-	protected boolean isForward(Square from, Square to, PlayerType player) {
-		return from.getY() != to.getY() && player == ShogiPlayerType.SENTE ^ from.getY() > to.getY();
-	}
+    @Override
+    public PlayerType getStartingPlayer() {
+        return ShogiPlayerType.SENTE;
+    }
 
-	public boolean isFrontCorner(Square from, Square to, PlayerType player) {
-		return AbstractBoard.isCorner(from, to) && isForward(from, to, player);
-	}
+    @Override
+    public void initPieces(Board board) {
+        for (Square square : board.getSquares()) {
+            int j = square.getY();
+            int i = square.getX();
+            ShogiPlayerType pl = j <= 2 ? ShogiPlayerType.SENTE : ShogiPlayerType.GOTE;
 
-	public boolean isGoldMove(Square from, Square to, ShogiPlayerType player) {
-		return AbstractBoard.isCross(from, to) || isFrontCorner(from, to, player);
-	}
+            if (j == 0 || j == 8) {
+                if (i == 0 || i == 8) {
+                    board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.LANCE));
+                } else if (i == 1 || i == 7) {
+                    board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.KNIGHT));
+                } else if (i == 2 || i == 6) {
+                    board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.SILVER));
+                } else if (i == 3 || i == 5) {
+                    board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.GOLD));
+                } else {
+                    board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.KING));
+                }
+            } else if (j == 1 && i == 1 || j == 7 && i == 7) {
+                board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.BISHOP));
+            } else if (j == 1 && i == 7 || j == 7 && i == 1) {
+                board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.ROOK));
+            } else if (j == 2 || j == 6) {
+                board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.PAWN));
+            }
+        }
+    }
 
-	public boolean isPawnMove(Square from, Square to, ShogiPlayerType player) {
-		return AbstractBoard.getXmove(from, to) == 0 && abs(AbstractBoard.getYmove(from, to)) == 1 && isForward(from, to, player);
-	}
+    public boolean isCheck(ShogiPlayerType player, ShogiGame game) {
+        ShogiBoard board = game.getBoard();
+        Square kingSquare = board.findKingSquare(player);
+        if (kingSquare == null) {
+            return false;
+        }
 
-	@Override
-	public boolean isValid(Move move, Board board, List<Move> history) {
-		if (!(board instanceof ShogiBoard)) {
-			return false;
-		}
-		ShogiBoard sb = (ShogiBoard) board;
-		if (move instanceof Drop) {
-			return canDrop(board, ((Drop) move).getTo());
+        for (Square square : board.getSquares()) {
+            Piece attacker = board.getPieceAt(square);
+            if (attacker == null || attacker.getPlayerType() == player) {
+                continue;
+            }
 
-		} else if (move instanceof NormalMove) {
-			Square from = ((NormalMove) move).getFrom();
-			Piece toMove = board.getPieceAt(from);
+            NormalMove wannabe = new NormalMoveImpl(attacker.getPlayerType(), square, kingSquare);
 
-			if (toMove == null || toMove.getPlayerType() != move.getPlayerType()) {
-				return false;
-			}
+            if (isValid(wannabe, game)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-			return canGo(sb, from, ((NormalMove) move).getTo());
-		} else if (move instanceof PromoteMove) {
-			PromoteMove promote = (PromoteMove) move;
-			return canPromote(sb, promote.getParentMove().getFrom(), promote.getParentMove().getTo());
-		}
+    @Override
+    protected boolean isForward(Square from, Square to, PlayerType player) {
+        return from.getY() != to.getY() && player == ShogiPlayerType.SENTE ^ from.getY() > to.getY();
+    }
 
-		return false;
-	}
+    private boolean isGoldMove(Square from, Square to, ShogiPlayerType player) {
+        return AbstractBoard.isCross(from, to) || isFrontCorner(from, to, player);
+    }
 
-	@Override
-	public void initPieces(Board board) {
-		for (Square square : board.getSquares()) {
-			int j = square.getY();
-			int i = square.getX();
-			ShogiPlayerType pl = j <= 2 ? ShogiPlayerType.SENTE : ShogiPlayerType.GOTE;
+    private boolean isPawnMove(Square from, Square to, ShogiPlayerType player) {
+        return AbstractBoard.getXmove(from, to) == 0 && abs(AbstractBoard.getYmove(from, to)) == 1
+                && isForward(from, to, player);
+    }
 
-			if (j == 0 || j == 8) {
-				if (i == 0 || i == 8) {
-					board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.LANCE));
-				} else if (i == 1 || i == 7) {
-					board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.KNIGHT));
-				} else if (i == 2 || i == 6) {
-					board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.SILVER));
-				} else if (i == 3 || i == 5) {
-					board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.GOLD));
-				} else {
-					board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.KING));
-				}
-			} else if (j == 1 && i == 1 || j == 7 && i == 7) {
-				board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.BISHOP));
-			} else if (j == 1 && i == 7 || j == 7 && i == 1) {
-				board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.ROOK));
-			} else if (j == 2 || j == 6) {
-				board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.PAWN));
-			}
-		}
-	}
+    @Override
+    public boolean isValid(Move move, Game game) {
+        if (!(game instanceof ShogiGame)) {
+            return false;
+        }
+        if (move.getPlayerType() != game.getTurn()) {
+            return false;
+        }
+        ShogiGame sg = (ShogiGame) game;
+        ShogiBoard board = sg.getBoard();
+        if (move instanceof Drop) {
+            return canDrop(board, ((Drop) move).getTo());
 
-	@Override
-	public PlayerType getStartingPlayer() {
-		return ShogiPlayerType.SENTE;
-	}
-	
-	public boolean isCheck(ShogiPlayerType player, ShogiBoard board) {
-		Square kingSquare = board.findKingSquare(player);
-		if (kingSquare == null) {
-			return false;
-		}
+        } else if (move instanceof NormalMove) {
+            Square from = ((NormalMove) move).getFrom();
+            ShogiPiece toMove = board.getPieceAt(from);
 
-		for (Square square : board.getSquares()) {
-			Piece attacker = board.getPieceAt(square);
-			if (attacker == null || attacker.getPlayerType() == player) {
-				continue;
-			}
+            if (toMove == null || toMove.getPlayerType() != move.getPlayerType()) {
+                return false;
+            }
 
-			NormalMove wannabe = new NormalMoveImpl(attacker.getPlayerType(), square, kingSquare);
+            return canGo(board, from, ((NormalMove) move).getTo());
+        } else if (move instanceof PromoteMove) {
+            PromoteMove promote = (PromoteMove) move;
+            return canPromote(board, promote.getParentMove().getFrom(), promote.getParentMove().getTo());
+        }
 
-			if (isValid(wannabe, board, null)) {
-				return true;
-			}
-		}
-		return false;
-	}
+        return false;
+    }
 
+    @Override
+    public ShogiBoard newBoard() {
+        return new ShogiBoard();
+    }
 }

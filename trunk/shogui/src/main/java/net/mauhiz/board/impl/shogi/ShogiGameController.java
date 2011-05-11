@@ -9,25 +9,26 @@ import net.mauhiz.board.model.data.NormalMove;
 
 public class ShogiGameController extends AbstractPocketGameController {
 
-	public ShogiGameController(BoardIO display) {
-		super(display);
-	}
+    public ShogiGameController(BoardIO display) {
+        super(display);
+    }
 
-	@Override
-	public ShogiGui getBoardIO() {
-		return (ShogiGui) super.getBoardIO();
-	}
+    public PromoteMove convertToPromotion(NormalMove move) {
+        return new PromoteMove(move);
+    }
 
-	@Override
-	protected ShogiGame newGame() {
-		return new ShogiGame(new ShogiRule());
-	}
+    @Override
+    public ShogiGui getBoardIO() {
+        return (ShogiGui) super.getBoardIO();
+    }
 
-	public ShogiGame getGame() {
-		return (ShogiGame) game;
-	}
+    @Override
+    public ShogiGame getGame() {
+        return (ShogiGame) game;
+    }
 
-	public PromoteMove convertToPromotion(NormalMove move) {
-		return new PromoteMove(move);
-	}
+    @Override
+    protected ShogiGame newGame() {
+        return new ShogiGame(new ShogiRule());
+    }
 }

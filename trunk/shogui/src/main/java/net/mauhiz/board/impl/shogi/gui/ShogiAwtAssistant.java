@@ -19,71 +19,72 @@ import net.mauhiz.util.ExecutionType;
  */
 public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGuiAssistant {
 
-	public ShogiAwtAssistant(BoardGui parent) {
-		super(parent);
-	}
+    public ShogiAwtAssistant(BoardGui parent) {
+        super(parent);
+    }
 
-	public void decorate(Button button, Piece op) {
-		if (op == null) {
-			button.setLabel("");
-		} else {
-			button.setLabel(op.getPieceType().toString());
-			button.setForeground(op.getPlayerType() == ShogiPlayerType.SENTE ? Color.BLACK : Color.WHITE);
-		}
-	}
+    @Override
+    public void decorate(Button button, Piece op) {
+        if (op == null) {
+            button.setLabel("");
+        } else {
+            button.setLabel(op.getPieceType().toString());
+            button.setForeground(op.getPlayerType() == ShogiPlayerType.SENTE ? Color.BLACK : Color.WHITE);
+        }
+    }
 
-	@Override
-	public void initPockets() {
-		Panel pocket = new Panel();
-		frame.add(pocket, 0);
-		pockets.put(ShogiPlayerType.SENTE, pocket);
-		pocket = new Panel();
-		frame.add(pocket);
-		pockets.put(ShogiPlayerType.GOTE, pocket);
-	}
+    protected ShogiGui getParent() {
+        return (ShogiGui) parent;
+    }
 
-	public void showPromotionDialog(final NormalMove move) {
-		final Dialog popup = new Dialog(frame, "Promotion?");
-		popup.setLayout(new GridLayout(1, 2, 10, 10));
-		popup.setModal(true);
+    @Override
+    public void initPockets() {
+        Panel pocket = new Panel();
+        frame.add(pocket, 0);
+        pockets.put(ShogiPlayerType.SENTE, pocket);
+        pocket = new Panel();
+        frame.add(pocket);
+        pockets.put(ShogiPlayerType.GOTE, pocket);
+    }
 
-		Button promoButton = new Button("Yes");
-		promoButton.addActionListener(new AbstractAction() {
+    public void showPromotionDialog(final NormalMove move) {
+        final Dialog popup = new Dialog(frame, "Promotion?");
+        popup.setLayout(new GridLayout(1, 2, 10, 10));
+        popup.setModal(true);
 
-			@Override
-			protected void doAction() {
-				getParent().afterPromotionDialog(move, true);
-				popup.dispose();
-			}
+        Button promoButton = new Button("Yes");
+        promoButton.addActionListener(new AbstractAction() {
 
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.NON_GUI;
-			}
-		});
-		popup.add(promoButton);
+            @Override
+            protected void doAction() {
+                getParent().afterPromotionDialog(move, true);
+                popup.dispose();
+            }
 
-		Button cancelButton = new Button("No");
-		cancelButton.addActionListener(new AbstractAction() {
+            @Override
+            protected ExecutionType getExecutionType() {
+                return ExecutionType.NON_GUI;
+            }
+        });
+        popup.add(promoButton);
 
-			@Override
-			public void doAction() {
-				getParent().afterPromotionDialog(move, false);
-				popup.dispose();
-			}
+        Button cancelButton = new Button("No");
+        cancelButton.addActionListener(new AbstractAction() {
 
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.NON_GUI;
-			}
-		});
-		popup.add(cancelButton);
+            @Override
+            public void doAction() {
+                getParent().afterPromotionDialog(move, false);
+                popup.dispose();
+            }
 
-		popup.pack();
-		popup.setVisible(true);
-	}
+            @Override
+            protected ExecutionType getExecutionType() {
+                return ExecutionType.NON_GUI;
+            }
+        });
+        popup.add(cancelButton);
 
-	protected ShogiGui getParent() {
-		return (ShogiGui) parent;
-	}
+        popup.pack();
+        popup.setVisible(true);
+    }
 }

@@ -7,6 +7,7 @@ import net.mauhiz.board.impl.shogi.ShogiGameController;
 import net.mauhiz.board.impl.shogi.data.ShogiBoard;
 import net.mauhiz.board.impl.shogi.data.ShogiRule;
 import net.mauhiz.board.model.GameController;
+import net.mauhiz.board.model.data.Drop;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.Piece;
@@ -14,96 +15,98 @@ import net.mauhiz.board.model.data.Square;
 
 public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 
-	public static void main(String[] args) {
-		ShogiGui gui = new ShogiGui();
-//		gui.assistant = new ShogiSwtAssistant(gui);
-		gui.assistant = new ShogiSwingAssistant(gui);
-		gui.assistant.start();
-	}
+    public static void main(String[] args) {
+        ShogiGui gui = new ShogiGui();
+        // gui.assistant = new ShogiSwtAssistant(gui);
+        gui.assistant = new ShogiSwingAssistant(gui);
+        gui.assistant.start();
+    }
 
-	@Override
-	public Color getSquareBgcolor(Square square) {
-		return Color.decode("0xFFCC66");
-	}
-	
-	IShogiGuiAssistant getAssistant() {
-		return (IShogiGuiAssistant) assistant;
-	}
+    public void afterPromotionDialog(NormalMove move, boolean promote) {
+        if (promote) {
+            Move promotion = getController().convertToPromotion(move);
+            super.sendMove(promotion);
+        } else {
+            super.sendMove(move);
+        }
+    }
 
-	public void showPromotionDialog(NormalMove move) {
-		getAssistant().showPromotionDialog(move);
-	}
-	
-	public ShogiGameController getController() {
-		return (ShogiGameController) controller;
-	}
+    IShogiGuiAssistant getAssistant() {
+        return (IShogiGuiAssistant) assistant;
+    }
 
-	public ShogiRule getRule() {
-		return getController().getGame().getRule();
-	}
+    @Override
+    public ShogiBoard getBoard() {
+        return getController().getGame().getBoard();
+    }
 
-	public ShogiBoard getBoard() {
-		return getController().getGame().getBoard();
-	}
+    public ShogiGameController getController() {
+        return (ShogiGameController) controller;
+    }
 
-	@Override
-	public void sendMove(Move move) {
-		if (move instanceof NormalMove) {
-			if (getRule().canPromote(getBoard(), getSelectedSquare(), ((NormalMove) move).getTo())) {
-				showPromotionDialog((NormalMove) move);
-				return; // do not send move yet
-			}
-		}
-		super.sendMove(move);
-	}
-	
-	@Override
-	public synchronized void refresh() {
-		super.refresh();
-		getAssistant().refreshPockets(getBoard().getAllPocketPieces());
-		getAssistant().refresh();
-	}
+    @Override
+    public ShogiRule getRule() {
+        return getController().getGame().getRule();
+    }
 
-	@Override
-	protected void refreshSquare(Square square) {
-		Piece piece = getBoard().getPieceAt(square);
-		if (selectedSquare == null) {
-			if (selectedPiece == null) { // available pieces
-				if (piece != null && piece.getPlayerType() == getTurn()) {
-					addSelectAction(square);
-				}
-			} else { // from the pocket
-				if (getRule().canDrop(getBoard(), square)) {
-					addMoveAction(square);
-				}
-			}
-		} else { // from the board
-			// available destinations
-			Piece selected = getBoard().getPieceAt(selectedSquare);
+    @Override
+    public Color getSquareBgcolor(Square square) {
+        return Color.decode("0xFFCC66");
+    }
 
-			if (selected != null && !square.equals(selectedSquare)
-					&& getRule().canGo(getBoard(), selectedSquare, square)) {
-				addMoveAction(square);
-			}
-		}
-	}
+    @Override
+    public String getWindowTitle() {
+        return "Shogui";
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "Shogui";
-	}
+    @Override
+    protected GameController newController() {
+        return new ShogiGameController(this);
+    }
 
-	@Override
-	protected GameController newController() {
-		return new ShogiGameController(this);
-	}
+    @Override
+    public synchronized void refresh() {
+        super.refresh();
+        getAssistant().refreshPockets(getBoard().getAllPocketPieces());
+        getAssistant().refresh();
+    }
 
-	public void afterPromotionDialog(NormalMove move, boolean promote) {
-		if (promote) {
-			Move promotion = getController().convertToPromotion(move);
-			super.sendMove(promotion);
-		} else {
-			super.sendMove(move);
-		}
-	}
+    @Override
+    protected void refreshSquare(Square square) {
+        Piece piece = getBoard().getPieceAt(square);
+        if (selectedSquare == null) {
+            if (selectedPiece == null) { // available pieces
+                if (piece != null && piece.getPlayerType() == getTurn()) {
+                    addSelectAction(square);
+                }
+            } else { // from the pocket
+                Drop drop = getRule().generateMove(selectedPiece, square, controller.getGame());
+                if (drop != null) {
+                    addMoveAction(square, drop);
+                }
+            }
+        } else { // from the board
+            // available destinations
+            Move move = getRule().generateMove(selectedSquare, square, controller.getGame());
+
+            if (move != null) {
+                addMoveAction(square, move);
+            }
+        }
+    }
+
+    @Override
+    public void sendMove(Move move) {
+        if (move instanceof NormalMove) {
+            if (getRule().canPromote(getBoard(), getSelectedSquare(), ((NormalMove) move).getTo())) {
+                showPromotionDialog((NormalMove) move);
+                return; // do not send move yet
+            }
+        }
+        super.sendMove(move);
+    }
+
+    public void showPromotionDialog(NormalMove move) {
+        getAssistant().showPromotionDialog(move);
+    }
 }
