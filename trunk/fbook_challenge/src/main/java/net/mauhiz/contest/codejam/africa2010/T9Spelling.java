@@ -79,6 +79,7 @@ public class T9Spelling extends CodejamLineSolver {
 		new T9Spelling().run(args);
 	}
 
+	@Override
 	protected String doJamProblem(String problemLine) {
 		return convert(problemLine.toCharArray());
 	}
