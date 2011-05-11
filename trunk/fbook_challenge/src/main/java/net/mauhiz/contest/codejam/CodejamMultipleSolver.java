@@ -15,10 +15,6 @@ public abstract class CodejamMultipleSolver extends MultipleSolver {
 
 	@Override
 	protected final void processSingle(BufferedReader input, PrintWriter output, int problemIndex) throws IOException {
-		output.print("Case #" + problemIndex + ": " + doJamProblem(input));
-		if (problemIndex == numTestCases) {
-			output.println();
-		}
-
+		output.println("Case #" + problemIndex + ": " + doJamProblem(input));
 	}
 }
