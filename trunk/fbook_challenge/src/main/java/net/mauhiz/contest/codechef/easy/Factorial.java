@@ -17,7 +17,7 @@ public class Factorial extends CodechefMultipleSolver {
 	}
 
 	@Override
-	protected void processSingle(Scanner input, PrintStream output, int probleIndex) throws IOException {
+	protected void processSingle(Scanner input, PrintStream output, int problemIndex) {
 		String line = input.nextLine();
 		int n = Integer.parseInt(line);
 		output.println(zed(n));
