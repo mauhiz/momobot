@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * @author mauhiz
  */
 public abstract class AbstractSolver {
-	public static final File PROJECT_FOLDER = new File("C:\\Documents and Settings\\user1\\workspace\\fbook_challenge");
+	public static final File PROJECT_FOLDER = new File(".");
 
 	protected final Logger log = Logger.getLogger("solver");
 
