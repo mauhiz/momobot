@@ -17,7 +17,7 @@ public class LifeUniverseEverything extends CodechefSolver {
 	}
 
 	@Override
-	protected void process(Scanner input, PrintStream output) throws IOException {
+	protected void process(Scanner input, PrintStream output) {
 		while (true) {
 			String line = input.nextLine();
 			if ("42".equals(line)) {
