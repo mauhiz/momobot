@@ -24,20 +24,21 @@ import net.mauhiz.util.IAction;
 
 public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
-	public SwingGuiAssistant(BoardGui parent) {
-		super(parent);
-	}
+	protected JPanel boardPanel;
 
 	private final Map<Square, RotatingJButton> buttons = new HashMap<Square, RotatingJButton>();
 	protected JFrame frame = new JFrame();
-	protected JPanel boardPanel;
+
+	public SwingGuiAssistant(BoardGui parent) {
+		super(parent);
+	}
 
 	public void appendSquare(Square square, Dimension size) {
 		int x = square.getX();
 		int y = size.height - square.getY() - 1;
 		RotatingJButton button = new RotatingJButton();
 		buttons.put(SquareImpl.getInstance(x, y), button);
-		button.setBackground(parent.getSquareBgcolor(square));
+		button.setBackground(getParent().getSquareBgcolor(square));
 		button.setSize(40, 40);
 		boardPanel.add(button);
 	}
@@ -51,22 +52,17 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	@Override
-	public void start() {
-		initDisplay();
-	}
-
-	@Override
 	public void close() {
 		frame.dispose();
 	}
+
+	protected abstract void decorate(RotatingJButton button, Piece piece);
 
 	@Override
 	public void decorate(Square square, Piece piece) {
 		RotatingJButton button = getButton(square);
 		decorate(button, piece);
 	}
-
-	protected abstract void decorate(RotatingJButton button, Piece piece);
 
 	@Override
 	public void disableSquare(Square square) {
@@ -100,12 +96,12 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 	public void initDisplay() {
 		initMenu();
-		frame.setTitle(parent.getWindowTitle());
+		frame.setTitle(getParent().getWindowTitle());
 
-		Dimension defaultSize = parent.getDefaultSize();
+		Dimension defaultSize = getParent().getDefaultSize();
 		frame.setSize(defaultSize);
 
-		Dimension minSize = parent.getMinimumSize();
+		Dimension minSize = getParent().getMinimumSize();
 		frame.setMinimumSize(minSize);
 
 		boardPanel = new JPanel();
@@ -128,15 +124,15 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 		JMenuItem fileStartItem = new JMenuItem("New Game");
 		fileMenu.add(fileStartItem);
-		fileStartItem.addActionListener(new StartAction(parent));
+		fileStartItem.addActionListener(new StartAction(getParent()));
 
 		JMenuItem fileRemoteItem = new JMenuItem("New &Network Game");
 		fileMenu.add(fileRemoteItem);
-		fileRemoteItem.addActionListener(new NewRemoteGameAction(parent));
+		fileRemoteItem.addActionListener(new NewRemoteGameAction(getParent()));
 
 		JMenuItem fileExitItem = new JMenuItem("Exit");
 		fileMenu.add(fileExitItem);
-		fileExitItem.addActionListener(new ExitAction(parent));
+		fileExitItem.addActionListener(new ExitAction(getParent()));
 
 		menuBar.add(fileMenu);
 		frame.setJMenuBar(menuBar);
@@ -145,5 +141,10 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 	@Override
 	public void refresh() {
 		boardPanel.repaint();
+	}
+
+	@Override
+	public void start() {
+		initDisplay();
 	}
 }

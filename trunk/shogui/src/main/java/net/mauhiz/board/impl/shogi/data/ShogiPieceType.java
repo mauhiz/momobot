@@ -88,6 +88,15 @@ public enum ShogiPieceType implements PieceType {
 		}
 	};
 
+	public static ShogiPieceType fromKanji(char piece) {
+		for (ShogiPieceType spt : values()) {
+			if (spt.kanji.charAt(0) == piece) {
+				return spt;
+			}
+		}
+		return null;
+	}
+
 	private String kanji;
 
 	private ShogiPieceType(String kanji) {
@@ -106,20 +115,20 @@ public enum ShogiPieceType implements PieceType {
 
 	public ShogiPieceType reversePromotion() {
 		switch (this) {
-			case TOKIN:
-				return PAWN;
-			case PROMOTED_KNIGHT:
-				return KNIGHT;
-			case PROMOTED_LANCE:
-				return LANCE;
-			case PROMOTED_SILVER:
-				return SILVER;
-			case HORSE:
-				return BISHOP;
-			case DRAGON:
-				return ROOK;
-			default:
-				return this;
+		case TOKIN:
+			return PAWN;
+		case PROMOTED_KNIGHT:
+			return KNIGHT;
+		case PROMOTED_LANCE:
+			return LANCE;
+		case PROMOTED_SILVER:
+			return SILVER;
+		case HORSE:
+			return BISHOP;
+		case DRAGON:
+			return ROOK;
+		default:
+			return this;
 		}
 	}
 

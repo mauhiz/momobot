@@ -50,7 +50,8 @@ public class SquareImpl implements Square {
 
 	@Override
 	public String toString() {
-		return "(" + x + "," + y + ")";
+		// indices are 0-based, so add a 1 offset to display
+		return "(" + (x + 1) + "," + (y + 1) + ")";
 	}
 
 }

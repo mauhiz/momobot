@@ -41,7 +41,7 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 
 				Button button = new Button(shell, SWT.PUSH | SWT.FLAT);
 				button.setSize(30, 30);
-				button.setBackground(fromAwt(parent.getSquareBgcolor(square)));
+				button.setBackground(fromAwt(getParent().getSquareBgcolor(square)));
 				buttons.put(SquareImpl.getInstance(x, y), button);
 			}
 
@@ -58,6 +58,14 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 
 	public void close() {
 		shell.close();
+	}
+
+	protected abstract void decorate(Button button, Piece piece);
+
+	@Override
+	public void decorate(Square square, Piece piece) {
+		Button button = getButton(square);
+		decorate(button, piece);
 	}
 
 	public void disableSquare(final Square square) {
@@ -109,12 +117,12 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		shell = new Shell(Display.getDefault());
 
 		initMenu();
-		shell.setText(parent.getWindowTitle());
+		shell.setText(getParent().getWindowTitle());
 
-		Dimension defaultSize = parent.getDefaultSize();
+		Dimension defaultSize = getParent().getDefaultSize();
 		shell.setSize(defaultSize.width, defaultSize.height);
 
-		Dimension minSize = parent.getMinimumSize();
+		Dimension minSize = getParent().getMinimumSize();
 		shell.setMinimumSize(minSize.width, minSize.height);
 	}
 
@@ -142,11 +150,11 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 
 		MenuItem fileStartItem = new MenuItem(fileMenu, SWT.PUSH);
 		fileStartItem.setText("New Local &Game");
-		fileStartItem.addSelectionListener(new StartAction(parent));
+		fileStartItem.addSelectionListener(new StartAction(getParent()));
 
 		MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
 		fileExitItem.setText("E&xit");
-		fileExitItem.addSelectionListener(new ExitAction(parent));
+		fileExitItem.addSelectionListener(new ExitAction(getParent()));
 		shell.setMenuBar(menuBar);
 	}
 
@@ -159,14 +167,6 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 			}
 		});
 	}
-
-	@Override
-	public void decorate(Square square, Piece piece) {
-		Button button = getButton(square);
-		decorate(button, piece);
-	}
-
-	protected abstract void decorate(Button button, Piece piece);
 
 	@Override
 	public void start() {

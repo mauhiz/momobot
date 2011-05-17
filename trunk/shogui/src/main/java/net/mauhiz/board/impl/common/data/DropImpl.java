@@ -7,8 +7,8 @@ import net.mauhiz.board.model.data.Square;
 
 public class DropImpl extends AbstractMove implements Drop {
 	private PieceType pieceType;
-
 	private Square to;
+
 	public DropImpl(PlayerType playerType, PieceType pieceType, Square to) {
 		super(playerType);
 		this.to = to;
@@ -23,5 +23,10 @@ public class DropImpl extends AbstractMove implements Drop {
 	@Override
 	public Square getTo() {
 		return to;
+	}
+
+	@Override
+	public String toString() {
+		return pieceType + "@" + to;
 	}
 }

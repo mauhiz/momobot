@@ -14,52 +14,52 @@ import net.mauhiz.board.model.data.Square;
  * @author mauhiz
  */
 public class CheckersGui extends AbstractInteractiveBoardGui {
-    public static void main(String... args) {
-        CheckersGui gui = new CheckersGui();
-        gui.assistant = new CheckersSwingAssistant(gui);
-        gui.assistant.start();
-    }
+	public static void main(String... args) {
+		CheckersGui gui = new CheckersGui();
+		gui.assistant = new CheckersSwingAssistant(gui);
+		gui.assistant.start();
+	}
 
-    @Override
-    protected CheckersBoard getBoard() {
-        return (CheckersBoard) super.getBoard();
-    }
+	@Override
+	protected CheckersBoard getBoard() {
+		return (CheckersBoard) super.getBoard();
+	}
 
-    @Override
-    public CheckersRule getRule() {
-        return (CheckersRule) super.getRule();
-    }
+	@Override
+	public CheckersRule getRule() {
+		return (CheckersRule) super.getRule();
+	}
 
-    @Override
-    public Color getSquareBgcolor(Square square) {
-        return (square.getX() + square.getY()) % 2 == 0 ? Color.DARK_GRAY : Color.LIGHT_GRAY;
-    }
+	@Override
+	public Color getSquareBgcolor(Square square) {
+		return (square.getX() + square.getY()) % 2 == 0 ? Color.DARK_GRAY : Color.LIGHT_GRAY;
+	}
 
-    public String getWindowTitle() {
-        return "mauhiz' Checkers";
-    }
+	public String getWindowTitle() {
+		return "mauhiz' Checkers";
+	}
 
-    @Override
-    protected CheckersGameController newController() {
-        return new CheckersGameController(this);
-    }
+	@Override
+	protected CheckersGameController newController() {
+		return new CheckersGameController(this);
+	}
 
-    @Override
-    protected void refreshSquare(Square square) {
-        Piece op = getBoard().getPieceAt(square);
-        disableSquare(square);
+	@Override
+	protected void refreshSquare(Square square) {
+		Piece op = getBoard().getPieceAt(square);
+		disableSquare(square);
 
-        if (selectedSquare == null) {// available pieces
-            if (op != null && op.getPlayerType() == getTurn()) {
-                addSelectAction(square);
-            }
-        } else { // from the board
-            // available destinations
-            Move move = getRule().generateMove(selectedSquare, square, controller.getGame());
+		if (selectedSquare == null) {// available pieces
+			if (op != null && op.getPlayerType() == getTurn()) {
+				addSelectAction(square);
+			}
+		} else { // from the board
+			// available destinations
+			Move move = getRule().generateMove(selectedSquare, square, getController().getGame());
 
-            if (move != null) {
-                addMoveAction(square, move);
-            }
-        }
-    }
+			if (move != null) {
+				addMoveAction(square, move);
+			}
+		}
+	}
 }

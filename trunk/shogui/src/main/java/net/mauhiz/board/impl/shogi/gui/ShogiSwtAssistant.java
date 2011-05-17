@@ -5,7 +5,7 @@ import net.mauhiz.board.impl.shogi.data.ShogiPieceType;
 import net.mauhiz.board.impl.shogi.data.ShogiPlayerType;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.Piece;
-import net.mauhiz.board.model.gui.BoardGui;
+import net.mauhiz.board.model.gui.PocketBoardGui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -37,7 +37,7 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		}
 	}
 
-	public ShogiSwtAssistant(BoardGui parent) {
+	public ShogiSwtAssistant(PocketBoardGui parent) {
 		super(parent);
 	}
 
@@ -47,13 +47,14 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 	}
 
 	@Override
+	public ShogiGui getParent() {
+		return (ShogiGui) super.getParent();
+	}
+
+	@Override
 	public void initPockets() {
 		pockets.put(ShogiPlayerType.GOTE, new Group(shell, SWT.TOP));
 		pockets.put(ShogiPlayerType.SENTE, new Group(shell, SWT.BOTTOM));
-	}
-	
-	public ShogiGui getParent() {
-		return (ShogiGui) parent;
 	}
 
 	public void showPromotionDialog(NormalMove move) {
@@ -61,11 +62,11 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		mb.setMessage("Promote?");
 		int buttonID = mb.open();
 		switch (buttonID) {
-			case SWT.YES:
-				getParent().afterPromotionDialog(move, true);
-				break;
-			default:
-				getParent().afterPromotionDialog(move, false);
+		case SWT.YES:
+			getParent().afterPromotionDialog(move, true);
+			break;
+		default:
+			getParent().afterPromotionDialog(move, false);
 		}
 	}
 }
