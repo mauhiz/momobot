@@ -17,75 +17,76 @@ import net.mauhiz.board.model.data.Square;
  */
 public class ChessGui extends AbstractInteractiveBoardGui {
 
-    public static void main(String... args) {
-        ChessGui gui = new ChessGui();
-        gui.assistant = new SwingChessGuiAssistant(gui);
-        gui.assistant.start();
-    }
+	public static void main(String... args) {
+		ChessGui gui = new ChessGui();
+		gui.assistant = new SwingChessGuiAssistant(gui);
+		gui.assistant.start();
+	}
 
-    private SwtChessGuiAssistant getAssistant() {
-        return (SwtChessGuiAssistant) assistant;
-    }
+	@Override
+	protected IChessGuiAssistant getAssistant() {
+		return (IChessGuiAssistant) super.getAssistant();
+	}
 
-    @Override
-    protected ChessBoard getBoard() {
-        return (ChessBoard) super.getBoard();
-    }
+	@Override
+	protected ChessBoard getBoard() {
+		return (ChessBoard) super.getBoard();
+	}
 
-    @Override
-    public ChessRule getRule() {
-        return (ChessRule) super.getRule();
-    }
+	@Override
+	public ChessRule getRule() {
+		return (ChessRule) super.getRule();
+	}
 
-    @Override
-    public Color getSquareBgcolor(Square square) {
-        return (square.getX() + square.getY()) % 2 == 0 ? Color.LIGHT_GRAY : Color.DARK_GRAY;
-    }
+	@Override
+	public Color getSquareBgcolor(Square square) {
+		return (square.getX() + square.getY()) % 2 == 0 ? Color.LIGHT_GRAY : Color.DARK_GRAY;
+	}
 
-    @Override
-    public String getWindowTitle() {
-        return "mauhiz' Chess";
-    }
+	@Override
+	public String getWindowTitle() {
+		return "mauhiz' Chess";
+	}
 
-    @Override
-    protected ChessGameController newController() {
-        return new ChessGameController(this);
-    }
+	@Override
+	protected ChessGameController newController() {
+		return new ChessGameController(this);
+	}
 
-    @Override
-    protected void refreshSquare(Square square) {
-        ChessPiece op = getBoard().getPieceAt(square);
-        disableSquare(square);
+	@Override
+	protected void refreshSquare(Square square) {
+		ChessPiece op = getBoard().getPieceAt(square);
+		disableSquare(square);
 
-        if (selectedSquare == null) {// available pieces
-            if (op != null && op.getPlayerType() == getTurn()) {
-                addSelectAction(square);
-            }
-        } else { // from the board
-            // available destinations
-            Move move = getRule().generateMove(selectedSquare, square, controller.getGame());
+		if (selectedSquare == null) {// available pieces
+			if (op != null && op.getPlayerType() == getTurn()) {
+				addSelectAction(square);
+			}
+		} else { // from the board
+			// available destinations
+			Move move = getRule().generateMove(selectedSquare, square, controller.getGame());
 
-            if (move != null) {
-                addMoveAction(square, move);
-            }
-        }
-    }
+			if (move != null) {
+				addMoveAction(square, move);
+			}
+		}
+	}
 
-    @Override
-    public void sendMove(Move move) {
-        if (move instanceof NormalMove) {
-            NormalMove nmove = (NormalMove) move;
+	@Override
+	public void sendMove(Move move) {
+		if (move instanceof NormalMove) {
+			NormalMove nmove = (NormalMove) move;
 
-            if (getRule().canPromote(getBoard().getPieceAt(nmove.getFrom()), nmove.getTo())) {
-                ChessPieceType[] promotions = { ChessPieceType.QUEEN, ChessPieceType.ROOK, ChessPieceType.BISHOP,
-                        ChessPieceType.KNIGHT };
-                getAssistant().showPromotionDialog(promotions, nmove);
-                return; // do not send anything yet
-            }
-        }
+			if (getRule().canPromote(getBoard().getPieceAt(nmove.getFrom()), nmove.getTo())) {
+				ChessPieceType[] promotions = { ChessPieceType.QUEEN, ChessPieceType.ROOK, ChessPieceType.BISHOP,
+						ChessPieceType.KNIGHT };
+				getAssistant().showPromotionDialog(promotions, nmove);
+				return; // do not send anything yet
+			}
+		}
 
-        selectedSquare = null;
-        refresh();
-        super.sendMove(move);
-    }
+		selectedSquare = null;
+		refresh();
+		super.sendMove(move);
+	}
 }

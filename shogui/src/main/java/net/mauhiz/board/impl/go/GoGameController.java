@@ -1,9 +1,9 @@
 package net.mauhiz.board.impl.go;
 
 import net.mauhiz.board.impl.common.AbstractPocketGameController;
+import net.mauhiz.board.impl.common.gui.AbstractInteractiveBoardGui;
 import net.mauhiz.board.impl.go.data.GoGame;
 import net.mauhiz.board.impl.go.data.GoRule;
-import net.mauhiz.board.impl.go.gui.GoGui;
 import net.mauhiz.board.model.BoardIO;
 
 public class GoGameController extends AbstractPocketGameController {
@@ -13,8 +13,8 @@ public class GoGameController extends AbstractPocketGameController {
     }
 
     @Override
-    public GoGui getBoardIO() {
-        return (GoGui) super.getBoardIO();
+    public AbstractInteractiveBoardGui getBoardIO() {
+        return (AbstractInteractiveBoardGui) super.getBoardIO();
     }
 
     @Override

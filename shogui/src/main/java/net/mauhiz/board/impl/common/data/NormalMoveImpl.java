@@ -24,4 +24,9 @@ public class NormalMoveImpl extends AbstractMove implements NormalMove {
 		return to;
 	}
 
+	@Override
+	public String toString() {
+		return from + "->" + to;
+	}
+
 }

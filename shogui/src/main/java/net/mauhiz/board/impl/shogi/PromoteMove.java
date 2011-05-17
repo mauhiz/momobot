@@ -14,4 +14,9 @@ public class PromoteMove extends AbstractMove {
 	public NormalMove getParentMove() {
 		return parentMove;
 	}
+
+	@Override
+	public String toString() {
+		return parentMove + "+";
+	}
 }

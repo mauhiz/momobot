@@ -13,105 +13,112 @@ import net.mauhiz.board.model.gui.InteractiveBoardGui;
 import net.mauhiz.util.IAction;
 
 public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui {
-    protected GuiAssistant assistant;
-    protected GameController controller;
-    protected Square selectedSquare;
+	protected GuiAssistant assistant;
+	protected GameController controller;
+	protected Square selectedSquare;
 
-    public void addCancelAction(Square square) {
-        enableSquare(square, new CancelAction(this));
-    }
+	public void addCancelAction(Square square) {
+		enableSquare(square, new CancelAction(this));
+	}
 
-    public void addMoveAction(Square square, Move move) {
-        enableSquare(square, new MoveAction(this, move));
-    }
+	public void addMoveAction(Square square, Move move) {
+		enableSquare(square, new MoveAction(this, move));
+	}
 
-    public void addSelectAction(Square square) {
-        enableSquare(square, new SelectSquareAction(this, square));
-    }
+	public void addSelectAction(Square square) {
+		enableSquare(square, new SelectSquareAction(this, square));
+	}
 
-    public void cancelSelection() {
-        selectedSquare = null;
-        refresh();
-    }
+	public void cancelSelection() {
+		selectedSquare = null;
+		refresh();
+	}
 
-    @Override
-    public void close() {
-        assistant.close();
-    }
+	@Override
+	public void close() {
+		assistant.close();
+	}
 
-    @Override
-    public void disableSquare(Square square) {
-        assistant.disableSquare(square);
-    }
+	@Override
+	public void disableSquare(Square square) {
+		assistant.disableSquare(square);
+	}
 
-    public void enableSquare(Square square, IAction action) {
-        assistant.enableSquare(square, action);
-    }
+	public void enableSquare(Square square, IAction action) {
+		assistant.enableSquare(square, action);
+	}
 
-    protected Board getBoard() {
-        return controller.getGame().getBoard();
-    }
+	protected GuiAssistant getAssistant() {
+		return assistant;
+	}
 
-    public Dimension getDefaultSize() {
-        return new Dimension(400, 400);
-    }
+	protected Board getBoard() {
+		return getController().getGame().getBoard();
+	}
 
-    public Dimension getMinimumSize() {
-        return new Dimension(0, 0);
-    }
+	protected GameController getController() {
+		return controller;
+	}
 
-    public Rule getRule() {
-        return controller.getGame().getRule();
-    }
+	public Dimension getDefaultSize() {
+		return new Dimension(400, 400);
+	}
 
-    public Square getSelectedSquare() {
-        return selectedSquare;
-    }
+	public Dimension getMinimumSize() {
+		return new Dimension(0, 0);
+	}
 
-    public PlayerType getTurn() {
-        return controller.getGame().getTurn();
-    }
+	protected Rule getRule() {
+		return getController().getGame().getRule();
+	}
 
-    protected abstract GameController newController();
+	public Square getSelectedSquare() {
+		return selectedSquare;
+	}
 
-    @Override
-    public void newGame() {
-        controller = newController();
-        Dimension size = getBoard().getSize();
+	public PlayerType getTurn() {
+		return getController().getGame().getTurn();
+	}
 
-        assistant.initLayout(size);
+	protected abstract GameController newController();
 
-        for (Square square : getBoard().getSquares()) {
-            assistant.appendSquare(square, size);
-        }
+	@Override
+	public void newGame() {
+		controller = newController();
+		Dimension size = getBoard().getSize();
 
-        refresh();
-    }
+		assistant.initLayout(size);
 
-    public synchronized void refresh() {
-        for (Square square : getBoard().getSquares()) {
-            disableSquare(square);
-            refreshSquare(square);
-            assistant.decorate(square, getBoard().getPieceAt(square));
-        }
+		for (Square square : getBoard().getSquares()) {
+			assistant.appendSquare(square, size);
+		}
 
-        if (getSelectedSquare() != null) {
-            addCancelAction(getSelectedSquare());
-        }
-        assistant.refresh();
-    }
+		refresh();
+	}
 
-    protected abstract void refreshSquare(Square square);
+	public synchronized void refresh() {
+		for (Square square : getBoard().getSquares()) {
+			disableSquare(square);
+			refreshSquare(square);
+			assistant.decorate(square, getBoard().getPieceAt(square));
+		}
 
-    @Override
-    public void selectSquare(Square at) {
-        selectedSquare = at;
-        refresh();
-    }
+		if (getSelectedSquare() != null) {
+			addCancelAction(getSelectedSquare());
+		}
+		assistant.refresh();
+	}
 
-    public void sendMove(Move move) {
-        controller.receiveMove(move);
-        cancelSelection();
-        refresh();
-    }
+	protected abstract void refreshSquare(Square square);
+
+	@Override
+	public void selectSquare(Square at) {
+		selectedSquare = at;
+		refresh();
+	}
+
+	public void sendMove(Move move) {
+		getController().receiveMove(move);
+		cancelSelection();
+	}
 }

@@ -23,32 +23,25 @@ import net.mauhiz.util.IAction;
 
 public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 
+	private final Map<Square, Button> buttons = new HashMap<Square, Button>();
+
+	protected Frame frame = new Frame();
+	protected Panel panel;
+
 	public AwtGuiAssistant(BoardGui parent) {
 		super(parent);
 	}
 
-	private final Map<Square, Button> buttons = new HashMap<Square, Button>();
-	protected Frame frame = new Frame();
-	protected Panel panel;
-
 	public void afterInit() {
 		frame.pack();
 	}
-
-	@Override
-	public void decorate(Square square, Piece piece) {
-		Button button = getButton(square);
-		decorate(button, piece);
-	}
-
-	protected abstract void decorate(Button button, Piece piece);
 
 	public void appendSquare(Square square, Dimension size) {
 		int x = square.getX();
 		int y = size.height - square.getY() - 1;
 		Button button = new Button();
 		buttons.put(SquareImpl.getInstance(x, y), button);
-		button.setBackground(parent.getSquareBgcolor(square));
+		button.setBackground(getParent().getSquareBgcolor(square));
 		button.setSize(30, 30);
 		panel.add(button);
 	}
@@ -64,6 +57,14 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	@Override
 	public void close() {
 		frame.dispose();
+	}
+
+	protected abstract void decorate(Button button, Piece piece);
+
+	@Override
+	public void decorate(Square square, Piece piece) {
+		Button button = getButton(square);
+		decorate(button, piece);
 	}
 
 	@Override
@@ -98,12 +99,12 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 
 	public void initDisplay() {
 		initMenu();
-		frame.setTitle(parent.getWindowTitle());
+		frame.setTitle(getParent().getWindowTitle());
 
-		Dimension defaultSize = parent.getDefaultSize();
+		Dimension defaultSize = getParent().getDefaultSize();
 		frame.setSize(defaultSize);
 
-		Dimension minSize = parent.getMinimumSize();
+		Dimension minSize = getParent().getMinimumSize();
 		frame.setMinimumSize(minSize);
 
 		panel = new Panel();
@@ -126,11 +127,11 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 
 		MenuItem fileStartItem = new MenuItem("New Game", new MenuShortcut(KeyEvent.VK_G));
 		fileMenu.add(fileStartItem);
-		fileStartItem.addActionListener(new StartAction(parent));
+		fileStartItem.addActionListener(new StartAction(getParent()));
 
 		MenuItem fileExitItem = new MenuItem("Exit", new MenuShortcut(KeyEvent.VK_X));
 		fileMenu.add(fileExitItem);
-		fileExitItem.addActionListener(new ExitAction(parent));
+		fileExitItem.addActionListener(new ExitAction(getParent()));
 
 		menuBar.add(fileMenu);
 		frame.setMenuBar(menuBar);
@@ -140,7 +141,7 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	public void refresh() {
 		frame.repaint();
 	}
-	
+
 	@Override
 	public void start() {
 		initDisplay();

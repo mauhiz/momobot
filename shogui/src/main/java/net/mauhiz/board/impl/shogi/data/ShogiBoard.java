@@ -20,48 +20,15 @@ import net.mauhiz.board.model.data.PocketBoard;
 import net.mauhiz.board.model.data.Square;
 
 public class ShogiBoard extends AbstractBoard implements PocketBoard {
-	protected final Map<ShogiPlayerType, List<ShogiPieceType>> pockets = new HashMap<ShogiPlayerType, List<ShogiPieceType>>(2);
+	public static final int SIZE = 9;
+	protected final Map<ShogiPlayerType, List<ShogiPieceType>> pockets = new HashMap<ShogiPlayerType, List<ShogiPieceType>>(
+			2);
 
 	public ShogiBoard() {
 		super();
 		for (ShogiPlayerType spt : ShogiPlayerType.values()) {
 			pockets.put(spt, new ArrayList<ShogiPieceType>());
 		}
-	}
-
-	@Override
-	public List<ShogiPieceType> getPocket(PlayerType player) {
-		return pockets.get(player);
-	}
-
-	@Override
-	public Dimension getSize() {
-		return new Dimension(9, 9);
-	}
-
-	public Square findKingSquare(ShogiPlayerType pl) {
-		// locate the king
-		for (Square square : getSquares()) {
-			ShogiPiece op = getPieceAt(square);
-			if (op == null) {
-				continue;
-			}
-			if (op.getPlayerType() == pl && op.getPieceType() == ShogiPieceType.KING) {
-				return square;
-			}
-		}
-
-		return null;
-	}
-	
-	@Override
-	public ShogiPiece getPieceAt(Square square) {
-		return (ShogiPiece) super.getPieceAt(square);
-	}
-	
-	@Override
-	public ShogiPiece setPieceAt(Square square, Piece piece) {
-		return (ShogiPiece) super.setPieceAt(square, piece);
 	}
 
 	public void applyMove(Move move) {
@@ -89,9 +56,24 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 			NormalMove parentMove = pmove.getParentMove();
 			applyMove(parentMove);
 			ShogiPiece moved = (ShogiPiece) piecesMap.remove(parentMove.getTo());
-			setPieceAt(parentMove.getTo(), new ShogiPiece((ShogiPlayerType) pmove.getPlayerType(), moved
-					.getPieceType().getPromotion()));
+			setPieceAt(parentMove.getTo(), new ShogiPiece((ShogiPlayerType) pmove.getPlayerType(), moved.getPieceType()
+					.getPromotion()));
 		}
+	}
+
+	public Square findKingSquare(ShogiPlayerType pl) {
+		// locate the king
+		for (Square square : getSquares()) {
+			ShogiPiece op = getPieceAt(square);
+			if (op == null) {
+				continue;
+			}
+			if (op.getPlayerType() == pl && op.getPieceType() == ShogiPieceType.KING) {
+				return square;
+			}
+		}
+
+		return null;
 	}
 
 	public Collection<ShogiPiece> getAllPocketPieces() {
@@ -105,5 +87,25 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 		}
 
 		return pieces;
+	}
+
+	@Override
+	public ShogiPiece getPieceAt(Square square) {
+		return (ShogiPiece) super.getPieceAt(square);
+	}
+
+	@Override
+	public List<ShogiPieceType> getPocket(PlayerType player) {
+		return pockets.get(player);
+	}
+
+	@Override
+	public Dimension getSize() {
+		return new Dimension(SIZE, SIZE);
+	}
+
+	@Override
+	public ShogiPiece setPieceAt(Square square, Piece piece) {
+		return (ShogiPiece) super.setPieceAt(square, piece);
 	}
 }

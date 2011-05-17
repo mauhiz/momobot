@@ -8,7 +8,6 @@ import java.util.Map;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
-import net.mauhiz.board.model.gui.BoardGui;
 import net.mauhiz.board.model.gui.PocketBoardGui;
 import net.mauhiz.board.model.gui.PocketGuiAssistant;
 
@@ -21,7 +20,7 @@ public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements P
 
 	protected Map<PlayerType, Composite> pockets = new HashMap<PlayerType, Composite>();
 
-	public PocketSwtGuiAssistant(BoardGui parent) {
+	public PocketSwtGuiAssistant(PocketBoardGui parent) {
 		super(parent);
 	}
 
@@ -29,8 +28,13 @@ public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements P
 		PlayerType player = piece.getPlayerType();
 		PieceType pieceType = piece.getPieceType();
 		Button button = new Button(pockets.get(player), SWT.PUSH);
-		button.addSelectionListener(new SelectPocketAction((PocketBoardGui) parent, pieceType, player));
+		button.addSelectionListener(new SelectPocketAction(getParent(), pieceType, player));
 		decorate(button, piece);
+	}
+
+	@Override
+	protected PocketBoardGui getParent() {
+		return (PocketBoardGui) super.getParent();
 	}
 
 	@Override
