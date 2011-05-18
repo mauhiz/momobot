@@ -1,66 +1,52 @@
 package net.mauhiz.board.impl.checkers.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.mauhiz.board.impl.checkers.PromoteMove;
-import net.mauhiz.board.model.data.Game;
+import net.mauhiz.board.impl.common.data.AbstractGame;
+import net.mauhiz.board.model.data.Board;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
-import net.mauhiz.board.model.data.PlayerType;
 
-public class CheckersGame implements Game {
-    private final CheckersBoard board;
-    private final List<Move> history = new ArrayList<Move>();
-    private final CheckersRule rule;
-    private PlayerType turn;
+public class CheckersGame extends AbstractGame {
 
-    public CheckersGame(CheckersRule rule) {
-        this.rule = rule;
-        board = rule.newBoard();
-        turn = rule.getStartingPlayer();
-        rule.initPieces(board);
-    }
+	public CheckersGame(CheckersRule rule) {
+		super(rule);
+	}
 
-    @Override
-    public PlayerType applyMove(Move move) {
-        if (rule.isValid(move, this)) {
-            Move realMove = move;
+	@Override
+	public CheckersPlayerType applyMove(Move move) {
+		if (rule.isValid(move, this)) {
+			Move realMove = move;
 
-            if (move instanceof NormalMove) {
-                NormalMove nmove = (NormalMove) move;
-                if (rule.canPromote(nmove)) {
-                    realMove = new PromoteMove(nmove);
-                }
-            }
-            history.add(realMove);
-            board.applyMove(realMove);
-            turn = realMove.getPlayerType().other();
-            // TODO can capture again with same piece if capture
-            return turn;
-        }
+			if (move instanceof NormalMove) {
+				NormalMove nmove = (NormalMove) move;
+				if (getRule().canPromote(nmove)) {
+					realMove = new PromoteMove(nmove);
+				}
+			}
+			moves.add(realMove);
+			Board newState = getLastBoard().copy();
+			newState.applyMove(realMove);
+			boards.add(newState);
+			return getTurn();
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public CheckersBoard getBoard() {
-        return board;
-    }
+	@Override
+	public CheckersBoard getLastBoard() {
+		return (CheckersBoard) super.getLastBoard();
+	}
 
-    @Override
-    public List<Move> getMoves() {
-        return history;
-    }
+	@Override
+	public CheckersRule getRule() {
+		return (CheckersRule) super.getRule();
+	}
 
-    @Override
-    public CheckersRule getRule() {
-        return rule;
-    }
-
-    @Override
-    public PlayerType getTurn() {
-        return turn;
-    }
+	@Override
+	public CheckersPlayerType getTurn() {
+		// TODO can capture again with same piece if capture
+		return (CheckersPlayerType) super.getTurn();
+	}
 
 }

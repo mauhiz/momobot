@@ -12,23 +12,18 @@ import net.mauhiz.board.model.data.Square;
  * @author mauhiz
  */
 public class CheckersBoard extends AbstractBoard {
-    public static final int SIZE = 10;
+	public static final int SIZE = 10;
 
-    static Square getSkippedSquare(Square from, Square to) {
-        if (isCornerSkip(from, to)) {
-            return SquareImpl.getInstance((from.getX() + to.getX()) / 2, (from.getY() + to.getY()) / 2);
-        }
-        return null;
-    }
+	static Square getSkippedSquare(Square from, Square to) {
+		if (isCornerSkip(from, to)) {
+			return SquareImpl.getInstance((from.getX() + to.getX()) / 2, (from.getY() + to.getY()) / 2);
+		}
+		return null;
+	}
 
-    @Override
-    public CheckersPiece getPieceAt(Square square) {
-        return (CheckersPiece) super.getPieceAt(square);
-    }
-
-    public Dimension getSize() {
-        return new Dimension(SIZE, SIZE);
-    }
+	public CheckersBoard(CheckersRule rule) {
+		super(rule);
+	}
 
 	@Override
 	public void applyMove(Move move) {
@@ -43,5 +38,21 @@ public class CheckersBoard extends AbstractBoard {
 			// capture
 			piecesMap.remove(getSkippedSquare(from, to));
 		}
+	}
+
+	@Override
+	public CheckersBoard copy() {
+		CheckersBoard copy = new CheckersBoard(null);
+		copy.piecesMap.putAll(piecesMap);
+		return copy;
+	}
+
+	@Override
+	public CheckersPiece getPieceAt(Square square) {
+		return (CheckersPiece) super.getPieceAt(square);
+	}
+
+	public Dimension getSize() {
+		return new Dimension(SIZE, SIZE);
 	}
 }

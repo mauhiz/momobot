@@ -3,6 +3,7 @@ package net.mauhiz.board.impl.go.data;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,56 +18,60 @@ import net.mauhiz.board.model.data.PocketBoard;
 import net.mauhiz.board.model.data.Square;
 
 public class GoBoard extends AbstractBoard implements PocketBoard {
-    protected final Map<GoPlayerType, List<GoPieceType>> pockets = new HashMap<GoPlayerType, List<GoPieceType>>(
-            2);
+	protected final Map<GoPlayerType, List<GoPieceType>> captures = new HashMap<GoPlayerType, List<GoPieceType>>(2);
 
-    public GoBoard() {
-        super();
-        for (GoPlayerType spt : GoPlayerType.values()) {
-            pockets.put(spt, new ArrayList<GoPieceType>());
-        }
-    }
+	public GoBoard(GoRule rule) {
+		super(rule);
+		for (GoPlayerType spt : GoPlayerType.values()) {
+			captures.put(spt, new ArrayList<GoPieceType>());
+		}
+	}
 
-    public void applyMove(Move move) {
-        if (move instanceof Drop) {
-            Drop drop = (Drop) move;
-            GoPieceType pieceType = (GoPieceType) drop.getPieceType();
-            GoPlayerType playerType = (GoPlayerType) drop.getPlayerType();
-            pockets.get(playerType).remove(pieceType);
-            setPieceAt(drop.getTo(), new GoPiece(playerType, pieceType));
-        }
-    }
+	public void applyMove(Move move) {
+		if (move instanceof Drop) {
+			Drop drop = (Drop) move;
+			GoPieceType pieceType = (GoPieceType) drop.getPieceType();
+			GoPlayerType playerType = (GoPlayerType) drop.getPlayerType();
+			setPieceAt(drop.getTo(), new GoPiece(playerType, pieceType));
+		}
+	}
 
-    public Collection<GoPiece> getAllPocketPieces() {
-        List<GoPiece> pieces = new ArrayList<GoPiece>();
-        for (Entry<GoPlayerType, List<GoPieceType>> ent : pockets.entrySet()) {
-            GoPlayerType playerType = ent.getKey();
+	@Override
+	public GoBoard copy() {
+		GoBoard copy = new GoBoard(null);
+		copy.piecesMap.putAll(piecesMap);
+		for (Entry<GoPlayerType, List<GoPieceType>> ent : captures.entrySet()) {
+			copy.captures.put(ent.getKey(), new ArrayList<GoPieceType>(ent.getValue()));
+		}
+		return copy;
+	}
 
-            for (GoPieceType pt : ent.getValue()) {
-                pieces.add(new GoPiece(playerType, pt));
-            }
-        }
+	public Collection<GoPiece> getAllPocketPieces() {
+		List<GoPiece> pieces = new ArrayList<GoPiece>();
+		for (GoPlayerType playerType : GoPlayerType.values()) {
+			pieces.add(new GoPiece(playerType, GoPieceType.STONE));
+		}
 
-        return pieces;
-    }
+		return pieces;
+	}
 
-    @Override
-    public GoPiece getPieceAt(Square square) {
-        return (GoPiece) super.getPieceAt(square);
-    }
+	@Override
+	public GoPiece getPieceAt(Square square) {
+		return (GoPiece) super.getPieceAt(square);
+	}
 
-    @Override
-    public List<GoPieceType> getPocket(PlayerType player) {
-        return pockets.get(player);
-    }
+	@Override
+	public List<GoPieceType> getPocket(PlayerType player) {
+		return Collections.singletonList(GoPieceType.STONE);
+	}
 
-    @Override
-    public Dimension getSize() {
-        return new Dimension(19, 19);
-    }
+	@Override
+	public Dimension getSize() {
+		return new Dimension(19, 19);
+	}
 
-    @Override
-    public GoPiece setPieceAt(Square square, Piece piece) {
-        return (GoPiece) super.setPieceAt(square, piece);
-    }
+	@Override
+	public GoPiece setPieceAt(Square square, Piece piece) {
+		return (GoPiece) super.setPieceAt(square, piece);
+	}
 }

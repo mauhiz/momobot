@@ -8,6 +8,7 @@ import java.util.Map;
 import net.mauhiz.board.model.data.Board;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PlayerType;
+import net.mauhiz.board.model.data.Rule;
 import net.mauhiz.board.model.data.Square;
 
 public abstract class AbstractBoard implements Board {
@@ -57,6 +58,13 @@ public abstract class AbstractBoard implements Board {
 	}
 
 	protected final Map<Square, Piece> piecesMap = new HashMap<Square, Piece>();
+
+	public AbstractBoard(Rule rule) {
+		super();
+		if (rule != null) {
+			rule.initPieces(this);
+		}
+	}
 
 	protected Piece getPieceAt(int i, int j) {
 		return getPieceAt(SquareImpl.getInstance(i, j));
@@ -116,7 +124,7 @@ public abstract class AbstractBoard implements Board {
 	public Piece setPieceAt(Square square, Piece piece) {
 		return piecesMap.put(square, piece);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

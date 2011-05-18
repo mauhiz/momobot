@@ -127,7 +127,7 @@ public class ShogiRule extends AbstractPocketRule {
 	}
 
 	public boolean isCheck(ShogiPlayerType player, ShogiGame game) {
-		ShogiBoard board = game.getBoard();
+		ShogiBoard board = game.getLastBoard();
 		Square kingSquare = board.findKingSquare(player);
 		if (kingSquare == null) {
 			return false;
@@ -171,7 +171,7 @@ public class ShogiRule extends AbstractPocketRule {
 			return false;
 		}
 		ShogiGame sg = (ShogiGame) game;
-		ShogiBoard board = sg.getBoard();
+		ShogiBoard board = sg.getLastBoard();
 		if (move instanceof Drop) {
 			return canDrop(board, ((Drop) move).getTo());
 
@@ -194,6 +194,6 @@ public class ShogiRule extends AbstractPocketRule {
 
 	@Override
 	public ShogiBoard newBoard() {
-		return new ShogiBoard();
+		return new ShogiBoard(this);
 	}
 }

@@ -1,56 +1,34 @@
 package net.mauhiz.board.impl.shogi.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.mauhiz.board.model.data.Game;
+import net.mauhiz.board.impl.common.data.AbstractGame;
 import net.mauhiz.board.model.data.Move;
-import net.mauhiz.board.model.data.PlayerType;
 
-public class ShogiGame implements Game {
-	private PlayerType turn;
-	private final ShogiRule rule;
-	private final ShogiBoard board;
-	private final List<Move> history = new ArrayList<Move>();
-	
-	
+public class ShogiGame extends AbstractGame {
+
 	public ShogiGame(ShogiRule rule) {
-		this.rule = rule;
-		this.board = rule.newBoard();
-		turn = rule.getStartingPlayer();
-		rule.initPieces(board);
+		super(rule);
 	}
 
 	@Override
-	public ShogiBoard getBoard() {
-		return board;
-	}
-
-	@Override
-	public List<Move> getMoves() {
-		return history;
-	}
-
-	@Override
-	public ShogiRule getRule() {
-		return rule;
-	}
-
-	@Override
-	public PlayerType applyMove(Move move) {
+	public ShogiPlayerType applyMove(Move move) {
 		if (rule.isValid(move, this)) {
-			history.add(move);
-			turn = move.getPlayerType().other();
-			board.applyMove(move);
-			return turn;
+			ShogiBoard clone = getLastBoard().copy();
+			clone.applyMove(move);
+			boards.add(clone);
+			moves.add(move);
+			return getTurn();
 		}
-		
+
 		return null;
 	}
 
 	@Override
-	public PlayerType getTurn() {
-		return turn;
+	public ShogiBoard getLastBoard() {
+		return (ShogiBoard) super.getLastBoard();
 	}
 
+	@Override
+	public ShogiPlayerType getTurn() {
+		return (ShogiPlayerType) super.getTurn();
+	}
 }

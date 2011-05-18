@@ -53,7 +53,7 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 	}
 
 	protected Board getBoard() {
-		return getController().getGame().getBoard();
+		return getController().getGame().getLastBoard();
 	}
 
 	protected GameController getController() {

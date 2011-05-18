@@ -16,28 +16,38 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class SwtChessGuiAssistant extends SwtGuiAssistant implements IChessGuiAssistant {
+	static class ButtonDecorator implements Runnable {
+		private final Button button;
+		private final Piece piece;
+		private final Shell shell;
+
+		ButtonDecorator(Button button, Shell shell, Piece piece) {
+			this.button = button;
+			this.shell = shell;
+			this.piece = piece;
+		}
+
+		@Override
+		public void run() {
+			if (piece == null) {
+				button.setText("");
+			} else {
+				button.setText(piece.getPieceType().toString());
+				Display display = shell.getDisplay();
+				Color black = display.getSystemColor(SWT.COLOR_BLACK);
+				Color white = display.getSystemColor(SWT.COLOR_WHITE);
+				button.setForeground(piece.getPlayerType() == ChessPlayerType.BLACK ? black : white);
+			}
+		}
+	}
+
 	public SwtChessGuiAssistant(BoardGui parent) {
 		super(parent);
 	}
 
 	@Override
-	public void decorate(final Button button, final Piece piece) {
-		final Shell lshell = shell;
-		button.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (piece == null) {
-					button.setText("");
-				} else {
-					button.setText(piece.getPieceType().toString());
-					Display display = lshell.getDisplay();
-					Color black = display.getSystemColor(SWT.COLOR_BLACK);
-					Color white = display.getSystemColor(SWT.COLOR_WHITE);
-					button.setForeground(piece.getPlayerType() == ChessPlayerType.BLACK ? black : white);
-				}
-			}
-		});
-
+	public void decorate(Button button, Piece piece) {
+		button.getDisplay().syncExec(new ButtonDecorator(button, shell, piece));
 	}
 
 	public boolean showPromotionDialog() {
