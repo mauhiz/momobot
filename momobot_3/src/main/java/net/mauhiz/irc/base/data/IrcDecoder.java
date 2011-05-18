@@ -18,7 +18,6 @@ import net.mauhiz.irc.base.msg.SetTopic;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
@@ -26,7 +25,6 @@ import org.apache.log4j.Logger;
 public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
 
     private static final IIrcDecoder INSTANCE = new IrcDecoder();
-    private static final Logger LOG = Logger.getLogger(IrcDecoder.class);
 
     public static IIrcDecoder getInstance() {
         return INSTANCE;
@@ -44,63 +42,63 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
             String msg) {
 
         switch (command) {
-            case NOTICE:
-                Target to = decodeTarget(server, args.poll());
-                return new Notice(server, from, to, msg);
+        case NOTICE:
+            Target to = decodeTarget(server, args.poll());
+            return new Notice(server, from, to, msg);
 
-            case PING:
-                return new Ping(server, from, msg);
+        case PING:
+            return new Ping(server, from, msg);
 
-            case MODE:
-                Target modifiedObject = decodeTarget(server, args.poll());
-                return new Mode(server, from, modifiedObject, args);
+        case MODE:
+            Target modifiedObject = decodeTarget(server, args.poll());
+            return new Mode(server, from, modifiedObject, args);
 
-            case JOIN:
-                String[] chans = StringUtils.split(args.poll(), ',');
-                String[] keys = StringUtils.split(args.poll(), ',');
-                IrcChannel[] channels = new IrcChannel[chans.length];
-                for (int i = 0; i < chans.length; i++) {
-                    channels[i] = server.getNetwork().findChannel(chans[i]);
-                }
-                return new Join(server, (IrcUser) from, channels, keys);
+        case JOIN:
+            String[] chans = StringUtils.split(args.poll(), ',');
+            String[] keys = StringUtils.split(args.poll(), ',');
+            IrcChannel[] channels = new IrcChannel[chans.length];
+            for (int i = 0; i < chans.length; i++) {
+                channels[i] = server.getNetwork().findChannel(chans[i]);
+            }
+            return new Join(server, (IrcUser) from, channels, keys);
 
-            case PART:
-                chans = StringUtils.split(args.poll(), ',');
-                channels = new IrcChannel[chans.length];
-                for (int i = 0; i < chans.length; i++) {
-                    channels[i] = server.getNetwork().findChannel(chans[i]);
-                }
-                return new Part(server, (IrcUser) from, msg, channels);
+        case PART:
+            chans = StringUtils.split(args.poll(), ',');
+            channels = new IrcChannel[chans.length];
+            for (int i = 0; i < chans.length; i++) {
+                channels[i] = server.getNetwork().findChannel(chans[i]);
+            }
+            return new Part(server, (IrcUser) from, msg, channels);
 
-            case PRIVMSG:
-                to = decodeTarget(server, args.poll());
-                if (msg.charAt(0) == QUOTE_STX) {
-                    String ctcpContent = StringUtils.strip(msg, Character.toString(QUOTE_STX));
-                    return CtcpFactory.decode(server, from, to, ctcpContent);
-                }
-                return new Privmsg(server, from, to, msg);
+        case PRIVMSG:
+            to = decodeTarget(server, args.poll());
+            if (msg.charAt(0) == QUOTE_STX) {
+                String ctcpContent = StringUtils.strip(msg, Character.toString(QUOTE_STX));
+                return CtcpFactory.decode(server, from, to, ctcpContent);
+            }
+            return new Privmsg(server, from, to, msg);
 
-            case QUIT:
-                return new Quit(server, from, msg);
+        case QUIT:
+            return new Quit(server, from, msg);
 
-            case NICK:
-                return new Nick(server, (IrcUser) from, msg);
+        case NICK:
+            return new Nick(server, (IrcUser) from, msg);
 
-            case KICK:
-                to = decodeTarget(server, args.poll());
-                String nick = args.poll();
-                IrcUser target = server.getNetwork().findUser(nick, false);
-                return new Kick(server, from, (IrcChannel) to, target, msg);
+        case KICK:
+            to = decodeTarget(server, args.poll());
+            String nick = args.poll();
+            IrcUser target = server.getNetwork().findUser(nick, false);
+            return new Kick(server, from, (IrcChannel) to, target, msg);
 
-            case ERROR:
-                return new ServerError(server, msg);
+        case ERROR:
+            return new ServerError(server, msg);
 
-            case TOPIC:
-                to = decodeTarget(server, args.poll());
-                return new SetTopic(server, from, (IrcChannel) to, msg);
+        case TOPIC:
+            to = decodeTarget(server, args.poll());
+            return new SetTopic(server, from, (IrcChannel) to, msg);
 
-            default:
-                return null;
+        default:
+            return null;
         }
     }
 

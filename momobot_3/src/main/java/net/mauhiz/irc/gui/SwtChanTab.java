@@ -236,7 +236,7 @@ public class SwtChanTab extends AbstractSwtTab {
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if (arg0.keyCode == '\r') {
-                    new SendAction(inputBar, swtIrcClient.gtm, server, channel).doSwtAction(arg0);
+                    new SendAction(inputBar, swtIrcClient.gtm, server, channel).doAction();
                 }
             }
         });

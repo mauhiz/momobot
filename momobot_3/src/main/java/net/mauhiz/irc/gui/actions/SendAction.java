@@ -28,7 +28,7 @@ public class SendAction extends AbstractAction {
     }
 
     @Override
-    protected void doAction() {
+    public void doAction() {
         String toSend = bar.getText();
         if (StringUtils.isEmpty(toSend)) {
             return;
