@@ -77,6 +77,9 @@ public class ShogiRule extends AbstractPocketRule {
 
 	public boolean canPromote(ShogiBoard board, Square from, Square to) {
 		Piece piece = board.getPieceAt(from);
+		if (piece == null) {
+			return false;
+		}
 		ShogiPieceType pieceType = (ShogiPieceType) piece.getPieceType();
 
 		if (!pieceType.canPromote()) {

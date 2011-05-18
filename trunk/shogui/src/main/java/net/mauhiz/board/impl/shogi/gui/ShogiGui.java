@@ -16,11 +16,11 @@ import net.mauhiz.board.model.data.Square;
 
 public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 
-	public static void main(String[] args) {
+	public static void main(String... args) {
 		ShogiGui gui = new ShogiGui();
 		// gui.assistant = new ShogiSwtAssistant(gui);
 		gui.assistant = new ShogiSwingAssistant(gui);
-		gui.assistant.start();
+		gui.getAssistant().start();
 	}
 
 	public void afterPromotionDialog(NormalMove move, boolean promote) {
@@ -92,20 +92,19 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 			addSelectAction(square);
 		}
 
-		if (selectedSquare != null) { // from the board
+		if (isSquareSelected()) { // from the board
 			// available destinations
-			Move move = getRule().generateMove(selectedSquare, square, controller.getGame());
+			Move move = getRule().generateMove(getSelectedSquare(), square, getGame());
 
 			if (move != null) {
 				addMoveAction(square, move);
 			}
-		} else if (selectedPiece != null) { // from the pocket
-			Drop drop = getRule().generateMove(selectedPiece, square, controller.getGame());
+		} else if (isPieceSelected()) { // from the pocket
+			Drop drop = getRule().generateMove(selectedPiece, square, getGame());
 			if (drop != null) {
 				addMoveAction(square, drop);
 			}
 		}
-
 	}
 
 	@Override

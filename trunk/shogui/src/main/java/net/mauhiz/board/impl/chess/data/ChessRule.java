@@ -106,11 +106,12 @@ public class ChessRule extends AbstractRule {
 	@Override
 	public Move generateMove(Square from, Square to, Game game) {
 		Move move = super.generateMove(from, to, game);
-		if (move == null) {
+
+		if (move == null && game instanceof ChessGame) {
 			// try to castle
 			return generateCastle(from, to, (ChessGame) game);
-
 		}
+
 		return move;
 	}
 
@@ -187,7 +188,7 @@ public class ChessRule extends AbstractRule {
 	@Override
 	public boolean isValid(Move move, Game game) {
 		if (!(game instanceof ChessGame)) {
-			throw new IllegalClassException(ChessGame.class, game.getClass());
+			throw new IllegalClassException(ChessGame.class, game);
 		}
 		if (move instanceof NormalMove) {
 			NormalMove nmove = (NormalMove) move;

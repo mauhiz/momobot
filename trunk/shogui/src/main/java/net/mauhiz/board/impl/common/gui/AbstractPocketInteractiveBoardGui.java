@@ -18,8 +18,7 @@ public abstract class AbstractPocketInteractiveBoardGui extends AbstractInteract
 
 	@Override
 	public void cancelSelection() {
-		selectedPiece = null;
-		super.cancelSelection();
+		selectPieceToDrop(null, null);
 	}
 
 	@Override
@@ -27,10 +26,13 @@ public abstract class AbstractPocketInteractiveBoardGui extends AbstractInteract
 		return (PocketGuiAssistant) super.getAssistant();
 	}
 
+	protected boolean isPieceSelected() {
+		return selectedPiece != null;
+	}
+
 	@Override
 	public void selectPieceToDrop(PlayerType player, PieceType piece) {
 		selectedPiece = piece;
-		selectedSquare = null;
-		refresh();
+		super.cancelSelection();
 	}
 }

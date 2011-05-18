@@ -17,6 +17,7 @@ import sun.awt.VerticalBagLayout;
 
 public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implements PocketGuiAssistant {
 
+	protected JPanel boardAndPocketsPanel;
 	protected Map<PlayerType, JPanel> pockets = new TreeMap<PlayerType, JPanel>();
 
 	public PocketSwingGuiAssistant(PocketBoardGui parent) {
@@ -40,8 +41,20 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 	@Override
 	public void initLayout(Dimension size) {
 		super.initLayout(size);
-		frame.setLayout(new VerticalBagLayout());
+		boardAndPocketsPanel.setLayout(new VerticalBagLayout());
 		initPockets();
+	}
+
+	@Override
+	protected void initPanels() {
+		boardAndPocketsPanel = new JPanel();
+		frame.add(boardAndPocketsPanel);
+
+		boardPanel = new JPanel();
+		boardAndPocketsPanel.add(boardPanel);
+
+		historyPanel = new JPanel();
+		frame.add(historyPanel);
 	}
 
 	public void refreshPockets(Collection<? extends Piece> contents) {
