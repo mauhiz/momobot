@@ -25,9 +25,9 @@ import net.mauhiz.util.IAction;
 public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 	protected JPanel boardPanel;
-
 	private final Map<Square, RotatingJButton> buttons = new HashMap<Square, RotatingJButton>();
-	protected JFrame frame = new JFrame();
+	protected final JFrame frame = new JFrame();
+	protected JPanel historyPanel;
 
 	public SwingGuiAssistant(BoardGui parent) {
 		super(parent);
@@ -104,8 +104,8 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		Dimension minSize = getParent().getMinimumSize();
 		frame.setMinimumSize(minSize);
 
-		boardPanel = new JPanel();
-		frame.add(boardPanel);
+		initPanels();
+
 		frame.setVisible(true);
 	}
 
@@ -136,6 +136,14 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 		menuBar.add(fileMenu);
 		frame.setJMenuBar(menuBar);
+	}
+
+	protected void initPanels() {
+		boardPanel = new JPanel();
+		frame.add(boardPanel);
+
+		historyPanel = new JPanel();
+		frame.add(historyPanel);
 	}
 
 	@Override

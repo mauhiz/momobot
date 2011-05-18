@@ -16,4 +16,8 @@ public class InitMove implements Move {
 		return starter;
 	}
 
+	@Override
+	public String toString() {
+		return "start";
+	}
 }

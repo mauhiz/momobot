@@ -13,11 +13,11 @@ import net.mauhiz.board.model.data.Square;
 
 public class GoGui extends AbstractPocketInteractiveBoardGui {
 
-	public static void main(String[] args) {
+	public static void main(String... args) {
 		GoGui gui = new GoGui();
 		// gui.assistant = new ShogiSwtAssistant(gui);
 		gui.assistant = new GoSwingAssistant(gui);
-		gui.assistant.start();
+		gui.getAssistant().start();
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class GoGui extends AbstractPocketInteractiveBoardGui {
 	}
 
 	@Override
-	public synchronized void refresh() {
+	public void refresh() {
 		super.refresh();
 		getAssistant().refreshPockets(getBoard().getAllPocketPieces());
 		getAssistant().refresh();
@@ -60,16 +60,13 @@ public class GoGui extends AbstractPocketInteractiveBoardGui {
 	@Override
 	protected void refreshSquare(Square square) {
 		Piece piece = getBoard().getPieceAt(square);
-		if (selectedPiece == null) { // available pieces
-			if (piece != null && piece.getPlayerType() == getTurn()) {
-				addSelectAction(square);
-			}
-		} else { // from the pocket
-			Drop drop = getRule().generateMove(selectedPiece, square, controller.getGame());
+		if (isPieceSelected()) { // from the pocket
+			Drop drop = getRule().generateMove(selectedPiece, square, getGame());
 			if (drop != null) {
 				addMoveAction(square, drop);
 			}
+		} else if (piece != null && piece.getPlayerType() == getTurn()) { // available pieces
+			addSelectAction(square);
 		}
-
 	}
 }

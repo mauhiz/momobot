@@ -37,10 +37,10 @@ public class GoSwingAssistant extends PocketSwingGuiAssistant {
 
 	public void initPockets() {
 		JPanel pocket = newPocket();
-		frame.add(pocket, 0);
+		boardAndPocketsPanel.add(pocket, 0);
 		pockets.put(GoPlayerType.BLACK, pocket);
 		pocket = newPocket();
-		frame.add(pocket);
+		boardAndPocketsPanel.add(pocket);
 		pockets.put(GoPlayerType.WHITE, pocket);
 	}
 

@@ -4,6 +4,7 @@ import java.awt.Dimension;
 
 import net.mauhiz.board.model.GameController;
 import net.mauhiz.board.model.data.Board;
+import net.mauhiz.board.model.data.Game;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Rule;
@@ -30,22 +31,21 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 	}
 
 	public void cancelSelection() {
-		selectedSquare = null;
-		refresh();
+		selectSquare(null);
 	}
 
 	@Override
 	public void close() {
-		assistant.close();
+		getAssistant().close();
 	}
 
 	@Override
 	public void disableSquare(Square square) {
-		assistant.disableSquare(square);
+		getAssistant().disableSquare(square);
 	}
 
 	public void enableSquare(Square square, IAction action) {
-		assistant.enableSquare(square, action);
+		getAssistant().enableSquare(square, action);
 	}
 
 	protected GuiAssistant getAssistant() {
@@ -53,7 +53,7 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 	}
 
 	protected Board getBoard() {
-		return getController().getGame().getLastBoard();
+		return getGame().getLastBoard();
 	}
 
 	protected GameController getController() {
@@ -64,12 +64,16 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 		return new Dimension(400, 400);
 	}
 
+	protected Game getGame() {
+		return getController().getGame();
+	}
+
 	public Dimension getMinimumSize() {
 		return new Dimension(0, 0);
 	}
 
 	protected Rule getRule() {
-		return getController().getGame().getRule();
+		return getGame().getRule();
 	}
 
 	public Square getSelectedSquare() {
@@ -77,7 +81,11 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 	}
 
 	public PlayerType getTurn() {
-		return getController().getGame().getTurn();
+		return getGame().getTurn();
+	}
+
+	protected boolean isSquareSelected() {
+		return getSelectedSquare() != null;
 	}
 
 	protected abstract GameController newController();
@@ -87,26 +95,26 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 		controller = newController();
 		Dimension size = getBoard().getSize();
 
-		assistant.initLayout(size);
+		getAssistant().initLayout(size);
 
 		for (Square square : getBoard().getSquares()) {
-			assistant.appendSquare(square, size);
+			getAssistant().appendSquare(square, size);
 		}
 
 		refresh();
 	}
 
-	public synchronized void refresh() {
+	public void refresh() {
 		for (Square square : getBoard().getSquares()) {
 			disableSquare(square);
 			refreshSquare(square);
-			assistant.decorate(square, getBoard().getPieceAt(square));
+			getAssistant().decorate(square, getBoard().getPieceAt(square));
 		}
 
-		if (getSelectedSquare() != null) {
+		if (isSquareSelected()) {
 			addCancelAction(getSelectedSquare());
 		}
-		assistant.refresh();
+		getAssistant().refresh();
 	}
 
 	protected abstract void refreshSquare(Square square);

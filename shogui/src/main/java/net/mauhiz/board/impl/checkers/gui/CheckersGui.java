@@ -17,7 +17,7 @@ public class CheckersGui extends AbstractInteractiveBoardGui {
 	public static void main(String... args) {
 		CheckersGui gui = new CheckersGui();
 		gui.assistant = new CheckersSwingAssistant(gui);
-		gui.assistant.start();
+		gui.getAssistant().start();
 	}
 
 	@Override
@@ -49,17 +49,16 @@ public class CheckersGui extends AbstractInteractiveBoardGui {
 		Piece op = getBoard().getPieceAt(square);
 		disableSquare(square);
 
-		if (selectedSquare == null) {// available pieces
-			if (op != null && op.getPlayerType() == getTurn()) {
-				addSelectAction(square);
-			}
-		} else { // from the board
+		if (isSquareSelected()) { // from the board
 			// available destinations
-			Move move = getRule().generateMove(selectedSquare, square, getController().getGame());
+			Move move = getRule().generateMove(getSelectedSquare(), square, getGame());
 
 			if (move != null) {
 				addMoveAction(square, move);
 			}
+		} else if (op != null && op.getPlayerType() == getTurn()) { // available pieces
+			addSelectAction(square);
 		}
+
 	}
 }

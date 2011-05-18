@@ -20,7 +20,7 @@ public class ChessGui extends AbstractInteractiveBoardGui {
 	public static void main(String... args) {
 		ChessGui gui = new ChessGui();
 		gui.assistant = new SwingChessGuiAssistant(gui);
-		gui.assistant.start();
+		gui.getAssistant().start();
 	}
 
 	@Override
@@ -58,17 +58,15 @@ public class ChessGui extends AbstractInteractiveBoardGui {
 		ChessPiece op = getBoard().getPieceAt(square);
 		disableSquare(square);
 
-		if (selectedSquare == null) {// available pieces
-			if (op != null && op.getPlayerType() == getTurn()) {
-				addSelectAction(square);
-			}
-		} else { // from the board
+		if (isSquareSelected()) { // from the board
 			// available destinations
-			Move move = getRule().generateMove(selectedSquare, square, controller.getGame());
+			Move move = getRule().generateMove(getSelectedSquare(), square, getGame());
 
 			if (move != null) {
 				addMoveAction(square, move);
 			}
+		} else if (op != null && op.getPlayerType() == getTurn()) { // available pieces
+			addSelectAction(square);
 		}
 	}
 
@@ -78,15 +76,13 @@ public class ChessGui extends AbstractInteractiveBoardGui {
 			NormalMove nmove = (NormalMove) move;
 
 			if (getRule().canPromote(getBoard().getPieceAt(nmove.getFrom()), nmove.getTo())) {
-				ChessPieceType[] promotions = { ChessPieceType.QUEEN, ChessPieceType.ROOK, ChessPieceType.BISHOP,
-						ChessPieceType.KNIGHT };
+				ChessPieceType[] promotions = ChessPieceType.getPromotions();
 				getAssistant().showPromotionDialog(promotions, nmove);
 				return; // do not send anything yet
 			}
 		}
 
-		selectedSquare = null;
-		refresh();
+		cancelSelection();
 		super.sendMove(move);
 	}
 }
