@@ -14,7 +14,7 @@ public class KifAdapterTest {
 		KifAdapter kifa = new KifAdapter();
 		FileInputStream fis = new FileInputStream(resFile);
 		try {
-			System.out.println(kifa.readKif(fis));
+			System.out.println(kifa.readAll(fis));
 		} finally {
 			fis.close();
 		}

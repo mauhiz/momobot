@@ -24,8 +24,8 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 	protected final Map<ShogiPlayerType, List<ShogiPieceType>> pockets = new HashMap<ShogiPlayerType, List<ShogiPieceType>>(
 			2);
 
-	public ShogiBoard() {
-		super();
+	public ShogiBoard(ShogiRule rule) {
+		super(rule);
 		for (ShogiPlayerType spt : ShogiPlayerType.values()) {
 			pockets.put(spt, new ArrayList<ShogiPieceType>());
 		}
@@ -59,6 +59,16 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 			setPieceAt(parentMove.getTo(), new ShogiPiece((ShogiPlayerType) pmove.getPlayerType(), moved.getPieceType()
 					.getPromotion()));
 		}
+	}
+
+	@Override
+	public ShogiBoard copy() {
+		ShogiBoard copy = new ShogiBoard(null);
+		copy.piecesMap.putAll(piecesMap);
+		for (Entry<ShogiPlayerType, List<ShogiPieceType>> ent : pockets.entrySet()) {
+			copy.pockets.put(ent.getKey(), new ArrayList<ShogiPieceType>(ent.getValue()));
+		}
+		return copy;
 	}
 
 	public Square findKingSquare(ShogiPlayerType pl) {

@@ -1,5 +1,6 @@
 package net.mauhiz.board.remote;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,7 +39,7 @@ public class BoardManager {
 		return null;
 	}
 
-	public void receiveMove(String gameId, String moveStr) {
+	public void receiveMove(String gameId, String moveStr) throws IOException {
 		RemoteBoardAdapter rba = games.get(gameId);
 
 		if (rba != null) {
