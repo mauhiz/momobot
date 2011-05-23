@@ -22,7 +22,6 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 			this.piece = piece;
 		}
 
-		@Override
 		public void run() {
 			if (piece == null) {
 				button.setText("");
@@ -51,7 +50,6 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		return (ShogiGui) super.getParent();
 	}
 
-	@Override
 	public void initPockets() {
 		pockets.put(ShogiPlayerType.GOTE, new Group(shell, SWT.TOP));
 		pockets.put(ShogiPlayerType.SENTE, new Group(shell, SWT.BOTTOM));

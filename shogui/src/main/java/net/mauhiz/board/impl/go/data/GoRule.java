@@ -14,17 +14,14 @@ public class GoRule extends AbstractPocketRule {
 		return board.getPieceAt(to) == null;
 	}
 
-	@Override
-	public PlayerType[] getPlayerTypes() {
+	public GoPlayerType[] getPlayerTypes() {
 		return GoPlayerType.values();
 	}
 
-	@Override
-	public PlayerType getStartingPlayer() {
+	public GoPlayerType getStartingPlayer() {
 		return GoPlayerType.BLACK;
 	}
 
-	@Override
 	public void initPieces(Board board) {
 		// starts with empty board
 	}
@@ -34,7 +31,6 @@ public class GoRule extends AbstractPocketRule {
 		return false;
 	}
 
-	@Override
 	public boolean isValid(Move move, Game game) {
 		if (!(game instanceof GoGame)) {
 			return false;
@@ -50,7 +46,6 @@ public class GoRule extends AbstractPocketRule {
 		return false;
 	}
 
-	@Override
 	public GoBoard newBoard() {
 		return new GoBoard(this);
 	}

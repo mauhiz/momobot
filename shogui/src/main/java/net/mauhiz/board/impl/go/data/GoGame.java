@@ -10,7 +10,6 @@ public class GoGame extends AbstractGame {
 		super(rule);
 	}
 
-	@Override
 	public PlayerType applyMove(Move move) {
 		if (rule.isValid(move, this)) {
 			GoBoard clone = getLastBoard().copy();

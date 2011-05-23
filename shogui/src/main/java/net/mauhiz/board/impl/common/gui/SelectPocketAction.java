@@ -28,4 +28,9 @@ public class SelectPocketAction extends AbstractAction {
 	protected ExecutionType getExecutionType() {
 		return ExecutionType.NON_GUI;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " for player: " + playerType + " with piece: " + piece;
+	}
 }

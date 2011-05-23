@@ -22,7 +22,6 @@ import org.apache.commons.lang.SerializationUtils;
  */
 public class SerializerMoveAdapter implements MoveReader, MoveWriter {
 
-	@Override
 	public Game readAll(InputStream data) throws IOException {
 		ObjectInputStream in = new ObjectInputStream(data);
 		try {
@@ -45,19 +44,16 @@ public class SerializerMoveAdapter implements MoveReader, MoveWriter {
 		}
 	}
 
-	@Override
 	public void readNext(InputStream data, Game game) throws IOException {
 		game.applyMove(readMove(data));
 	}
 
-	@Override
 	public void writeAll(OutputStream out, Game game) throws IOException {
 		for (Move move : game.getMoves()) {
 			writeMove(out, move);
 		}
 	}
 
-	@Override
 	public void writeLast(OutputStream out, Game game) throws IOException {
 		writeMove(out, game.getLastMove());
 	}

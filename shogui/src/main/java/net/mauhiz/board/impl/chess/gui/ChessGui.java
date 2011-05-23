@@ -38,12 +38,10 @@ public class ChessGui extends AbstractInteractiveBoardGui {
 		return (ChessRule) super.getRule();
 	}
 
-	@Override
 	public Color getSquareBgcolor(Square square) {
 		return (square.getX() + square.getY()) % 2 == 0 ? Color.LIGHT_GRAY : Color.DARK_GRAY;
 	}
 
-	@Override
 	public String getWindowTitle() {
 		return "mauhiz' Chess";
 	}

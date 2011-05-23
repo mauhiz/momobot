@@ -15,12 +15,10 @@ public class DropImpl extends AbstractMove implements Drop {
 		this.pieceType = pieceType;
 	}
 
-	@Override
 	public PieceType getPieceType() {
 		return pieceType;
 	}
 
-	@Override
 	public Square getTo() {
 		return to;
 	}

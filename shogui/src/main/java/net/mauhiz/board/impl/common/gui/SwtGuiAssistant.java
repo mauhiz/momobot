@@ -35,8 +35,6 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		final int y = size.height - square.getY() - 1;
 
 		shell.getDisplay().syncExec(new Runnable() {
-
-			@Override
 			public void run() {
 
 				Button button = new Button(shell, SWT.PUSH | SWT.FLAT);
@@ -62,7 +60,6 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 
 	protected abstract void decorate(Button button, Piece piece);
 
-	@Override
 	public void decorate(Square square, Piece piece) {
 		Button button = getButton(square);
 		decorate(button, piece);
@@ -71,8 +68,6 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 	public void disableSquare(final Square square) {
 		final Button button = getButton(square);
 		shell.getDisplay().syncExec(new Runnable() {
-
-			@Override
 			public void run() {
 				Color fore = button.getForeground();
 				Color back = button.getBackground();
@@ -90,7 +85,6 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 	public void enableSquare(final Square square, final IAction action) {
 		final Button button = getButton(square);
 		button.getDisplay().syncExec(new Runnable() {
-			@Override
 			public void run() {
 				Color fore = button.getForeground();
 				Color back = button.getBackground();
@@ -128,8 +122,6 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 
 	public void initLayout(final Dimension size) {
 		shell.getDisplay().syncExec(new Runnable() {
-
-			@Override
 			public void run() {
 				GridLayout gridLayout = new GridLayout(size.width, true);
 				shell.setLayout(gridLayout);
@@ -160,15 +152,12 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 
 	public void refresh() {
 		shell.getDisplay().syncExec(new Runnable() {
-
-			@Override
 			public void run() {
 				shell.redraw();
 			}
 		});
 	}
 
-	@Override
 	public void start() {
 		initDisplay();
 		// SWT loop

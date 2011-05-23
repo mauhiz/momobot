@@ -23,6 +23,11 @@ public class SquareView implements Iterable<Square>, Iterator<Square> {
 		return counter < getNumSquares();
 	}
 
+	public Iterator<Square> iterator() {
+		counter = 0;
+		return this;
+	}
+
 	public Square next() {
 		int x = counter % boardSize.width;
 		int y = (counter - x) / boardSize.width;
@@ -32,10 +37,5 @@ public class SquareView implements Iterable<Square>, Iterator<Square> {
 
 	public void remove() {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Iterator<Square> iterator() {
-		return this;
 	}
 }

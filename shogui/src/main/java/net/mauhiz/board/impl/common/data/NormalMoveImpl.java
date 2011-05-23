@@ -14,12 +14,10 @@ public class NormalMoveImpl extends AbstractMove implements NormalMove {
 		this.to = to;
 	}
 
-	@Override
 	public Square getFrom() {
 		return from;
 	}
 
-	@Override
 	public Square getTo() {
 		return to;
 	}

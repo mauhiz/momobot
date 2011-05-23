@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 
 public class MoveTrigger implements IPrivmsgTrigger {
 
-	@Override
 	public void doTrigger(Privmsg im, IIrcControl control) {
 		if (im instanceof CtcpMove) {
 			String moveText = ((CtcpMove) im).getCtcpContent();
@@ -26,7 +25,6 @@ public class MoveTrigger implements IPrivmsgTrigger {
 		}
 	}
 
-	@Override
 	public boolean isActivatedBy(String text) {
 		return true;
 	}

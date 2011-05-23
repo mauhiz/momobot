@@ -23,11 +23,11 @@ import javax.swing.Icon;
 */
 public class RotatedIcon implements Icon {
 
+	private double angle;
+
 	private Icon icon;
 
 	private Rotation rotate;
-
-	private double angle;
 
 	/**
 	 *  Convenience constructor to create a RotatedIcon that is rotated DOWN.
@@ -36,17 +36,6 @@ public class RotatedIcon implements Icon {
 	 */
 	public RotatedIcon(Icon icon) {
 		this(icon, Rotation.UP);
-	}
-
-	/**
-	 *  Create a RotatedIcon
-	 *
-	 *  @param icon    the Icon to rotate
-	 *  @param rotate  the direction of rotation
-	 */
-	public RotatedIcon(Icon icon, Rotation rotate) {
-		this.icon = icon;
-		this.rotate = rotate;
 	}
 
 	/**
@@ -64,12 +53,60 @@ public class RotatedIcon implements Icon {
 	}
 
 	/**
+	 *  Create a RotatedIcon
+	 *
+	 *  @param icon    the Icon to rotate
+	 *  @param rotate  the direction of rotation
+	 */
+	public RotatedIcon(Icon icon, Rotation rotate) {
+		this.icon = icon;
+		this.rotate = rotate;
+	}
+
+	/**
+	 *  Gets the angle of rotation. Only use for Rotate.ABOUT_CENTER.
+	 *
+	 *  @return the angle of rotation
+	 */
+	public double getAngle() {
+		return angle;
+	}
+
+	/**
 	 *  Gets the Icon to be rotated
 	 *
 	 *  @return the Icon to be rotated
 	 */
 	public Icon getIcon() {
 		return icon;
+	}
+
+	/**
+	 *  Gets the height of this icon.
+	 *
+	 *  @return the height of the icon in pixels.
+	 */
+	public int getIconHeight() {
+		if (rotate == Rotation.UPSIDE_DOWN || rotate == Rotation.ABOUT_CENTER) {
+			return icon.getIconHeight();
+		}
+		return icon.getIconWidth();
+	}
+
+	//
+	//  Implement the Icon Interface
+	//
+
+	/**
+	 *  Gets the width of this icon.
+	 *
+	 *  @return the width of the icon in pixels.
+	 */
+	public int getIconWidth() {
+		if (rotate == Rotation.UPSIDE_DOWN || rotate == Rotation.ABOUT_CENTER) {
+			return icon.getIconWidth();
+		}
+		return icon.getIconHeight();
 	}
 
 	/**
@@ -82,45 +119,6 @@ public class RotatedIcon implements Icon {
 	}
 
 	/**
-	 *  Gets the angle of rotation. Only use for Rotate.ABOUT_CENTER.
-	 *
-	 *  @return the angle of rotation
-	 */
-	public double getAngle() {
-		return angle;
-	}
-
-	//
-	//  Implement the Icon Interface
-	//
-
-	/**
-	 *  Gets the width of this icon.
-	 *
-	 *  @return the width of the icon in pixels.
-	 */
-	@Override
-	public int getIconWidth() {
-		if (rotate == Rotation.UPSIDE_DOWN || rotate == Rotation.ABOUT_CENTER) {
-			return icon.getIconWidth();
-		}
-		return icon.getIconHeight();
-	}
-
-	/**
-	 *  Gets the height of this icon.
-	 *
-	 *  @return the height of the icon in pixels.
-	 */
-	@Override
-	public int getIconHeight() {
-		if (rotate == Rotation.UPSIDE_DOWN || rotate == Rotation.ABOUT_CENTER) {
-			return icon.getIconHeight();
-		}
-		return icon.getIconWidth();
-	}
-
-	/**
 	 *  Paint the icons of this compound icon at the specified location
 	 *
 	 *  @param c The component on which the icon is painted
@@ -128,7 +126,6 @@ public class RotatedIcon implements Icon {
 	 *  @param x the X coordinate of the icon's top-left corner
 	 *  @param y the Y coordinate of the icon's top-left corner
 	 */
-	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 		Graphics2D g2 = (Graphics2D) g.create();
 

@@ -36,7 +36,6 @@ public class GoBoard extends AbstractBoard implements PocketBoard {
 		}
 	}
 
-	@Override
 	public GoBoard copy() {
 		GoBoard copy = new GoBoard(null);
 		copy.piecesMap.putAll(piecesMap);
@@ -60,12 +59,10 @@ public class GoBoard extends AbstractBoard implements PocketBoard {
 		return (GoPiece) super.getPieceAt(square);
 	}
 
-	@Override
 	public List<GoPieceType> getPocket(PlayerType player) {
 		return Collections.singletonList(GoPieceType.STONE);
 	}
 
-	@Override
 	public Dimension getSize() {
 		return new Dimension(19, 19);
 	}

@@ -30,7 +30,6 @@ public class CheckersGui extends AbstractInteractiveBoardGui {
 		return (CheckersRule) super.getRule();
 	}
 
-	@Override
 	public Color getSquareBgcolor(Square square) {
 		return (square.getX() + square.getY()) % 2 == 0 ? Color.DARK_GRAY : Color.LIGHT_GRAY;
 	}

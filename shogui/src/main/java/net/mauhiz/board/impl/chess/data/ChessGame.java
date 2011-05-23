@@ -13,7 +13,6 @@ public class ChessGame extends AbstractGame {
 		super(rule);
 	}
 
-	@Override
 	public ChessPlayerType applyMove(Move move) {
 		if (rule.isValid(move, this)) {
 			ChessBoard clone = getLastBoard().copy();

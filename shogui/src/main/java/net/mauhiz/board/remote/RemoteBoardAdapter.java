@@ -20,12 +20,10 @@ public class RemoteBoardAdapter implements GameController {
 		this.reader = reader;
 	}
 
-	@Override
 	public BoardIO getBoardIO() {
 		return localController.getBoardIO();
 	}
 
-	@Override
 	public Game getGame() {
 		return localController.getGame();
 	}
@@ -34,7 +32,6 @@ public class RemoteBoardAdapter implements GameController {
 		reader.readNext(IOUtils.toInputStream(moveStr), getGame());
 	}
 
-	@Override
 	public void receiveMove(Move move) {
 		BoardManager.getInstance().sendMove(this, move);
 		localController.receiveMove(move);

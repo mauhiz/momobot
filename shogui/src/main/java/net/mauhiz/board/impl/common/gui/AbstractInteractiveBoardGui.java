@@ -13,33 +13,39 @@ import net.mauhiz.board.model.gui.GuiAssistant;
 import net.mauhiz.board.model.gui.InteractiveBoardGui;
 import net.mauhiz.util.IAction;
 
+import org.apache.log4j.Logger;
+
 public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui {
+	private static final Logger LOG = Logger.getLogger(AbstractInteractiveBoardGui.class);
 	protected GuiAssistant assistant;
 	protected GameController controller;
 	protected Square selectedSquare;
 
 	public void addCancelAction(Square square) {
+		LOG.trace("Adding cancel action to square: " + square);
 		enableSquare(square, new CancelAction(this));
 	}
 
 	public void addMoveAction(Square square, Move move) {
+		LOG.trace("Adding move action to square: " + square);
 		enableSquare(square, new MoveAction(this, move));
 	}
 
 	public void addSelectAction(Square square) {
+		LOG.trace("Adding select action to square: " + square);
 		enableSquare(square, new SelectSquareAction(this, square));
 	}
 
 	public void cancelSelection() {
+		LOG.trace("Cancelling selection: " + selectedSquare);
 		selectSquare(null);
 	}
 
-	@Override
 	public void close() {
+		LOG.info("Closing GUI");
 		getAssistant().close();
 	}
 
-	@Override
 	public void disableSquare(Square square) {
 		getAssistant().disableSquare(square);
 	}
@@ -90,13 +96,14 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 
 	protected abstract GameController newController();
 
-	@Override
 	public void newGame() {
+		LOG.info("Starting new game");
 		controller = newController();
 		Dimension size = getBoard().getSize();
-
+		getAssistant().clear();
 		getAssistant().initLayout(size);
 
+		LOG.debug("Appending squares");
 		for (Square square : getBoard().getSquares()) {
 			getAssistant().appendSquare(square, size);
 		}
@@ -105,6 +112,7 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 	}
 
 	public void refresh() {
+		LOG.debug("Refreshing squares");
 		for (Square square : getBoard().getSquares()) {
 			disableSquare(square);
 			refreshSquare(square);
@@ -119,7 +127,6 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 
 	protected abstract void refreshSquare(Square square);
 
-	@Override
 	public void selectSquare(Square at) {
 		selectedSquare = at;
 		refresh();

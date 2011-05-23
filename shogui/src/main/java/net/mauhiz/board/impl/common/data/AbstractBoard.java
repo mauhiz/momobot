@@ -70,7 +70,6 @@ public abstract class AbstractBoard implements Board {
 		return getPieceAt(SquareImpl.getInstance(i, j));
 	}
 
-	@Override
 	public Piece getPieceAt(Square square) {
 		return piecesMap.get(square);
 	}
@@ -120,7 +119,6 @@ public abstract class AbstractBoard implements Board {
 		}
 	}
 
-	@Override
 	public Piece setPieceAt(Square square, Piece piece) {
 		return piecesMap.put(square, piece);
 	}

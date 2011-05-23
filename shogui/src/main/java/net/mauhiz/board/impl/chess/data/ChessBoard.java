@@ -34,7 +34,6 @@ public class ChessBoard extends AbstractBoard {
 		super(rule);
 	}
 
-	@Override
 	public void applyMove(Move move) {
 		if (move instanceof EnPassant) {
 			EnPassant passant = (EnPassant) move;
@@ -68,7 +67,6 @@ public class ChessBoard extends AbstractBoard {
 		}
 	}
 
-	@Override
 	public ChessBoard copy() {
 		ChessBoard copy = new ChessBoard(null);
 		copy.piecesMap.putAll(piecesMap);
@@ -95,7 +93,6 @@ public class ChessBoard extends AbstractBoard {
 		return (ChessPiece) super.getPieceAt(square);
 	}
 
-	@Override
 	public Dimension getSize() {
 		return new Dimension(SIZE, SIZE);
 	}

@@ -12,22 +12,18 @@ import org.apache.commons.lang.NotImplementedException;
 
 public class KifuAdapter implements MoveReader, MoveWriter {
 
-	@Override
 	public Game readAll(InputStream data) throws IOException {
 		throw new NotImplementedException("TODO");
 	}
 
-	@Override
 	public void readNext(InputStream data, Game game) throws IOException {
 		throw new NotImplementedException("TODO");
 	}
 
-	@Override
 	public void writeAll(OutputStream out, Game game) throws IOException {
 		throw new NotImplementedException("TODO");
 	}
 
-	@Override
 	public void writeLast(OutputStream out, Game game) throws IOException {
 		throw new NotImplementedException("TODO");
 	}

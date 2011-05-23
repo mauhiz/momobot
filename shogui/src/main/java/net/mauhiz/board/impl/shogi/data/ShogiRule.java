@@ -14,7 +14,11 @@ import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
 
+import org.apache.log4j.Logger;
+
 public class ShogiRule extends AbstractPocketRule {
+
+	private static final Logger LOG = Logger.getLogger(ShogiRule.class);
 
 	private static boolean isPromotionZone(ShogiPlayerType player, Square square) {
 		return player == ShogiPlayerType.SENTE ? square.getY() >= 6 : square.getY() <= 2;
@@ -90,17 +94,14 @@ public class ShogiRule extends AbstractPocketRule {
 		return isPromotionZone(playerType, from) || isPromotionZone(playerType, to);
 	}
 
-	@Override
 	public ShogiPlayerType[] getPlayerTypes() {
 		return ShogiPlayerType.values();
 	}
 
-	@Override
 	public ShogiPlayerType getStartingPlayer() {
 		return ShogiPlayerType.SENTE;
 	}
 
-	@Override
 	public void initPieces(Board board) {
 		for (Square square : board.getSquares()) {
 			int j = square.getY();
@@ -127,12 +128,14 @@ public class ShogiRule extends AbstractPocketRule {
 				board.setPieceAt(square, new ShogiPiece(pl, ShogiPieceType.PAWN));
 			}
 		}
+		LOG.info("Pieces init complete");
 	}
 
 	public boolean isCheck(ShogiPlayerType player, ShogiGame game) {
 		ShogiBoard board = game.getLastBoard();
 		Square kingSquare = board.findKingSquare(player);
 		if (kingSquare == null) {
+			LOG.warn("Player: " + player + " has no king!");
 			return false;
 		}
 
@@ -145,6 +148,7 @@ public class ShogiRule extends AbstractPocketRule {
 			NormalMove wannabe = new NormalMoveImpl(attacker.getPlayerType(), square, kingSquare);
 
 			if (isValid(wannabe, game)) {
+				LOG.debug("Ote: " + wannabe);
 				return true;
 			}
 		}
@@ -165,7 +169,6 @@ public class ShogiRule extends AbstractPocketRule {
 				&& isForward(from, to, player);
 	}
 
-	@Override
 	public boolean isValid(Move move, Game game) {
 		if (!(game instanceof ShogiGame)) {
 			return false;
@@ -195,7 +198,6 @@ public class ShogiRule extends AbstractPocketRule {
 		return false;
 	}
 
-	@Override
 	public ShogiBoard newBoard() {
 		return new ShogiBoard(this);
 	}
