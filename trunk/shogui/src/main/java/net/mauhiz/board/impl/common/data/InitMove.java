@@ -11,7 +11,6 @@ public class InitMove implements Move {
 		this.starter = starter;
 	}
 
-	@Override
 	public PlayerType getPlayerType() {
 		return starter;
 	}

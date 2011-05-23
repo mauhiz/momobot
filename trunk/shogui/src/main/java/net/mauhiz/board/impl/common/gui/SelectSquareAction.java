@@ -1,6 +1,5 @@
 package net.mauhiz.board.impl.common.gui;
 
-
 import net.mauhiz.board.model.data.Square;
 import net.mauhiz.board.model.gui.InteractiveBoardGui;
 import net.mauhiz.util.AbstractAction;
@@ -28,5 +27,10 @@ public class SelectSquareAction extends AbstractAction {
 	@Override
 	protected ExecutionType getExecutionType() {
 		return ExecutionType.NON_GUI;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "@" + at;
 	}
 }

@@ -8,7 +8,6 @@ import net.mauhiz.board.model.data.Square;
 
 public abstract class AbstractPocketRule extends AbstractRule implements PocketRule {
 
-	@Override
 	public Drop generateMove(PieceType toDrop, Square onTo, Game game) {
 		Drop move = new DropImpl(game.getTurn(), toDrop, onTo);
 		if (isValid(move, game)) {

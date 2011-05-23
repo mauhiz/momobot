@@ -65,7 +65,6 @@ public class KifAdapter implements MoveReader {
 		return SquareImpl.getInstance(ShogiBoard.SIZE - originX, ShogiBoard.SIZE - originY);
 	}
 
-	@Override
 	public Game readAll(InputStream data) throws IOException {
 		ShogiGame game = new ShogiGame(new ShogiRule());
 		BufferedReader br = new BufferedReader(new InputStreamReader(data, Charset.forName("SHIFT-JIS")));
@@ -74,7 +73,7 @@ public class KifAdapter implements MoveReader {
 			String line = br.readLine();
 			if (line == null) {
 				break;
-			} else if (line.isEmpty()) {
+			} else if (line.length() == 0) {
 				continue;
 			}
 
@@ -85,7 +84,6 @@ public class KifAdapter implements MoveReader {
 		return game;
 	}
 
-	@Override
 	public void readNext(InputStream data, Game game) throws IOException {
 		String line = IOUtils.toString(data, FileUtil.UTF8.name());
 		int i = 0;

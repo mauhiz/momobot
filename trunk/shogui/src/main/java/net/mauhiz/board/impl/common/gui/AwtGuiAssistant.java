@@ -54,20 +54,17 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 		listeners.clear();
 	}
 
-	@Override
 	public void close() {
 		frame.dispose();
 	}
 
 	protected abstract void decorate(Button button, Piece piece);
 
-	@Override
 	public void decorate(Square square, Piece piece) {
 		Button button = getButton(square);
 		decorate(button, piece);
 	}
 
-	@Override
 	public void disableSquare(Square square) {
 		Button button = getButton(square);
 		Color fore = button.getForeground();
@@ -81,7 +78,6 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 		button.setBackground(back);
 	}
 
-	@Override
 	public void enableSquare(Square square, IAction action) {
 		Button button = getButton(square);
 		Color fore = button.getForeground();
@@ -137,12 +133,10 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 		frame.setMenuBar(menuBar);
 	}
 
-	@Override
 	public void refresh() {
 		frame.repaint();
 	}
 
-	@Override
 	public void start() {
 		initDisplay();
 	}

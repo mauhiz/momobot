@@ -14,16 +14,22 @@ import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.Square;
 
+import org.apache.log4j.Logger;
+
 public class ShogiGui extends AbstractPocketInteractiveBoardGui {
+
+	private static final Logger LOG = Logger.getLogger(ShogiGui.class);
 
 	public static void main(String... args) {
 		ShogiGui gui = new ShogiGui();
 		// gui.assistant = new ShogiSwtAssistant(gui);
 		gui.assistant = new ShogiSwingAssistant(gui);
+		LOG.debug("Starting assistant: " + gui.assistant);
 		gui.getAssistant().start();
 	}
 
 	public void afterPromotionDialog(NormalMove move, boolean promote) {
+		// do not call this.sendMove again here - it would show the promotion dialog again
 		if (promote) {
 			Move promotion = getController().convertToPromotion(move);
 			super.sendMove(promotion);
@@ -49,7 +55,7 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 
 	@Override
 	public Dimension getDefaultSize() {
-		return new Dimension(400, 600);
+		return new Dimension(800, 600);
 	}
 
 	@Override
@@ -62,12 +68,10 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 		return (ShogiRule) super.getRule();
 	}
 
-	@Override
 	public Color getSquareBgcolor(Square square) {
 		return Color.decode("0xFFCC66");
 	}
 
-	@Override
 	public String getWindowTitle() {
 		return "Shogui";
 	}

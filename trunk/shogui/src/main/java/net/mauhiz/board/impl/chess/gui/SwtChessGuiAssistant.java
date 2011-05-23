@@ -27,7 +27,6 @@ public class SwtChessGuiAssistant extends SwtGuiAssistant implements IChessGuiAs
 			this.piece = piece;
 		}
 
-		@Override
 		public void run() {
 			if (piece == null) {
 				button.setText("");

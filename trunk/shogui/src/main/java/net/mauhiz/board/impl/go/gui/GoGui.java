@@ -35,14 +35,12 @@ public class GoGui extends AbstractPocketInteractiveBoardGui {
 		return (GoRule) super.getRule();
 	}
 
-	@Override
 	public Color getSquareBgcolor(Square square) {
 		return Color.decode("0xFFCC66");
 	}
 
-	@Override
 	public String getWindowTitle() {
-		return "Shogui";
+		return "Go GUI";
 	}
 
 	@Override

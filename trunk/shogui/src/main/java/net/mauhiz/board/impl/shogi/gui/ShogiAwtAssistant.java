@@ -38,7 +38,6 @@ public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGu
 		return (ShogiGui) super.getParent();
 	}
 
-	@Override
 	public void initPockets() {
 		Panel pocket = new Panel();
 		frame.add(pocket, 0);

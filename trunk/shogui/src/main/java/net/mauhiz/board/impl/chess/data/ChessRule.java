@@ -115,17 +115,14 @@ public class ChessRule extends AbstractRule {
 		return move;
 	}
 
-	@Override
 	public ChessPlayerType[] getPlayerTypes() {
 		return ChessPlayerType.values();
 	}
 
-	@Override
 	public ChessPlayerType getStartingPlayer() {
 		return ChessPlayerType.WHITE;
 	}
 
-	@Override
 	public void initPieces(Board board) {
 		for (Square square : board.getSquares()) {
 			int j = square.getY();
@@ -185,7 +182,6 @@ public class ChessRule extends AbstractRule {
 		return false;
 	}
 
-	@Override
 	public boolean isValid(Move move, Game game) {
 		if (!(game instanceof ChessGame)) {
 			throw new IllegalClassException(ChessGame.class, game);
@@ -199,7 +195,6 @@ public class ChessRule extends AbstractRule {
 		return false;
 	}
 
-	@Override
 	public ChessBoard newBoard() {
 		return new ChessBoard(this);
 	}

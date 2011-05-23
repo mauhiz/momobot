@@ -10,22 +10,27 @@ import net.mauhiz.util.ExecutionType;
  */
 public class MoveAction extends AbstractAction {
 
-    private final InteractiveBoardGui gui;
-    private final Move move;
+	private final InteractiveBoardGui gui;
+	private final Move move;
 
-    public MoveAction(InteractiveBoardGui gui, Move move) {
-        super();
-        this.move = move;
-        this.gui = gui;
-    }
+	public MoveAction(InteractiveBoardGui gui, Move move) {
+		super();
+		this.move = move;
+		this.gui = gui;
+	}
 
-    @Override
-    protected void doAction() {
-        gui.sendMove(move);
-    }
+	@Override
+	protected void doAction() {
+		gui.sendMove(move);
+	}
 
-    @Override
-    protected ExecutionType getExecutionType() {
-        return ExecutionType.GUI_ASYNCHRONOUS;
-    }
+	@Override
+	protected ExecutionType getExecutionType() {
+		return ExecutionType.GUI_ASYNCHRONOUS;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " with move: " + move;
+	}
 }

@@ -119,7 +119,6 @@ public class PgnAdapter implements MoveReader, MoveWriter {
 		game.applyMove(cm);
 	}
 
-	@Override
 	public ChessGame readAll(InputStream data) throws IOException {
 		ChessGame game = new ChessGame(new ChessRule());
 		String pgnData = IOUtils.toString(data);
@@ -137,7 +136,6 @@ public class PgnAdapter implements MoveReader, MoveWriter {
 		return game;
 	}
 
-	@Override
 	public void readNext(InputStream data, Game game) throws IOException {
 		if (!(game instanceof ChessGame)) {
 			throw new IllegalClassException(ChessGame.class, game);
@@ -146,12 +144,10 @@ public class PgnAdapter implements MoveReader, MoveWriter {
 		read((ChessGame) game, pgnMove);
 	}
 
-	@Override
 	public void writeAll(OutputStream out, Game game) throws IOException {
 		throw new NotImplementedException();
 	}
 
-	@Override
 	public void writeLast(OutputStream out, Game game) throws IOException {
 		throw new NotImplementedException();
 	}

@@ -30,7 +30,6 @@ public abstract class AbstractPocketInteractiveBoardGui extends AbstractInteract
 		return selectedPiece != null;
 	}
 
-	@Override
 	public void selectPieceToDrop(PlayerType player, PieceType piece) {
 		selectedPiece = piece;
 		super.cancelSelection();

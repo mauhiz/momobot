@@ -12,7 +12,6 @@ public class CheckersGame extends AbstractGame {
 		super(rule);
 	}
 
-	@Override
 	public CheckersPlayerType applyMove(Move move) {
 		if (rule.isValid(move, this)) {
 			Move realMove = move;

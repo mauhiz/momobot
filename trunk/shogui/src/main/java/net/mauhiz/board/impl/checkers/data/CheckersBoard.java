@@ -25,7 +25,6 @@ public class CheckersBoard extends AbstractBoard {
 		super(rule);
 	}
 
-	@Override
 	public void applyMove(Move move) {
 		if (move instanceof NormalMove) {
 			Square from = ((NormalMove) move).getFrom();
@@ -40,7 +39,6 @@ public class CheckersBoard extends AbstractBoard {
 		}
 	}
 
-	@Override
 	public CheckersBoard copy() {
 		CheckersBoard copy = new CheckersBoard(null);
 		copy.piecesMap.putAll(piecesMap);

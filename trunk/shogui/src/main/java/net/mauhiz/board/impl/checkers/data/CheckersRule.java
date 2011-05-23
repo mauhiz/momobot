@@ -46,17 +46,14 @@ public class CheckersRule extends AbstractRule {
 				: nmove.getTo().getY() == 0;
 	}
 
-	@Override
 	public PlayerType[] getPlayerTypes() {
 		return CheckersPlayerType.values();
 	}
 
-	@Override
 	public PlayerType getStartingPlayer() {
 		return CheckersPlayerType.BLACK;
 	}
 
-	@Override
 	public void initPieces(Board board) {
 		for (Square square : board.getSquares()) {
 			int j = square.getY();
@@ -77,7 +74,6 @@ public class CheckersRule extends AbstractRule {
 		return from.getY() != to.getY() && player == CheckersPlayerType.BLACK ^ from.getY() > to.getY();
 	}
 
-	@Override
 	public boolean isValid(Move move, Game game) {
 		if (!(game instanceof CheckersGame)) {
 			throw new IllegalClassException(CheckersGame.class, game.getClass());
@@ -90,7 +86,6 @@ public class CheckersRule extends AbstractRule {
 		return false;
 	}
 
-	@Override
 	public CheckersBoard newBoard() {
 		return new CheckersBoard(this);
 	}

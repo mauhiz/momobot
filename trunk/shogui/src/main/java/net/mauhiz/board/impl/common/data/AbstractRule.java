@@ -9,7 +9,6 @@ import net.mauhiz.board.model.data.Square;
 
 public abstract class AbstractRule implements Rule {
 
-	@Override
 	public Move generateMove(Square from, Square to, Game game) {
 		if (to != from) {
 			NormalMove move = new NormalMoveImpl(game.getTurn(), from, to);

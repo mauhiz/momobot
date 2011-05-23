@@ -25,44 +25,37 @@ public abstract class AbstractGame implements Game {
 		moves.add(new InitMove(rule.getStartingPlayer()));
 	}
 
-	@Override
 	public Board getBoard(int i) {
 		return boards.get(i);
 	}
 
-	@Override
 	public Board getLastBoard() {
 		return getBoard(boards.size() - 1);
 	}
 
-	@Override
 	public Move getLastMove() {
 		return getMove(moves.size() - 1);
 	}
 
-	@Override
 	public Move getMove(int i) {
 		return moves.get(i);
 	}
 
-	@Override
 	public Iterable<Move> getMoves() {
 		return moves;
 	}
 
-	@Override
 	public Rule getRule() {
 		return rule;
 	}
 
-	@Override
 	public PlayerType getTurn() {
 		Move move = getLastMove();
-		return move == null ? rule.getStartingPlayer() : move.getPlayerType().other();
+		return move instanceof InitMove ? rule.getStartingPlayer() : move.getPlayerType().other();
 	}
 
 	@Override
 	public String toString() {
-		return "Game: " + moves;
+		return getClass().getSimpleName() + ": " + moves;
 	}
 }

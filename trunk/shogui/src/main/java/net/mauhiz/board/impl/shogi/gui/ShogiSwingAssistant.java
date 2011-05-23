@@ -15,10 +15,14 @@ import net.mauhiz.board.model.gui.PocketBoardGui;
 import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author mauhiz
  */
 public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements IShogiGuiAssistant {
+
+	private static final Logger LOG = Logger.getLogger(ShogiSwingAssistant.class);
 
 	public ShogiSwingAssistant(PocketBoardGui parent) {
 		super(parent);
@@ -42,9 +46,11 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 		JPanel pocket = newPocket();
 		boardAndPocketsPanel.add(pocket, 0);
 		pockets.put(ShogiPlayerType.GOTE, pocket);
+		LOG.debug("Init top pocket: " + pocket);
 		pocket = newPocket();
 		boardAndPocketsPanel.add(pocket);
 		pockets.put(ShogiPlayerType.SENTE, pocket);
+		LOG.debug("Init bottom pocket: " + pocket);
 	}
 
 	private JPanel newPocket() {
@@ -57,6 +63,7 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 	}
 
 	public void showPromotionDialog(final NormalMove move) {
+		LOG.debug("Showing promotion dialog for move: " + move);
 		final JDialog popup = new JDialog(frame, "Promotion?");
 		popup.setLayout(new GridLayout(1, 2, 10, 10));
 		popup.setModal(true);
