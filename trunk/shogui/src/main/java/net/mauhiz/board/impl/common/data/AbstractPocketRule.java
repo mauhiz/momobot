@@ -10,7 +10,7 @@ public abstract class AbstractPocketRule extends AbstractRule implements PocketR
 
 	public Drop generateMove(PieceType toDrop, Square onTo, Game game) {
 		Drop move = new DropImpl(game.getTurn(), toDrop, onTo);
-		if (isValid(move, game)) {
+		if (preCheck(move, game.getLastBoard(), game)) {
 			return move;
 		}
 		return null;

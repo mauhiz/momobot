@@ -12,7 +12,7 @@ public abstract class AbstractRule implements Rule {
 	public Move generateMove(Square from, Square to, Game game) {
 		if (to != from) {
 			NormalMove move = new NormalMoveImpl(game.getTurn(), from, to);
-			if (isValid(move, game)) {
+			if (preCheck(move, game.getLastBoard(), game)) {
 				return move;
 			}
 		}

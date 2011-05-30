@@ -20,17 +20,17 @@ public class MoveAction extends AbstractAction {
 	}
 
 	@Override
-	protected void doAction() {
-		gui.sendMove(move);
-	}
-
-	@Override
 	protected ExecutionType getExecutionType() {
-		return ExecutionType.GUI_ASYNCHRONOUS;
+		return ExecutionType.PARALLEL_CACHED;
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " with move: " + move;
+	}
+
+	@Override
+	public void trun() {
+		gui.sendMove(move);
 	}
 }

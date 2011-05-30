@@ -28,20 +28,17 @@ public class CheckersBoard extends AbstractBoard {
 	public void applyMove(Move move) {
 		if (move instanceof NormalMove) {
 			Square from = ((NormalMove) move).getFrom();
-			CheckersPiece toMove = getPieceAt(from);
-
 			Square to = ((NormalMove) move).getTo();
-			piecesMap.remove(from);
-			piecesMap.put(to, toMove);
+			movePiece(from, to);
 
 			// capture
-			piecesMap.remove(getSkippedSquare(from, to));
+			setPieceAt(getSkippedSquare(from, to), null);
 		}
 	}
 
 	public CheckersBoard copy() {
 		CheckersBoard copy = new CheckersBoard(null);
-		copy.piecesMap.putAll(piecesMap);
+		super.copyInto(copy);
 		return copy;
 	}
 

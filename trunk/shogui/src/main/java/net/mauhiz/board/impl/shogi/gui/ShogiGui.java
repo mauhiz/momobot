@@ -12,7 +12,9 @@ import net.mauhiz.board.model.data.Drop;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
+import net.mauhiz.util.PerformanceMonitor;
 
 import org.apache.log4j.Logger;
 
@@ -22,8 +24,8 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 
 	public static void main(String... args) {
 		ShogiGui gui = new ShogiGui();
-		// gui.assistant = new ShogiSwtAssistant(gui);
-		gui.assistant = new ShogiSwingAssistant(gui);
+		gui.assistant = new ShogiSwtAssistant(gui);
+		//		gui.assistant = new ShogiSwingAssistant(gui);
 		LOG.debug("Starting assistant: " + gui.assistant);
 		gui.getAssistant().start();
 	}
@@ -82,18 +84,14 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 	}
 
 	@Override
-	public synchronized void refresh() {
-		super.refresh();
-		getAssistant().refreshPockets(getBoard().getAllPocketPieces());
-		getAssistant().refresh();
-	}
-
-	@Override
 	protected void refreshSquare(Square square) {
+		PerformanceMonitor sw = new PerformanceMonitor();
 		Piece piece = getBoard().getPieceAt(square);
 
 		if (piece != null && piece.getPlayerType() == getTurn()) {
 			addSelectAction(square);
+			sw.perfLog("Select action added at " + square);
+			return;
 		}
 
 		if (isSquareSelected()) { // from the board
@@ -101,25 +99,36 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 			Move move = getRule().generateMove(getSelectedSquare(), square, getGame());
 
 			if (move != null) {
+				sw.perfLog("Move generated: " + move);
+				sw.start();
 				addMoveAction(square, move);
+				sw.perfLog("Move action added at: " + square);
+				return;
 			}
 		} else if (isPieceSelected()) { // from the pocket
 			Drop drop = getRule().generateMove(selectedPiece, square, getGame());
+
 			if (drop != null) {
+				sw.perfLog("Drop generated: " + drop);
+				sw.start();
 				addMoveAction(square, drop);
+				sw.perfLog("Drop action added at " + square);
+				return;
 			}
 		}
+		// no action : disable button
+		disableSquare(square);
 	}
 
 	@Override
-	public void sendMove(Move move) {
+	public PlayerType sendMove(Move move) {
 		if (move instanceof NormalMove) {
 			NormalMove nmove = (NormalMove) move;
 			if (getRule().canPromote(getBoard(), getSelectedSquare(), nmove.getTo())) {
 				getAssistant().showPromotionDialog(nmove);
-				return; // do not send move yet
+				return null; // do not send move yet
 			}
 		}
-		super.sendMove(move);
+		return super.sendMove(move);
 	}
 }

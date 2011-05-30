@@ -5,6 +5,8 @@ import java.awt.Graphics;
 
 import javax.swing.Icon;
 
+import org.apache.commons.lang.NullArgumentException;
+
 /**
  *  The CompoundIcon will paint two, or more, Icons as a single Icon. The
  *  Icons are painted in the order in which they are added.
@@ -23,13 +25,9 @@ public class CompoundIcon implements Icon {
 	public final static float LEFT = 0.0f;
 	public final static float RIGHT = 1.0f;
 	public final static float TOP = 0.0f;
-
 	private float alignmentX = CENTER;
-
 	private float alignmentY = CENTER;
-
 	private Axis axis;
-
 	private int gap;
 	private Icon[] icons;
 
@@ -65,8 +63,7 @@ public class CompoundIcon implements Icon {
 
 		for (int i = 0; i < icons.length; i++) {
 			if (icons[i] == null) {
-				String message = "Icon (" + i + ") cannot be null";
-				throw new IllegalArgumentException(message);
+				throw new NullArgumentException("Icon (" + i + ")");
 			}
 		}
 
@@ -169,8 +166,7 @@ public class CompoundIcon implements Icon {
 			for (Icon icon : icons) {
 				height += icon.getIconHeight();
 			}
-		} else //  Just find the maximum height
-		{
+		} else { //  Just find the maximum height
 			for (Icon icon : icons) {
 				height = Math.max(height, icon.getIconHeight());
 			}
@@ -195,8 +191,7 @@ public class CompoundIcon implements Icon {
 			for (Icon icon : icons) {
 				width += icon.getIconWidth();
 			}
-		} else //  Just find the maximum width
-		{
+		} else { // Just find the maximum width
 			for (Icon icon : icons) {
 				width = Math.max(width, icon.getIconWidth());
 			}
@@ -241,9 +236,7 @@ public class CompoundIcon implements Icon {
 				icon.paintIcon(c, g, x + iconX, ly);
 				ly += icon.getIconHeight() + gap;
 			}
-		}
-		// must be Z_AXIS
-		else {
+		} else { // must be Z_AXIS
 			int width = getIconWidth();
 			int height = getIconHeight();
 

@@ -7,6 +7,7 @@ import net.mauhiz.board.model.GameController;
 import net.mauhiz.board.model.MoveReader;
 import net.mauhiz.board.model.data.Game;
 import net.mauhiz.board.model.data.Move;
+import net.mauhiz.board.model.data.PlayerType;
 
 import org.apache.commons.io.IOUtils;
 
@@ -32,9 +33,9 @@ public class RemoteBoardAdapter implements GameController {
 		reader.readNext(IOUtils.toInputStream(moveStr), getGame());
 	}
 
-	public void receiveMove(Move move) {
+	public PlayerType receiveMove(Move move) {
 		BoardManager.getInstance().sendMove(this, move);
-		localController.receiveMove(move);
+		return localController.receiveMove(move);
 	}
 
 }

@@ -8,7 +8,7 @@ import net.mauhiz.util.IAction;
 
 public interface GuiAssistant {
 
-	void appendSquare(Square square, Dimension size);
+	void appendSquares(Iterable<Square> squares, Dimension size);
 
 	void clear();
 
@@ -24,7 +24,7 @@ public interface GuiAssistant {
 
 	void initLayout(Dimension sizeInSquares);
 
-	void refresh();
+	void refreshBoard();
 
 	void start();
 }

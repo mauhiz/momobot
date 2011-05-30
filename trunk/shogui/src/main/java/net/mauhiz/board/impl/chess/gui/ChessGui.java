@@ -10,6 +10,7 @@ import net.mauhiz.board.impl.chess.data.ChessRule;
 import net.mauhiz.board.impl.common.gui.AbstractInteractiveBoardGui;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
 
 /**
@@ -54,7 +55,6 @@ public class ChessGui extends AbstractInteractiveBoardGui {
 	@Override
 	protected void refreshSquare(Square square) {
 		ChessPiece op = getBoard().getPieceAt(square);
-		disableSquare(square);
 
 		if (isSquareSelected()) { // from the board
 			// available destinations
@@ -62,25 +62,29 @@ public class ChessGui extends AbstractInteractiveBoardGui {
 
 			if (move != null) {
 				addMoveAction(square, move);
+				return;
 			}
 		} else if (op != null && op.getPlayerType() == getTurn()) { // available pieces
 			addSelectAction(square);
+			return;
 		}
+
+		disableSquare(square);
 	}
 
 	@Override
-	public void sendMove(Move move) {
+	public PlayerType sendMove(Move move) {
 		if (move instanceof NormalMove) {
 			NormalMove nmove = (NormalMove) move;
 
 			if (getRule().canPromote(getBoard().getPieceAt(nmove.getFrom()), nmove.getTo())) {
 				ChessPieceType[] promotions = ChessPieceType.getPromotions();
 				getAssistant().showPromotionDialog(promotions, nmove);
-				return; // do not send anything yet
+				return null; // do not send anything yet
 			}
 		}
 
 		cancelSelection();
-		super.sendMove(move);
+		return super.sendMove(move);
 	}
 }

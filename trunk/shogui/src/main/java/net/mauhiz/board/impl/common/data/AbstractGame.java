@@ -9,12 +9,16 @@ import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Rule;
 
+import org.apache.log4j.Logger;
+
 /**
  * After move #i, we have board #i
  * @author mauhiz
  *
  */
 public abstract class AbstractGame implements Game {
+	private static final Logger LOG = Logger.getLogger(AbstractGame.class);
+
 	protected final List<Board> boards = new ArrayList<Board>();
 	protected final List<Move> moves = new ArrayList<Move>();
 	protected final Rule rule;
@@ -23,6 +27,31 @@ public abstract class AbstractGame implements Game {
 		this.rule = rule;
 		boards.add(rule.newBoard());
 		moves.add(new InitMove(rule.getStartingPlayer()));
+	}
+
+	public PlayerType applyMove(Move move) {
+		if (move instanceof InitMove) {
+			return getRule().getStartingPlayer();
+		}
+		if (move.getPlayerType() != getTurn()) {
+			LOG.warn("Wrong turn: " + move);
+			return null;
+		}
+		Board lastBoard = getLastBoard();
+		if (rule.preCheck(move, lastBoard, this)) {
+			LOG.trace("Applying move: " + move);
+			LOG.trace("Cloning board: " + lastBoard);
+			Board clone = lastBoard.copy();
+			clone.applyMove(move);
+			if (rule.postCheck(move, clone, this)) {
+				boards.add(clone);
+				moves.add(move);
+				return getTurn();
+			}
+		}
+
+		LOG.warn("Move rejected: " + move);
+		return null;
 	}
 
 	public Board getBoard(int i) {

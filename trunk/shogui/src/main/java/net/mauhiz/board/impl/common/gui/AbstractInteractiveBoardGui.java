@@ -11,7 +11,9 @@ import net.mauhiz.board.model.data.Rule;
 import net.mauhiz.board.model.data.Square;
 import net.mauhiz.board.model.gui.GuiAssistant;
 import net.mauhiz.board.model.gui.InteractiveBoardGui;
+import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.IAction;
+import net.mauhiz.util.MonitoredRunnable;
 
 import org.apache.log4j.Logger;
 
@@ -23,7 +25,7 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 
 	public void addCancelAction(Square square) {
 		LOG.trace("Adding cancel action to square: " + square);
-		enableSquare(square, new CancelAction(this));
+		enableSquare(square, CancelAction.getInstance(this));
 	}
 
 	public void addMoveAction(Square square, Move move) {
@@ -34,6 +36,11 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 	public void addSelectAction(Square square) {
 		LOG.trace("Adding select action to square: " + square);
 		enableSquare(square, new SelectSquareAction(this, square));
+	}
+
+	private void appendSquares(final GuiAssistant pAssistant, final Dimension size) {
+		pAssistant.appendSquares(getBoard().getSquares(), size);
+
 	}
 
 	public void cancelSelection() {
@@ -99,41 +106,63 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 	public void newGame() {
 		LOG.info("Starting new game");
 		controller = newController();
-		Dimension size = getBoard().getSize();
+		final Dimension size = getBoard().getSize();
 		getAssistant().clear();
 		getAssistant().initLayout(size);
+		appendSquares(getAssistant(), size);
 
-		LOG.debug("Appending squares");
-		for (Square square : getBoard().getSquares()) {
-			getAssistant().appendSquare(square, size);
-		}
-
-		refresh();
+		refreshDecorations();
+		refreshActions();
 	}
 
-	public void refresh() {
-		LOG.debug("Refreshing squares");
-		for (Square square : getBoard().getSquares()) {
-			disableSquare(square);
-			refreshSquare(square);
-			getAssistant().decorate(square, getBoard().getPieceAt(square));
-		}
+	public void refreshActions() {
+		new MonitoredRunnable("Refresh Actions", "Refreshed actions") {
+			@Override
+			protected ExecutionType getExecutionType() {
+				return ExecutionType.PARALLEL_CACHED;
+			}
 
-		if (isSquareSelected()) {
-			addCancelAction(getSelectedSquare());
-		}
-		getAssistant().refresh();
+			@Override
+			public void mrun() {
+				Board board = getBoard();
+				for (Square square : board.getSquares()) {
+					refreshSquare(square);
+				}
+				if (isSquareSelected()) {
+					addCancelAction(selectedSquare);
+				}
+			}
+		}.launch(null);
+	}
+
+	public void refreshDecorations() {
+		new MonitoredRunnable("Refresh Decorations", "Refreshed decorations") {
+			@Override
+			protected ExecutionType getExecutionType() {
+				return ExecutionType.PARALLEL_CACHED;
+			}
+
+			@Override
+			public void mrun() {
+				Board board = getBoard();
+				for (Square square : board.getSquares()) {
+					assistant.decorate(square, board.getPieceAt(square));
+				}
+			}
+		}.launch(null);
 	}
 
 	protected abstract void refreshSquare(Square square);
 
 	public void selectSquare(Square at) {
 		selectedSquare = at;
-		refresh();
+		refreshActions();
 	}
 
-	public void sendMove(Move move) {
-		getController().receiveMove(move);
+	public PlayerType sendMove(Move move) {
+		PlayerType player = getController().receiveMove(move);
 		cancelSelection();
+		refreshDecorations();
+		return player;
 	}
 }

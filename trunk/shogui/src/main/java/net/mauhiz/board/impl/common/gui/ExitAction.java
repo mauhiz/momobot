@@ -16,12 +16,13 @@ public class ExitAction extends AbstractAction {
 	}
 
 	@Override
-	protected void doAction() {
-		gui.close();
+	protected ExecutionType getExecutionType() {
+		return ExecutionType.GUI_SYNCHRONOUS;
 	}
 
 	@Override
-	protected ExecutionType getExecutionType() {
-		return ExecutionType.NON_GUI;
+	public void trun() {
+		gui.close();
+		DEFAULT_EXECUTOR.shutdown();
 	}
 }

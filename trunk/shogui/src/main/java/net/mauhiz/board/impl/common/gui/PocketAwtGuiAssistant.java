@@ -3,11 +3,9 @@ package net.mauhiz.board.impl.common.gui;
 import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.Panel;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
@@ -21,12 +19,17 @@ public abstract class PocketAwtGuiAssistant extends AwtGuiAssistant implements P
 		super(parent);
 	}
 
-	public void addToPocket(Piece piece) {
-		PlayerType player = piece.getPlayerType();
-		PieceType pieceType = piece.getPieceType();
+	public void addToPocket(PieceType pieceType, PlayerType player) {
 		Button button = new Button(pieceType.toString());
+		decorate(button, pieceType, player);
 		pockets.get(player).add(button);
 		button.addActionListener(new SelectPocketAction(getParent(), pieceType, player));
+	}
+
+	public void clearPockets() {
+		for (Panel pocket : pockets.values()) {
+			pocket.removeAll();
+		}
 	}
 
 	@Override
@@ -40,13 +43,9 @@ public abstract class PocketAwtGuiAssistant extends AwtGuiAssistant implements P
 		initPockets();
 	}
 
-	public void refreshPockets(Collection<? extends Piece> contents) {
-		for (Panel pocket : pockets.values()) {
-			pocket.removeAll();
-		}
+	public void refreshPocketActions(PlayerType player) {
+	}
 
-		for (Piece piece : contents) {
-			addToPocket(piece);
-		}
+	public void removeFromPocket(PieceType piece, PlayerType player) {
 	}
 }

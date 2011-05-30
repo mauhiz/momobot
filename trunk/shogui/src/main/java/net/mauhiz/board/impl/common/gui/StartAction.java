@@ -17,12 +17,12 @@ public class StartAction extends AbstractAction {
 	}
 
 	@Override
-	public void doAction() {
-		gui.newGame();
+	protected ExecutionType getExecutionType() {
+		return ExecutionType.PARALLEL_CACHED;
 	}
 
 	@Override
-	protected ExecutionType getExecutionType() {
-		return ExecutionType.NON_GUI;
+	public void trun() {
+		gui.newGame();
 	}
 }

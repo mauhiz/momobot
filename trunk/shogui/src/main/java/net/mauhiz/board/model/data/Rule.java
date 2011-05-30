@@ -1,15 +1,18 @@
 package net.mauhiz.board.model.data;
 
+
 public interface Rule {
-	Board newBoard();
+	Move generateMove(Square from, Square to, Game game);
 
 	PlayerType[] getPlayerTypes();
 
-	boolean isValid(Move move, Game game);
+	PlayerType getStartingPlayer();
 
 	void initPieces(Board board);
 
-	PlayerType getStartingPlayer();
+	Board newBoard();
 
-	Move generateMove(Square from, Square to, Game game);
+	boolean postCheck(Move move, Board newBoard, Game game);
+
+	boolean preCheck(Move move, Board oldBoard, Game game);
 }

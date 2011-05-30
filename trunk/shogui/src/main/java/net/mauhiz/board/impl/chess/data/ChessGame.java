@@ -13,36 +13,6 @@ public class ChessGame extends AbstractGame {
 		super(rule);
 	}
 
-	public ChessPlayerType applyMove(Move move) {
-		if (rule.isValid(move, this)) {
-			ChessBoard clone = getLastBoard().copy();
-			clone.applyMove(move);
-			if (getRule().isCheck(getTurn(), clone)) {
-				return null;
-			}
-			boards.add(clone);
-			moves.add(move);
-			return getTurn();
-		}
-
-		return null;
-	}
-
-	@Override
-	public ChessBoard getLastBoard() {
-		return (ChessBoard) super.getLastBoard();
-	}
-
-	@Override
-	public ChessRule getRule() {
-		return (ChessRule) super.getRule();
-	}
-
-	@Override
-	public ChessPlayerType getTurn() {
-		return (ChessPlayerType) super.getTurn();
-	}
-
 	public boolean kingHasMoved(PlayerType kingOwner) {
 		for (Move move : moves) {
 			if (move.getPlayerType() == kingOwner) {

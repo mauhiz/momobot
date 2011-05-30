@@ -7,11 +7,16 @@ import java.util.Map;
 
 import net.mauhiz.board.model.data.Board;
 import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Rule;
 import net.mauhiz.board.model.data.Square;
 
+import org.apache.log4j.Logger;
+
 public abstract class AbstractBoard implements Board {
+
+	private static final Logger LOG = Logger.getLogger(AbstractBoard.class);
 
 	public static int getXmove(Square from, Square to) {
 		return to.getX() - from.getX();
@@ -30,7 +35,8 @@ public abstract class AbstractBoard implements Board {
 	}
 
 	public static boolean isCross(Square from, Square to) {
-		return abs(getXmove(from, to)) == 1 ^ abs(getYmove(from, to)) == 1;
+		return abs(getXmove(from, to)) == 1 && abs(getYmove(from, to)) == 0 || abs(getXmove(from, to)) == 0
+				&& abs(getYmove(from, to)) == 1;
 	}
 
 	public static boolean isDiagonal(Square from, Square to) {
@@ -57,7 +63,7 @@ public abstract class AbstractBoard implements Board {
 		return getXmove(from, to) == 0;
 	}
 
-	protected final Map<Square, Piece> piecesMap = new HashMap<Square, Piece>();
+	private final Map<Square, Piece> piecesMap = new HashMap<Square, Piece>();
 
 	public AbstractBoard(Rule rule) {
 		super();
@@ -66,12 +72,34 @@ public abstract class AbstractBoard implements Board {
 		}
 	}
 
+	protected void copyInto(AbstractBoard copy) {
+		synchronized (piecesMap) {
+			copy.piecesMap.putAll(piecesMap);
+		}
+	}
+
+	public Square findSquare(PlayerType player, PieceType piece) {
+		for (Square square : getSquares()) {
+			Piece op = getPieceAt(square);
+			if (op == null) {
+				continue;
+			}
+			if (op.getPlayerType() == player && op.getPieceType() == piece) {
+				return square;
+			}
+		}
+		LOG.warn(piece + " not found for player: " + player);
+		return null;
+	}
+
 	protected Piece getPieceAt(int i, int j) {
 		return getPieceAt(SquareImpl.getInstance(i, j));
 	}
 
 	public Piece getPieceAt(Square square) {
-		return piecesMap.get(square);
+		synchronized (piecesMap) {
+			return piecesMap.get(square);
+		}
 	}
 
 	public Iterable<Square> getSquares() {
@@ -119,15 +147,26 @@ public abstract class AbstractBoard implements Board {
 		}
 	}
 
+	public Piece movePiece(Square from, Square to) {
+		synchronized (piecesMap) {
+			return piecesMap.put(to, piecesMap.remove(from));
+		}
+	}
+
 	public Piece setPieceAt(Square square, Piece piece) {
-		return piecesMap.put(square, piece);
+		synchronized (piecesMap) {
+			if (piece == null) {
+				return piecesMap.remove(square);
+			}
+			return piecesMap.put(square, piece);
+		}
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (Square square : getSquares()) {
-			sb.append("[").append(piecesMap.get(square)).append("] ");
+			sb.append("[").append(getPieceAt(square)).append("] ");
 		}
 		return sb.toString();
 	}

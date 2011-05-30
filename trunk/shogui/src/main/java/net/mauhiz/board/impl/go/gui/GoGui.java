@@ -49,22 +49,19 @@ public class GoGui extends AbstractPocketInteractiveBoardGui {
 	}
 
 	@Override
-	public void refresh() {
-		super.refresh();
-		getAssistant().refreshPockets(getBoard().getAllPocketPieces());
-		getAssistant().refresh();
-	}
-
-	@Override
 	protected void refreshSquare(Square square) {
 		Piece piece = getBoard().getPieceAt(square);
 		if (isPieceSelected()) { // from the pocket
 			Drop drop = getRule().generateMove(selectedPiece, square, getGame());
 			if (drop != null) {
 				addMoveAction(square, drop);
+				return;
 			}
 		} else if (piece != null && piece.getPlayerType() == getTurn()) { // available pieces
 			addSelectAction(square);
+			return;
 		}
+
+		disableSquare(square);
 	}
 }

@@ -4,11 +4,9 @@ import net.mauhiz.board.model.BoardIO;
 import net.mauhiz.board.model.GameController;
 import net.mauhiz.board.model.data.Game;
 import net.mauhiz.board.model.data.Move;
-
-import org.apache.log4j.Logger;
+import net.mauhiz.board.model.data.PlayerType;
 
 public abstract class AbstractGameController implements GameController {
-	private static final Logger LOG = Logger.getLogger(AbstractGameController.class);
 	private final BoardIO boardIO;
 	protected Game game;
 
@@ -30,8 +28,7 @@ public abstract class AbstractGameController implements GameController {
 
 	protected abstract Game newGame();
 
-	public void receiveMove(Move move) {
-		game.applyMove(move);
-		LOG.debug("New game state: " + game);
+	public PlayerType receiveMove(Move move) {
+		return game.applyMove(move);
 	}
 }

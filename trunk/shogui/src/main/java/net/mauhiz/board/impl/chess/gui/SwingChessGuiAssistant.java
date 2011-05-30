@@ -11,7 +11,8 @@ import net.mauhiz.board.impl.chess.data.ChessPlayerType;
 import net.mauhiz.board.impl.common.gui.SwingGuiAssistant;
 import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
 import net.mauhiz.board.model.data.NormalMove;
-import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PieceType;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.BoardGui;
 
 /**
@@ -24,12 +25,12 @@ public class SwingChessGuiAssistant extends SwingGuiAssistant implements IChessG
 	}
 
 	@Override
-	public void decorate(RotatingJButton button, Piece op) {
+	public void decorate(RotatingJButton button, PieceType op, PlayerType player) {
 		if (op == null) {
 			button.setText("");
 		} else {
-			button.setText(op.getPieceType().toString());
-			button.setForeground(op.getPlayerType() == ChessPlayerType.BLACK ? Color.BLACK : Color.WHITE);
+			button.setText(op.toString());
+			button.setForeground(player == ChessPlayerType.BLACK ? Color.BLACK : Color.WHITE);
 		}
 	}
 

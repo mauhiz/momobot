@@ -46,7 +46,6 @@ public class CheckersGui extends AbstractInteractiveBoardGui {
 	@Override
 	protected void refreshSquare(Square square) {
 		Piece op = getBoard().getPieceAt(square);
-		disableSquare(square);
 
 		if (isSquareSelected()) { // from the board
 			// available destinations
@@ -54,10 +53,13 @@ public class CheckersGui extends AbstractInteractiveBoardGui {
 
 			if (move != null) {
 				addMoveAction(square, move);
+				return;
 			}
 		} else if (op != null && op.getPlayerType() == getTurn()) { // available pieces
 			addSelectAction(square);
+			return;
 		}
 
+		disableSquare(square);
 	}
 }

@@ -20,17 +20,31 @@ public class SelectSquareAction extends AbstractAction {
 	}
 
 	@Override
-	protected void doAction() {
-		gui.selectSquare(at);
+	public boolean equals(Object obj) {
+		return this == obj || obj instanceof SelectSquareAction && isEquals((SelectSquareAction) obj);
 	}
 
 	@Override
 	protected ExecutionType getExecutionType() {
-		return ExecutionType.NON_GUI;
+		return ExecutionType.PARALLEL_CACHED;
+	}
+
+	@Override
+	public int hashCode() {
+		return at.hashCode();
+	}
+
+	private boolean isEquals(SelectSquareAction other) {
+		return at.equals(other.at) && gui == other.gui;
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + "@" + at;
+	}
+
+	@Override
+	public void trun() {
+		gui.selectSquare(at);
 	}
 }

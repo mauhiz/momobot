@@ -13,19 +13,17 @@ import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
 
-import org.apache.commons.lang.IllegalClassException;
-
 public class ChessRule extends AbstractRule {
 
 	static boolean isPromotionZone(ChessPlayerType pl, Square here) {
 		return ChessPlayerType.WHITE.equals(pl) ? here.getY() == 7 : here.getY() == 0;
 	}
 
-	private boolean canEnPassant(ChessBoard board, Square from, Square to, ChessPlayerType player) {
+	private boolean canEnPassant(Board board, Square from, Square to, PlayerType player) {
 
 		if (isFrontCorner(from, to, player)) {
 			Square enPassant = SquareImpl.getInstance(to.getX(), from.getY());
-			ChessPiece couic = board.getPieceAt(enPassant);
+			Piece couic = board.getPieceAt(enPassant);
 			if (couic == null || couic.getPieceType() != ChessPieceType.PAWN || couic.getPlayerType() == player) {
 				return false;
 			}
@@ -42,19 +40,22 @@ public class ChessRule extends AbstractRule {
 	 *            is different from 'from'
 	 * @return
 	 */
-	private boolean canGo(ChessBoard b, Square from, Square to) {
-		ChessPiece op = b.getPieceAt(from);
+	private boolean canGo(Board b, Square from, Square to) {
+		Piece op = b.getPieceAt(from);
+		PlayerType player = op.getPlayerType();
 
-		if (b.isFriendlyPieceOn(op.getPlayerType(), to)) {
+		if (b.isFriendlyPieceOn(player, to)) {
 			return false;
 		}
 
-		switch (op.getPieceType()) {
+		ChessPieceType pieceType = (ChessPieceType) op.getPieceType();
+
+		switch (pieceType) {
 		case PAWN:
 			if (b.getPieceAt(to) == null) {
-				return isPawnMove(from, to, op.getPlayerType()) || canEnPassant(b, from, to, op.getPlayerType());
+				return isPawnMove(from, to, player) || canEnPassant(b, from, to, player);
 			}
-			return isFrontCorner(from, to, op.getPlayerType());
+			return isFrontCorner(from, to, player);
 		case KNIGHT:
 			return abs(AbstractBoard.getXmove(from, to)) == 1 && abs(AbstractBoard.getYmove(from, to)) == 2
 					|| abs(AbstractBoard.getXmove(from, to)) == 2 && abs(AbstractBoard.getYmove(from, to)) == 1;
@@ -147,18 +148,10 @@ public class ChessRule extends AbstractRule {
 		}
 	}
 
-	public boolean isCheck(PlayerType player, ChessBoard board) {
-		Square kingSquare = board.findKingSquare(player);
-		if (kingSquare == null) {
-			return false;
-		}
-		return isCheck(player, board, kingSquare);
-	}
-
-	private boolean isCheck(PlayerType player, ChessBoard board, Square kingSquare) {
+	private boolean isCheck(PlayerType player, Board board, Square kingSquare) {
 
 		for (Square square : board.getSquares()) {
-			ChessPiece attacker = board.getPieceAt(square);
+			Piece attacker = board.getPieceAt(square);
 			if (attacker == null || attacker.getPlayerType() == player) {
 				continue;
 			}
@@ -169,12 +162,20 @@ public class ChessRule extends AbstractRule {
 		return false;
 	}
 
+	public boolean isCheck(PlayerType player, ChessBoard board) {
+		Square kingSquare = board.findKingSquare(player);
+		if (kingSquare == null) {
+			return false;
+		}
+		return isCheck(player, board, kingSquare);
+	}
+
 	@Override
 	protected boolean isForward(Square from, Square to, PlayerType player) {
 		return from.getY() != to.getY() && player == ChessPlayerType.WHITE ^ from.getY() > to.getY();
 	}
 
-	public boolean isPawnMove(Square from, Square to, ChessPlayerType player) {
+	public boolean isPawnMove(Square from, Square to, PlayerType player) {
 		if (AbstractBoard.getXmove(from, to) == 0 && isForward(from, to, player)) {
 			return from.getY() == (player == ChessPlayerType.WHITE ? 1 : 6) ? abs(AbstractBoard.getYmove(from, to)) <= 2
 					: abs(AbstractBoard.getYmove(from, to)) == 1;
@@ -182,20 +183,24 @@ public class ChessRule extends AbstractRule {
 		return false;
 	}
 
-	public boolean isValid(Move move, Game game) {
-		if (!(game instanceof ChessGame)) {
-			throw new IllegalClassException(ChessGame.class, game);
+	public ChessBoard newBoard() {
+		return new ChessBoard(this);
+	}
+
+	public boolean postCheck(Move move, Board newBoard, Game game) {
+		if (isCheck(move.getPlayerType(), (ChessBoard) newBoard)) {
+			return false;
 		}
+		return true;
+	}
+
+	public boolean preCheck(Move move, Board oldBoard, Game game) {
 		if (move instanceof NormalMove) {
 			NormalMove nmove = (NormalMove) move;
-			return canGo((ChessBoard) game.getLastBoard(), nmove.getFrom(), nmove.getTo());
+			return canGo(oldBoard, nmove.getFrom(), nmove.getTo());
 		} else if (move instanceof Castle) {
 			return true;
 		}
 		return false;
-	}
-
-	public ChessBoard newBoard() {
-		return new ChessBoard(this);
 	}
 }

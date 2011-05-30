@@ -38,7 +38,7 @@ public class GoBoard extends AbstractBoard implements PocketBoard {
 
 	public GoBoard copy() {
 		GoBoard copy = new GoBoard(null);
-		copy.piecesMap.putAll(piecesMap);
+		super.copyInto(copy);
 		for (Entry<GoPlayerType, List<GoPieceType>> ent : captures.entrySet()) {
 			copy.captures.put(ent.getKey(), new ArrayList<GoPieceType>(ent.getValue()));
 		}

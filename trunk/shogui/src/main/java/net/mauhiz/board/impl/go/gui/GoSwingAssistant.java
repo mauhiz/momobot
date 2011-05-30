@@ -8,7 +8,8 @@ import javax.swing.JPanel;
 import net.mauhiz.board.impl.common.gui.PocketSwingGuiAssistant;
 import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
 import net.mauhiz.board.impl.go.data.GoPlayerType;
-import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PieceType;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
 
 /**
@@ -21,12 +22,12 @@ public class GoSwingAssistant extends PocketSwingGuiAssistant {
 	}
 
 	@Override
-	public void decorate(RotatingJButton button, Piece op) {
+	public void decorate(RotatingJButton button, PieceType op, PlayerType player) {
 		if (op == null) {
 			button.setText("");
 		} else {
-			button.setText(op.getPieceType().toString());
-			button.setForeground(op.getPlayerType() == GoPlayerType.BLACK ? Color.BLACK : Color.WHITE);
+			button.setText(op.toString());
+			button.setForeground(player == GoPlayerType.BLACK ? Color.BLACK : Color.WHITE);
 		}
 	}
 

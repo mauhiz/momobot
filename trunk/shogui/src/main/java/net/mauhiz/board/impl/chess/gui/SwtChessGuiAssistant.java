@@ -4,8 +4,11 @@ import net.mauhiz.board.impl.chess.data.ChessPieceType;
 import net.mauhiz.board.impl.chess.data.ChessPlayerType;
 import net.mauhiz.board.impl.common.gui.SwtGuiAssistant;
 import net.mauhiz.board.model.data.NormalMove;
-import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PieceType;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.BoardGui;
+import net.mauhiz.util.ExecutionType;
+import net.mauhiz.util.NamedRunnable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -16,26 +19,33 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class SwtChessGuiAssistant extends SwtGuiAssistant implements IChessGuiAssistant {
-	static class ButtonDecorator implements Runnable {
+	static class ButtonDecorator extends NamedRunnable {
 		private final Button button;
-		private final Piece piece;
-		private final Shell shell;
+		private final PieceType piece;
+		private final PlayerType player;
 
-		ButtonDecorator(Button button, Shell shell, Piece piece) {
+		ButtonDecorator(Button button, PieceType piece, PlayerType player) {
+			super("Button decorator");
 			this.button = button;
-			this.shell = shell;
 			this.piece = piece;
+			this.player = player;
 		}
 
-		public void run() {
+		@Override
+		protected ExecutionType getExecutionType() {
+			return ExecutionType.GUI_SYNCHRONOUS;
+		}
+
+		@Override
+		public void trun() {
 			if (piece == null) {
 				button.setText("");
 			} else {
-				button.setText(piece.getPieceType().toString());
-				Display display = shell.getDisplay();
+				button.setText(piece.toString());
+				Display display = button.getDisplay();
 				Color black = display.getSystemColor(SWT.COLOR_BLACK);
 				Color white = display.getSystemColor(SWT.COLOR_WHITE);
-				button.setForeground(piece.getPlayerType() == ChessPlayerType.BLACK ? black : white);
+				button.setForeground(player == ChessPlayerType.BLACK ? black : white);
 			}
 		}
 	}
@@ -45,8 +55,8 @@ public class SwtChessGuiAssistant extends SwtGuiAssistant implements IChessGuiAs
 	}
 
 	@Override
-	public void decorate(Button button, Piece piece) {
-		button.getDisplay().syncExec(new ButtonDecorator(button, shell, piece));
+	public void decorate(Button button, PieceType piece, PlayerType player) {
+		new ButtonDecorator(button, piece, player).launch(button.getDisplay());
 	}
 
 	public boolean showPromotionDialog() {

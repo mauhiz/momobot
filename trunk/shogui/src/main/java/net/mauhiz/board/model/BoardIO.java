@@ -1,7 +1,8 @@
 package net.mauhiz.board.model;
 
 import net.mauhiz.board.model.data.Move;
+import net.mauhiz.board.model.data.PlayerType;
 
 public interface BoardIO {
-	void sendMove(Move move);
+	PlayerType sendMove(Move move);
 }
