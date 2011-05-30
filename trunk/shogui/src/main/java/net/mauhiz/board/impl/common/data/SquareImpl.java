@@ -2,24 +2,26 @@ package net.mauhiz.board.impl.common.data;
 
 import net.mauhiz.board.model.data.Square;
 
-public class SquareImpl implements Square {
+import org.apache.commons.lang.builder.CompareToBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
+public class SquareImpl implements Square {
 	private static final int _CACHE_HEIGHT = 20;
 	private static final int _CACHE_WIDTH = 20;
 	private static final Square[][] CACHE = new Square[_CACHE_WIDTH][_CACHE_HEIGHT];
 
 	public static Square getInstance(int x, int y) {
 		boolean inRange = x >= 0 && x < _CACHE_WIDTH && y >= 0 && y < _CACHE_HEIGHT;
-		Square square = inRange ? CACHE[x][y] : null;
-
-		if (square == null) {
-			square = new SquareImpl(x, y);
-			if (inRange) {
+		if (inRange) {
+			Square square = CACHE[x][y];
+			if (square == null) {
+				square = new SquareImpl(x, y);
 				CACHE[x][y] = square;
 			}
+			return square;
 		}
 
-		return square;
+		return new SquareImpl(x, y);
 	}
 
 	public final int x;
@@ -28,6 +30,11 @@ public class SquareImpl implements Square {
 	public SquareImpl(int x, int y) {
 		this.x = x;
 		this.y = y;
+	}
+
+	@Override
+	public int compareTo(Square other) {
+		return new CompareToBuilder().append(getX(), other.getX()).append(getY(), other.getY()).toComparison();
 	}
 
 	@Override
@@ -45,7 +52,7 @@ public class SquareImpl implements Square {
 
 	@Override
 	public int hashCode() {
-		return x + 377 * y;
+		return new HashCodeBuilder().append(x).append(y).toHashCode();
 	}
 
 	private boolean isEquals(Square other) {
@@ -57,5 +64,4 @@ public class SquareImpl implements Square {
 		// indices are 0-based, so add a 1 offset to display
 		return "(" + (x + 1) + "," + (y + 1) + ")";
 	}
-
 }
