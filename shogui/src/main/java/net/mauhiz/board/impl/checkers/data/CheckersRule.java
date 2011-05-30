@@ -6,10 +6,9 @@ import net.mauhiz.board.model.data.Board;
 import net.mauhiz.board.model.data.Game;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
+import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
-
-import org.apache.commons.lang.IllegalClassException;
 
 public class CheckersRule extends AbstractRule {
 
@@ -19,8 +18,8 @@ public class CheckersRule extends AbstractRule {
 	 *            is different from 'from'
 	 * @return
 	 */
-	private boolean canGo(CheckersBoard b, Square from, Square to) {
-		CheckersPiece op = b.getPieceAt(from);
+	private boolean canGo(Board b, Square from, Square to) {
+		Piece op = b.getPieceAt(from);
 
 		if (b.getPieceAt(to) != null) {
 			return false;
@@ -29,7 +28,7 @@ public class CheckersRule extends AbstractRule {
 		if (AbstractBoard.isCornerSkip(from, to)) {
 			// capture
 			Square skipped = CheckersBoard.getSkippedSquare(from, to);
-			CheckersPiece captured = b.getPieceAt(skipped);
+			Piece captured = b.getPieceAt(skipped);
 			if (captured == null || captured.getPlayerType() == op.getPlayerType()) {
 				return false;
 			}
@@ -74,19 +73,20 @@ public class CheckersRule extends AbstractRule {
 		return from.getY() != to.getY() && player == CheckersPlayerType.BLACK ^ from.getY() > to.getY();
 	}
 
-	public boolean isValid(Move move, Game game) {
-		if (!(game instanceof CheckersGame)) {
-			throw new IllegalClassException(CheckersGame.class, game.getClass());
-		}
+	public CheckersBoard newBoard() {
+		return new CheckersBoard(this);
+	}
+
+	public boolean postCheck(Move move, Board newBoard, Game game) {
+		return true;
+	}
+
+	public boolean preCheck(Move move, Board oldBoard, Game game) {
 		if (move instanceof NormalMove) {
-			return canGo((CheckersBoard) game.getLastBoard(), ((NormalMove) move).getFrom(),
-					((NormalMove) move).getTo());
+			NormalMove nmove = (NormalMove) move;
+			return canGo(oldBoard, nmove.getFrom(), nmove.getTo());
 		}
 
 		return false;
-	}
-
-	public CheckersBoard newBoard() {
-		return new CheckersBoard(this);
 	}
 }

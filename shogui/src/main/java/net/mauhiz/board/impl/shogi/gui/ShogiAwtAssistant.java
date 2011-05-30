@@ -9,7 +9,8 @@ import java.awt.Panel;
 import net.mauhiz.board.impl.common.gui.PocketAwtGuiAssistant;
 import net.mauhiz.board.impl.shogi.data.ShogiPlayerType;
 import net.mauhiz.board.model.data.NormalMove;
-import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PieceType;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
 import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
@@ -19,17 +20,59 @@ import net.mauhiz.util.ExecutionType;
  */
 public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGuiAssistant {
 
+	class PromotionAcceptedAction extends AbstractAction {
+		private final NormalMove move;
+		private final Dialog popup;
+
+		PromotionAcceptedAction(Dialog popup, NormalMove move) {
+			this.popup = popup;
+			this.move = move;
+		}
+
+		@Override
+		protected ExecutionType getExecutionType() {
+			return ExecutionType.GUI_ASYNCHRONOUS;
+		}
+
+		@Override
+		public void trun() {
+			getParent().afterPromotionDialog(move, true);
+			popup.dispose();
+		}
+	}
+
+	class PromotionRefusedAction extends AbstractAction {
+		private final NormalMove move;
+		private final Dialog popup;
+
+		PromotionRefusedAction(Dialog popup, NormalMove move) {
+			this.popup = popup;
+			this.move = move;
+		}
+
+		@Override
+		protected ExecutionType getExecutionType() {
+			return ExecutionType.GUI_ASYNCHRONOUS;
+		}
+
+		@Override
+		public void trun() {
+			getParent().afterPromotionDialog(move, false);
+			popup.dispose();
+		}
+	}
+
 	public ShogiAwtAssistant(PocketBoardGui parent) {
 		super(parent);
 	}
 
 	@Override
-	public void decorate(Button button, Piece op) {
+	public void decorate(Button button, PieceType op, PlayerType player) {
 		if (op == null) {
 			button.setLabel("");
 		} else {
-			button.setLabel(op.getPieceType().toString());
-			button.setForeground(op.getPlayerType() == ShogiPlayerType.SENTE ? Color.BLACK : Color.WHITE);
+			button.setLabel(op.toString());
+			button.setForeground(player == ShogiPlayerType.SENTE ? Color.BLACK : Color.WHITE);
 		}
 	}
 
@@ -53,35 +96,11 @@ public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGu
 		popup.setModal(true);
 
 		Button promoButton = new Button("Yes");
-		promoButton.addActionListener(new AbstractAction() {
-
-			@Override
-			protected void doAction() {
-				getParent().afterPromotionDialog(move, true);
-				popup.dispose();
-			}
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.NON_GUI;
-			}
-		});
+		promoButton.addActionListener(new PromotionAcceptedAction(popup, move));
 		popup.add(promoButton);
 
 		Button cancelButton = new Button("No");
-		cancelButton.addActionListener(new AbstractAction() {
-
-			@Override
-			public void doAction() {
-				getParent().afterPromotionDialog(move, false);
-				popup.dispose();
-			}
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.NON_GUI;
-			}
-		});
+		cancelButton.addActionListener(new PromotionRefusedAction(popup, move));
 		popup.add(cancelButton);
 
 		popup.pack();

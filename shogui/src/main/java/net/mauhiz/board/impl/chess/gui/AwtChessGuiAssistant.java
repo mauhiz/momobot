@@ -9,7 +9,8 @@ import net.mauhiz.board.impl.chess.data.ChessPieceType;
 import net.mauhiz.board.impl.chess.data.ChessPlayerType;
 import net.mauhiz.board.impl.common.gui.AwtGuiAssistant;
 import net.mauhiz.board.model.data.NormalMove;
-import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PieceType;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.BoardGui;
 
 /**
@@ -22,12 +23,12 @@ public class AwtChessGuiAssistant extends AwtGuiAssistant implements IChessGuiAs
 	}
 
 	@Override
-	public void decorate(Button button, Piece op) {
+	public void decorate(Button button, PieceType op, PlayerType player) {
 		if (op == null) {
 			button.setLabel("");
 		} else {
-			button.setLabel(op.getPieceType().toString());
-			button.setForeground(op.getPlayerType() == ChessPlayerType.BLACK ? Color.BLACK : Color.WHITE);
+			button.setLabel(op.toString());
+			button.setForeground(player == ChessPlayerType.BLACK ? Color.BLACK : Color.WHITE);
 		}
 	}
 

@@ -18,6 +18,7 @@ import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.PocketBoard;
 import net.mauhiz.board.model.data.Square;
+import net.mauhiz.util.PerformanceMonitor;
 
 import org.apache.log4j.Logger;
 
@@ -35,6 +36,7 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 	}
 
 	public void applyMove(Move move) {
+		PerformanceMonitor pm = new PerformanceMonitor();
 		if (move instanceof Drop) {
 			Drop drop = (Drop) move;
 			ShogiPieceType pieceType = (ShogiPieceType) drop.getPieceType();
@@ -44,19 +46,11 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 			} else {
 				LOG.warn("Player: " + playerType + " had no such piece: " + pieceType + " in his pocket");
 			}
-			LOG.debug("Drop applied: " + drop);
+			pm.perfLog("Drop applied: " + drop);
 
 		} else if (move instanceof NormalMove) {
 			NormalMove nmove = (NormalMove) move;
-			ShogiPiece toMove = getPieceAt(nmove.getFrom());
-			Piece oldPiece = piecesMap.remove(nmove.getFrom());
-
-			if (oldPiece == null) {
-				LOG.warn("Normal move: " + nmove + " has no piece at start square");
-				return;
-			}
-
-			ShogiPiece capturedPiece = setPieceAt(nmove.getTo(), toMove);
+			ShogiPiece capturedPiece = (ShogiPiece) movePiece(nmove.getFrom(), nmove.getTo());
 
 			if (capturedPiece != null) {
 				ShogiPieceType capturedPieceType = capturedPiece.getPieceType().reversePromotion();
@@ -66,40 +60,25 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 				Collections.sort(pocket);
 				LOG.trace("New pocket: " + pocket);
 			}
-			LOG.debug("Normal move applied: " + nmove);
+			pm.perfLog("Normal move applied: " + nmove);
 		} else if (move instanceof PromoteMove) {
 			PromoteMove pmove = (PromoteMove) move;
 			NormalMove parentMove = pmove.getParentMove();
 			applyMove(parentMove);
-			ShogiPiece moved = (ShogiPiece) piecesMap.remove(parentMove.getTo());
+			ShogiPiece moved = setPieceAt(parentMove.getTo(), null);
 			setPieceAt(parentMove.getTo(), new ShogiPiece((ShogiPlayerType) pmove.getPlayerType(), moved.getPieceType()
 					.getPromotion()));
-			LOG.debug("Promote move applied: " + pmove);
+			pm.perfLog("Promote move applied: " + pmove);
 		}
 	}
 
 	public ShogiBoard copy() {
 		ShogiBoard copy = new ShogiBoard(null);
-		copy.piecesMap.putAll(piecesMap);
+		super.copyInto(copy);
 		for (Entry<ShogiPlayerType, List<ShogiPieceType>> ent : pockets.entrySet()) {
 			copy.pockets.put(ent.getKey(), new ArrayList<ShogiPieceType>(ent.getValue()));
 		}
 		return copy;
-	}
-
-	public Square findKingSquare(ShogiPlayerType pl) {
-		// locate the king
-		for (Square square : getSquares()) {
-			ShogiPiece op = getPieceAt(square);
-			if (op == null) {
-				continue;
-			}
-			if (op.getPlayerType() == pl && op.getPieceType() == ShogiPieceType.KING) {
-				return square;
-			}
-		}
-		LOG.warn("King not found for player: " + pl);
-		return null;
 	}
 
 	public Collection<ShogiPiece> getAllPocketPieces() {
@@ -126,6 +105,23 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 
 	public Dimension getSize() {
 		return new Dimension(SIZE, SIZE);
+	}
+
+	public boolean hasPawnOnColumn(ShogiPlayerType pl, int x) {
+		for (Square square : getSquares()) {
+			if (square.getX() != x) {
+				continue;
+			}
+			ShogiPiece op = getPieceAt(square);
+			if (op == null) {
+				continue;
+			}
+			if (op.getPlayerType() == pl && op.getPieceType() == ShogiPieceType.PAWN) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Override

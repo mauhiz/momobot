@@ -40,36 +40,36 @@ public class ChessBoard extends AbstractBoard {
 			Square from = passant.getFrom();
 			Square to = passant.getTo();
 			Square enPassant = SquareImpl.getInstance(to.getX(), from.getY());
-			piecesMap.remove(enPassant);
+			setPieceAt(enPassant, null);
 		}
 		if (move instanceof NormalMove) {
 			Square from = ((NormalMove) move).getFrom();
 			Square to = ((NormalMove) move).getTo();
-			piecesMap.put(to, piecesMap.remove(from));
+			movePiece(from, to);
 
 		} else if (move instanceof Castle) {
 			Castle castle = (Castle) move;
 			int row = move.getPlayerType() == ChessPlayerType.WHITE ? 0 : 7;
 			Square kingFrom = SquareImpl.getInstance(4, row);
 			Square kingTo = SquareImpl.getInstance(castle.isGreat() ? 2 : 6, row);
-			piecesMap.put(kingTo, piecesMap.remove(kingFrom));
+			movePiece(kingFrom, kingTo);
 
 			// move the rook too
 			Square rookFrom = SquareImpl.getInstance(castle.isGreat() ? 0 : 7, row);
 			Square rookTo = SquareImpl.getInstance(castle.isGreat() ? 3 : 5, row);
-			piecesMap.put(rookTo, piecesMap.remove(rookFrom));
+			movePiece(rookFrom, rookTo);
 		} else if (move instanceof PromoteMove) {
 			PromoteMove pmove = (PromoteMove) move;
 			NormalMove parentMove = pmove.getParentMove();
 			applyMove(parentMove);
-			piecesMap.put(parentMove.getTo(),
+			setPieceAt(parentMove.getTo(),
 					new ChessPiece((ChessPlayerType) pmove.getPlayerType(), pmove.getPromotion()));
 		}
 	}
 
 	public ChessBoard copy() {
 		ChessBoard copy = new ChessBoard(null);
-		copy.piecesMap.putAll(piecesMap);
+		super.copyInto(copy);
 		return copy;
 	}
 

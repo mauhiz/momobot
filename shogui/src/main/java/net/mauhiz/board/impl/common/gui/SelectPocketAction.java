@@ -20,17 +20,17 @@ public class SelectPocketAction extends AbstractAction {
 	}
 
 	@Override
-	protected void doAction() {
-		gui.selectPieceToDrop(playerType, piece);
-	}
-
-	@Override
 	protected ExecutionType getExecutionType() {
-		return ExecutionType.NON_GUI;
+		return ExecutionType.GUI_SYNCHRONOUS;
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " for player: " + playerType + " with piece: " + piece;
+	}
+
+	@Override
+	public void trun() {
+		gui.selectPieceToDrop(playerType, piece);
 	}
 }

@@ -1,9 +1,12 @@
 package net.mauhiz.board.impl.common.gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.swing.BoxLayout;
@@ -11,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
-import net.mauhiz.board.impl.shogi.data.ShogiPlayerType;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
@@ -24,27 +26,35 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 
 	private static final Logger LOG = Logger.getLogger(PocketSwingGuiAssistant.class);
 	protected final JPanel boardAndPocketsPanel = new JPanel();
-	protected final Map<PlayerType, JPanel> pockets = new TreeMap<PlayerType, JPanel>();
+	protected final Map<RotatingJButton, Piece> pocketButtons = new HashMap<RotatingJButton, Piece>();
+	protected final SortedMap<PlayerType, JPanel> pockets = new TreeMap<PlayerType, JPanel>();
 
 	public PocketSwingGuiAssistant(PocketBoardGui parent) {
 		super(parent);
 	}
 
-	public void addToPocket(Piece piece) {
-		PlayerType player = piece.getPlayerType();
-		PieceType pieceType = piece.getPieceType();
+	public void addToPocket(PieceType pieceType, PlayerType player) {
 		RotatingJButton button = new RotatingJButton();
-		button.setText(pieceType.toString(), player == ShogiPlayerType.GOTE);
+		button.setBackground(getParent().getSquareBgcolor(null));
 		button.setSize(30, 30);
-		pockets.get(player).add(button);
+		decorate(button, pieceType, player);
 		button.addActionListener(new SelectPocketAction(getParent(), pieceType, player));
-		LOG.debug("Adding to pocket: " + piece);
+		pockets.get(player).add(button);
+		LOG.debug("Adding to pocket: " + pieceType);
 	}
 
 	@Override
 	public void clear() {
 		super.clear();
-		refreshPockets(Collections.<Piece> emptySet());
+		clearPockets();
+	}
+
+	public void clearPockets() {
+		LOG.trace("Emptying pockets");
+		for (JPanel pocket : pockets.values()) {
+			pocket.removeAll();
+		}
+		pocketButtons.clear();
 	}
 
 	@Override
@@ -78,18 +88,29 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 		boardPanel.setSize(boardAndPocketsPanel.getWidth(), boardAndPocketsPanel.getHeight() - 100);
 		boardAndPocketsPanel.add(boardPanel);
 		LOG.debug("Init Board panel: " + boardPanel);
-
 	}
 
-	public void refreshPockets(Collection<? extends Piece> contents) {
-		LOG.trace("Emptying pockets");
-		for (JPanel pocket : pockets.values()) {
-			pocket.removeAll();
+	public void refreshPocketActions(PlayerType player) {
+		for (Entry<PlayerType, JPanel> pocket : pockets.entrySet()) {
+			for (Component comp : pocket.getValue().getComponents()) {
+				if (comp instanceof RotatingJButton) {
+					comp.setEnabled(player == pocket.getKey());
+				}
+			}
 		}
-		if (contents != null) {
-			LOG.debug("Refreshing pockets with contents: " + contents);
-			for (Piece piece : contents) {
-				addToPocket(piece);
+	}
+
+	public void removeFromPocket(PieceType piece, PlayerType player) {
+		LOG.debug("Removing from " + player + " pocket: " + piece);
+		for (Iterator<Entry<RotatingJButton, Piece>> i = pocketButtons.entrySet().iterator(); i.hasNext();) {
+			Entry<RotatingJButton, Piece> candidate = i.next();
+			Piece inPocket = candidate.getValue();
+			if (inPocket.getPieceType() == piece && inPocket.getPlayerType() == player) {
+				RotatingJButton button = candidate.getKey();
+				i.remove();
+				pockets.get(player).remove(button);
+				button.removeActionListener(null); // clear listeners
+				break;
 			}
 		}
 	}

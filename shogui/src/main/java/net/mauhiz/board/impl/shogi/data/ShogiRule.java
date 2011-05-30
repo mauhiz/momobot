@@ -24,21 +24,17 @@ public class ShogiRule extends AbstractPocketRule {
 		return player == ShogiPlayerType.SENTE ? square.getY() >= 6 : square.getY() <= 2;
 	}
 
-	private boolean canDrop(Board board, Square to) {
-		return board.getPieceAt(to) == null;
-	}
-
 	/**
 	 * @param from
 	 * @param to
 	 *            is different from 'from'
 	 * @return
 	 */
-	private boolean canGo(ShogiBoard board, Square from, Square to) {
+	private boolean canGo(Board board, Square from, Square to) {
 		Piece piece = board.getPieceAt(from);
 		ShogiPlayerType playerType = (ShogiPlayerType) piece.getPlayerType();
 
-		if (board.isFriendlyPieceOn(piece.getPlayerType(), to)) {
+		if (board.isFriendlyPieceOn(playerType, to)) {
 			return false;
 		}
 
@@ -79,7 +75,7 @@ public class ShogiRule extends AbstractPocketRule {
 		}
 	}
 
-	public boolean canPromote(ShogiBoard board, Square from, Square to) {
+	public boolean canPromote(Board board, Square from, Square to) {
 		Piece piece = board.getPieceAt(from);
 		if (piece == null) {
 			return false;
@@ -131,9 +127,8 @@ public class ShogiRule extends AbstractPocketRule {
 		LOG.info("Pieces init complete");
 	}
 
-	public boolean isCheck(ShogiPlayerType player, ShogiGame game) {
-		ShogiBoard board = game.getLastBoard();
-		Square kingSquare = board.findKingSquare(player);
+	public boolean isCheck(PlayerType player, Game game, Board board) {
+		Square kingSquare = board.findSquare(player, ShogiPieceType.KING);
 		if (kingSquare == null) {
 			LOG.warn("Player: " + player + " has no king!");
 			return false;
@@ -147,7 +142,7 @@ public class ShogiRule extends AbstractPocketRule {
 
 			NormalMove wannabe = new NormalMoveImpl(attacker.getPlayerType(), square, kingSquare);
 
-			if (isValid(wannabe, game)) {
+			if (preCheck(wannabe, board, game)) {
 				LOG.debug("Ote: " + wannabe);
 				return true;
 			}
@@ -169,36 +164,62 @@ public class ShogiRule extends AbstractPocketRule {
 				&& isForward(from, to, player);
 	}
 
-	public boolean isValid(Move move, Game game) {
-		if (!(game instanceof ShogiGame)) {
+	public ShogiBoard newBoard() {
+		return new ShogiBoard(this);
+	}
+
+	public boolean postCheck(Move move, Board newBoard, Game game) {
+		// rule : don't be in check after play
+		if (isCheck(move.getPlayerType(), game, newBoard)) {
 			return false;
 		}
-		if (move.getPlayerType() != game.getTurn()) {
-			return false;
-		}
-		ShogiGame sg = (ShogiGame) game;
-		ShogiBoard board = sg.getLastBoard();
+
+		return true;
+	}
+
+	public boolean preCheck(Move move, Board oldBoard, Game game) {
 		if (move instanceof Drop) {
-			return canDrop(board, ((Drop) move).getTo());
+			Drop drop = (Drop) move;
+			Square to = drop.getTo();
+			if (oldBoard.getPieceAt(to) == null) {
+				ShogiPieceType spt = (ShogiPieceType) drop.getPieceType();
+				ShogiPlayerType player = (ShogiPlayerType) move.getPlayerType();
+				switch (spt) {
+				case ROOK:
+				case SILVER:
+				case BISHOP:
+					return true;
+				case KNIGHT:
+					return !isPromotionZone(player, to);
+				case PAWN:
+					int x = to.getX();
+					if (((ShogiBoard) oldBoard).hasPawnOnColumn(player, x)) {
+						LOG.debug("Player: " + player + " already had a pawn on column: " + x);
+						return false;
+					}
+					//$FALL-THROUGH$
+				case LANCE:
+					return player == ShogiPlayerType.SENTE ? to.getY() != 7 : to.getY() != 0;
+				default:
+					return false;
+				}
+			}
 
 		} else if (move instanceof NormalMove) {
-			Square from = ((NormalMove) move).getFrom();
-			ShogiPiece toMove = board.getPieceAt(from);
+			NormalMove nmove = (NormalMove) move;
+			Square from = nmove.getFrom();
+			Piece toMove = oldBoard.getPieceAt(from);
 
 			if (toMove == null || toMove.getPlayerType() != move.getPlayerType()) {
 				return false;
 			}
 
-			return canGo(board, from, ((NormalMove) move).getTo());
+			return canGo(oldBoard, from, nmove.getTo());
 		} else if (move instanceof PromoteMove) {
 			PromoteMove promote = (PromoteMove) move;
-			return canPromote(board, promote.getParentMove().getFrom(), promote.getParentMove().getTo());
+			return canPromote(oldBoard, promote.getParentMove().getFrom(), promote.getParentMove().getTo());
 		}
 
 		return false;
-	}
-
-	public ShogiBoard newBoard() {
-		return new ShogiBoard(this);
 	}
 }

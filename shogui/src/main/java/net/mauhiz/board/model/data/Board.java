@@ -7,11 +7,17 @@ public interface Board {
 
 	Board copy();
 
+	Square findSquare(PlayerType player, PieceType piece);
+
 	Piece getPieceAt(Square square);
 
 	Dimension getSize();
 
 	Iterable<Square> getSquares();
+
+	boolean isFriendlyPieceOn(PlayerType player, Square to);
+
+	boolean isObstruction(Square from, Square to);
 
 	/**
 	 * @return The piece that was previously there

@@ -31,22 +31,21 @@ public class GoRule extends AbstractPocketRule {
 		return false;
 	}
 
-	public boolean isValid(Move move, Game game) {
-		if (!(game instanceof GoGame)) {
-			return false;
-		}
+	public GoBoard newBoard() {
+		return new GoBoard(this);
+	}
+
+	public boolean postCheck(Move move, Board newBoard, Game game) {
+		return true;
+	}
+
+	public boolean preCheck(Move move, Board oldBoard, Game game) {
 		if (move.getPlayerType() != game.getTurn()) {
 			return false;
 		}
-		GoGame sg = (GoGame) game;
-		GoBoard board = sg.getLastBoard();
 		if (move instanceof Drop) {
-			return canDrop(board, ((Drop) move).getTo());
+			return canDrop(oldBoard, ((Drop) move).getTo());
 		}
 		return false;
-	}
-
-	public GoBoard newBoard() {
-		return new GoBoard(this);
 	}
 }

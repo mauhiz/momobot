@@ -1,5 +1,8 @@
 package net.mauhiz.board.impl.common.gui;
 
+import net.mauhiz.board.impl.common.data.CaptureMove;
+import net.mauhiz.board.model.data.Drop;
+import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
@@ -33,5 +36,18 @@ public abstract class AbstractPocketInteractiveBoardGui extends AbstractInteract
 	public void selectPieceToDrop(PlayerType player, PieceType piece) {
 		selectedPiece = piece;
 		super.cancelSelection();
+	}
+
+	@Override
+	public PlayerType sendMove(Move move) {
+		PlayerType nextTurn = super.sendMove(move);
+		if (nextTurn != null) {
+			if (move instanceof Drop) {
+				getAssistant().removeFromPocket(((Drop) move).getPieceType(), move.getPlayerType());
+			} else if (move instanceof CaptureMove) {
+				getAssistant().addToPocket(((CaptureMove) move).getCaptured(), move.getPlayerType());
+			}
+		}
+		return nextTurn;
 	}
 }

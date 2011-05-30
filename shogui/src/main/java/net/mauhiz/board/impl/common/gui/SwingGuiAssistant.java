@@ -2,6 +2,7 @@ package net.mauhiz.board.impl.common.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -18,10 +19,17 @@ import javax.swing.JSplitPane;
 import net.mauhiz.board.impl.common.data.SquareImpl;
 import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
 import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PieceType;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
 import net.mauhiz.board.model.gui.BoardGui;
 import net.mauhiz.board.remote.NewRemoteGameAction;
+import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.IAction;
+import net.mauhiz.util.MonitoredRunnable;
+import net.mauhiz.util.NamedRunnable;
+import net.mauhiz.util.PerformanceMonitor;
+import net.mauhiz.util.ThreadUtils;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
@@ -38,14 +46,16 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		super(parent);
 	}
 
-	public void appendSquare(Square square, Dimension size) {
-		Square cartesianSquare = SquareImpl.getInstance(square.getX(), size.height - square.getY() - 1);
-		RotatingJButton button = new RotatingJButton();
-		buttons.put(cartesianSquare, button);
-		button.setBackground(getParent().getSquareBgcolor(square));
-		button.setSize(30, 30);
-		boardPanel.add(button);
-		LOG.trace("Square appended: " + square + " at position: " + cartesianSquare);
+	public void appendSquares(Iterable<Square> squares, Dimension size) {
+		boardPanel.setVisible(false);
+		for (Square square : squares) {
+			Square cartesianSquare = SquareImpl.getInstance(square.getX(), size.height - square.getY() - 1);
+			RotatingJButton button = newButton(getParent().getSquareBgcolor(square));
+			synchronized (buttons) {
+				buttons.put(cartesianSquare, button);
+			}
+		}
+		boardPanel.setVisible(true);
 	}
 
 	public void clear() {
@@ -57,14 +67,11 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 			historyPanel.removeAll();
 			LOG.debug("History panel cleared");
 		}
-		if (!buttons.isEmpty()) {
+		synchronized (buttons) {
 			buttons.clear();
-			LOG.debug("Buttons cleared");
 		}
-		if (!listeners.isEmpty()) {
-			listeners.clear();
-			LOG.debug("Listeners cleared");
-		}
+
+		clearListeners();
 	}
 
 	public void close() {
@@ -72,51 +79,60 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		LOG.info("Display disposed");
 	}
 
-	protected abstract void decorate(RotatingJButton button, Piece piece);
+	protected abstract void decorate(RotatingJButton button, PieceType piece, PlayerType player);
 
 	public void decorate(Square square, Piece piece) {
 		RotatingJButton button = getButton(square);
-		decorate(button, piece);
-		if (piece != null) {
-			LOG.trace("Square: " + square + " decorated with piece: " + piece);
+
+		if (piece == null) {
+			decorate(button, null, null);
+		} else {
+			decorate(button, piece.getPieceType(), piece.getPlayerType());
 		}
 	}
 
 	public void disableSquare(Square square) {
-		RotatingJButton button = getButton(square);
-		Color fore = button.getForeground();
-		Color back = button.getBackground();
-		ActionListener action = listeners.remove(square);
+		ActionListener action = removeListener(square);
 		if (action != null) {
+			RotatingJButton button = getButton(square);
 			button.removeActionListener(action);
-			LOG.debug("Square disabled: " + square + " (former action: " + action + ")");
 		}
-		button.setEnabled(false);
-		button.setForeground(fore);
-		button.setBackground(back);
 	}
 
 	public void enableSquare(Square square, IAction action) {
-		RotatingJButton button = getButton(square);
-		Color fore = button.getForeground();
-		Color back = button.getBackground();
-		button.addActionListener(action);
-		IAction former = listeners.put(square, action);
-		if (former == null) {
-			LOG.debug("Square: " + square + ", enabled with action: " + action);
-		} else if (!ObjectUtils.equals(former, action)) {
-			LOG.debug("Square: " + square + ", action: " + former + " with action: " + action);
+		IAction former = putListener(square, action);
+		if (ObjectUtils.equals(former, action)) {
+			return;
 		}
-		button.setEnabled(true);
-		button.setForeground(fore);
-		button.setBackground(back);
+
+		RotatingJButton button = getButton(square);
+
+		// the order is important to not trigger a disable/enable flip
+		button.addActionListener(action);
+
+		if (former != null) {
+			button.removeActionListener(former);
+		}
 	}
 
 	public RotatingJButton getButton(Square at) {
-		return buttons.get(at);
+		// This loop waits until the buttons have actually been added.
+		while (true) {
+			RotatingJButton button;
+			synchronized (buttons) {
+				button = buttons.get(at);
+			}
+			if (button == null) {
+				// not ready yet
+				ThreadUtils.safeSleep(100);
+			} else {
+				return button;
+			}
+		}
 	}
 
 	public void initDisplay() {
+		loadFontBackground();
 		initMenu();
 		frame.setTitle(getParent().getWindowTitle());
 
@@ -126,20 +142,24 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		Dimension minSize = getParent().getMinimumSize();
 		frame.setMinimumSize(minSize);
 
+		PerformanceMonitor sw = new PerformanceMonitor();
 		initPanels();
+		sw.perfLog("Panels initialized");
 
+		sw.start();
 		frame.setVisible(true);
-		LOG.info("Display initialized");
+		sw.perfLog("Frame set to visible");
 	}
 
 	public void initLayout(Dimension size) {
+		PerformanceMonitor sw = new PerformanceMonitor();
 		GridLayout gridLayout = new GridLayout(size.width, size.height, 0, 0);
 		boardPanel.setLayout(gridLayout);
-		LOG.debug("Board layout initialized: " + boardPanel.getLayout());
+		sw.perfLog("Board layout initialized: " + boardPanel.getLayout());
 	}
 
 	protected void initMenu() {
-
+		PerformanceMonitor sw = new PerformanceMonitor();
 		/* menu */
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
@@ -158,7 +178,7 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 		menuBar.add(fileMenu);
 		frame.setJMenuBar(menuBar);
-		LOG.debug("Menu ready");
+		sw.perfLog("Menu ready");
 	}
 
 	protected void initPanels() {
@@ -177,9 +197,54 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 	}
 
-	public void refresh() {
-		boardAndHistory.repaint();
-		LOG.trace("Repainted: " + boardAndHistory);
+	private void loadFontBackground() {
+		// special hax to load font in bg without holding back the user.
+		new MonitoredRunnable("Font loader") {
+
+			@Override
+			protected ExecutionType getExecutionType() {
+				return ExecutionType.PARALLEL_CACHED;
+			}
+
+			@Override
+			public void mrun() {
+				Thread.currentThread().setPriority(4);
+				Font font = Font.decode("Dialog-BOLD-12");
+				// preload font
+				sun.font.Font2D font2d = sun.font.FontManager.getFont2D(font);
+				font2d.charToGlyph('香');
+				logMsg = "Loaded font :" + font;
+				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+			}
+
+		}.launch(null);
+
+	}
+
+	private RotatingJButton newButton(final Color bgColor) {
+		final RotatingJButton button = new RotatingJButton();
+		new NamedRunnable("Button initializer") {
+
+			@Override
+			protected ExecutionType getExecutionType() {
+				return ExecutionType.GUI_SYNCHRONOUS;
+			}
+
+			@Override
+			protected void trun() {
+				button.setBackground(bgColor);
+				button.setSize(30, 30);
+				button.setEnabled(false);
+				boardPanel.add(button);
+			}
+		}.launch(null);
+		return button;
+	}
+
+	public void refreshBoard() {
+		PerformanceMonitor sw = new PerformanceMonitor();
+		boardAndHistory.validate();
+		sw.perfLog("Repainted: " + boardAndHistory);
 	}
 
 	public void start() {

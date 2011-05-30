@@ -8,9 +8,11 @@ import javax.swing.JPanel;
 
 import net.mauhiz.board.impl.common.gui.PocketSwingGuiAssistant;
 import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
+import net.mauhiz.board.impl.shogi.data.ShogiPieceType;
 import net.mauhiz.board.impl.shogi.data.ShogiPlayerType;
 import net.mauhiz.board.model.data.NormalMove;
-import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.model.data.PieceType;
+import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
 import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
@@ -29,11 +31,15 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 	}
 
 	@Override
-	public void decorate(RotatingJButton button, Piece op) {
-		if (op == null) {
+	public void decorate(RotatingJButton button, PieceType piece, PlayerType player) {
+		if (piece == null) {
 			button.setText("", false);
 		} else {
-			button.setText(op.getPieceType().toString(), op.getPlayerType() == ShogiPlayerType.GOTE);
+			String ji = piece.toString();
+			if (piece == ShogiPieceType.KING && player == ShogiPlayerType.SENTE) {
+				ji = "玉"; // special case!
+			}
+			button.setText(ji, player == ShogiPlayerType.GOTE);
 		}
 	}
 
@@ -68,18 +74,19 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 		popup.setLayout(new GridLayout(1, 2, 10, 10));
 		popup.setModal(true);
 
-		JButton promoButton = new JButton("Yes");
+		JButton promoButton = new JButton();
+		promoButton.setText("Yes");
 		promoButton.addActionListener(new AbstractAction() {
 
 			@Override
-			protected void doAction() {
-				getParent().afterPromotionDialog(move, true);
-				popup.dispose();
+			protected ExecutionType getExecutionType() {
+				return ExecutionType.GUI_ASYNCHRONOUS;
 			}
 
 			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.NON_GUI;
+			public void trun() {
+				getParent().afterPromotionDialog(move, true);
+				popup.dispose();
 			}
 		});
 		popup.add(promoButton);
@@ -88,14 +95,14 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 		cancelButton.addActionListener(new AbstractAction() {
 
 			@Override
-			protected void doAction() {
-				getParent().afterPromotionDialog(move, false);
-				popup.dispose();
+			protected ExecutionType getExecutionType() {
+				return ExecutionType.GUI_ASYNCHRONOUS;
 			}
 
 			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.NON_GUI;
+			public void trun() {
+				getParent().afterPromotionDialog(move, false);
+				popup.dispose();
 			}
 		});
 		popup.add(cancelButton);

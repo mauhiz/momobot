@@ -10,7 +10,7 @@ import net.mauhiz.util.IAction;
 
 public abstract class AbstractGuiAssistant implements GuiAssistant {
 
-	protected final Map<Square, IAction> listeners = new HashMap<Square, IAction>();
+	private final Map<Square, IAction> listeners = new HashMap<Square, IAction>();
 
 	protected BoardGui parent;
 
@@ -18,7 +18,25 @@ public abstract class AbstractGuiAssistant implements GuiAssistant {
 		this.parent = parent;
 	}
 
+	protected void clearListeners() {
+		synchronized (listeners) {
+			listeners.clear();
+		}
+	}
+
 	protected BoardGui getParent() {
 		return parent;
+	}
+
+	protected IAction putListener(Square square, IAction action) {
+		synchronized (listeners) {
+			return listeners.put(square, action);
+		}
+	}
+
+	protected IAction removeListener(Square square) {
+		synchronized (listeners) {
+			return listeners.remove(square);
+		}
 	}
 }
