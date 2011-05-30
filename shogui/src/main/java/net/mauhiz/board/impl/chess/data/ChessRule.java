@@ -51,25 +51,25 @@ public class ChessRule extends AbstractRule {
 		ChessPieceType pieceType = (ChessPieceType) op.getPieceType();
 
 		switch (pieceType) {
-		case PAWN:
-			if (b.getPieceAt(to) == null) {
-				return isPawnMove(from, to, player) || canEnPassant(b, from, to, player);
-			}
-			return isFrontCorner(from, to, player);
-		case KNIGHT:
-			return abs(AbstractBoard.getXmove(from, to)) == 1 && abs(AbstractBoard.getYmove(from, to)) == 2
-					|| abs(AbstractBoard.getXmove(from, to)) == 2 && abs(AbstractBoard.getYmove(from, to)) == 1;
-		case BISHOP:
-			return AbstractBoard.isDiagonal(from, to) && !b.isObstruction(from, to);
-		case ROOK:
-			return AbstractBoard.isStraight(from, to) && !b.isObstruction(from, to);
-		case KING:
-			return abs(AbstractBoard.getXmove(from, to)) <= 1 && abs(AbstractBoard.getYmove(from, to)) <= 1;
-		case QUEEN:
-			return (AbstractBoard.isDiagonal(from, to) || AbstractBoard.isStraight(from, to))
-					&& !b.isObstruction(from, to);
-		default:
-			throw new IllegalStateException();
+			case PAWN:
+				if (b.getPieceAt(to) == null) {
+					return isPawnMove(from, to, player) || canEnPassant(b, from, to, player);
+				}
+				return isFrontCorner(from, to, player);
+			case KNIGHT:
+				return abs(AbstractBoard.getXmove(from, to)) == 1 && abs(AbstractBoard.getYmove(from, to)) == 2
+						|| abs(AbstractBoard.getXmove(from, to)) == 2 && abs(AbstractBoard.getYmove(from, to)) == 1;
+			case BISHOP:
+				return AbstractBoard.isDiagonal(from, to) && !b.isObstruction(from, to);
+			case ROOK:
+				return AbstractBoard.isStraight(from, to) && !b.isObstruction(from, to);
+			case KING:
+				return abs(AbstractBoard.getXmove(from, to)) <= 1 && abs(AbstractBoard.getYmove(from, to)) <= 1;
+			case QUEEN:
+				return (AbstractBoard.isDiagonal(from, to) || AbstractBoard.isStraight(from, to))
+						&& !b.isObstruction(from, to);
+			default:
+				throw new IllegalStateException();
 		}
 	}
 
@@ -148,6 +148,14 @@ public class ChessRule extends AbstractRule {
 		}
 	}
 
+	public boolean isCheck(PlayerType player, Board board) {
+		Square kingSquare = board.findSquare(player, ChessPieceType.KING);
+		if (kingSquare == null) {
+			return false;
+		}
+		return isCheck(player, board, kingSquare);
+	}
+
 	private boolean isCheck(PlayerType player, Board board, Square kingSquare) {
 
 		for (Square square : board.getSquares()) {
@@ -160,14 +168,6 @@ public class ChessRule extends AbstractRule {
 			}
 		}
 		return false;
-	}
-
-	public boolean isCheck(PlayerType player, ChessBoard board) {
-		Square kingSquare = board.findKingSquare(player);
-		if (kingSquare == null) {
-			return false;
-		}
-		return isCheck(player, board, kingSquare);
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class ChessRule extends AbstractRule {
 	}
 
 	public boolean postCheck(Move move, Board newBoard, Game game) {
-		if (isCheck(move.getPlayerType(), (ChessBoard) newBoard)) {
+		if (isCheck(move.getPlayerType(), newBoard)) {
 			return false;
 		}
 		return true;

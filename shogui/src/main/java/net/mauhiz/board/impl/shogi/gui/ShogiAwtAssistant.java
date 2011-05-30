@@ -25,6 +25,7 @@ public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGu
 		private final Dialog popup;
 
 		PromotionAcceptedAction(Dialog popup, NormalMove move) {
+			super();
 			this.popup = popup;
 			this.move = move;
 		}
@@ -46,6 +47,7 @@ public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGu
 		private final Dialog popup;
 
 		PromotionRefusedAction(Dialog popup, NormalMove move) {
+			super();
 			this.popup = popup;
 			this.move = move;
 		}

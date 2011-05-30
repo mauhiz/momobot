@@ -127,7 +127,7 @@ public abstract class TextIcon implements Icon, PropertyChangeListener {
 	 *
 	 *  @param text  the text to be rendered on the Icon
 	 */
-	public void setText(String text) {
+	public final void setText(String text) {
 		this.text = text;
 		if (AUTO_RESIZE) {
 			calculateIconDimensions();

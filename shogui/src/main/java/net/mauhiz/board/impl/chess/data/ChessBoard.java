@@ -7,7 +7,6 @@ import net.mauhiz.board.impl.chess.EnPassant;
 import net.mauhiz.board.impl.chess.PromoteMove;
 import net.mauhiz.board.impl.common.data.AbstractBoard;
 import net.mauhiz.board.impl.common.data.SquareImpl;
-import net.mauhiz.board.impl.common.data.SquareView;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PlayerType;
@@ -73,19 +72,8 @@ public class ChessBoard extends AbstractBoard {
 		return copy;
 	}
 
-	public Square findKingSquare(PlayerType pl) {
-		// locate the king
-		for (Square square : new SquareView(getSize())) {
-			ChessPiece op = getPieceAt(square);
-			if (op == null) {
-				continue;
-			}
-			if (op.getPlayerType() == pl && op.getPieceType() == ChessPieceType.KING) {
-				return square;
-			}
-		}
-
-		return null;
+	protected Square findKingSquare(PlayerType pl) {
+		return findSquare(pl, ChessPieceType.KING);
 	}
 
 	@Override

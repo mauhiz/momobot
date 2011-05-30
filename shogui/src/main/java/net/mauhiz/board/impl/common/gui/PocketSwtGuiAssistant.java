@@ -51,7 +51,7 @@ public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements P
 				}
 			}
 
-		}.launch(shell.getDisplay());
+		}.launch(getShell().getDisplay());
 	}
 
 	public void clearPockets() {
@@ -70,7 +70,7 @@ public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements P
 					}
 				}
 			}
-		}.launch(shell.getDisplay());
+		}.launch(getShell().getDisplay());
 
 	}
 

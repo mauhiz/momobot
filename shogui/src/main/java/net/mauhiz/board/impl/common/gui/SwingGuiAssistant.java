@@ -2,7 +2,6 @@ package net.mauhiz.board.impl.common.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import net.mauhiz.board.model.gui.BoardGui;
 import net.mauhiz.board.remote.NewRemoteGameAction;
 import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.IAction;
-import net.mauhiz.util.MonitoredRunnable;
 import net.mauhiz.util.NamedRunnable;
 import net.mauhiz.util.PerformanceMonitor;
 import net.mauhiz.util.ThreadUtils;
@@ -35,6 +33,30 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 
 public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
+	final class ButtonInitializer extends NamedRunnable {
+		private final Color bgColor;
+		private final RotatingJButton button;
+
+		ButtonInitializer(Color bgColor, RotatingJButton button) {
+			super("Button initializer");
+			this.bgColor = bgColor;
+			this.button = button;
+		}
+
+		@Override
+		protected ExecutionType getExecutionType() {
+			return ExecutionType.GUI_SYNCHRONOUS;
+		}
+
+		@Override
+		protected void trun() {
+			button.setBackground(bgColor);
+			button.setSize(30, 30);
+			button.setEnabled(false);
+			boardPanel.add(button);
+		}
+	}
+
 	private static final Logger LOG = Logger.getLogger(SwingGuiAssistant.class);
 	protected final JSplitPane boardAndHistory = new JSplitPane();
 	protected final JPanel boardPanel = new JPanel();
@@ -50,7 +72,8 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		boardPanel.setVisible(false);
 		for (Square square : squares) {
 			Square cartesianSquare = SquareImpl.getInstance(square.getX(), size.height - square.getY() - 1);
-			RotatingJButton button = newButton(getParent().getSquareBgcolor(square));
+			RotatingJButton button = new RotatingJButton();
+			new ButtonInitializer(getParent().getSquareBgcolor(square), button).launch(null);
 			synchronized (buttons) {
 				buttons.put(cartesianSquare, button);
 			}
@@ -132,7 +155,6 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	public void initDisplay() {
-		loadFontBackground();
 		initMenu();
 		frame.setTitle(getParent().getWindowTitle());
 
@@ -194,51 +216,6 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		historyPanel.setSize(boardAndHistory.getWidth() / 2 - 2, boardAndHistory.getHeight());
 		boardAndHistory.add(historyPanel, JSplitPane.RIGHT);
 		LOG.debug("Init history panel: " + historyPanel);
-
-	}
-
-	private void loadFontBackground() {
-		// special hax to load font in bg without holding back the user.
-		new MonitoredRunnable("Font loader") {
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.PARALLEL_CACHED;
-			}
-
-			@Override
-			public void mrun() {
-				Thread.currentThread().setPriority(4);
-				Font font = Font.decode("Dialog-BOLD-12");
-				// preload font
-				sun.font.Font2D font2d = sun.font.FontManager.getFont2D(font);
-				font2d.charToGlyph('香');
-				logMsg = "Loaded font :" + font;
-				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-			}
-
-		}.launch(null);
-
-	}
-
-	private RotatingJButton newButton(final Color bgColor) {
-		final RotatingJButton button = new RotatingJButton();
-		new NamedRunnable("Button initializer") {
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.GUI_SYNCHRONOUS;
-			}
-
-			@Override
-			protected void trun() {
-				button.setBackground(bgColor);
-				button.setSize(30, 30);
-				button.setEnabled(false);
-				boardPanel.add(button);
-			}
-		}.launch(null);
-		return button;
 	}
 
 	public void refreshBoard() {

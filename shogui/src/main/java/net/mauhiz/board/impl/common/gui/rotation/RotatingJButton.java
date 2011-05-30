@@ -15,7 +15,6 @@ import net.mauhiz.util.PerformanceMonitor;
 import org.apache.commons.lang.StringUtils;
 
 public class RotatingJButton extends JButton {
-
 	class ButtonDecorator extends MonitoredRunnable {
 
 		public ButtonDecorator() {
@@ -33,18 +32,7 @@ public class RotatingJButton extends JButton {
 			final Icon realIcon = flip ? getRotatedIcon(ti) : ti;
 
 			if (getIcon() != realIcon) {
-				new NamedRunnable("Set Icon") {
-
-					@Override
-					protected ExecutionType getExecutionType() {
-						return ExecutionType.GUI_ASYNCHRONOUS;
-					}
-
-					@Override
-					protected void trun() {
-						setIcon(realIcon);
-					}
-				}.launch(null);
+				new SetIcon("Set Icon", realIcon).launch(null);
 			}
 		}
 	}
@@ -70,6 +58,25 @@ public class RotatingJButton extends JButton {
 		@Override
 		public void mrun() {
 			superEnable(enabled);
+		}
+	}
+
+	class SetIcon extends NamedRunnable {
+		private final Icon realIcon;
+
+		SetIcon(String name, Icon realIcon) {
+			super(name);
+			this.realIcon = realIcon;
+		}
+
+		@Override
+		protected ExecutionType getExecutionType() {
+			return ExecutionType.GUI_ASYNCHRONOUS;
+		}
+
+		@Override
+		protected void trun() {
+			setIcon(realIcon);
 		}
 	}
 
@@ -124,20 +131,6 @@ public class RotatingJButton extends JButton {
 	}
 
 	@Override
-	public void repaint() {
-		PerformanceMonitor pm = new PerformanceMonitor(50, 100);
-		super.repaint();
-		pm.perfLog("Repainted button[flip=" + flip + "][text=" + iconText + "]");
-	}
-
-	@Override
-	public void revalidate() {
-		PerformanceMonitor pm = new PerformanceMonitor(50, 100);
-		super.revalidate();
-		pm.perfLog("Revalidated button[flip=" + flip + "][text=" + iconText + "]");
-	}
-
-	@Override
 	public void setEnabled(boolean enabled) {
 		new ButtonEnabler(enabled).launch(null);
 	}
@@ -159,12 +152,5 @@ public class RotatingJButton extends JButton {
 
 	void superEnable(boolean enabled) {
 		super.setEnabled(enabled);
-	}
-
-	@Override
-	public void validate() {
-		PerformanceMonitor pm = new PerformanceMonitor(50, 100);
-		super.validate();
-		pm.perfLog("Validated button[flip=" + flip + "][text=" + iconText + "]");
 	}
 }

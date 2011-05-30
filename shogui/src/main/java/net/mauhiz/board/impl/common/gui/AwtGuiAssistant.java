@@ -78,9 +78,9 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	public void disableSquare(Square square) {
-		Button button = getButton(square);
 		ActionListener action = removeListener(square);
 		if (action != null) {
+			Button button = getButton(square);
 			button.removeActionListener(action);
 			button.setEnabled(false);
 		}

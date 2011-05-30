@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 
 public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGuiAssistant {
 	static class ButtonDecorator extends NamedRunnable {
@@ -53,6 +52,26 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		}
 	}
 
+	class PocketInitializer extends NamedRunnable {
+		private final Map<PlayerType, Composite> lpockets;
+
+		PocketInitializer(Map<PlayerType, Composite> lpockets) {
+			super("Pocket Initializer");
+			this.lpockets = lpockets;
+		}
+
+		@Override
+		protected ExecutionType getExecutionType() {
+			return ExecutionType.GUI_ASYNCHRONOUS;
+		}
+
+		@Override
+		protected void trun() {
+			lpockets.put(ShogiPlayerType.GOTE, new Group(getShell(), SWT.TOP));
+			lpockets.put(ShogiPlayerType.SENTE, new Group(getShell(), SWT.BOTTOM));
+		}
+	}
+
 	public ShogiSwtAssistant(PocketBoardGui parent) {
 		super(parent);
 	}
@@ -68,33 +87,19 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 	}
 
 	public void initPockets() {
-		final Shell lshell = shell;
-		final Map<PlayerType, Composite> lpockets = pockets;
-		new NamedRunnable("Pocket Initializer") {
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.GUI_ASYNCHRONOUS;
-			}
-
-			@Override
-			protected void trun() {
-				lpockets.put(ShogiPlayerType.GOTE, new Group(lshell, SWT.TOP));
-				lpockets.put(ShogiPlayerType.SENTE, new Group(lshell, SWT.BOTTOM));
-			}
-		}.launch(shell.getDisplay());
+		new PocketInitializer(pockets).launch(getShell().getDisplay());
 	}
 
 	public void showPromotionDialog(NormalMove move) {
-		MessageBox mb = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+		MessageBox mb = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 		mb.setMessage("Promote?");
 		int buttonID = mb.open();
 		switch (buttonID) {
-		case SWT.YES:
-			getParent().afterPromotionDialog(move, true);
-			break;
-		default:
-			getParent().afterPromotionDialog(move, false);
+			case SWT.YES:
+				getParent().afterPromotionDialog(move, true);
+				break;
+			default:
+				getParent().afterPromotionDialog(move, false);
 		}
 	}
 }
