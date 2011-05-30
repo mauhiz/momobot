@@ -27,7 +27,7 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
     /**
      * a chaque server sa liste d users.
      */
-    private final TreeSet<IrcUser> users = new TreeSet<IrcUser>();
+    private final SortedSet<IrcUser> users = new TreeSet<IrcUser>();
 
     protected AbstractIrcNetwork(String alias) {
         super();
