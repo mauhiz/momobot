@@ -1,7 +1,7 @@
 package net.mauhiz.board.model.data;
 
-public interface Square {
-	public int getX();
+public interface Square extends Comparable<Square> {
+	int getX();
 
-	public int getY();
+	int getY();
 }
