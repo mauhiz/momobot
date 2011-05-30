@@ -51,7 +51,6 @@ public class SeekUserHistory implements Iterable<String> {
         return user;
     }
 
-    @Override
     public Iterator<String> iterator() {
         return history.iterator();
     }

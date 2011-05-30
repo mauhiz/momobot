@@ -86,7 +86,6 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
         String args = getTriggerContent(cme);
         Privmsg resp;

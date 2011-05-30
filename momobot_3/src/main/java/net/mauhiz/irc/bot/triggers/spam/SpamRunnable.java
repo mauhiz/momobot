@@ -3,12 +3,12 @@ package net.mauhiz.irc.bot.triggers.spam;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.msg.Privmsg;
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.AbstractDaemon;
 
 /**
  * @author mauhiz
  */
-public class SpamRunnable extends AbstractRunnable {
+public class SpamRunnable extends AbstractDaemon {
     /**
      * control.
      */
@@ -29,7 +29,7 @@ public class SpamRunnable extends AbstractRunnable {
      * @param delayMs1
      */
     public SpamRunnable(Privmsg spamMsg1, IIrcControl control1, long delayMs1) {
-        super();
+        super("Spam");
         control = control1;
         delayMs = delayMs1;
         spamMsg = spamMsg1;
@@ -59,9 +59,10 @@ public class SpamRunnable extends AbstractRunnable {
     /**
      * @see java.lang.Runnable#run()
      */
-    public void run() {
+    @Override
+    public void trun() {
         while (isRunning()) {
-            sleep(delayMs);
+            pause(delayMs);
             control.sendMsg(spamMsg);
         }
     }

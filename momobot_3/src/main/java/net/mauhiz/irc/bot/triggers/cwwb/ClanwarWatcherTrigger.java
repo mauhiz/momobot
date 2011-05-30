@@ -74,7 +74,6 @@ public class ClanwarWatcherTrigger implements IPrivmsgTrigger, IPartTrigger, IQu
     /**
      * @see net.mauhiz.irc.base.trigger.ITextTrigger#isActivatedBy(java.lang.String)
      */
-    @Override
     public boolean isActivatedBy(String text) {
         return true;
     }

@@ -11,6 +11,4 @@ public interface ITriggerManager {
      * @return true if message was consumed
      */
     boolean processMsg(IIrcMessage msg, IIrcControl ircControl);
-
-    void shutdown();
 }

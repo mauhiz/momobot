@@ -46,7 +46,6 @@ public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         String vdm = getNextVdm();
         int maxLen = im.getServerPeer().getNetwork().getLineMaxLength() - 50; // TODO make precise computation of overhead in PRIVMSG
@@ -56,7 +55,7 @@ public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
             control.sendMsg(reply);
             vdm = vdm.substring(spc + 1);
         }
-        if (!vdm.isEmpty()) {
+        if (vdm.length() != 0) {
             Privmsg reply = new Privmsg(im, vdm);
             control.sendMsg(reply);
         }

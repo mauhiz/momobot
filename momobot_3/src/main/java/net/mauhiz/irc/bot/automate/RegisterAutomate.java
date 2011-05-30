@@ -37,7 +37,7 @@ public class RegisterAutomate extends AbstractAutomate {
      * @param server1
      */
     public RegisterAutomate(QnetUser user1, IrcClientControl control1, IIrcServerPeer server1) {
-        super(user1, control1, server1);
+        super(user1, control1, server1, "Register auth");
         etat = STARTED;
     }
 
@@ -47,60 +47,58 @@ public class RegisterAutomate extends AbstractAutomate {
     }
 
     /**
-     * @see Runnable#run()
-     */
-    public void run() {
-        while (isRunning()) {
-            pause(SLEEPTIME);
-            switch (etat) {
-                case STARTED:
-                    WhoisRequest.startWhois(getServer(), control, Collections.singleton(getUser().getNick()), null);
-
-                    sendMsgToUser("Detection de ton auth Qnet...");
-                    etat = WHOISING;
-                    break;
-                case WHOISING:
-                    WhoisRequest whois = WhoisRequest.get(getUser().getNick());
-                    if (whois != null && whois.isRunning()) {
-                        continue;
-                    }
-                    if (StringUtils.isEmpty(getUser().getAuth())) {
-                        sendMsgToUser("Tu es authe sur Qnet.");
-                        sendMsgToUser("Il faut etre auth pour utiliser la commande $register.");
-                        return;
-                    }
-                    sendMsgToUser("Ton auth Qnet est: " + getUser().getAuth());
-                    if (PlayerDB.authIsKnown(getUser().getAuth())) {
-                        sendMsgToUser("Cet auth est deja associe a une steamid");
-                        sendMsgToUser("Pour changer de steamid, commencez par $unregister");
-                        return;
-                    }
-                    sendMsgToUser("Quel est ton steamID?");
-                    etat = STEAMING;
-                    break;
-                case STEAMING:
-                    if (StringUtils.isEmpty(steamId)) {
-                        continue;
-                    }
-                    if (PlayerDB.steamidIsKnown(steamId)) {
-                        sendMsgToUser("Ce steamid est deja associe a un auth");
-                        sendMsgToUser("Veuillez contacter le mastah du bot");
-                        return;
-                    }
-                    // FIXME
-                    // sendMsgToUser(SqlUtils.registerPlayer(steamid, ((QnetUser) getUser()).getAuth()));
-                    return;
-                default:
-                    break;
-            }
-        }
-    }
-
-    /**
      * @param steamid1
      *            le steamid
      */
     public void setSteamId(String steamid1) {
         steamId = steamid1;
+    }
+
+    @Override
+    public void trun() {
+        while (isRunning()) {
+            pause(SLEEPTIME);
+            switch (etat) {
+            case STARTED:
+                WhoisRequest.startWhois(getServer(), control, Collections.singleton(getUser().getNick()), null);
+
+                sendMsgToUser("Detection de ton auth Qnet...");
+                etat = WHOISING;
+                break;
+            case WHOISING:
+                WhoisRequest whois = WhoisRequest.get(getUser().getNick());
+                if (whois != null && whois.isRunning()) {
+                    continue;
+                }
+                if (StringUtils.isEmpty(getUser().getAuth())) {
+                    sendMsgToUser("Tu es authe sur Qnet.");
+                    sendMsgToUser("Il faut etre auth pour utiliser la commande $register.");
+                    return;
+                }
+                sendMsgToUser("Ton auth Qnet est: " + getUser().getAuth());
+                if (PlayerDB.authIsKnown(getUser().getAuth())) {
+                    sendMsgToUser("Cet auth est deja associe a une steamid");
+                    sendMsgToUser("Pour changer de steamid, commencez par $unregister");
+                    return;
+                }
+                sendMsgToUser("Quel est ton steamID?");
+                etat = STEAMING;
+                break;
+            case STEAMING:
+                if (StringUtils.isEmpty(steamId)) {
+                    continue;
+                }
+                if (PlayerDB.steamidIsKnown(steamId)) {
+                    sendMsgToUser("Ce steamid est deja associe a un auth");
+                    sendMsgToUser("Veuillez contacter le mastah du bot");
+                    return;
+                }
+                // FIXME
+                // sendMsgToUser(SqlUtils.registerPlayer(steamid, ((QnetUser) getUser()).getAuth()));
+                return;
+            default:
+                break;
+            }
+        }
     }
 }

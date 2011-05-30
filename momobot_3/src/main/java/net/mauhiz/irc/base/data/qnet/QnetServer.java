@@ -31,7 +31,6 @@ public class QnetServer extends AbstractIrcNetwork {
         return 255; // confirmed
     }
 
-    @Override
     public List<String> getServiceNicks() {
         return Arrays.asList("Q", "L");
     }
@@ -45,7 +44,6 @@ public class QnetServer extends AbstractIrcNetwork {
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newChannel(java.lang.String)
      */
-    @Override
     public QnetChannel newChannel(String chanLowerCase) {
         return new QnetChannel(chanLowerCase);
     }
@@ -53,7 +51,6 @@ public class QnetServer extends AbstractIrcNetwork {
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newUser(java.lang.String)
      */
-    @Override
     public QnetUser newUser(String nick) {
         return new QnetUser(nick);
     }

@@ -26,7 +26,6 @@ public class QuitTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         String args = getTriggerContent(im);
         /* TODO quit cross servers */

@@ -24,7 +24,6 @@ public class Seek2Trigger extends AbstractTextTrigger implements IPrivmsgTrigger
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = (IrcChannel) im.getTo();
         IChannelEvent event = chan.getEvt();

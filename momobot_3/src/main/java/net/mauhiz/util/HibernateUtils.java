@@ -41,7 +41,7 @@ public class HibernateUtils {
         if (s == null) {
             KeepAlive ka = new KeepAlive(SESSION_FACTORY);
             s = ka.getSession();
-            ka.startAs("SQL Connection keep-alive");
+            ka.tstart();
             SESSION.set(s);
         }
         return s;

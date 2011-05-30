@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,7 +94,7 @@ public class SeekWar {
     /**
      * Temps de time out : 6min par defaut
      */
-    private final long seekTimeOut = TimeUnit.MILLISECONDS.convert(6, TimeUnit.MINUTES);
+    private final long seekTimeOut = 6 * 60 * 1000;
     /**
      * si on a splite
      */
@@ -329,7 +328,7 @@ public class SeekWar {
                 inquote = !inquote;
             }
 
-            if (tmpStg.isEmpty()) {
+            if (tmpStg.length() == 0) {
                 tmpStg = element;
             } else {
                 tmpStg += " " + element;
@@ -499,10 +498,10 @@ public class SeekWar {
 
         // On test si il faut renvoyer le msg de seek au channel
 
-        if (sw.getTime() > TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS)) {
+        if (sw.getTime() > 30 * 1000) {
             IIrcServerPeer server = im.getServerPeer();
             if (split) {
-                if (sw.getSplitTime() > TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES) && !sWarning) {
+                if (sw.getSplitTime() > 60 * 1000 && !sWarning) {
                     sw.split();
                     seekMessage = "." + seekMessage + ".";
                     for (String seekChan : SEEK_CHANS) {

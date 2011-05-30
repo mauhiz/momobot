@@ -10,13 +10,9 @@ import net.mauhiz.irc.base.io.IrcInput;
  * @author viper
  */
 public class BncClientInput extends IrcInput {
-    
+
     BncClientInput(IIrcIO io1, Socket socket) throws IOException {
         super(io1, socket);
-    }
-    
-    @Override
-    public void start() {
-        startAs("Bnc Client Input Thread");
+        setName("Bnc Client Input");
     }
 }

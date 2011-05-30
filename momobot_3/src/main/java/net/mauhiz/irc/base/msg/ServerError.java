@@ -18,7 +18,6 @@ public class ServerError extends AbstractIrcMessage {
         this.msg = msg;
     }
 
-    @Override
     public ServerError copy() {
         return new ServerError(server, msg);
     }

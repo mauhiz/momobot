@@ -17,12 +17,10 @@ public class ClientPeer extends AbstractPeer implements Target {
         this.server = server;
     }
 
-    @Override
     public String getIrcForm() {
         throw new NotImplementedException("TODO");
     }
 
-    @Override
     public IrcNetwork getNetwork() {
         return server;
     }

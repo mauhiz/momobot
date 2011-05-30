@@ -29,7 +29,6 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
 
     public abstract IrcCommands getIrcCommand();
 
-    @Override
     public String getIrcForm() {
         return ircFromDisplay() + getIrcCommand();
     }

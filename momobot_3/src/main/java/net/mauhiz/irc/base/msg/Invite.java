@@ -20,7 +20,6 @@ public class Invite extends AbstractIrcMessage implements IrcChannelMessage {
         this.invitedUser = invitedUser;
     }
 
-    @Override
     public Invite copy() {
         return new Invite(server, from, invitedUser, chan);
     }
@@ -32,7 +31,6 @@ public class Invite extends AbstractIrcMessage implements IrcChannelMessage {
         return chan;
     }
 
-    @Override
     public IrcChannel[] getChans() {
         return new IrcChannel[] { chan };
     }

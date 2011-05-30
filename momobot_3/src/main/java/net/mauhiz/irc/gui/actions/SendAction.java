@@ -28,7 +28,12 @@ public class SendAction extends AbstractAction {
     }
 
     @Override
-    public void doAction() {
+    protected ExecutionType getExecutionType() {
+        return ExecutionType.GUI_ASYNCHRONOUS;
+    }
+
+    @Override
+    public void trun() {
         String toSend = bar.getText();
         if (StringUtils.isEmpty(toSend)) {
             return;
@@ -36,10 +41,5 @@ public class SendAction extends AbstractAction {
         Privmsg msg = new Privmsg(server, null, target, toSend);
         gtm.getClient().sendMsg(msg);
         bar.setText("");
-    }
-
-    @Override
-    protected ExecutionType getExecutionType() {
-        return ExecutionType.GUI_SYNCHRONOUS; // this should be quick 
     }
 }

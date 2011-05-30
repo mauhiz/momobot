@@ -16,20 +16,28 @@ import net.mauhiz.irc.base.trigger.IJoinTrigger;
 import net.mauhiz.irc.base.trigger.IKickTrigger;
 import net.mauhiz.irc.base.trigger.IPartTrigger;
 import net.mauhiz.irc.base.trigger.IQuitTrigger;
+import net.mauhiz.util.ExecutionType;
+import net.mauhiz.util.NamedRunnable;
 
 public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTrigger, IKickTrigger {
 
-    static class UserListUpdater implements Runnable {
+    static class UserListUpdater extends NamedRunnable {
         private final IrcChannel channel;
         private final org.eclipse.swt.widgets.List userList;
 
-        UserListUpdater(org.eclipse.swt.widgets.List userList, IrcChannel channel) {
+        public UserListUpdater(org.eclipse.swt.widgets.List userList, IrcChannel channel) {
+            super("User List Updater");
             this.userList = userList;
             this.channel = channel;
         }
 
         @Override
-        public void run() {
+        protected ExecutionType getExecutionType() {
+            return ExecutionType.GUI_ASYNCHRONOUS;
+        }
+
+        @Override
+        public void trun() {
             userList.removeAll();
 
             for (IrcUser user : channel) {
@@ -44,22 +52,18 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTr
         userLists.put(channel, list);
     }
 
-    @Override
     public void doTrigger(Join im, IIrcControl control) {
         doUpdate(im.getChans());
     }
 
-    @Override
     public void doTrigger(Kick im, IIrcControl control) {
         doUpdate(im.getChans());
     }
 
-    @Override
     public void doTrigger(Part im, IIrcControl control) {
         doUpdate(im.getChans());
     }
 
-    @Override
     public void doTrigger(Quit im, IIrcControl control) {
         doUpdate(null);
     }
@@ -70,7 +74,7 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTr
             org.eclipse.swt.widgets.List userList = userLists.get(channel);
 
             if (userList != null) {
-                userList.getDisplay().asyncExec(new UserListUpdater(userList, channel));
+                new UserListUpdater(userList, channel).launch(userList.getDisplay());
             }
         }
     }

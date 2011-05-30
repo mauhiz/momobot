@@ -22,7 +22,6 @@ public class DefaultServer extends AbstractIrcNetwork {
         return 127; // TODO confirm?
     }
 
-    @Override
     public Set<String> getServiceNicks() {
         return Collections.emptySet();
     }
@@ -30,7 +29,6 @@ public class DefaultServer extends AbstractIrcNetwork {
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newChannel(java.lang.String)
      */
-    @Override
     public IrcChannel newChannel(String chanLowerCase) {
         return new DefaultChannel(chanLowerCase);
     }
@@ -38,7 +36,6 @@ public class DefaultServer extends AbstractIrcNetwork {
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newUser(java.lang.String)
      */
-    @Override
     public IrcUser newUser(String nick) {
         return new DefaultUser(nick);
     }

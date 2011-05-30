@@ -4,13 +4,13 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-public class KeepAlive extends AbstractRunnable {
+public class KeepAlive extends AbstractDaemon {
     private static final long SLEEP = DateUtils.MILLIS_PER_HOUR;
     private final Session session;
     private final SessionFactory sessionFactory;
 
     public KeepAlive(SessionFactory sessionFactory) {
-        super();
+        super("Hibernate Keep-Alive");
         this.sessionFactory = sessionFactory;
         session = sessionFactory.openSession();
     }
@@ -25,9 +25,9 @@ public class KeepAlive extends AbstractRunnable {
     }
 
     @Override
-    public void run() {
+    public void trun() {
         while (isRunning()) {
-            sleep(SLEEP);
+            pause(SLEEP);
 
             // FIXME fonctionne pour MySQL mais pas pour Oracle par ex. trouver un keepalive generique.
             session.createSQLQuery("SELECT 1").uniqueResult();

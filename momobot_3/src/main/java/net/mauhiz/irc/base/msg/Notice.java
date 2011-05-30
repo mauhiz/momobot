@@ -25,7 +25,6 @@ public class Notice extends AbstractPrivateIrcMessage {
         super(toReply, msg, priv);
     }
 
-    @Override
     public Notice copy() {
         return new Notice(server, from, to, message);
     }

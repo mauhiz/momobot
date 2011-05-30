@@ -4,7 +4,8 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.mauhiz.irc.MomoStringUtils;
 
@@ -20,13 +21,13 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
     /**
      * a chaque server sa liste de channels.
      */
-    private final Set<IrcChannel> channels = new ConcurrentSkipListSet<IrcChannel>();
+    private final SortedSet<IrcChannel> channels = new TreeSet<IrcChannel>();
 
     private URI defaultUri;
     /**
      * a chaque server sa liste d users.
      */
-    private final Set<IrcUser> users = new ConcurrentSkipListSet<IrcUser>();
+    private final TreeSet<IrcUser> users = new TreeSet<IrcUser>();
 
     protected AbstractIrcNetwork(String alias) {
         super();
@@ -114,7 +115,6 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
         return chans;
     }
 
-    @Override
     public int getLineMaxLength() {
         return 512;
     }
@@ -152,7 +152,6 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
         users.remove(quitter);
     }
 
-    @Override
     public void setDefaultUri(URI defaultUri) {
         this.defaultUri = defaultUri;
     }

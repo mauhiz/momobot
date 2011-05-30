@@ -24,7 +24,6 @@ public abstract class AbstractPrivateIrcMessage extends AbstractIrcMessage imple
         this(toReply.getServerPeer(), null, !priv && toReply.isToChannel() ? toReply.getTo() : toReply.getFrom(), msg);
     }
 
-    @Override
     public IrcChannel[] getChans() {
         return isToChannel() ? new IrcChannel[] { (IrcChannel) to } : new IrcChannel[0];
     }

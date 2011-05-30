@@ -17,7 +17,6 @@ public class PlayersQuery extends AbstractQuery implements ServerFlags {
         super(server);
     }
 
-    @Override
     public void afterReceive(byte[] resp) {
         ByteBuffer result = ByteBuffer.wrap(resp);
         result.getInt(); // skip int -1
@@ -53,9 +52,8 @@ public class PlayersQuery extends AbstractQuery implements ServerFlags {
         server.resetPlayers();
     }
 
-    @Override
     public byte[] getCmd() {
-        byte[] cmd = Character.toString(A2S_PLAYERS).getBytes(FileUtil.ASCII);
+        byte[] cmd = FileUtil.getBytes(Character.toString(A2S_PLAYERS), FileUtil.ASCII);
         ByteBuffer buf = ByteBuffer.allocate(cmd.length + 4);
         buf.put(cmd);
         buf.putInt(server.getChallenge());

@@ -77,7 +77,7 @@ public class SwtPrivateTab extends AbstractSwtTab {
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if (arg0.keyCode == '\r') {
-                    new SendAction(inputBar, swtIrcClient.gtm, server, user).doAction();
+                    new SendAction(inputBar, swtIrcClient.gtm, server, user).run();
                 }
             }
         });

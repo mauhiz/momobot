@@ -8,7 +8,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Whois;
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.AbstractDaemon;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class WhoisRequest extends AbstractRunnable {
+public class WhoisRequest extends AbstractDaemon {
     /**
      * tous les whois en cours.
      */
@@ -49,7 +49,7 @@ public class WhoisRequest extends AbstractRunnable {
         for (String arg : args) {
             WhoisRequest wr = new WhoisRequest(server, control, arg);
             wr.setReportTo(reportTo);
-            wr.startAs("Whois Request");
+            wr.tstart();
         }
     }
 
@@ -77,7 +77,7 @@ public class WhoisRequest extends AbstractRunnable {
      *            le nom
      */
     protected WhoisRequest(IIrcServerPeer server, IIrcControl control, String nick) {
-        super();
+        super("Whois Request");
         target = nick;
         this.server = server;
         this.control = control;
@@ -91,34 +91,12 @@ public class WhoisRequest extends AbstractRunnable {
         return reportTo;
     }
 
-    /**
-     * Ce thread attend que momobot lui dise qu'il a fini le whois.
-     */
-    public void run() {
-        /* whois deja en cours */
-        IrcUser user = server.getNetwork().findUser(target, false);
-        if (user == null) {
-            /* user inconnu */
-            purgatory = true;
-        }
-        /* frequence maximale de whois */
-        WhoisRequest oldWr = get(target);
-        /* whois en cours */
-        if (oldWr != null && oldWr.getElapsedTime() < TIMEOUT) {
-            /* whois precedent en cours */
-            return;
-            /* else : echec du whois precedent : retry */
-        }
-
-        waitForResult();
-    }
-
     public void setReportTo(Target reportTo) {
         this.reportTo = reportTo;
     }
 
     public void setSuccess(boolean ok) {
-        stop();
+        tstop();
         String respMsg;
         if (ok) {
             if (purgatory) {
@@ -137,6 +115,29 @@ public class WhoisRequest extends AbstractRunnable {
         success = ok;
         LOGGER.debug("[whois ended][done=" + ok + "]");
         ALL_WHOIS.remove(target);
+    }
+
+    /**
+     * Ce thread attend que momobot lui dise qu'il a fini le whois.
+     */
+    @Override
+    public void trun() {
+        /* whois deja en cours */
+        IrcUser user = server.getNetwork().findUser(target, false);
+        if (user == null) {
+            /* user inconnu */
+            purgatory = true;
+        }
+        /* frequence maximale de whois */
+        WhoisRequest oldWr = get(target);
+        /* whois en cours */
+        if (oldWr != null && oldWr.getElapsedTime() < TIMEOUT) {
+            /* whois precedent en cours */
+            return;
+            /* else : echec du whois precedent : retry */
+        }
+
+        waitForResult();
     }
 
     private void waitForResult() {

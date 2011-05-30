@@ -8,10 +8,9 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.TimeUnit;
 
 import net.mauhiz.irc.base.data.IrcUser;
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.FileUtil;
 
 import org.apache.log4j.Logger;
@@ -19,7 +18,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class IdentServer extends AbstractRunnable implements IIdentServer {
+public class IdentServer extends AbstractDaemon implements IIdentServer {
 
     private static final Logger LOGGER = Logger.getLogger(IdentServer.class);
     /**
@@ -29,7 +28,7 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
     /**
      * Timeout en millisecondes.
      */
-    private static final int SO_TIMEOUT = (int) TimeUnit.MILLISECONDS.convert(1, TimeUnit.MINUTES);
+    private static final int SO_TIMEOUT = 60 * 1000;
     /**
      * le serversocket.
      */
@@ -40,14 +39,15 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
      * @param user1
      */
     public IdentServer(IrcUser user1) {
-        super();
+        super("Ident Server");
         user = user1.getMask().getUser();
     }
 
     /**
      * @see java.lang.Runnable#run()
      */
-    public void run() {
+    @Override
+    public void trun() {
 
         try {
             ss = new ServerSocket(PORT);
@@ -76,21 +76,12 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
         } catch (IOException ioe) {
             LOGGER.error(ioe, ioe);
         }
-        stop();
+        tstop();
     }
 
-    /**
-     * @see net.mauhiz.irc.base.ident.IIdentServer#start()
-     */
-    public void start() {
-        startAs("ident server");
-    }
-
-    /**
-     * @see net.mauhiz.util.AbstractRunnable#stop()
-     */
     @Override
-    public void stop() {
+    public void tstop() {
+        super.tstop();
         if (ss != null) {
             try {
                 ss.close();
@@ -99,6 +90,5 @@ public class IdentServer extends AbstractRunnable implements IIdentServer {
                 LOGGER.warn(ioe, ioe);
             }
         }
-        super.stop();
     }
 }

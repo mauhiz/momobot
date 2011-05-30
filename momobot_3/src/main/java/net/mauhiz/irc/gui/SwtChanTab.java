@@ -48,14 +48,14 @@ public class SwtChanTab extends AbstractSwtTab {
 
         @Override
         protected ExecutionType getExecutionType() {
-            return ExecutionType.GUI_SYNCHRONOUS;
+            return ExecutionType.PARALLEL_CACHED;
         }
     }
 
     class BanAction extends AbstractUserMenuAction {
 
         @Override
-        protected void doAction() {
+        public void trun() {
             List<IrcUser> users = findUsers();
             for (IrcUser user : users) {
                 String modeStr = "+b " + user.getMask(); // TODO make this higher level
@@ -82,7 +82,7 @@ public class SwtChanTab extends AbstractSwtTab {
     class KickAction extends AbstractUserMenuAction {
 
         @Override
-        protected void doAction() {
+        public void trun() {
             List<IrcUser> users = findUsers();
             for (IrcUser user : users) {
                 Kick kick = new Kick(server, null, channel, user, null);
@@ -94,7 +94,7 @@ public class SwtChanTab extends AbstractSwtTab {
     class OpAction extends AbstractUserMenuAction {
 
         @Override
-        protected void doAction() {
+        public void trun() {
             List<IrcUser> users = findUsers();
             for (IrcUser user : users) {
                 String modeStr = "+o " + user; // TODO make this higher level
@@ -107,7 +107,7 @@ public class SwtChanTab extends AbstractSwtTab {
     class QueryAction extends AbstractUserMenuAction {
 
         @Override
-        protected void doAction() {
+        public void trun() {
             List<IrcUser> users = findUsers();
             for (IrcUser user : users) {
                 swtIrcClient.createPrivateTab(server, user);
@@ -118,23 +118,23 @@ public class SwtChanTab extends AbstractSwtTab {
     class SetTopicAction extends AbstractAction {
 
         @Override
-        protected void doAction() {
+        protected ExecutionType getExecutionType() {
+            return ExecutionType.GUI_ASYNCHRONOUS;
+        }
+
+        @Override
+        public void trun() {
             if (topicBar.getEditable()) {
                 SetTopic setTopic = new SetTopic(server, null, channel, topicBar.getText());
                 swtIrcClient.gtm.client.sendMsg(setTopic);
             }
-        }
-
-        @Override
-        protected ExecutionType getExecutionType() {
-            return ExecutionType.GUI_ASYNCHRONOUS;
         }
     }
 
     class ToggleModerateAction extends AbstractUserMenuAction {
 
         @Override
-        protected void doAction() {
+        public void trun() {
             String modeStr = channel.getProperties().isModerated() ? "-m" : "+m"; // TODO make this higher level
             Mode mute = new Mode(server, null, channel, new ArgumentList(modeStr));
             swtIrcClient.gtm.client.sendMsg(mute);
@@ -145,7 +145,7 @@ public class SwtChanTab extends AbstractSwtTab {
     class VoiceAction extends AbstractUserMenuAction {
 
         @Override
-        protected void doAction() {
+        public void trun() {
             List<IrcUser> users = findUsers();
             for (IrcUser user : users) {
                 String modeStr = "+v " + user; // TODO make this higher level
@@ -158,7 +158,7 @@ public class SwtChanTab extends AbstractSwtTab {
     class WhoisAction extends AbstractUserMenuAction {
 
         @Override
-        protected void doAction() {
+        public void trun() {
             String[] selectedNicks = usersInChan.getSelection();
             Whois whois = new Whois(server, null, selectedNicks);
             swtIrcClient.gtm.client.sendMsg(whois);
@@ -236,7 +236,7 @@ public class SwtChanTab extends AbstractSwtTab {
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if (arg0.keyCode == '\r') {
-                    new SendAction(inputBar, swtIrcClient.gtm, server, channel).doAction();
+                    new SendAction(inputBar, swtIrcClient.gtm, server, channel).run();
                 }
             }
         });

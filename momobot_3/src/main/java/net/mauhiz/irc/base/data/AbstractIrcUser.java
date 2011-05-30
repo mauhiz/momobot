@@ -16,7 +16,6 @@ public abstract class AbstractIrcUser implements IrcUser {
         nick = nick1;
     }
 
-    @Override
     public int compareTo(IrcUser o) {
         return nick.compareTo(o.getNick());
     }
@@ -41,7 +40,6 @@ public abstract class AbstractIrcUser implements IrcUser {
         return fullName;
     }
 
-    @Override
     public String getIrcForm() {
         if (mask == null) {
             return nick;
@@ -49,7 +47,6 @@ public abstract class AbstractIrcUser implements IrcUser {
         return mask.getIrcForm();
     }
 
-    @Override
     public HostMask getMask() {
         if (mask == null) {
             mask = HostMask.getInstance(nick + "!*@*");
@@ -64,7 +61,6 @@ public abstract class AbstractIrcUser implements IrcUser {
         return nick;
     }
 
-    @Override
     public UserProperties getProperties() {
         return props;
     }
@@ -93,7 +89,6 @@ public abstract class AbstractIrcUser implements IrcUser {
         this.fullName = fullName;
     }
 
-    @Override
     public void setMask(HostMask mask) {
         this.mask = mask;
         setNick(mask.getNick());
@@ -102,9 +97,9 @@ public abstract class AbstractIrcUser implements IrcUser {
     /**
      * @see net.mauhiz.irc.base.data.IrcUser#setNick(java.lang.String)
      */
-    public void setNick(String nick1) {
+    public void setNick(String nick) {
         assert nick != null;
-        nick = nick1;
+        this.nick = nick;
     }
 
     @Override

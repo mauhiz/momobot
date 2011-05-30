@@ -1,11 +1,9 @@
 package net.mauhiz.irc.base;
 
-import java.util.ArrayDeque;
 import java.util.Collections;
-import java.util.Deque;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Stack;
 
 import org.apache.commons.lang.text.StrBuilder;
 
@@ -151,11 +149,11 @@ public final class ColorUtils implements IrcSpecialChars {
 
     public static String toHTML(String text) {
         StringBuilder result = new StringBuilder();
-        Deque<String> openTags = new ArrayDeque<String>();
+        Stack<String> openTags = new Stack<String>();
         for (int i = 0; i < text.length(); i++) {
             char next = text.charAt(i);
             if (next == DELIM_COLOR) {
-                if ("font".equals(openTags.peekLast())) {
+                if ("font".equals(openTags.peek())) {
                     result.append(getCloseTag("font"));
                     continue;
                 }
@@ -195,21 +193,21 @@ public final class ColorUtils implements IrcSpecialChars {
                 result.append(getOpenTag("font", attributes));
                 continue;
             } else if (next == DELIM_BOLD) {
-                if ("b".equals(openTags.peekLast())) {
+                if ("b".equals(openTags.peek())) {
                     result.append(getCloseTag("b"));
                     continue;
                 }
                 result.append(getOpenTag("b", null));
                 continue;
             } else if (next == DELIM_REVERSE) {
-                if ("i".equals(openTags.peekLast())) {
+                if ("i".equals(openTags.peek())) {
                     result.append(getCloseTag("i"));
                     continue;
                 }
                 result.append(getOpenTag("i", null));
                 continue;
             } else if (next == DELIM_UNDERLINE) {
-                if ("u".equals(openTags.peekLast())) {
+                if ("u".equals(openTags.peek())) {
                     result.append(getCloseTag("u"));
                     continue;
                 }
@@ -217,17 +215,15 @@ public final class ColorUtils implements IrcSpecialChars {
                 continue;
 
             } else if (next == DELIM_NORMAL) {
-                for (Iterator<String> desc = openTags.descendingIterator(); desc.hasNext();) {
-                    result.append(getCloseTag(desc.next()));
-                    desc.remove();
+                while (!openTags.isEmpty()) {
+                    result.append(getCloseTag(openTags.pop()));
                 }
             } else {
                 result.append(next);
             }
         }
-        for (Iterator<String> desc = openTags.descendingIterator(); desc.hasNext();) {
-            result.append(getCloseTag(desc.next()));
-            desc.remove();
+        while (!openTags.isEmpty()) {
+            result.append(getCloseTag(openTags.pop()));
         }
         return result.toString();
     }

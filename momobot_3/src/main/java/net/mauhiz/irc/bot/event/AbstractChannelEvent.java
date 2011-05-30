@@ -13,12 +13,12 @@ public abstract class AbstractChannelEvent implements IChannelEvent {
      * logger.
      */
     protected static final Logger LOG = Logger.getLogger(AbstractChannelEvent.class);
-    
+
     /**
      * running
      */
     private boolean running = true;
-    
+
     /**
      * @param chan
      *            le channel
@@ -26,15 +26,14 @@ public abstract class AbstractChannelEvent implements IChannelEvent {
     public AbstractChannelEvent(IrcChannel chan) {
         Hooks.addHook(chan, this);
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.event.IChannelEvent#isRunning()
      */
-    @Override
     public boolean isRunning() {
         return running;
     }
-    
+
     /**
      * @see net.mauhiz.irc.bot.event.IChannelEvent#stop()
      */
@@ -42,7 +41,7 @@ public abstract class AbstractChannelEvent implements IChannelEvent {
         running = false;
         return "Fin du " + getClass().getSimpleName() + " !";
     }
-    
+
     /**
      * Status
      * 

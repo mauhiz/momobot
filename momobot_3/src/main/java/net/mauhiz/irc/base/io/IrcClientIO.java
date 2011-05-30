@@ -5,11 +5,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import net.mauhiz.irc.base.IrcClientControl;
-import net.mauhiz.irc.base.data.IrcPeer;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcPeer;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.User;
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.ThreadUtils;
 
 import org.apache.commons.net.SocketClient;
 import org.apache.log4j.Logger;
@@ -54,7 +54,6 @@ public class IrcClientIO extends AbstractIrcIO {
     /**
      * @see org.apache.commons.net.SocketClient#disconnect()
      */
-    @Override
     public void disconnect() {
         status = IOStatus.DISCONNECTING;
         if (output != null) {
@@ -63,7 +62,7 @@ public class IrcClientIO extends AbstractIrcIO {
         if (input != null) {
             input.stop();
         }
-        AbstractRunnable.sleep(2000);
+        ThreadUtils.safeSleep(2000);
         if (sclient.isConnected()) {
             try {
                 sclient.disconnect();
@@ -74,7 +73,6 @@ public class IrcClientIO extends AbstractIrcIO {
         status = IOStatus.DISCONNECTED;
     }
 
-    @Override
     public IIrcServerPeer getServerPeer() {
         return (IIrcServerPeer) peer; // server is my partner.
     }
@@ -89,7 +87,7 @@ public class IrcClientIO extends AbstractIrcIO {
             if (status == IOStatus.CONNECTED) {
                 return;
             }
-            AbstractRunnable.sleep(100);
+            ThreadUtils.safeSleep(100);
         }
     }
 }

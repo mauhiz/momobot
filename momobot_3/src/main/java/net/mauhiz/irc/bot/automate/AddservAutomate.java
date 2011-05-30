@@ -18,21 +18,22 @@ public class AddservAutomate extends AbstractAutomate {
      * @param server
      */
     public AddservAutomate(IrcUser user1, IIrcControl control, IIrcServerPeer server) {
-        super(user1, control, server);
+        super(user1, control, server, "Add server");
         etat = STARTED;
     }
-    
+
     /**
      * @see java.lang.Runnable#run()
      */
-    public void run() {
+    @Override
+    public void trun() {
         while (isRunning()) {
             pause(SLEEPTIME);
             switch (etat) {
-                case STARTED :
-                    break;
-                default :
-                    break;
+            case STARTED:
+                break;
+            default:
+                break;
             }
         }
     }

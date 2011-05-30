@@ -33,7 +33,6 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     /**
      * @see net.mauhiz.irc.base.trigger.INoticeTrigger#doTrigger(Notice, IIrcControl)
      */
-    @Override
     public void doTrigger(Notice im, IIrcControl control) {
         StringBuilder msg = new StringBuilder(getHeader());
         SortedSet<String> cmds = new TreeSet<String>();
@@ -59,7 +58,6 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         StringBuilder msg = new StringBuilder(getHeader());
         SortedSet<String> cmds = new TreeSet<String>();

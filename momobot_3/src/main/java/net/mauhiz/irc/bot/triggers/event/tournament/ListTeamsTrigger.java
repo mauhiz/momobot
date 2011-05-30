@@ -27,7 +27,6 @@ public class ListTeamsTrigger extends AbstractTextTrigger implements IPrivmsgTri
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         IrcChannel chan = (IrcChannel) im.getTo();
         IChannelEvent event = chan.getEvt();
