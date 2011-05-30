@@ -90,6 +90,7 @@ public class SwtIrcClient {
         IIrcControl control = gtm.getClient();
         control.sendMsg(msg);
         cut.addChannel(channel, tab.getUsersInChan());
+        cut.doUpdate(channel);
     }
 
     public Shell getShell() {
