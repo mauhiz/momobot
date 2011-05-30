@@ -5,8 +5,8 @@ import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
 
 public class NormalMoveImpl extends AbstractMove implements NormalMove {
-	private Square from;
-	private Square to;
+	private final Square from;
+	private final Square to;
 
 	public NormalMoveImpl(PlayerType playerType, Square from, Square to) {
 		super(playerType);
