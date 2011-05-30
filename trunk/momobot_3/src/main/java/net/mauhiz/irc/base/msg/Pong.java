@@ -14,7 +14,6 @@ public class Pong extends AbstractIrcMessage {
         this.pingId = pingId;
     }
 
-    @Override
     public Pong copy() {
         return new Pong(server, pingId);
     }

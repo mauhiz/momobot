@@ -34,7 +34,6 @@ public class SwtServerTab extends AbstractSwtTab {
             this.joinField = joinField;
         }
 
-        @Override
         public void handleEvent(Event arg0) {
             swtIrcClient.doJoin(server, server.getNetwork().findChannel(joinField.getText()));
         }
@@ -42,7 +41,6 @@ public class SwtServerTab extends AbstractSwtTab {
 
     class ListHandler implements Listener {
 
-        @Override
         public void handleEvent(Event arg0) {
             swtIrcClient.gtm.client.sendMsg(new net.mauhiz.irc.base.msg.List(server, null));
         }

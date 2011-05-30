@@ -70,7 +70,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         if (myself == null) {
             throw new IllegalArgumentException("I have no name. Who am I?");
         }
-        new IdentServer(myself).start();
+        new IdentServer(myself).tstart();
         IrcClientIO ircio = new IrcClientIO(this, peer);
         try {
             ircio.connect();

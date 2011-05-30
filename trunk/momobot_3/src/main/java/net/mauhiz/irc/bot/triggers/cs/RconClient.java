@@ -76,7 +76,8 @@ class RconClient extends ValveUdpClient implements IRconClient {
      */
     public void initLogThread() {
         assert StringUtils.isNotEmpty(rcon) : "pas de rcon defini";
-        rl.startAs("Valve Udp Listener on " + server.getIp());
+        rl.setName("Valve Udp Listener on " + server.getIp());
+        rl.tstart();
     }
 
     /**
@@ -231,6 +232,6 @@ class RconClient extends ValveUdpClient implements IRconClient {
      */
     private void unsetRcon() {
         rcon = null;
-        rl.stop();
+        rl.tstop();
     }
 }

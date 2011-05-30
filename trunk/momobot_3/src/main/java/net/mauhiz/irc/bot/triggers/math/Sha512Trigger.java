@@ -39,7 +39,6 @@ public class Sha512Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
     /**
      * MessageDigest
      */
-    @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
         String args = getTriggerContent(cme);
 
@@ -48,7 +47,8 @@ public class Sha512Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
         } else {
             Privmsg resp;
             try {
-                resp = new Privmsg(cme, "sha-512 de " + args + ": " + computeSha512(args.getBytes(FileUtil.ISO8859_15)));
+                resp = new Privmsg(cme, "sha-512 de " + args + ": "
+                        + computeSha512(FileUtil.getBytes(args, FileUtil.ISO8859_15)));
             } catch (NoSuchAlgorithmException nsae) {
                 resp = new Privmsg(cme, "J'ai pas de sha-512. Sry.");
             }

@@ -21,7 +21,6 @@ public class SpamTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         /* TODO cross server */
         ArgumentList args = getArgs(im);
@@ -31,6 +30,6 @@ public class SpamTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         Privmsg spamMsg = new Privmsg(im.getServerPeer(), null, target, msg);
         long delay = 150;
         SpamRunnable spam = new SpamRunnable(spamMsg, control, delay);
-        spam.startAs("Spam");
+        spam.tstart();
     }
 }

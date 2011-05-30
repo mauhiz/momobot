@@ -1,14 +1,13 @@
 package net.mauhiz.irc.bot.triggers.math;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.IPrivateIrcMessage;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-
-import org.apache.commons.lang.text.StrTokenizer;
 
 /**
  * @author mauhiz
@@ -42,23 +41,21 @@ public class BaseConvTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(net.mauhiz.irc.base.msg.Privmsg,
      *      net.mauhiz.irc.base.IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
-        String args = getTriggerContent(cme);
-        if (args.trim().isEmpty()) {
+        ArgumentList args = getArgs(cme);
+        if (args.isEmpty()) {
             showHelp(control, cme);
             return;
         }
-        StrTokenizer tok = new StrTokenizer(args);
-        String nombre = tok.nextToken();
-        int base1 = Integer.parseInt(tok.nextToken());
+        String nombre = args.poll();
+        int base1 = Integer.parseInt(args.poll());
         if (!checkBase(cme, control, base1)) {
             return;
         }
         IIrcMessage resp;
         try {
             int intNombre = Integer.parseInt(nombre, base1);
-            int base2 = Integer.parseInt(tok.nextToken());
+            int base2 = Integer.parseInt(args.poll());
             if (!checkBase(cme, control, base2)) {
                 return;
             }

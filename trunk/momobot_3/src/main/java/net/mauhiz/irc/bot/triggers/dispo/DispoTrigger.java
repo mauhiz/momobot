@@ -39,7 +39,6 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcUser user = (IrcUser) cme.getFrom();
 

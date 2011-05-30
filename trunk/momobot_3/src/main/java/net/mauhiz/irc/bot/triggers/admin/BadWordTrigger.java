@@ -40,13 +40,12 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         if (im.getMessage().startsWith(getTriggerText())) {
             /* mode controle */
             /* TODO admin mode */
             String args = getTriggerContent(im);
-            if (args.isEmpty()) {
+            if (args.length() == 0) {
                 showHelp(control, im);
             } else {
                 BADWORDS.add(args);

@@ -14,7 +14,7 @@ import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.ServerMsg;
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.ThreadUtils;
 
 import org.apache.log4j.Logger;
 
@@ -34,12 +34,11 @@ public class BncClientIO extends AbstractIrcIO {
         this.socket = socket;
     }
 
-    @Override
     public void disconnect() {
         status = IOStatus.DISCONNECTING;
         if (output != null) {
             output.stop();
-            AbstractRunnable.sleep(2000);
+            ThreadUtils.safeSleep(2000);
         }
         if (socket.isConnected()) {
             try {
@@ -57,7 +56,6 @@ public class BncClientIO extends AbstractIrcIO {
 
     // private long connectionTime = System.currentTimeMillis();
 
-    @Override
     public IIrcServerPeer getServerPeer() {
         return null; // myself
     }

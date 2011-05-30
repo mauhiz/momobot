@@ -24,7 +24,6 @@ public class ActivateTrigger extends AbstractTextTrigger implements IAdminTrigge
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg pme, IIrcControl control) {
         ArgumentList args = getArgs(pme);
         if (args.isEmpty()) {

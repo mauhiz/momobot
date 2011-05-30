@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.FileUtil;
 
 import org.apache.log4j.Logger;
@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class IrcInput extends AbstractRunnable implements IIrcInput {
+public class IrcInput extends AbstractDaemon implements IIrcInput {
     private static final Logger LOGGER = Logger.getLogger(IrcInput.class);
 
     private final IIrcIO io;
@@ -25,15 +25,13 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
      * @throws IOException
      */
     protected IrcInput(IIrcIO io1, Socket socket) throws IOException {
-        super();
+        super("IRC Input");
         io = io1;
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15));
     }
 
-    /**
-     * @see java.lang.Runnable#run()
-     */
-    public void run() {
+    @Override
+    public void trun() {
         while (isRunning()) {
             try {
                 String nextRaw = reader.readLine();
@@ -51,17 +49,9 @@ public class IrcInput extends AbstractRunnable implements IIrcInput {
         io.disconnect();
     }
 
-    /**
-     * @see net.mauhiz.irc.base.io.IIrcInput#start()
-     */
     @Override
-    public void start() {
-        startAs("Input Thread");
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
+    public void tstop() {
+        super.tstop();
         try {
             reader.close();
         } catch (IOException ioe) {

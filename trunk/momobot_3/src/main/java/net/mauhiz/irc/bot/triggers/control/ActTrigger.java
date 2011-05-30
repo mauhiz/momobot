@@ -24,13 +24,12 @@ public class ActTrigger extends AbstractTextTrigger implements IAdminTrigger, IP
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         ArgumentList args = getArgs(im);
         String targetNick = args.poll();
         String message = args.getRemainingData();
 
-        if (targetNick == null || message.isEmpty()) {
+        if (targetNick == null || message.length() == 0) {
             showHelp(control, im);
         } else {
             /* FIXME cross-server */

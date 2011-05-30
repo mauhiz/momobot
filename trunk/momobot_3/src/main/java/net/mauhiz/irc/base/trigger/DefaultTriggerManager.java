@@ -13,7 +13,8 @@ import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.ExecutionType;
+import net.mauhiz.util.NamedRunnable;
 
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.log4j.Logger;
@@ -26,7 +27,7 @@ public class DefaultTriggerManager implements ITriggerManager {
      * @author mauhiz
      * 
      */
-    class TriggerLoop extends AbstractRunnable {
+    class TriggerLoop extends NamedRunnable {
         private final IIrcControl control;
         private final IIrcMessage msg;
 
@@ -35,16 +36,18 @@ public class DefaultTriggerManager implements ITriggerManager {
          * @param msg1
          */
         public TriggerLoop(IIrcMessage msg1, IIrcControl control1) {
-            super();
+            super("Trigger Loop");
             control = control1;
             msg = msg1;
         }
 
-        /**
-         * @see java.lang.Runnable#run()
-         */
         @Override
-        public void run() {
+        protected ExecutionType getExecutionType() {
+            return ExecutionType.PARALLEL_CACHED;
+        }
+
+        @Override
+        public void trun() {
             try {
                 for (ITrigger trigger : getTriggers()) {
                     if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
@@ -161,22 +164,13 @@ public class DefaultTriggerManager implements ITriggerManager {
     /**
      * @see net.mauhiz.irc.base.trigger.ITriggerManager#processMsg(IIrcMessage, IIrcControl)
      */
-    @Override
     public boolean processMsg(IIrcMessage msg, IIrcControl control) {
         if (msg == null) {
             LOG.warn("received null msg");
             return true;
         }
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
-        TriggerExecutor.getInstance().execute(new TriggerLoop(msg, control));
+        new TriggerLoop(msg, control).launch(null);
         return false;
-    }
-
-    /**
-     * @see net.mauhiz.irc.base.trigger.ITriggerManager#shutdown()
-     */
-    @Override
-    public void shutdown() {
-        TriggerExecutor.getInstance().shutdown();
     }
 }

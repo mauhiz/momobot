@@ -24,7 +24,6 @@ public class UsersTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     /**
      * @see IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         ArgumentList chanNames = getArgs(im);
         if (chanNames.isEmpty()) {

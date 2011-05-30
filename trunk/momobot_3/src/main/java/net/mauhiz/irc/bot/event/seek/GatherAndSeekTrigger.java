@@ -24,7 +24,6 @@ public class GatherAndSeekTrigger extends AbstractTextTrigger implements IPrivms
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg cme, IIrcControl control) {
         IrcChannel chan = (IrcChannel) cme.getTo();
         IChannelEvent evt = chan.getEvt();

@@ -100,7 +100,6 @@ class ValveUdpClient extends DatagramSocketClient implements IClient {
         return _socket_;
     }
 
-    @Override
     public void receive(DatagramPacket receivePacket) throws IOException {
         getSocket().receive(receivePacket);
     }
@@ -120,7 +119,7 @@ class ValveUdpClient extends DatagramSocketClient implements IClient {
     }
 
     protected byte[] sendAndRcvValveCmd(String str) throws IOException {
-        return sendAndRcvValveCmd(str.getBytes(FileUtil.ASCII));
+        return sendAndRcvValveCmd(FileUtil.getBytes(str, FileUtil.ASCII));
     }
 
     private void sendValveCmd(byte[] cmdBytes) throws IOException {
@@ -140,6 +139,6 @@ class ValveUdpClient extends DatagramSocketClient implements IClient {
     }
 
     protected void sendValveCmd(String string) throws IOException {
-        sendValveCmd(string.getBytes(FileUtil.ASCII));
+        sendValveCmd(FileUtil.getBytes(string, FileUtil.ASCII));
     }
 }

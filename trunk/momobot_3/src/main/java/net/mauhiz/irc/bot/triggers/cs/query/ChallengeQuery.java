@@ -17,7 +17,6 @@ public class ChallengeQuery extends AbstractQuery {
         super(server);
     }
 
-    @Override
     public void afterReceive(byte[] resp) {
         ByteBuffer result = ByteBuffer.wrap(resp);
         result.getInt(); // skip int -1
@@ -25,8 +24,7 @@ public class ChallengeQuery extends AbstractQuery {
         processChallenge(server, result);
     }
 
-    @Override
     public byte[] getCmd() {
-        return Character.toString(A2S_SERVERQUERY_GETCHALLENGE).getBytes(FileUtil.ASCII);
+        return FileUtil.getBytes(Character.toString(A2S_SERVERQUERY_GETCHALLENGE), FileUtil.ASCII);
     }
 }

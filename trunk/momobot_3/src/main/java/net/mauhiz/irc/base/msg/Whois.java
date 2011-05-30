@@ -18,7 +18,6 @@ public class Whois extends AbstractIrcMessage {
         this.targets = targets;
     }
 
-    @Override
     public Whois copy() {
         return new Whois(server, from, targets);
     }

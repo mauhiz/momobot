@@ -8,9 +8,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcClientControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
-import net.mauhiz.util.AbstractRunnable;
-
-import org.eclipse.swt.widgets.Display;
+import net.mauhiz.util.ThreadUtils;
 
 /**
  * @author mauhiz
@@ -45,18 +43,8 @@ public class GuiTriggerManager extends DefaultTriggerManager {
             incoming.put(msg);
             return false;
         } catch (InterruptedException e) {
-
-            AbstractRunnable.handleInterruption(e);
+            ThreadUtils.handleInterruption(e);
             return true;
         }
-    }
-
-    /**
-     * @see net.mauhiz.irc.base.trigger.ITriggerManager#shutdown()
-     */
-    @Override
-    public void shutdown() {
-        Display.getDefault().dispose();
-        super.shutdown();
     }
 }

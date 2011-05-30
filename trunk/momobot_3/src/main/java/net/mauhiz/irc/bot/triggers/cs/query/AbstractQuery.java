@@ -35,7 +35,6 @@ public abstract class AbstractQuery implements IValveQuery {
         this.server = server;
     }
 
-    @Override
     public void beforeSend() {
         // empty by default;
     }

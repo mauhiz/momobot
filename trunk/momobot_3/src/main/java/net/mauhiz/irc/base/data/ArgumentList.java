@@ -39,7 +39,6 @@ public class ArgumentList implements Iterable<String> {
         return index >= message.length();
     }
 
-    @Override
     public ListIterator<String> iterator() {
         return asList().listIterator();
     }

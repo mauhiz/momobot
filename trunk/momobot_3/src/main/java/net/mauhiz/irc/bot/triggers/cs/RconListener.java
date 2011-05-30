@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.NetUtils;
 
 import org.apache.commons.lang.math.RandomUtils;
@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-class RconListener extends AbstractRunnable implements IRconListener {
+class RconListener extends AbstractDaemon implements IRconListener {
     private static final Logger LOGGER = Logger.getLogger(RconListener.class);
     /**
      * port mini
@@ -37,7 +37,7 @@ class RconListener extends AbstractRunnable implements IRconListener {
      *            mon maitre!
      */
     protected RconListener(IRconClient vuc1) throws IOException {
-        super();
+        super("Rcon Listener");
         rc = vuc1;
         int localPort = generateRandomPort();
         rc.getRconChallenge();
@@ -51,14 +51,6 @@ class RconListener extends AbstractRunnable implements IRconListener {
         rc.processLine(new String(receivePacket.getData(), 0, receivePacket.getLength()));
     }
 
-    /**
-     * @see java.lang.Runnable#run()
-     */
-    public void run() {
-        DatagramPacket receivePacket = NetUtils.createDatagramPacket();
-        runLoop(receivePacket);
-    }
-
     private void runLoop(DatagramPacket receivePacket) {
         while (isRunning()) {
             try {
@@ -69,5 +61,14 @@ class RconListener extends AbstractRunnable implements IRconListener {
                 break;
             }
         }
+    }
+
+    /**
+     * @see java.lang.Runnable#run()
+     */
+    @Override
+    public void trun() {
+        DatagramPacket receivePacket = NetUtils.createDatagramPacket();
+        runLoop(receivePacket);
     }
 }

@@ -4,7 +4,7 @@ import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.Hooks;
 
 /**
@@ -12,7 +12,7 @@ import net.mauhiz.util.Hooks;
  * 
  * @author mauhiz
  */
-public abstract class AbstractAutomate extends AbstractRunnable {
+public abstract class AbstractAutomate extends AbstractDaemon {
 
     /**
      * @author mauhiz
@@ -65,8 +65,8 @@ public abstract class AbstractAutomate extends AbstractRunnable {
      * @param user
      *            l'user
      */
-    public AbstractAutomate(IrcUser user, IIrcControl control, IIrcServerPeer server) {
-        super();
+    public AbstractAutomate(IrcUser user, IIrcControl control, IIrcServerPeer server, String name) {
+        super("Automate: " + name);
         this.control = control;
         this.server = server;
         myHook = new AutomateHook(user);

@@ -16,7 +16,6 @@ public class SetTopic extends AbstractIrcMessage implements IrcChannelMessage {
         this.chan = chan;
     }
 
-    @Override
     public SetTopic copy() {
         return new SetTopic(server, from, chan, topic);
     }
@@ -25,7 +24,6 @@ public class SetTopic extends AbstractIrcMessage implements IrcChannelMessage {
         return chan;
     }
 
-    @Override
     public IrcChannel[] getChans() {
         return new IrcChannel[] { chan };
     }

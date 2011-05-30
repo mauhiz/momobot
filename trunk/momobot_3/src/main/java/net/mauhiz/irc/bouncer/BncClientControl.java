@@ -33,7 +33,6 @@ public class BncClientControl extends AbstractIrcControl {
     /**
      * @see net.mauhiz.irc.base.IIrcControl#exit()
      */
-    @Override
     public void exit() {
         Collection<BncClientIO> ios = clientToIo.values();
         for (IIrcIO io : ios) {
@@ -49,7 +48,6 @@ public class BncClientControl extends AbstractIrcControl {
     /**
      * @see net.mauhiz.irc.base.IIrcControl#sendMsg(net.mauhiz.irc.base.msg.IIrcMessage)
      */
-    @Override
     public void sendMsg(IIrcMessage msg) {
         if (msg instanceof Privmsg) {
             if (StringUtils.isEmpty(((Privmsg) msg).getMessage())) {

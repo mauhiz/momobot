@@ -4,28 +4,26 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.TimeUnit;
 
 import net.mauhiz.irc.base.IrcClientControl;
-import net.mauhiz.util.AbstractRunnable;
+import net.mauhiz.util.AbstractDaemon;
 
 import org.apache.log4j.Logger;
 
-public class BncServerConnection extends AbstractRunnable {
+public class BncServerConnection extends AbstractDaemon {
     private static final Logger LOG = Logger.getLogger(BncServerConnection.class);
+
     /**
      * Timeout en millisecondes.
      */
-    private static final int SO_TIMEOUT = (int) TimeUnit.MILLISECONDS.convert(4, TimeUnit.MINUTES);
+    private static final int SO_TIMEOUT = 4 * 60 * 1000;
     private final AccountStore accountStore;
     private long globalStartTime;
-
     final BncUser mySelf;
-
     final BncServer serverData;
 
     public BncServerConnection(AccountStore accountStore, int port) {
-        super();
+        super("Bouncer Server");
         this.accountStore = accountStore;
 
         serverData = new BncServer("Bouncer");
@@ -60,7 +58,7 @@ public class BncServerConnection extends AbstractRunnable {
     }
 
     @Override
-    public void run() {
+    public void trun() {
         try {
             ServerSocket bouncerServer = new ServerSocket(6667);
             LOG.info("Bouncer server rock steady");
@@ -75,6 +73,6 @@ public class BncServerConnection extends AbstractRunnable {
             LOG.error(ioe, ioe);
         }
 
-        stop();
+        tstop();
     }
 }

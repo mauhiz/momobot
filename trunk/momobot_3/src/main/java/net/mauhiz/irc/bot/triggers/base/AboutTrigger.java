@@ -21,7 +21,6 @@ public class AboutTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     /**
      * @see IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         /* TODO cross server */
         Privmsg retour = new Privmsg(im, Messages.get(getClass(), "about"), true); //$NON-NLS-1$

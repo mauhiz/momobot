@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.util.Hooks;
@@ -29,7 +29,7 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * users sur le channel
      */
-    protected Map<IrcUser, Set<UserChannelMode>> users = new ConcurrentSkipListMap<IrcUser, Set<UserChannelMode>>();
+    protected Map<IrcUser, Set<UserChannelMode>> users = new ConcurrentHashMap<IrcUser, Set<UserChannelMode>>();
 
     /**
      * @param chanName
@@ -42,12 +42,10 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * @see net.mauhiz.irc.base.data.IrcChannel#add(net.mauhiz.irc.base.data.IrcUser)
      */
-    @Override
     public void add(IrcUser truite) {
         users.put(truite, new HashSet<UserChannelMode>());
     }
 
-    @Override
     public int compareTo(IrcChannel o) {
         return fullName().compareTo(o.fullName());
     }
@@ -55,7 +53,6 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * @see net.mauhiz.irc.base.data.IrcChannel#contains(net.mauhiz.irc.base.data.IrcUser)
      */
-    @Override
     public boolean contains(IrcUser smith) {
         return users.containsKey(smith);
     }
@@ -84,7 +81,6 @@ public abstract class AbstractIrcChannel implements IrcChannel {
         return Hooks.getHook(this, IChannelEvent.class);
     }
 
-    @Override
     public String getIrcForm() {
         return fullName();
     }
@@ -92,7 +88,6 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * @see net.mauhiz.irc.base.data.IrcChannel#getModes(IrcUser)
      */
-    @Override
     public Set<UserChannelMode> getModes(IrcUser smith) {
         return users.get(smith);
     }
@@ -112,7 +107,6 @@ public abstract class AbstractIrcChannel implements IrcChannel {
         return fullName().hashCode();
     }
 
-    @Override
     public boolean isTopicEditable(IrcUser user) {
         return contains(user) && (!props.isOpTopic() || getModes(user).contains(UserChannelMode.OP));
     }
@@ -120,7 +114,6 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * @see java.lang.Iterable#iterator()
      */
-    @Override
     public Iterator<IrcUser> iterator() {
         return users.keySet().iterator();
     }
@@ -128,7 +121,6 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * @see net.mauhiz.irc.base.data.IrcChannel#remove(net.mauhiz.irc.base.data.IrcUser)
      */
-    @Override
     public void remove(IrcUser toRemove) {
         users.remove(toRemove);
     }
@@ -136,7 +128,6 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * @see net.mauhiz.irc.base.data.IrcChannel#size()
      */
-    @Override
     public int size() {
         return users.size();
     }

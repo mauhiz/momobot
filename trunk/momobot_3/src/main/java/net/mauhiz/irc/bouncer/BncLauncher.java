@@ -13,6 +13,6 @@ public class BncLauncher {
         dummy.reload();
 
         BncServerConnection bouncer = new BncServerConnection(dummy, 6667);
-        bouncer.startAs("Bouncer Server");
+        bouncer.tstart();
     }
 }

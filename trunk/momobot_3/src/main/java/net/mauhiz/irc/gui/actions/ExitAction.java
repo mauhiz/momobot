@@ -3,6 +3,7 @@ package net.mauhiz.irc.gui.actions;
 import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -20,12 +21,13 @@ public class ExitAction extends AbstractAction {
     }
 
     @Override
-    protected void doAction() {
-        shell.close();
+    protected ExecutionType getExecutionType() {
+        return ExecutionType.GUI_SYNCHRONOUS; // I want to quit now!
     }
 
     @Override
-    protected ExecutionType getExecutionType() {
-        return ExecutionType.GUI_SYNCHRONOUS; // I want to quit now!
+    public void trun() {
+        shell.close();
+        Display.getDefault().dispose();
     }
 }

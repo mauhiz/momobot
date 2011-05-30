@@ -26,7 +26,6 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
     /**
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
-    @Override
     public void doTrigger(Privmsg im, IIrcControl control) {
         String args = getTriggerContent(im);
         boolean engueuler = false;
