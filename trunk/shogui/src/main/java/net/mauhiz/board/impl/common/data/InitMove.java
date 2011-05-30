@@ -5,9 +5,9 @@ import net.mauhiz.board.model.data.PlayerType;
 
 public class InitMove implements Move {
 
-	private PlayerType starter;
+	private final PlayerType starter;
 
-	InitMove(PlayerType starter) {
+	public InitMove(PlayerType starter) {
 		this.starter = starter;
 	}
 
