@@ -1,22 +1,20 @@
 package net.mauhiz.board.impl.checkers.data;
 
-import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.impl.common.data.AbstractPiece;
 
-public class CheckersPiece implements Piece {
+public class CheckersPiece extends AbstractPiece {
 
-	private final CheckersPieceType piece;
-	private CheckersPlayerType player;
-
-	public CheckersPiece(CheckersPlayerType player, CheckersPieceType piece) {
-		this.piece = piece;
-		this.player = player;
+	public CheckersPiece(CheckersPlayerType playerType, CheckersPieceType pieceType) {
+		super(playerType, pieceType);
 	}
 
+	@Override
 	public CheckersPieceType getPieceType() {
-		return piece;
+		return (CheckersPieceType) super.getPieceType();
 	}
 
+	@Override
 	public CheckersPlayerType getPlayerType() {
-		return player;
+		return (CheckersPlayerType) super.getPlayerType();
 	}
 }
