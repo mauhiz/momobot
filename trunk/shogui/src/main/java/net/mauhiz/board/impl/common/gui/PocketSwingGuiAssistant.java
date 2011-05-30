@@ -26,11 +26,17 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 
 	private static final Logger LOG = Logger.getLogger(PocketSwingGuiAssistant.class);
 	protected final JPanel boardAndPocketsPanel = new JPanel();
-	protected final Map<RotatingJButton, Piece> pocketButtons = new HashMap<RotatingJButton, Piece>();
-	protected final SortedMap<PlayerType, JPanel> pockets = new TreeMap<PlayerType, JPanel>();
+	private final Map<RotatingJButton, Piece> pocketButtons = new HashMap<RotatingJButton, Piece>();
+	private final SortedMap<PlayerType, JPanel> pockets = new TreeMap<PlayerType, JPanel>();
 
 	public PocketSwingGuiAssistant(PocketBoardGui parent) {
 		super(parent);
+	}
+
+	protected JPanel addPocket(PlayerType playerType, JPanel pocket) {
+		synchronized (pockets) {
+			return pockets.put(playerType, pocket);
+		}
 	}
 
 	public void addToPocket(PieceType pieceType, PlayerType player) {
@@ -39,8 +45,9 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 		button.setSize(30, 30);
 		decorate(button, pieceType, player);
 		button.addActionListener(new SelectPocketAction(getParent(), pieceType, player));
-		pockets.get(player).add(button);
+		getPocket(player).add(button);
 		LOG.debug("Adding to pocket: " + pieceType);
+		refreshPocketActions(player);
 	}
 
 	@Override
@@ -51,15 +58,25 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 
 	public void clearPockets() {
 		LOG.trace("Emptying pockets");
-		for (JPanel pocket : pockets.values()) {
-			pocket.removeAll();
+		synchronized (pockets) {
+			for (JPanel pocket : pockets.values()) {
+				pocket.removeAll();
+			}
 		}
-		pocketButtons.clear();
+		synchronized (pocketButtons) {
+			pocketButtons.clear();
+		}
 	}
 
 	@Override
 	protected PocketBoardGui getParent() {
 		return (PocketBoardGui) super.getParent();
+	}
+
+	protected JPanel getPocket(PlayerType playerType) {
+		synchronized (pockets) {
+			return pockets.get(playerType);
+		}
 	}
 
 	@Override
@@ -91,10 +108,12 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 	}
 
 	public void refreshPocketActions(PlayerType player) {
-		for (Entry<PlayerType, JPanel> pocket : pockets.entrySet()) {
-			for (Component comp : pocket.getValue().getComponents()) {
-				if (comp instanceof RotatingJButton) {
-					comp.setEnabled(player == pocket.getKey());
+		synchronized (pockets) {
+			for (Entry<PlayerType, JPanel> pocket : pockets.entrySet()) {
+				for (Component comp : pocket.getValue().getComponents()) {
+					if (comp instanceof RotatingJButton) {
+						comp.setEnabled(player == pocket.getKey());
+					}
 				}
 			}
 		}
@@ -102,15 +121,17 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 
 	public void removeFromPocket(PieceType piece, PlayerType player) {
 		LOG.debug("Removing from " + player + " pocket: " + piece);
-		for (Iterator<Entry<RotatingJButton, Piece>> i = pocketButtons.entrySet().iterator(); i.hasNext();) {
-			Entry<RotatingJButton, Piece> candidate = i.next();
-			Piece inPocket = candidate.getValue();
-			if (inPocket.getPieceType() == piece && inPocket.getPlayerType() == player) {
-				RotatingJButton button = candidate.getKey();
-				i.remove();
-				pockets.get(player).remove(button);
-				button.removeActionListener(null); // clear listeners
-				break;
+		synchronized (pocketButtons) {
+			for (Iterator<Entry<RotatingJButton, Piece>> i = pocketButtons.entrySet().iterator(); i.hasNext();) {
+				Entry<RotatingJButton, Piece> candidate = i.next();
+				Piece inPocket = candidate.getValue();
+				if (inPocket.getPieceType() == piece && inPocket.getPlayerType() == player) {
+					RotatingJButton button = candidate.getKey();
+					i.remove();
+					getPocket(player).remove(button);
+					button.removeActionListener(null); // clear listeners
+					break;
+				}
 			}
 		}
 	}

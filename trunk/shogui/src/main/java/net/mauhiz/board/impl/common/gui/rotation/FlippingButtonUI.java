@@ -13,41 +13,37 @@ import javax.swing.plaf.basic.BasicButtonUI;
  * @author mauhiz
  * Ne marche pas :|
  */
-class FlippingButtonUI extends BasicButtonUI {
-    static final FlippingButtonUI FLIPPER = new FlippingButtonUI();
+public class FlippingButtonUI extends BasicButtonUI {
+	public static final FlippingButtonUI FLIPPER = new FlippingButtonUI();
 
-    public FlippingButtonUI() {
-        super();
-    }
+	@Override
+	public void paint(Graphics g, JComponent c) {
+		if (c instanceof JButton) {
+			JButton button = (JButton) c;
+			String text = button.getText();
+			Icon icon = button.isEnabled() ? button.getIcon() : button.getDisabledIcon();
+			if (g instanceof Graphics2D) {
+				Graphics2D g2 = (Graphics2D) g;
+				// save
+				AffineTransform tr = g2.getTransform();
 
-    @Override
-    public void paint(Graphics g, JComponent c) {
-        if (c instanceof JButton) {
-            JButton button = (JButton) c;
-            String text = button.getText();
-            Icon icon = button.isEnabled() ? button.getIcon() : button.getDisabledIcon();
-            if (g instanceof Graphics2D) {
-                Graphics2D g2 = (Graphics2D) g;
-                // save
-                AffineTransform tr = g2.getTransform();
+				// flip
+				g2.rotate(Math.PI);
 
-                // flip
-                g2.rotate(Math.PI);
+				// translate the origin
+				g2.translate(c.getWidth(), c.getHeight());
 
-                // translate the origin
-                g2.translate(c.getWidth(), c.getHeight());
+				if (icon != null) {
+					icon.paintIcon(c, g, 0, 0);
+				}
 
-                if (icon != null) {
-                    icon.paintIcon(c, g, 0, 0);
-                }
+				if (text != null) {
+					g.drawString(text, 0, 0);
+				}
 
-                if (text != null) {
-                    g.drawString(text, 0, 0);
-                }
-
-                // restore
-                g2.setTransform(tr);
-            }
-        }
-    }
+				// restore
+				g2.setTransform(tr);
+			}
+		}
+	}
 }

@@ -24,9 +24,9 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 
 	public static void main(String... args) {
 		ShogiGui gui = new ShogiGui();
-		gui.assistant = new ShogiSwtAssistant(gui);
-		//		gui.assistant = new ShogiSwingAssistant(gui);
-		LOG.debug("Starting assistant: " + gui.assistant);
+		//		gui.assistant = new ShogiSwtAssistant(gui);
+		gui.assistant = new ShogiSwingAssistant(gui);
+		LOG.debug("Starting assistant: " + gui.getAssistant());
 		gui.getAssistant().start();
 	}
 

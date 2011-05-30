@@ -51,10 +51,8 @@ public class BoardManager {
 		String gameId = findGame(rba);
 
 		if (gameId != null) {
-			String text = move.toString();
-
 			for (IrcOpponent opponent : opponents.get(gameId)) {
-				Ctcp msg = new CtcpMove(null, opponent.opponentUser, opponent.server, text);
+				Ctcp msg = new CtcpMove(null, opponent.opponentUser, opponent.server, move);
 				opponent.control.sendMsg(msg);
 			}
 		}

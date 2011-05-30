@@ -50,14 +50,14 @@ public class KifAdapter implements MoveReader {
 	private static final char NARI = '成';
 	private static final char UCHI = '打';
 
-	private Square getSquareAA(char originFile, char originRow) {
+	private static Square getSquareAA(char originFile, char originRow) {
 		int originX = originFile - '0';
 		int originY = originRow - '0';
 		// in shogi, both are reversed
 		return SquareImpl.getInstance(ShogiBoard.SIZE - originX, ShogiBoard.SIZE - originY);
 	}
 
-	private Square getSquareAJ(char originFile, char originRow) {
+	private static Square getSquareAJ(char originFile, char originRow) {
 		int originX = originFile - '０'; // full-width arab numeral
 		// the Japanese numerals are not aligned in UTF-8
 		int originY = JapaneseNumeral.valueOf(Character.toString(originRow)).getValue(); // kanji
@@ -77,7 +77,7 @@ public class KifAdapter implements MoveReader {
 				continue;
 			}
 
-			if (line.charAt(0) == ' ') {
+			if (line.charAt(0) == ' ') { // it's a move !
 				readNext(IOUtils.toInputStream(line, FileUtil.UTF8.name()), game);
 			}
 		}
@@ -87,7 +87,6 @@ public class KifAdapter implements MoveReader {
 	public void readNext(InputStream data, Game game) throws IOException {
 		String line = IOUtils.toString(data, FileUtil.UTF8.name());
 		int i = 0;
-		// it's a move !
 		// chars 0..3 represent the move number.
 		// char 4 is a space.
 		i += 5;
@@ -123,11 +122,10 @@ public class KifAdapter implements MoveReader {
 			}
 		}
 		char piece = line.charAt(i++);
-		ShogiPieceType spt = ShogiPieceType.fromKanji(piece);
 		// special move (or opening bracket if none)
 		char special = line.charAt(i++);
 		if (special == UCHI) {
-			game.applyMove(new DropImpl(game.getTurn(), spt, dest));
+			game.applyMove(new DropImpl(game.getTurn(), ShogiPieceType.fromKanji(piece), dest));
 			return;
 		} else if (special != '(') {
 			i++;

@@ -127,14 +127,14 @@ public class RotatingJButton extends JButton {
 	public void repaint() {
 		PerformanceMonitor pm = new PerformanceMonitor(50, 100);
 		super.repaint();
-		pm.perfLog("Repainted: " + this);
+		pm.perfLog("Repainted button[flip=" + flip + "][text=" + iconText + "]");
 	}
 
 	@Override
 	public void revalidate() {
 		PerformanceMonitor pm = new PerformanceMonitor(50, 100);
 		super.revalidate();
-		pm.perfLog("Revalidated: " + this);
+		pm.perfLog("Revalidated button[flip=" + flip + "][text=" + iconText + "]");
 	}
 
 	@Override
@@ -155,7 +155,6 @@ public class RotatingJButton extends JButton {
 		this.flip = flip;
 		this.iconText = iconText;
 		new ButtonDecorator().launch(null);
-
 	}
 
 	void superEnable(boolean enabled) {
@@ -166,6 +165,6 @@ public class RotatingJButton extends JButton {
 	public void validate() {
 		PerformanceMonitor pm = new PerformanceMonitor(50, 100);
 		super.validate();
-		pm.perfLog("Validated: " + this);
+		pm.perfLog("Validated button[flip=" + flip + "][text=" + iconText + "]");
 	}
 }
