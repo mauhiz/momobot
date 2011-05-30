@@ -51,11 +51,11 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 	public void initPockets() {
 		JPanel pocket = newPocket();
 		boardAndPocketsPanel.add(pocket, 0);
-		pockets.put(ShogiPlayerType.GOTE, pocket);
+		addPocket(ShogiPlayerType.GOTE, pocket);
 		LOG.debug("Init top pocket: " + pocket);
 		pocket = newPocket();
 		boardAndPocketsPanel.add(pocket);
-		pockets.put(ShogiPlayerType.SENTE, pocket);
+		addPocket(ShogiPlayerType.SENTE, pocket);
 		LOG.debug("Init bottom pocket: " + pocket);
 	}
 

@@ -13,8 +13,8 @@ import org.apache.commons.io.IOUtils;
 
 public class RemoteBoardAdapter implements GameController {
 
-	private GameController localController;
-	private MoveReader reader;
+	private final GameController localController;
+	private final MoveReader reader;
 
 	public RemoteBoardAdapter(GameController localController, MoveReader reader) {
 		this.localController = localController;
