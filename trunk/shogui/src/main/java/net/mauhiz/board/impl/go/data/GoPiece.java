@@ -1,27 +1,20 @@
 package net.mauhiz.board.impl.go.data;
 
-import net.mauhiz.board.model.data.Piece;
+import net.mauhiz.board.impl.common.data.AbstractPiece;
 
-public class GoPiece implements Piece {
-	private GoPieceType pieceType;
-	private GoPlayerType playerType;
+public class GoPiece extends AbstractPiece {
 
 	public GoPiece(GoPlayerType playerType, GoPieceType pieceType) {
-		this.playerType = playerType;
-		this.pieceType = pieceType;
-	}
-
-	public GoPieceType getPieceType() {
-		return pieceType;
-	}
-
-	public GoPlayerType getPlayerType() {
-		return playerType;
+		super(playerType, pieceType);
 	}
 
 	@Override
-	public String toString() {
-		return playerType.name().charAt(0) + "." + pieceType.getName();
+	public GoPieceType getPieceType() {
+		return (GoPieceType) super.getPieceType();
 	}
 
+	@Override
+	public GoPlayerType getPlayerType() {
+		return (GoPlayerType) super.getPlayerType();
+	}
 }

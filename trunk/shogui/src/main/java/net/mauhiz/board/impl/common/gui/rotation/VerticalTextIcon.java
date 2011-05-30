@@ -30,8 +30,8 @@ import javax.swing.JComponent;
  *  these properties.
  */
 public class VerticalTextIcon extends TextIcon {
-	private String[] chars;
-	private int[] charWidths;
+	private String[] chars = new String[0];
+	private int[] charWidths = new int[0];
 
 	/**
 	 *  Convenience constructor to create a TextIcon with a HORIZONTAL layout.

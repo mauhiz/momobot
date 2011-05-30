@@ -60,19 +60,19 @@ public class SwtChessGuiAssistant extends SwtGuiAssistant implements IChessGuiAs
 	}
 
 	public boolean showPromotionDialog() {
-		MessageBox mb = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+		MessageBox mb = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 		mb.setMessage("Promote?");
 		int buttonID = mb.open();
 		switch (buttonID) {
-		case SWT.YES:
-			return true;
-		default:
-			return false;
+			case SWT.YES:
+				return true;
+			default:
+				return false;
 		}
 	}
 
 	public void showPromotionDialog(ChessPieceType[] promotions, NormalMove nmove) {
-		Shell popup = new Shell(shell, SWT.ICON_QUESTION);
+		Shell popup = new Shell(getShell(), SWT.ICON_QUESTION);
 		popup.setLayout(new GridLayout(promotions.length, true));
 		popup.setText("Promotion?");
 		popup.setActive();

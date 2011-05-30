@@ -35,9 +35,11 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 		if (piece == null) {
 			button.setText("", false);
 		} else {
-			String ji = piece.toString();
+			String ji;
 			if (piece == ShogiPieceType.KING && player == ShogiPlayerType.SENTE) {
 				ji = "玉"; // special case!
+			} else {
+				ji = piece.toString();
 			}
 			button.setText(ji, player == ShogiPlayerType.GOTE);
 		}

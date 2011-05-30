@@ -41,37 +41,37 @@ public class ShogiRule extends AbstractPocketRule {
 		ShogiPieceType pieceType = (ShogiPieceType) piece.getPieceType();
 
 		switch (pieceType) {
-		case PAWN:
-			return isPawnMove(from, to, playerType);
-		case LANCE:
-			return !board.isObstruction(from, to) && AbstractBoard.getXmove(from, to) == 0
-					&& AbstractBoard.getYmove(from, to) * (playerType == ShogiPlayerType.SENTE ? 1 : -1) > 0;
-		case SILVER:
-			return AbstractBoard.isCorner(from, to) || isPawnMove(from, to, playerType);
-		case KNIGHT:
-			return abs(AbstractBoard.getXmove(from, to)) == 1
-					&& AbstractBoard.getYmove(from, to) == (playerType == ShogiPlayerType.SENTE ? 2 : -2);
+			case PAWN:
+				return isPawnMove(from, to, playerType);
+			case LANCE:
+				return !board.isObstruction(from, to) && AbstractBoard.getXmove(from, to) == 0
+						&& AbstractBoard.getYmove(from, to) * (playerType == ShogiPlayerType.SENTE ? 1 : -1) > 0;
+			case SILVER:
+				return AbstractBoard.isCorner(from, to) || isPawnMove(from, to, playerType);
+			case KNIGHT:
+				return abs(AbstractBoard.getXmove(from, to)) == 1
+						&& AbstractBoard.getYmove(from, to) == (playerType == ShogiPlayerType.SENTE ? 2 : -2);
 
-		case BISHOP:
-			return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to);
-		case ROOK:
-			return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to);
-		case KING:
-			return abs(AbstractBoard.getXmove(from, to)) <= 1 && abs(AbstractBoard.getYmove(from, to)) <= 1;
-		case TOKIN:
-		case GOLD:
-		case PROMOTED_LANCE:
-		case PROMOTED_SILVER:
-		case PROMOTED_KNIGHT:
-			return isGoldMove(from, to, playerType);
-		case HORSE:
-			return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to)
-					|| AbstractBoard.isCross(from, to);
-		case DRAGON:
-			return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to)
-					|| AbstractBoard.isCorner(from, to);
-		default:
-			throw new IllegalStateException();
+			case BISHOP:
+				return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to);
+			case ROOK:
+				return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to);
+			case KING:
+				return abs(AbstractBoard.getXmove(from, to)) <= 1 && abs(AbstractBoard.getYmove(from, to)) <= 1;
+			case TOKIN:
+			case GOLD:
+			case PROMOTED_LANCE:
+			case PROMOTED_SILVER:
+			case PROMOTED_KNIGHT:
+				return isGoldMove(from, to, playerType);
+			case HORSE:
+				return AbstractBoard.isDiagonal(from, to) && !board.isObstruction(from, to)
+						|| AbstractBoard.isCross(from, to);
+			case DRAGON:
+				return AbstractBoard.isStraight(from, to) && !board.isObstruction(from, to)
+						|| AbstractBoard.isCorner(from, to);
+			default:
+				throw new IllegalStateException();
 		}
 	}
 
@@ -185,23 +185,24 @@ public class ShogiRule extends AbstractPocketRule {
 				ShogiPieceType spt = (ShogiPieceType) drop.getPieceType();
 				ShogiPlayerType player = (ShogiPlayerType) move.getPlayerType();
 				switch (spt) {
-				case ROOK:
-				case SILVER:
-				case BISHOP:
-					return true;
-				case KNIGHT:
-					return !isPromotionZone(player, to);
-				case PAWN:
-					int x = to.getX();
-					if (((ShogiBoard) oldBoard).hasPawnOnColumn(player, x)) {
-						LOG.debug("Player: " + player + " already had a pawn on column: " + x);
+					case ROOK:
+					case SILVER:
+					case BISHOP:
+						return true;
+					case KNIGHT:
+						return !isPromotionZone(player, to);
+					case PAWN:
+						int x = to.getX();
+						assert oldBoard instanceof ShogiBoard;
+						if (((ShogiBoard) oldBoard).hasPawnOnColumn(player, x)) {
+							LOG.debug("Player: " + player + " already had a pawn on column: " + x);
+							return false;
+						}
+						//$FALL-THROUGH$
+					case LANCE:
+						return player == ShogiPlayerType.SENTE ? to.getY() != 7 : to.getY() != 0;
+					default:
 						return false;
-					}
-					//$FALL-THROUGH$
-				case LANCE:
-					return player == ShogiPlayerType.SENTE ? to.getY() != 7 : to.getY() != 0;
-				default:
-					return false;
 				}
 			}
 

@@ -14,6 +14,7 @@ public class PromoteAction extends AbstractAction {
 	private final ChessPieceType promotion;
 
 	public PromoteAction(NormalMove nmove, BoardGui lparent, ChessPieceType promotion) {
+		super();
 		this.nmove = nmove;
 		this.lparent = lparent;
 		this.promotion = promotion;
