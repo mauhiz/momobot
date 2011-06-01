@@ -10,10 +10,6 @@ import org.eclipse.swt.events.SelectionEvent;
  */
 public abstract class AbstractAction extends AbstractRunnable implements IAction {
 
-    public AbstractAction() {
-        super();
-    }
-
     public void actionPerformed(ActionEvent e) {
         launch(null);
     }
