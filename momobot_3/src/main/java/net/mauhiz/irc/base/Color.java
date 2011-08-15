@@ -1,6 +1,6 @@
 package net.mauhiz.irc.base;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz

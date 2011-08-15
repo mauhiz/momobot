@@ -9,7 +9,7 @@ import net.mauhiz.irc.base.data.qnet.QnetUser;
 import net.mauhiz.irc.base.trigger.AbstractAutomate;
 import net.mauhiz.irc.bot.triggers.cs.PlayerDB;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * <pre>

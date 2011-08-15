@@ -9,8 +9,8 @@ import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.util.NetUtils;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz
@@ -26,7 +26,7 @@ public class VdmTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
             page = StringUtils.substringAfter(page, "<div class=\"post\"><p>");
             page = StringUtils.substringBefore(page, "</p>");
             page = StringUtils.replaceChars(page, "\r\n", "");
-            return StringEscapeUtils.unescapeHtml(page);
+            return StringEscapeUtils.unescapeHtml4(page);
 
         } catch (IOException e) {
             return e.getMessage();

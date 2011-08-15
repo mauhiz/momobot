@@ -14,7 +14,7 @@ import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.event.Pickup;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz

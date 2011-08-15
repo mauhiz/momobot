@@ -10,7 +10,7 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.msg.Whois;
 import net.mauhiz.util.AbstractDaemon;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 
 /**

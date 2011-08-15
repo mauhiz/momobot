@@ -6,7 +6,7 @@ import net.mauhiz.irc.base.data.IrcNetwork;
 import net.mauhiz.util.HibernateUtils;
 import net.mauhiz.util.Hooks;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 
 /**

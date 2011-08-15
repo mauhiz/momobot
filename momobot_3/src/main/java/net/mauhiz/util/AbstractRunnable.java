@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
 
@@ -86,48 +85,49 @@ abstract class AbstractRunnable implements IRunnable {
      * @param display
      */
     public void launch(Display display) {
-        switch (getExecutionType()) {
-        case SINGLE:
-            run();
-            break;
-        case DAEMON:
-            new DaemonRunnable(getName()).tstart();
-            break;
-        case PARALLEL_CACHED:
-            synchronized (FUTURES) {
-                FUTURES.put(DEFAULT_EXECUTOR.submit(this), getName());
-            }
-            break;
-        case GUI_ASYNCHRONOUS:
-            if (display == null) {
-                if (EventQueue.isDispatchThread()) {
-                    run();
-                } else {
-                    EventQueue.invokeLater(this);
+        ExecutionType et = getExecutionType();
+        switch (et) {
+            case SINGLE:
+                run();
+                break;
+            case DAEMON:
+                new DaemonRunnable(getName()).tstart();
+                break;
+            case PARALLEL_CACHED:
+                synchronized (FUTURES) {
+                    FUTURES.put(DEFAULT_EXECUTOR.submit(this), getName());
                 }
-            } else {
-                display.asyncExec(this);
-            }
-            break;
-        case GUI_SYNCHRONOUS:
-            if (display == null) {
-                if (EventQueue.isDispatchThread()) {
-                    run();
-                } else {
-                    try {
-                        EventQueue.invokeAndWait(this);
-                    } catch (InterruptedException ie) {
-                        ThreadUtils.handleInterruption(ie);
-                    } catch (InvocationTargetException ite) {
-                        LOG.error(ite.getTargetException(), ite);
+                break;
+            case GUI_ASYNCHRONOUS:
+                if (display == null) {
+                    if (EventQueue.isDispatchThread()) {
+                        run();
+                    } else {
+                        EventQueue.invokeLater(this);
                     }
+                } else {
+                    display.asyncExec(this);
                 }
-            } else {
-                display.syncExec(this);
-            }
-            break;
-        default:
-            throw new NotImplementedException();
+                break;
+            case GUI_SYNCHRONOUS:
+                if (display == null) {
+                    if (EventQueue.isDispatchThread()) {
+                        run();
+                    } else {
+                        try {
+                            EventQueue.invokeAndWait(this);
+                        } catch (InterruptedException ie) {
+                            ThreadUtils.handleInterruption(ie);
+                        } catch (InvocationTargetException ite) {
+                            LOG.error(ite.getTargetException(), ite);
+                        }
+                    }
+                } else {
+                    display.syncExec(this);
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unknown excution type: " + et);
         }
     }
 

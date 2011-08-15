@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bot.triggers.fun;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.ArgumentList;
@@ -11,12 +12,13 @@ import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
-import org.apache.commons.lang.math.RandomUtils;
-
 /**
  * @author mauhiz
  */
 public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+
+    private static final Random RANDOM = new Random();
+
     /**
      * @param trigger
      */
@@ -38,7 +40,7 @@ public class RouletteTrigger extends AbstractTextTrigger implements IPrivmsgTrig
                 return;
             }
         }
-        int index = RandomUtils.nextInt(wannabe.size());
+        int index = RANDOM.nextInt(wannabe.size());
         Iterator<IrcUser> uIter = wannabe.iterator();
         for (int i = 0; i < index; i++) {
             uIter.next();

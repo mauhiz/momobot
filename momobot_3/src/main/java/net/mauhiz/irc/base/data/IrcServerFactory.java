@@ -9,7 +9,7 @@ import net.mauhiz.irc.base.data.defaut.DefaultServer;
 import net.mauhiz.irc.base.data.qnet.QnetServer;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class IrcServerFactory {
     private static final Map<String, Class<? extends IrcNetwork>> NETWORK_TYPES = new HashMap<String, Class<? extends IrcNetwork>>();

@@ -1,7 +1,7 @@
 package net.mauhiz.util;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.StopWatch;
 
 public class PerformanceMonitor extends StopWatch {
     private static final long SLOW_THRESHOLD = 100; // time in ms

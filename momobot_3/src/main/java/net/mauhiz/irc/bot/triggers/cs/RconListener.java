@@ -3,11 +3,11 @@ package net.mauhiz.irc.bot.triggers.cs;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.util.Random;
 
 import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.NetUtils;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -19,12 +19,13 @@ class RconListener extends AbstractDaemon implements IRconListener {
      * port mini
      */
     private static final int MIN_PORT = 1024;
+    private static final Random RANDOM = new Random();
 
     /**
      * @return un port au hasard, > {@link #MIN_PORT}.
      */
     static int generateRandomPort() {
-        return MIN_PORT + RandomUtils.nextInt(5000); // TODO ensure port availability
+        return MIN_PORT + RANDOM.nextInt(5000); // TODO ensure port availability
     }
 
     /**

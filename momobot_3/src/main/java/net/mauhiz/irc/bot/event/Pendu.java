@@ -1,8 +1,8 @@
 package net.mauhiz.irc.bot.event;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,8 +10,7 @@ import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.util.FileUtil;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz
@@ -20,15 +19,16 @@ public class Pendu extends AbstractChannelEvent {
     /**
      * un dictionnaire de mots.
      */
-    private static final List<String> DICO = new LinkedList<String>();
+    private static final List<String> DICO;
+    private static final Random RANDOM = new Random();
     /**
      * le caractere underscore.
      */
     private static final char UNDERSCORE = '_';
+
     static {
         try {
-            List<String> lignes = FileUtil.readFileInCp("dico.txt", FileUtil.UTF8);
-            DICO.addAll(lignes);
+            DICO = FileUtil.readFileInCp("dico.txt", FileUtil.UTF8);
         } catch (IOException ioe) {
             throw new ExceptionInInitializerError(ioe);
         }
@@ -69,7 +69,7 @@ public class Pendu extends AbstractChannelEvent {
      * @return un mot au hasard
      */
     private static String getNextMot() {
-        String mot = DICO.get(RandomUtils.nextInt(DICO.size()));
+        String mot = DICO.get(RANDOM.nextInt(DICO.size()));
         /* pas de mots composes */
         if (mot.indexOf('-') > 0) {
             return getNextMot();
