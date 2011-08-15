@@ -19,7 +19,7 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.irc.bot.triggers.dispo.Dispo.Present;
 import net.mauhiz.util.DateUtil;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz

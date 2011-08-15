@@ -1,11 +1,11 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrTokenizer;
 
 /**
  * @author mauhiz

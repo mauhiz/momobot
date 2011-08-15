@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import net.mauhiz.irc.base.data.IrcUser;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * @author mauhiz
  */
 public class Team implements Iterable<IrcUser> {
+    private static final Random RANDOM = new Random();
     private final int capacity;
     private final List<IrcUser> members;
     private String nom;
@@ -51,6 +52,10 @@ public class Team implements Iterable<IrcUser> {
         return capacity;
     }
 
+    public Collection<IrcUser> getMembers() {
+        return members;
+    }
+
     /**
      * @return {@link #nom}.
      */
@@ -73,12 +78,8 @@ public class Team implements Iterable<IrcUser> {
         return members.iterator();
     }
 
-    public Collection<IrcUser> getMembers() {
-        return members;
-    }
-
     public IrcUser randomPlayer() {
-        return members.get(RandomUtils.nextInt(size()));
+        return members.get(RANDOM.nextInt(size()));
     }
 
     /**

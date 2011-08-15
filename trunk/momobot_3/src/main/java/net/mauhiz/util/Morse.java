@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.log4j.Logger;
 
 /**

@@ -10,7 +10,7 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.util.FileUtil;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Calcule un sha-256.

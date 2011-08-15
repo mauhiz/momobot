@@ -9,9 +9,9 @@ import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 import net.mauhiz.util.NetUtils;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrTokenizer;
 
 /**
  * @author mauhiz
@@ -28,7 +28,7 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             page = StringUtils.replaceChars(page, "\r\n", "");
             String[] lignes = new StrTokenizer(page, "<br />").getTokenArray();
             for (int i = 0; i < lignes.length; i++) {
-                lignes[i] = StringEscapeUtils.unescapeHtml(lignes[i]);
+                lignes[i] = StringEscapeUtils.unescapeHtml4(lignes[i]);
             }
             return lignes;
         } catch (IOException e) {
@@ -50,7 +50,7 @@ public class BashTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
             page = StringUtils.replaceChars(page, "\r\n", "");
             String[] lignes = new StrTokenizer(page, "<br />").getTokenArray();
             for (int i = 0; i < lignes.length; i++) {
-                lignes[i] = StringEscapeUtils.unescapeHtml(lignes[i]);
+                lignes[i] = StringEscapeUtils.unescapeHtml4(lignes[i]);
             }
             return lignes;
         } catch (IOException e) {

@@ -7,7 +7,7 @@ import net.mauhiz.irc.gui.GuiTriggerManager;
 import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.widgets.Text;
 
 /**

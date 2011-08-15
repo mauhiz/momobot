@@ -10,7 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.FileUtil;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**

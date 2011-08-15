@@ -4,7 +4,7 @@ import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz

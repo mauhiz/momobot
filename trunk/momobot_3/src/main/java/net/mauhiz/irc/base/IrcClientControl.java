@@ -39,7 +39,7 @@ import net.mauhiz.irc.base.msg.ServerMsg;
 import net.mauhiz.irc.base.msg.SetTopic;
 import net.mauhiz.irc.base.trigger.ITriggerManager;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**

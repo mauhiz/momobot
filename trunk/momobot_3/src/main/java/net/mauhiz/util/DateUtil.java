@@ -7,9 +7,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * @author mauhiz
@@ -94,6 +94,6 @@ public class DateUtil {
 
     public static String[] getWeekDays(Locale loc) {
         String[] weekdays = new DateFormatSymbols(loc).getWeekdays();
-        return (String[]) ArrayUtils.subarray(weekdays, 1, weekdays.length); // 1-based
+        return ArrayUtils.subarray(weekdays, 1, weekdays.length); // 1-based
     }
 }

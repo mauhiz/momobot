@@ -5,7 +5,7 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.IrcUser;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz

@@ -7,7 +7,7 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.bot.event.seek.SeekWar;
 import net.mauhiz.util.DateUtil;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * @author mauhiz

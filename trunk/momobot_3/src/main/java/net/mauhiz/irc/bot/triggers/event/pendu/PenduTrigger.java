@@ -10,7 +10,7 @@ import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.event.Pendu;
 import net.mauhiz.irc.bot.triggers.AbstractGourmandTrigger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz

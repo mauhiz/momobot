@@ -1,16 +1,18 @@
 package net.mauhiz.irc;
 
 import java.text.Normalizer;
+import java.util.Random;
 
 import net.mauhiz.irc.base.IrcSpecialChars;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author mauhiz
  */
 public class MomoStringUtils {
+    private static final Random RANDOM = new Random();
+
     /**
      * @param input
      *            la string a depouiller
@@ -74,7 +76,7 @@ public class MomoStringUtils {
         StringBuilder input = new StringBuilder(seq);
         StringBuilder output = new StringBuilder(seq.length());
         for (int len = input.length(); len > 0; --len) {
-            int random = RandomUtils.nextInt(len);
+            int random = RANDOM.nextInt(len);
             output.append(input.charAt(random));
             input.deleteCharAt(random);
         }

@@ -1,12 +1,12 @@
 package net.mauhiz.irc.bot.triggers.fun;
 
+import java.util.Random;
+
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-
-import org.apache.commons.lang.math.RandomUtils;
 
 /**
  * Un trigger pour lancer les des !
@@ -14,6 +14,8 @@ import org.apache.commons.lang.math.RandomUtils;
  * @author abby
  */
 public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+    private static final Random RANDOM = new Random();
+
     /**
      * Constructeur
      * 
@@ -64,7 +66,7 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
         }
 
         // random de base
-        int diceRoll = RandomUtils.nextInt(max) + 1;
+        int diceRoll = RANDOM.nextInt(max) + 1;
 
         // Petits commentaires futes
         String commentaire = getCommentaire(diceRoll, max);

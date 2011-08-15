@@ -6,7 +6,7 @@ import net.mauhiz.irc.bot.triggers.cs.IServer;
 import net.mauhiz.irc.bot.triggers.cs.ServerFlags;
 import net.mauhiz.util.FileUtil;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 
 public class InfoQuery extends AbstractQuery implements ServerFlags {
 

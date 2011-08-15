@@ -5,7 +5,7 @@ import net.mauhiz.irc.base.msg.Ctcp;
 import net.mauhiz.irc.base.msg.CtcpVersion;
 import net.mauhiz.irc.base.msg.DccChatRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public class CtcpFactory {
