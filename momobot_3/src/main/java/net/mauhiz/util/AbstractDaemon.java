@@ -46,7 +46,7 @@ public abstract class AbstractDaemon extends Thread implements IDaemon {
     @Override
     @Deprecated
     public synchronized void start() {
-        super.start();
+        throw new UnsupportedOperationException("Call tstart()");
     }
 
     protected abstract void trun() throws InterruptedException;
