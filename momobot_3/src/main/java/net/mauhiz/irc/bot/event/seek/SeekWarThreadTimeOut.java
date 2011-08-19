@@ -2,6 +2,7 @@ package net.mauhiz.irc.bot.event.seek;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author mauhiz
@@ -42,7 +43,7 @@ class SeekWarThreadTimeOut extends Timer {
      */
     public SeekWarThreadTimeOut(SeekWar2 seekwar1, int timeOutMinutes) {
         super("SeekWar TimeOut");
-        long timeOut = timeOutMinutes * 60 * 1000;
+        long timeOut = TimeUnit.MILLISECONDS.convert(timeOutMinutes, TimeUnit.MINUTES);
         schedule(new Timeout(seekwar1), timeOut);
     }
 }
