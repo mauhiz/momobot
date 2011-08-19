@@ -1,13 +1,15 @@
 package net.mauhiz.irc.base.ident;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.util.AbstractDaemon;
@@ -55,16 +57,31 @@ public class IdentServer extends AbstractDaemon implements IIdentServer {
 
             Socket socket = ss.accept();
             socket.setSoTimeout(SO_TIMEOUT);
-            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-
+            OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(), FileUtil.ASCII);
             try {
-                String line = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ASCII))
-                        .readLine();
-                if (line != null) {
-                    writer.println(line + " : USERID : UNIX : " + user);
+                PrintWriter writer = new PrintWriter(osw, true);
+
+                try {
+                    InputStreamReader isr = new InputStreamReader(socket.getInputStream(), FileUtil.ASCII);
+                    try {
+                        Scanner scan = new Scanner(isr);
+                        try {
+                            String line = scan.nextLine();
+                            writer.println(line + " : USERID : UNIX : " + user);
+                        } finally {
+                            scan.close();
+                        }
+
+                    } catch (NoSuchElementException nse) {
+
+                    } finally {
+                        isr.close();
+                    }
+                } finally {
+                    writer.close();
                 }
             } finally {
-                writer.close();
+                osw.close();
             }
 
         } catch (BindException be) {
