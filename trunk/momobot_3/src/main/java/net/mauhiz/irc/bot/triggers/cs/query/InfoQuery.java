@@ -92,7 +92,7 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
             LOG.warn("remaining bytes: " + remaining);
             byte[] remain = new byte[remaining];
             System.arraycopy(result.array(), result.position(), remain, 0, remaining);
-            LOG.warn("remaining text: " + new String(remain));
+            LOG.warn("remaining text: " + new String(remain, FileUtil.ASCII));
         }
     }
 

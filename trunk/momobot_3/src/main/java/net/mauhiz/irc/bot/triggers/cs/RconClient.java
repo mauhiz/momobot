@@ -4,6 +4,8 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 import java.io.IOException;
 
+import net.mauhiz.util.FileUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrTokenizer;
 
@@ -65,7 +67,7 @@ class RconClient extends ValveUdpClient implements IRconClient {
      *             en cas de pepin!
      */
     public void getRconChallenge() throws IOException {
-        rconChallenge = substringAfter(new String(sendAndRcvValveCmd(CHALLENGE)), CHALLENGE + " ");
+        rconChallenge = substringAfter(new String(sendAndRcvValveCmd(CHALLENGE), FileUtil.ASCII), CHALLENGE + " ");
     }
 
     IRconServer getServer() {

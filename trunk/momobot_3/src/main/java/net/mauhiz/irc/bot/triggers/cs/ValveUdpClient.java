@@ -133,7 +133,7 @@ class ValveUdpClient extends DatagramSocketClient implements IClient {
         sendBuf.putInt(-1);
         sendBuf.put(cmdBytes);
         sendBuf.put((byte) 0);
-        LOG.info("Sending : " + new String(cmdBytes) + " to " + server.getIp() + ":" + server.getPort());
+        LOG.info("Sending : " + new String(cmdBytes, FileUtil.ASCII) + " to " + server.getIp() + ":" + server.getPort());
         DatagramPacket sendPacket = new DatagramPacket(sendBuf.array(), sendBuf.capacity(), server.getIpay());
         _socket_.send(sendPacket);
     }
