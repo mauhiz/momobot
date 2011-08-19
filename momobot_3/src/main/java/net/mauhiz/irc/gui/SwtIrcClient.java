@@ -237,6 +237,9 @@ public class SwtIrcClient {
         if (!processed) {
             processed = processServerLog(msg);
         }
+        if (!processed) {
+            LOG.error("Unprocessed msg: " + msg);
+        }
         //        }
     }
 }
