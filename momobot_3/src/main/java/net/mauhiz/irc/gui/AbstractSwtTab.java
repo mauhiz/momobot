@@ -56,6 +56,9 @@ public abstract class AbstractSwtTab {
     }
 
     public void appendText(String msg) {
+        if (receiveBox == null) {
+            throw new IllegalStateException("Must call initReceiveBox()");
+        }
         receiveBox.append(msg + SystemUtils.LINE_SEPARATOR);
         // TODO replaceStyleRange
         //        receiveBox.append(ColorUtils.toHTML(msg) + "<br />");
