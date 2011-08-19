@@ -28,6 +28,24 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     private static final String[] DISPOS = { "oui", "non", "?" };
     private static final String[] HEURES = { "21h", "22h30" };
 
+    private static void whoisUser(QnetUser quser, IPrivateIrcMessage cme, IIrcControl control) {
+        if (StringUtils.isEmpty(quser.getAuth())) {
+            WhoisRequest.startWhois(cme.getServerPeer(), control, Collections.singleton(quser.getNick()), null);
+            WhoisRequest whois = WhoisRequest.get(quser.getNick());
+
+            /* on attend le whois */
+            while (whois.isRunning()) {
+                Thread.yield();
+            }
+
+            if (StringUtils.isEmpty(quser.getAuth())) {
+                Notice notice = new Notice(cme, "il faut etre auth sur Qnet pour utiliser cette fonction", true);
+                control.sendMsg(notice);
+                return;
+            }
+        }
+    }
+
     /**
      * @param trigger
      *            le trigger
@@ -56,33 +74,36 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             showHelp(control, cme);
 
         } else {
-            Calendar date = DateUtil.getDateFromJour(args.poll(), Locale.FRANCE); /* tokens finis */
+            Calendar date;
+            try {
+                date = DateUtil.getDateFromJour(args.poll(), Locale.FRANCE); /* tokens finis */
 
-            if (date == null) {
+            } catch (IllegalArgumentException iae) {
                 showHelp(control, cme);
-
-            } else {
-                Dispo dispo = new Dispo();
-                dispo.setChannel(((IrcChannel) cme.getTo()).fullName());
-                Present[] heures = new Present[HEURES.length];
-                List<String> ouinons = args.asList();
-                for (int i = 0; i < HEURES.length && i < ouinons.size(); i++) {
-                    String nextArg = ouinons.get(i);
-                    if (nextArg.equalsIgnoreCase("oui")) {
-                        heures[i] = Present.LA;
-                    } else if (nextArg.equalsIgnoreCase("non")) {
-                        heures[i] = Present.PAS_LA;
-                    }
-                }
-                dispo.setPresent1(heures[0]);
-                dispo.setPresent2(heures[1]);
-                dispo.setQauth(quser.getAuth());
-                dispo.setServerAlias(cme.getServerPeer().getNetwork().getAlias());
-                dispo.setQuand(new java.sql.Date(date.getTimeInMillis()));
-                DispoDb.updateDispo(dispo);
-                Notice notice = new Notice(cme, "dispo enregistree pour le " + DateUtil.DATE_FORMAT.format(date), true);
-                control.sendMsg(notice);
+                return;
             }
+
+            Dispo dispo = new Dispo();
+            dispo.setChannel(((IrcChannel) cme.getTo()).fullName());
+            Present[] heures = new Present[HEURES.length];
+            List<String> ouinons = args.asList();
+            for (int i = 0; i < HEURES.length && i < ouinons.size(); i++) {
+                String nextArg = ouinons.get(i);
+                if (nextArg.equalsIgnoreCase("oui")) {
+                    heures[i] = Present.LA;
+                } else if (nextArg.equalsIgnoreCase("non")) {
+                    heures[i] = Present.PAS_LA;
+                }
+            }
+            dispo.setPresent1(heures[0]);
+            dispo.setPresent2(heures[1]);
+            dispo.setQauth(quser.getAuth());
+            dispo.setServerAlias(cme.getServerPeer().getNetwork().getAlias());
+            dispo.setQuand(new java.sql.Date(date.getTimeInMillis()));
+            DispoDb.updateDispo(dispo);
+            Notice notice = new Notice(cme, "dispo enregistree pour le " + DateUtil.DATE_FORMAT.format(date), true);
+            control.sendMsg(notice);
+
         }
     }
 
@@ -97,23 +118,5 @@ public class DispoTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             msg.append(heure).append("[").append(StringUtils.join(DISPOS, '/')).append("] ");
         }
         return msg.toString();
-    }
-
-    private void whoisUser(QnetUser quser, IPrivateIrcMessage cme, IIrcControl control) {
-        if (StringUtils.isEmpty(quser.getAuth())) {
-            WhoisRequest.startWhois(cme.getServerPeer(), control, Collections.singleton(quser.getNick()), null);
-            WhoisRequest whois = WhoisRequest.get(quser.getNick());
-
-            /* on attend le whois */
-            while (whois.isRunning()) {
-                Thread.yield();
-            }
-
-            if (StringUtils.isEmpty(quser.getAuth())) {
-                Notice notice = new Notice(cme, "il faut etre auth sur Qnet pour utiliser cette fonction", true);
-                control.sendMsg(notice);
-                return;
-            }
-        }
     }
 }
