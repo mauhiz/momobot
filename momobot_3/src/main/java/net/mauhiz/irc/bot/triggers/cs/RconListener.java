@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.util.Random;
 
 import net.mauhiz.util.AbstractDaemon;
+import net.mauhiz.util.FileUtil;
 import net.mauhiz.util.NetUtils;
 
 import org.apache.log4j.Logger;
@@ -49,7 +50,7 @@ class RconListener extends AbstractDaemon implements IRconListener {
      * @param receivePacket
      */
     private void processLine(DatagramPacket receivePacket) {
-        rc.processLine(new String(receivePacket.getData(), 0, receivePacket.getLength()));
+        rc.processLine(new String(receivePacket.getData(), 0, receivePacket.getLength(), FileUtil.ASCII));
     }
 
     private void runLoop(DatagramPacket receivePacket) {

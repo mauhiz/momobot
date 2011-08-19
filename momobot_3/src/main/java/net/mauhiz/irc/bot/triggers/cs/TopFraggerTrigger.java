@@ -14,6 +14,20 @@ import org.apache.commons.lang3.StringUtils;
  * @author mauhiz
  */
 public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+    private static Player findBestPlayer(IServer server) {
+        Player best = null;
+        int bestScore = Integer.MIN_VALUE;
+        for (Player player : server.getPlayers()) {
+            if (player == null) {
+                continue;
+            } else if (player.getFrags() > bestScore) {
+                best = player;
+                bestScore = player.getFrags();
+            }
+        }
+        return best;
+    }
+
     /**
      * @param trigger
      *            le trigger
@@ -56,19 +70,5 @@ public class TopFraggerTrigger extends AbstractTextTrigger implements IPrivmsgTr
 
         Privmsg msg = new Privmsg(im, reply);
         control.sendMsg(msg);
-    }
-
-    private Player findBestPlayer(IServer server) {
-        Player best = null;
-        int bestScore = Integer.MIN_VALUE;
-        for (Player player : server.getPlayers()) {
-            if (player == null) {
-                continue;
-            } else if (player.getFrags() > bestScore) {
-                best = player;
-                bestScore = player.getFrags();
-            }
-        }
-        return best;
     }
 }
