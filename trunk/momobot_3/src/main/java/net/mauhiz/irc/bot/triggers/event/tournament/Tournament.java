@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,12 +13,14 @@ import java.util.Locale;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.bot.event.AbstractChannelEvent;
+import net.mauhiz.util.FileUtil;
 import net.mauhiz.util.MathUtils;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.net.ftp.FTP;
@@ -155,7 +156,7 @@ public class Tournament extends AbstractChannelEvent {
         File temp = new File(CFG.getString("tn.tempfile.name"));
 
         ve.init();
-        PrintWriter writer = new PrintWriter(temp);
+        FileWriterWithEncoding writer = new FileWriterWithEncoding(temp, FileUtil.UTF8);
 
         try {
             Template plate = ve.getTemplate(CFG.getString("tn.vm"));
