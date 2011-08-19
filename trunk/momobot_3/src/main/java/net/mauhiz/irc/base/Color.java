@@ -1,5 +1,7 @@
 package net.mauhiz.irc.base;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -11,7 +13,7 @@ public enum Color {
 
     public static Color fromCode(String code) {
         for (Color color : values()) {
-            if (color.code == code) {
+            if (StringUtils.equals(color.code, code)) {
                 return color;
             }
         }
@@ -32,7 +34,7 @@ public enum Color {
     }
 
     public String getCssName() {
-        return StringUtils.remove(name().toLowerCase(), "_");
+        return StringUtils.remove(name().toLowerCase(Locale.ENGLISH), "_");
     }
 
     /**
