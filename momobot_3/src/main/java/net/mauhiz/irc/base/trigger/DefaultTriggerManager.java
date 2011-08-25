@@ -50,31 +50,35 @@ public class DefaultTriggerManager implements ITriggerManager {
         public void trun() {
             try {
                 for (ITrigger trigger : getTriggers()) {
-                    if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
-                        IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
-                        Privmsg priv = (Privmsg) msg;
-                        if (trig.isActivatedBy(priv.getMessage())) {
-                            trig.doTrigger(priv, control);
-                        }
-                    } else if (msg instanceof Notice && trigger instanceof INoticeTrigger) {
-                        INoticeTrigger trig = (INoticeTrigger) trigger;
-                        Notice notic = (Notice) msg;
-                        if (trig.isActivatedBy(notic.getMessage())) {
-                            trig.doTrigger(notic, control);
-                        }
-                    } else if (msg instanceof Join && trigger instanceof IJoinTrigger) {
-                        ((IJoinTrigger) trigger).doTrigger((Join) msg, control);
-                    } else if (msg instanceof Part && trigger instanceof IPartTrigger) {
-                        ((IPartTrigger) trigger).doTrigger((Part) msg, control);
-                    } else if (msg instanceof Invite && trigger instanceof IInviteTrigger) {
-                        ((IInviteTrigger) trigger).doTrigger((Invite) msg, control);
-                    } else if (msg instanceof Kick && trigger instanceof IKickTrigger) {
-                        ((IKickTrigger) trigger).doTrigger((Kick) msg, control);
-                    }
+                    tryTrigger(trigger);
                 }
 
             } catch (RuntimeException unexpected) {
                 LOG.error(unexpected, unexpected);
+            }
+        }
+
+        private void tryTrigger(ITrigger trigger) {
+            if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
+                IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
+                Privmsg priv = (Privmsg) msg;
+                if (trig.isActivatedBy(priv.getMessage())) {
+                    trig.doTrigger(priv, control);
+                }
+            } else if (msg instanceof Notice && trigger instanceof INoticeTrigger) {
+                INoticeTrigger trig = (INoticeTrigger) trigger;
+                Notice notice = (Notice) msg;
+                if (trig.isActivatedBy(notice.getMessage())) {
+                    trig.doTrigger(notice, control);
+                }
+            } else if (msg instanceof Join && trigger instanceof IJoinTrigger) {
+                ((IJoinTrigger) trigger).doTrigger((Join) msg, control);
+            } else if (msg instanceof Part && trigger instanceof IPartTrigger) {
+                ((IPartTrigger) trigger).doTrigger((Part) msg, control);
+            } else if (msg instanceof Invite && trigger instanceof IInviteTrigger) {
+                ((IInviteTrigger) trigger).doTrigger((Invite) msg, control);
+            } else if (msg instanceof Kick && trigger instanceof IKickTrigger) {
+                ((IKickTrigger) trigger).doTrigger((Kick) msg, control);
             }
         }
     }
@@ -83,6 +87,20 @@ public class DefaultTriggerManager implements ITriggerManager {
      * logger
      */
     static final Logger LOG = Logger.getLogger(DefaultTriggerManager.class);
+
+    private static Class<? extends ITrigger> findClass(String trigClassFull) {
+        try {
+            Class<?> wannabe = Class.forName(trigClassFull);
+            if (!ITrigger.class.isAssignableFrom(wannabe)) {
+                LOG.warn("Not a trigger: " + wannabe.getName());
+                return null;
+            }
+            return wannabe.asSubclass(ITrigger.class);
+        } catch (ClassNotFoundException e) {
+            LOG.warn(e);
+            return null;
+        }
+    }
 
     /**
      * keeper of the seven keys
@@ -134,30 +152,24 @@ public class DefaultTriggerManager implements ITriggerManager {
      * @param args
      */
     public void loadTrigClass(String trigClassFull, String prefix, Collection<String> args) {
-        Class<? extends ITrigger> trigClass;
-        try {
-            Class<?> wannabe = Class.forName(trigClassFull);
-            if (!ITrigger.class.isAssignableFrom(wannabe)) {
-                LOG.warn("Not a trigger: " + wannabe.getName());
-                return;
+        Class<? extends ITrigger> trigClass = findClass(trigClassFull);
+        if (trigClass != null) {
+            if (args.isEmpty()) {
+                LOG.debug("loading trigger: " + trigClass.getSimpleName());
+                addTrigger(trigClass, (Object[]) null);
+            } else {
+                loadTrigClassWithArgs(trigClass, prefix, args);
             }
-            trigClass = wannabe.asSubclass(ITrigger.class);
-        } catch (ClassNotFoundException e) {
-            LOG.warn(e);
-            return;
         }
+    }
 
-        if (args.isEmpty()) {
-            LOG.debug("loading trigger: " + trigClass.getSimpleName());
-            addTrigger(trigClass, (Object[]) null);
-        } else {
-            for (String trigText : args) {
-                if (prefix != null) {
-                    trigText = prefix + trigText;
-                }
-                addTrigger(trigClass, trigText);
-                LOG.debug("loading trigger with command '" + trigText + "': " + trigClass.getSimpleName());
+    private void loadTrigClassWithArgs(Class<? extends ITrigger> trigClass, String prefix, Collection<String> args) {
+        for (String trigText : args) {
+            if (prefix != null) {
+                trigText = prefix + trigText;
             }
+            LOG.debug("loading trigger with command '" + trigText + "': " + trigClass.getSimpleName());
+            addTrigger(trigClass, trigText);
         }
     }
 

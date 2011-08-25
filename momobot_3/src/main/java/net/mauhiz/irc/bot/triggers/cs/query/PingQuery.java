@@ -1,5 +1,7 @@
 package net.mauhiz.irc.bot.triggers.cs.query;
 
+import java.nio.ByteBuffer;
+
 import net.mauhiz.irc.bot.triggers.cs.IServer;
 import net.mauhiz.util.FileUtil;
 
@@ -16,7 +18,7 @@ public class PingQuery extends AbstractQuery {
         super(server);
     }
 
-    public void afterReceive(byte[] resp) {
+    public void afterReceive(ByteBuffer result) {
         // ignore response
         server.setPing(sw.getTime());
         sw.reset();
@@ -28,7 +30,7 @@ public class PingQuery extends AbstractQuery {
         sw.start();
     }
 
-    public byte[] getCmd() {
-        return FileUtil.getBytes(Character.toString(A2A_PING), FileUtil.ASCII);
+    public ByteBuffer getCmd() {
+        return FileUtil.ASCII.encode(Character.toString(A2A_PING));
     }
 }

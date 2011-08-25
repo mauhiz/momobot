@@ -1,9 +1,8 @@
 package net.mauhiz.irc.base.io;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.nio.CharBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -24,15 +23,14 @@ public class IrcOutput extends AbstractDaemon implements IIrcOutput {
     private static final Logger LOGGER = Logger.getLogger(IrcOutput.class);
     private static final int MAX_SIZE = 50;
     private final BlockingQueue<String> queue = new LinkedBlockingQueue<String>(MAX_SIZE);
-    private final PrintWriter writer;
+    private final AsynchronousSocketChannel socket;
 
     /**
      * @param socket
-     * @throws IOException
      */
-    protected IrcOutput(Socket socket) throws IOException {
+    protected IrcOutput(AsynchronousSocketChannel socket) {
         super("IRC Output");
-        writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), FileUtil.ISO8859_15), true);
+        this.socket = socket;
     }
 
     /**
@@ -70,8 +68,18 @@ public class IrcOutput extends AbstractDaemon implements IIrcOutput {
                 continue;
             }
             LOGGER.debug(">> " + toWrite);
-            writer.println(toWrite);
+            socket.write(FileUtil.ISO8859_15.encode(CharBuffer.wrap(toWrite + "\r\n")));
         }
-        writer.close();
+        tstop();
+    }
+
+    @Override
+    public void tstop() {
+        super.tstop();
+        try {
+            socket.close();
+        } catch (IOException ioe) {
+            LOGGER.warn("Could not close output stream: " + ioe, ioe);
+        }
     }
 }

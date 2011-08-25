@@ -28,9 +28,17 @@ public abstract class AbstractPrivateIrcMessage extends AbstractIrcMessage imple
         return isToChannel() ? new IrcChannel[] { (IrcChannel) to } : new IrcChannel[0];
     }
 
+    protected int getHeaderLength() {
+        return getIrcCommand().toString().length() + 1 + to.getIrcForm().length() + 2;
+    }
+
     @Override
     public final String getIrcForm() {
         return super.getIrcForm() + ' ' + to + " :" + getMessage(); // getMessage() important pour les sous classes (CTCP, ACTION...);
+    }
+
+    public int getMaxPayload() {
+        return getServerPeer().getNetwork().getLineMaxLength() - getHeaderLength();
     }
 
     public String getMessage() {

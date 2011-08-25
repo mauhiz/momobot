@@ -38,9 +38,8 @@ public final class ColorUtils implements IrcSpecialChars {
     public static String removeColors(String line) {
         int length = line.length();
         StringBuilder buffer = new StringBuilder();
-        char index = 0;
-        while (index < length) {
-            char car = line.charAt(index);
+        for (int index = 0; index < length;) {
+            int car = line.codePointAt(index);
             if (car == DELIM_NORMAL) {
                 ++index;
                 continue;
@@ -49,12 +48,12 @@ public final class ColorUtils implements IrcSpecialChars {
                     break;
                 }
                 /* Skip "x" or "xy" (foreground color). */
-                car = line.charAt(index);
+                car = line.codePointAt(index);
                 if (Character.isDigit(car)) {
                     if (++index >= length) {
                         break;
                     }
-                    car = line.charAt(index);
+                    car = line.codePointAt(index);
                     if (Character.isDigit(car)) {
                         ++index;
                     }
@@ -62,19 +61,19 @@ public final class ColorUtils implements IrcSpecialChars {
                     if (index >= length) {
                         break;
                     }
-                    car = line.charAt(index);
+                    car = line.codePointAt(index);
                     if (car == ',') {
                         if (++index >= length) {
                             /* Keep the comma. */
                             --index;
                             continue;
                         }
-                        car = line.charAt(index);
+                        car = line.codePointAt(index);
                         if (Character.isDigit(car)) {
                             if (++index >= length) {
                                 break;
                             }
-                            car = line.charAt(index);
+                            car = line.codePointAt(index);
                             if (Character.isDigit(car)) {
                                 ++index;
                             }
@@ -151,38 +150,38 @@ public final class ColorUtils implements IrcSpecialChars {
         StringBuilder result = new StringBuilder();
         Stack<String> openTags = new Stack<String>();
         for (int i = 0; i < text.length(); i++) {
-            char next = text.charAt(i);
+            int next = text.codePointAt(i);
             if (next == DELIM_COLOR) {
                 if ("font".equals(openTags.peek())) {
                     result.append(getCloseTag("font"));
                     continue;
                 }
-                char fgcolor1 = text.charAt(i + 1);
+                int fgcolor1 = text.codePointAt(i + 1);
                 if (!Character.isDigit(fgcolor1)) {
                     continue;
                 }
                 i++; // consuming
-                char fgcolor2 = text.charAt(i + 1);
+                int fgcolor2 = text.codePointAt(i + 1);
                 String fgColorStr;
                 if (Character.isDigit(fgcolor2)) {
                     i++; // consuming
-                    fgColorStr = new String(new char[] { fgcolor1, fgcolor2 });
+                    fgColorStr = text.substring(i - 2, i);
                 } else {
-                    fgColorStr = Character.toString(fgcolor1);
+                    fgColorStr = text.substring(i - 1, i);
                 }
                 Color fgcolor = Color.fromCode(fgColorStr);
                 Color bgcolor = null;
-                if (text.charAt(i + 1) == ',') {
-                    char bgcolor1 = text.charAt(i + 2);
+                if (text.codePointAt(i + 1) == ',') {
+                    int bgcolor1 = text.codePointAt(i + 2);
                     if (Character.isDigit(bgcolor1)) {
                         i += 2;
-                        char bgcolor2 = text.charAt(i + 1);
+                        int bgcolor2 = text.codePointAt(i + 1);
                         String bgColorStr;
                         if (Character.isDigit(bgcolor2)) {
                             i++; // consuming
-                            bgColorStr = new String(new char[] { bgcolor1, bgcolor2 });
+                            bgColorStr = text.substring(i - 2, i);
                         } else {
-                            bgColorStr = Character.toString(bgcolor1);
+                            bgColorStr = text.substring(i - 1, i);
                         }
                         bgcolor = Color.fromCode(bgColorStr);
                     }

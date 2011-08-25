@@ -90,10 +90,7 @@ public class ChannelProperties implements IChannelProperties {
         return prive;
     }
 
-    /**
-     * @see net.mauhiz.irc.base.data.IChannelProperties#process(boolean, char, java.lang.String[])
-     */
-    public void process(boolean set, char mode, String... args) {
+    public void process(boolean set, int mode, String... args) {
         if (mode == 'b') {
             HostMask hm = HostMask.getInstance(args[0]);
             if (set) {

@@ -52,7 +52,7 @@ public interface IChannelProperties {
      */
     boolean isPrive();
 
-    void process(boolean set, char mode, String... args);
+    void process(boolean set, int mode, String... args);
 
     /**
      * @param inviteOnly

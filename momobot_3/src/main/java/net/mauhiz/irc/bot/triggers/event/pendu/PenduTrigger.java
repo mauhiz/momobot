@@ -1,7 +1,5 @@
 package net.mauhiz.irc.bot.triggers.event.pendu;
 
-import java.util.Locale;
-
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -45,7 +43,7 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
                 Pendu pendu = (Pendu) evt;
                 String respMsg;
                 if (cme.getMessage().length() == 1) {
-                    respMsg = pendu.submitLettre(cme.getMessage().toLowerCase(Locale.FRANCE).charAt(0));
+                    respMsg = pendu.submitLettre(Character.toLowerCase(cme.getMessage().codePointAt(0)));
                 } else {
                     respMsg = pendu.submitMot(cme.getMessage()).toString();
                 }

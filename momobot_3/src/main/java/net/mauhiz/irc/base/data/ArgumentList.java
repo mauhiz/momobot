@@ -61,10 +61,10 @@ public class ArgumentList implements Iterable<String> {
             return ret;
         }
 
-        // skip next whitespace chars
+        // skip next whitespace utf characters
         if (consume) {
             int newIndex = endIndex;
-            while (message.charAt(newIndex) == ' ') {
+            while (Character.isSpaceChar(message.codePointAt(newIndex))) {
                 newIndex++;
             }
             index = newIndex;

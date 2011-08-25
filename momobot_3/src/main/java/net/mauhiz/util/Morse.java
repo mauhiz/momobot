@@ -2,10 +2,8 @@ package net.mauhiz.util;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
-
 
 import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.log4j.Logger;
@@ -17,7 +15,7 @@ public class Morse {
     /**
      * mon tableau avec le code morse.
      */
-    private static final Map<Character, String> CODE_MORSE = new TreeMap<Character, String>();
+    private static final SortedMap<String, String> CODE_MORSE = new TreeMap<String, String>();
     /**
      * logger.
      */
@@ -25,8 +23,8 @@ public class Morse {
     /**
      * mon tableau avec le code morse inverse.
      */
-    private static final Map<String, Character> REVERSE_MORSE = new TreeMap<String, Character>();
-    
+    private static final SortedMap<String, String> REVERSE_MORSE = new TreeMap<String, String>();
+
     /**
      * les lettres doivent etre separees par un espace.
      * 
@@ -44,7 +42,7 @@ public class Morse {
         }
         return output.toString();
     }
-    
+
     /**
      * La map morse est forme ainsi...
      * 
@@ -64,18 +62,17 @@ public class Morse {
             if (!REVERSE_MORSE.isEmpty()) {
                 REVERSE_MORSE.clear();
             }
-            Character chara;
-            String traitPoint;
             for (String ligne : lignes) {
-                chara = Character.valueOf(ligne.charAt(0));
-                traitPoint = ligne.substring(2);
-                CODE_MORSE.put(chara, traitPoint);
-                REVERSE_MORSE.put(traitPoint, chara);
+                String normal = ligne.substring(0, 1);
+                String traitPoint = ligne.substring(2);
+                CODE_MORSE.put(normal, traitPoint);
+                REVERSE_MORSE.put(traitPoint, normal);
             }
         } catch (IOException ioe) {
             LOG.warn(ioe, ioe);
         }
     }
+
     /**
      * @param work
      *            la chaine a convertir en Morse
@@ -86,9 +83,10 @@ public class Morse {
             loadMorse();
         }
         StringBuilder output = new StringBuilder();
-        String upper = work.toUpperCase(Locale.FRANCE);
-        for (char element : upper.toCharArray()) {
-            output.append(CODE_MORSE.get(Character.valueOf(element)));
+        String upper = work.toUpperCase();
+        for (int i = 0; i < upper.length(); i++) {
+            String element = upper.substring(i, i + 1);
+            output.append(CODE_MORSE.get(element));
         }
         return output.toString();
     }

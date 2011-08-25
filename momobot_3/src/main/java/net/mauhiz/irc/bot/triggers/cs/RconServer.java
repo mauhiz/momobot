@@ -43,7 +43,7 @@ public class RconServer extends Server implements IRconServer {
     }
 
     @Override
-    public IRconClient getClient() {
+    public IRconClient getClient() throws IOException {
         return (IRconClient) super.getClient();
     }
 

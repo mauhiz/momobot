@@ -21,14 +21,11 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
         super(server);
     }
 
-    public void afterReceive(byte[] resp) {
+    public void afterReceive(ByteBuffer result) {
         // ignore response
         server.setPing(sw.getTime());
         sw.reset();
-        ByteBuffer result = ByteBuffer.wrap(resp);
-
-        result.getInt(); // ignore that
-        char type = (char) result.get();
+        char type = readByteAsChar(result);
         LOG.debug("Type: " + Character.toString(type));
         if (type == GOLDSOURCE) {
             getDetailsGoldSource(result);
@@ -45,14 +42,14 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
         sw.start();
     }
 
-    public byte[] getCmd() {
-        return FileUtil.getBytes(A2S_INFO + QUERY, FileUtil.ASCII);
+    public ByteBuffer getCmd() {
+        return FileUtil.ASCII.encode(A2S_INFO + QUERY);
     }
 
     /**
      * @param result
      */
-    private void getDetailsGoldSource(ByteBuffer result) {
+    protected void getDetailsGoldSource(ByteBuffer result) {
         String adresse = getNextString(result);
         LOG.debug("adresse: " + adresse);
         server.setName(getNextString(result));
@@ -71,35 +68,32 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
         LOG.debug("max players: " + maxPlayers);
         short version = result.get();
         LOG.debug("version: " + version);
-        char dedicated = (char) result.get();
+        char dedicated = readByteAsChar(result);
         LOG.debug("dedicated: " + dedicated);
-        char operatingSystem = (char) result.get();
+        char operatingSystem = readByteAsChar(result);
         LOG.debug("OS: " + operatingSystem);
-        boolean passWord = result.get() == 0x1;
+        boolean passWord = readByteAsBoolean(result);
         LOG.debug("passWord: " + passWord);
-        boolean isMod = result.get() == 0x1;
+        boolean isMod = readByteAsBoolean(result);
         LOG.debug("isMod: " + isMod);
         if (isMod) {
             getDetailsModGoldSource(result);
         }
-        boolean secure = result.get() == 0x1;
+        boolean secure = readByteAsBoolean(result);
         LOG.debug("secure: " + secure);
         short nbBots = result.get();
         LOG.debug("nbBots: " + nbBots);
 
-        int remaining = result.remaining();
-        if (remaining > 0) {
-            LOG.warn("remaining bytes: " + remaining);
-            byte[] remain = new byte[remaining];
-            System.arraycopy(result.array(), result.position(), remain, 0, remaining);
-            LOG.warn("remaining text: " + new String(remain, FileUtil.ASCII));
+        if (result.hasRemaining()) {
+            LOG.warn("remaining bytes: " + result.remaining());
+            LOG.warn("remaining text: " + FileUtil.ASCII.decode(result));
         }
     }
 
     /**
      * @param result
      */
-    private void getDetailsModGoldSource(ByteBuffer result) {
+    protected void getDetailsModGoldSource(ByteBuffer result) {
         String urlInfo = getNextString(result);
         LOG.debug("urlInfo? " + urlInfo);
 
@@ -112,9 +106,9 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
         LOG.debug("modVersion? " + Integer.toString(modVersion));
         int modSize = result.getInt();
         LOG.debug("modSize: " + modSize);
-        boolean svOnly = result.get() == 0x1;
+        boolean svOnly = readByteAsBoolean(result);
         LOG.debug("svOnly? " + svOnly);
-        boolean clDll = result.get() == 0x1;
+        boolean clDll = readByteAsBoolean(result);
         LOG.debug("clDll? " + clDll);
 
     }
@@ -143,13 +137,13 @@ public class InfoQuery extends AbstractQuery implements ServerFlags {
         LOG.debug("max players: " + maxPlayers);
         short nbBots = result.get();
         LOG.debug("nbBots: " + nbBots);
-        char dedicated = (char) result.get();
+        char dedicated = readByteAsChar(result);
         LOG.debug("dedicated: " + dedicated);
-        char operatingSystem = (char) result.get();
+        char operatingSystem = readByteAsChar(result);
         LOG.debug("OS: " + operatingSystem);
-        boolean passWord = result.get() == 0x1;
+        boolean passWord = readByteAsBoolean(result);
         LOG.debug("password? " + passWord);
-        boolean secure = result.get() == 0x1;
+        boolean secure = readByteAsBoolean(result);
         LOG.debug("secure? " + secure);
         String gameVersion = getNextString(result);
         LOG.debug("version: " + gameVersion);

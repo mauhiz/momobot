@@ -20,7 +20,7 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * prefixe du chan (#, &amp;)
      */
-    private final Character prefix;
+    private final String prefix;
     /**
      * flags du chan
      */
@@ -35,7 +35,7 @@ public abstract class AbstractIrcChannel implements IrcChannel {
      * @param chanName
      */
     protected AbstractIrcChannel(String chanName) {
-        prefix = Character.valueOf(chanName.charAt(0));
+        prefix = chanName.substring(0, 1);
         nom = chanName.substring(1);
     }
 

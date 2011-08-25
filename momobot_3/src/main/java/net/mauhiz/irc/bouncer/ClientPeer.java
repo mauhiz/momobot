@@ -1,7 +1,8 @@
 package net.mauhiz.irc.bouncer;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.nio.channels.AsynchronousSocketChannel;
 
 import net.mauhiz.irc.base.data.AbstractPeer;
 import net.mauhiz.irc.base.data.IrcNetwork;
@@ -12,8 +13,8 @@ import org.apache.commons.lang.NotImplementedException;
 public class ClientPeer extends AbstractPeer implements Target {
     private final BncServer server;
 
-    public ClientPeer(Socket so, BncServer server) {
-        super(new InetSocketAddress(so.getInetAddress(), so.getPort()));
+    public ClientPeer(AsynchronousSocketChannel socket, BncServer server) throws IOException {
+        super((InetSocketAddress) socket.getRemoteAddress());
         this.server = server;
     }
 

@@ -2,7 +2,11 @@ package net.mauhiz.irc.base.io;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import net.mauhiz.irc.base.IrcClientControl;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
@@ -11,22 +15,15 @@ import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.User;
 import net.mauhiz.util.ThreadUtils;
 
-import org.apache.commons.net.SocketClient;
 import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
 public class IrcClientIO extends AbstractIrcIO {
-    static class IrcClient extends SocketClient {
-        Socket getSocket() {
-            return _socket_;
-        }
-    }
-
     private static final Logger LOG = Logger.getLogger(IrcClientIO.class);
     private IIrcInput input;
-    private final IrcClient sclient = new IrcClient();
+    private AsynchronousSocketChannel sclient;
 
     public IrcClientIO(IrcClientControl control, IrcPeer server) {
         super(control, server);
@@ -37,14 +34,22 @@ public class IrcClientIO extends AbstractIrcIO {
      */
     public void connect() throws IOException {
         InetSocketAddress address = peer.getAddress();
-        sclient.connect(address.getAddress(), address.getPort());
-        if (sclient.getSocket() == null) {
-            LOG.error("could not connect to " + address);
+        sclient = AsynchronousSocketChannel.open();
+        Future<Void> f = sclient.connect(address);
+        try {
+            f.get(4, TimeUnit.SECONDS);
+        } catch (TimeoutException te) {
+            LOG.error("could not connect to " + address, te);
+            return;
+        } catch (InterruptedException e) {
+            ThreadUtils.handleInterruption(e);
+        } catch (ExecutionException e) {
+            LOG.error("could not connect to " + address, e.getCause());
             return;
         }
-        output = new IrcOutput(sclient.getSocket());
+        output = new IrcOutput(sclient);
         output.tstart();
-        input = new IrcInput(this, sclient.getSocket());
+        input = new IrcInput(this, sclient);
         input.tstart();
         IIrcServerPeer server = getServerPeer();
         sendMsg(new Nick(server).getIrcForm());
@@ -63,13 +68,12 @@ public class IrcClientIO extends AbstractIrcIO {
             input.tstop();
         }
         ThreadUtils.safeSleep(2000);
-        if (sclient.isConnected()) {
-            try {
-                sclient.disconnect();
-            } catch (IOException ioe) {
-                LOG.error(ioe, ioe);
-            }
+        try {
+            sclient.close();
+        } catch (IOException ioe) {
+            LOG.error(ioe, ioe);
         }
+
         status = IOStatus.DISCONNECTED;
     }
 

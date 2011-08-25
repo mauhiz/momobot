@@ -37,7 +37,8 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         StringBuilder q3nick = new StringBuilder();
         StrBuilder colorCode = new StrBuilder();
         int inColor = 0;
-        for (char c : args.toCharArray()) {
+        for (int i = 0; i < args.length(); i++) {
+            int c = args.codePointAt(i);
             if (c == DELIM_COLOR) {
                 inColor = 1;
                 continue;

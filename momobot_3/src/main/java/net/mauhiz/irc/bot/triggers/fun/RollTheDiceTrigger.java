@@ -75,7 +75,7 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
         control.sendMsg(msg);
     }
 
-    private String getCommentaire(int diceRoll, int max) {
+    protected String getCommentaire(int diceRoll, int max) {
         if (diceRoll == max) {
             return "Quelle chance ! ";
         } else if (diceRoll == 1) {

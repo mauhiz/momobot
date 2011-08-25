@@ -119,6 +119,21 @@ public class SeekWar2 extends AbstractChannelEvent {
 
     /**
      * @param st
+     * @return
+     */
+    private static boolean isMatchServer(final String st) {
+        String st1 = st.toLowerCase(Locale.FRENCH);
+        if (DEFAULT_SERV) {
+            return true;
+        }
+        if (st1.contains("off")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param st
      * @return true si le param�tre st contient une URL, false sinon
      */
     public static boolean isMatchUrl(final String st) {
@@ -129,7 +144,6 @@ public class SeekWar2 extends AbstractChannelEvent {
     }
 
     private final IrcChannel channel;
-
     private final IIrcControl control;
     /**
      * contient false si la war est encore d'actualit�, true sinon
@@ -137,12 +151,13 @@ public class SeekWar2 extends AbstractChannelEvent {
     private boolean expired;
     private String ipPw;
     private final IIrcServerPeer ircServer;
-    private String level;
 
+    private String level;
     /**
      * Liste des utilisateurs qui sont d�j� rentr�s en contact avec le bot lorsqu'il �tait en train de seeker
      */
     private final List<SeekUserHistory> listIrcSeekUser = new ArrayList<SeekUserHistory>();
+
     private final int nbPlayers;
 
     private boolean serv;
@@ -440,21 +455,6 @@ public class SeekWar2 extends AbstractChannelEvent {
                 // FIXME
                 LOG.debug("Not found but...");
             }
-        }
-        return false;
-    }
-
-    /**
-     * @param st
-     * @return
-     */
-    private boolean isMatchServer(final String st) {
-        String st1 = st.toLowerCase(Locale.FRENCH);
-        if (DEFAULT_SERV) {
-            return true;
-        }
-        if (st1.contains("off")) {
-            return true;
         }
         return false;
     }

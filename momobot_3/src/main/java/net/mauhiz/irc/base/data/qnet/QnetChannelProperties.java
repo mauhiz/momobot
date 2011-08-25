@@ -42,7 +42,7 @@ class QnetChannelProperties extends ChannelProperties {
     }
 
     @Override
-    public void process(boolean set, char mode, String... args) {
+    public void process(boolean set, int mode, String... args) {
         if (mode == 'd') {
             hiddenUsers = set;
         } else if (mode == 'c') {

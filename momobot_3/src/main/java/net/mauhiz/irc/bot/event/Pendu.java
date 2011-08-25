@@ -80,7 +80,7 @@ public class Pendu extends AbstractChannelEvent {
     /**
      * lettres deja proposees.
      */
-    private final Set<Character> alreadyTried = new TreeSet<Character>();
+    private final Set<String> alreadyTried = new TreeSet<String>();
     /**
      * le mot en cours de devinage (negatif).
      */
@@ -109,7 +109,7 @@ public class Pendu extends AbstractChannelEvent {
     public Pendu(IrcChannel channel1) {
         super(channel1);
         solutionPure = getNextMot();
-        solution = MomoStringUtils.effaceAccents(solutionPure);
+        solution = MomoStringUtils.normalizeAscii(solutionPure);
         mot.append(solution);
         vies = calibre(mot.length());
         devinage.append(StringUtils.rightPad("", mot.length(), UNDERSCORE));
@@ -121,13 +121,13 @@ public class Pendu extends AbstractChannelEvent {
      *            la lettre
      * @return si la lettre est present ans le mot
      */
-    public boolean findLetter(char car) {
+    public boolean findLetter(int car) {
         boolean present = false;
         for (int index = 0; index < solution.length(); index++) {
-            if (car == mot.charAt(index)) {
+            if (car == mot.codePointAt(index)) {
                 present = true;
-                devinage.setCharAt(index, solutionPure.charAt(index));
-                mot.setCharAt(index, UNDERSCORE);
+                MomoStringUtils.setCodePointAt(devinage, index, solutionPure.codePointAt(index));
+                MomoStringUtils.setCodePointAt(mot, index, UNDERSCORE);
             }
         }
         return present;
@@ -141,22 +141,22 @@ public class Pendu extends AbstractChannelEvent {
     }
 
     /**
-     * @param toSubmit
+     * @param i
      *            la lettre
      * @return un message
      */
-    public String submitLettre(char toSubmit) {
-        if (Character.isLetter(toSubmit)) {
-            if (!alreadyTried.add(Character.valueOf(toSubmit))) {
-                return "La lettre " + toSubmit + " a deja ete essayee";
+    public String submitLettre(int i) {
+        if (Character.isLetter(i)) {
+            if (!alreadyTried.add(new String(Character.toChars(i)))) {
+                return "La lettre " + i + " a deja ete essayee";
             }
         } else {
             return "";
         }
 
         StringBuilder penduMsg = new StringBuilder();
-        penduMsg.append("La lettre ").append(toSubmit).append(" est ");
-        if (findLetter(toSubmit)) {
+        penduMsg.append("La lettre ").append(i).append(" est ");
+        if (findLetter(i)) {
             penduMsg.append("presente! ");
             if (devinage.toString().equals(solutionPure)) {
                 /* arreter le pendu */

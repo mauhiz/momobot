@@ -1,10 +1,12 @@
 package net.mauhiz.irc.bot.triggers.event.tournament;
 
+import java.io.Serializable;
+
 /**
  * @author Topper
  * 
  */
-public class Match {
+public class Match implements Serializable {
     /**
      * serial
      */
@@ -196,28 +198,26 @@ public class Match {
             score[1] = scoreTeam1;
             return toString();
         }
-        return "Erreur : Match incompatible.";
 
+        return "Erreur : Match incompatible.";
     }
 
-    /**
-     * @see java.util.AbstractCollection#toString()
-     */
     @Override
     public String toString() {
         // on a un gagnant
         if (winner != null) {
-            // on a gagner le tn
-            String gagnant = "";
+            // on a gagne le tn
+            String gagnant;
             if (phase == 1) {
                 gagnant = " " + winner.toString() + " gagne le tournoi.";
+            } else {
+                gagnant = "";
             }
 
             if (team1.getId() == winner.getId()) {
                 return "Team " + team1.getId() + " (WINNER): " + score[0] + " vs Team " + team2.getId() + ":"
                         + score[1] + "." + gagnant;
-            }
-            if (team2.getId() == winner.getId()) {
+            } else if (team2.getId() == winner.getId()) {
                 return "Team " + team1.getId() + ": " + score[0] + " vs Team " + team2.getId() + " (WINNER):"
                         + score[1] + "." + gagnant;
             }

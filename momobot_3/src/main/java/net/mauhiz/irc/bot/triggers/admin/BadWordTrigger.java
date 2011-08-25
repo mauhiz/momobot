@@ -68,7 +68,7 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
      * @param control
      * @param badword
      */
-    private void getAngry(IPrivateIrcMessage toReply, IIrcControl control, String badword) {
+    protected void getAngry(IPrivateIrcMessage toReply, IIrcControl control, String badword) {
         IIrcMessage resp;
         IIrcServerPeer server = toReply.getServerPeer();
         IrcChannel targetChan = (IrcChannel) toReply.getTo();
