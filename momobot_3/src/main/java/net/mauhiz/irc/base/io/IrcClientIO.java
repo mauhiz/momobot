@@ -43,9 +43,9 @@ public class IrcClientIO extends AbstractIrcIO {
             return;
         }
         output = new IrcOutput(sclient.getSocket());
-        output.start();
+        output.tstart();
         input = new IrcInput(this, sclient.getSocket());
-        input.start();
+        input.tstart();
         IIrcServerPeer server = getServerPeer();
         sendMsg(new Nick(server).getIrcForm());
         sendMsg(new User(server).getIrcForm());
@@ -57,10 +57,10 @@ public class IrcClientIO extends AbstractIrcIO {
     public void disconnect() {
         status = IOStatus.DISCONNECTING;
         if (output != null) {
-            output.stop();
+            output.tstop();
         }
         if (input != null) {
-            input.stop();
+            input.tstop();
         }
         ThreadUtils.safeSleep(2000);
         if (sclient.isConnected()) {
