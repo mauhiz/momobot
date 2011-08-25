@@ -37,7 +37,7 @@ public class BncClientIO extends AbstractIrcIO {
     public void disconnect() {
         status = IOStatus.DISCONNECTING;
         if (output != null) {
-            output.stop();
+            output.tstop();
             ThreadUtils.safeSleep(2000);
         }
         if (socket.isConnected()) {
@@ -144,9 +144,9 @@ public class BncClientIO extends AbstractIrcIO {
 
     void start() throws IOException {
         output = new BncClientOutput(socket);
-        output.start();
+        output.tstart();
 
         IIrcInput input = new BncClientInput(this, socket);
-        input.start();
+        input.tstart();
     }
 }

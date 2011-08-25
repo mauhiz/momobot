@@ -1,20 +1,15 @@
 package net.mauhiz.irc.base.io;
 
+import net.mauhiz.util.IDaemon;
+
 /**
  * @author mauhiz
  */
-public interface IIrcOutput {
+public interface IIrcOutput extends IDaemon {
     boolean isReady();
 
     /**
      * @param raw
      */
     void sendRawMsg(String raw);
-
-    /**
-     * go!
-     */
-    void start();
-
-    void stop();
 }
