@@ -128,38 +128,79 @@ public class SwtIrcClient {
         if (msg instanceof IrcChannelMessage) {
             channels = ((IrcChannelMessage) msg).getChans();
 
+            if (channels == null || channels.length == 0) {
+                return false;
+            }
+
         } else {
             return false;
         }
 
-        if (channels == null || channels.length == 0) {
-            return false;
-        }
+        boolean processed = false;
 
         for (IrcChannel channel : channels) {
-            SwtChanTab chanTab = chanTabs.get(channel);
+            if (processChanLogSub(msg, channel)) {
+                processed = true;
+            }
+        }
 
-            if (chanTab == null) {
-                if (msg instanceof Part && msg.getServerPeer().getMyself().equals(msg.getFrom())) {
+        return processed;
+    }
+
+    private boolean processChanLogSub(IIrcMessage msg, IrcChannel channel) {
+        SwtChanTab chanTab = chanTabs.get(channel);
+
+        if (chanTab == null) {
+            if (msg instanceof Part) {
+                if (msg.getServerPeer().getMyself().equals(msg.getFrom())) {
                     // this is me parting
                     return true;
-                } else if (msg instanceof Kick && msg.getServerPeer().getMyself().equals(((Kick) msg).getTarget())) {
+                }
+            } else if (msg instanceof Kick) {
+                if (msg.getServerPeer().getMyself().equals(((Kick) msg).getTarget())) {
                     // this is me being kicked
                     return true;
                 }
-
-                LOG.warn("Missing chan tab: " + channel);
-                return false;
             }
 
-            chanTab.appendText(msg.toString());
-
-            if (msg instanceof SetTopic) {
-                chanTab.updateTopic(channel.getProperties().getTopic());
-            }
+            LOG.warn("Missing chan tab: " + channel);
+            return false;
         }
 
+        chanTab.appendText(msg.toString());
+
+        if (msg instanceof SetTopic) {
+            chanTab.updateTopic(channel.getProperties().getTopic());
+        }
         return true;
+    }
+
+    private void processLoop(SwtLogTab logTab) {
+
+        //        long maxLoopTime = 5000;
+        //        for (long startTime = System.currentTimeMillis(); startTime + maxLoopTime <= System.currentTimeMillis();) {
+        final IIrcMessage msg = gtm.nextMsg();
+
+        if (msg == null) { // booh, no new message
+            return;
+        }
+
+        if (logTab != null) {
+            logTab.appendText(msg.getIrcForm());
+        }
+
+        boolean processed = processChanLog(msg);
+
+        if (!processed) {
+            processed = processPrivateLog(msg);
+        }
+        if (!processed) {
+            processed = processServerLog(msg);
+        }
+        if (!processed) {
+            LOG.error("Unprocessed msg: " + msg);
+        }
+        //        }
     }
 
     private boolean processPrivateLog(IIrcMessage msg) {
@@ -197,14 +238,22 @@ public class SwtIrcClient {
         initMenus();
 
         /* Affichage des logs */
-        SwtLogTab defaut = initDefaultTab();
+        SwtLogTab logTab = initDefaultTab();
 
         /* go afficher */
         initShell();
+        try {
+            swtLoop(logTab);
+        } finally {
+            gtm.getClient().exit();
+        }
+    }
+
+    private void swtLoop(SwtLogTab logTab) {
         Display display = shell.getDisplay();
 
         while (!shell.isDisposed()) {
-            swtLoop(defaut);
+            processLoop(logTab);
 
             if (!display.readAndDispatch()) {
                 display.sleep();
@@ -212,34 +261,5 @@ public class SwtIrcClient {
         }
 
         display.dispose();
-        gtm.getClient().exit();
-    }
-
-    private void swtLoop(SwtLogTab logTab) {
-
-        //        long maxLoopTime = 5000;
-        //        for (long startTime = System.currentTimeMillis(); startTime + maxLoopTime <= System.currentTimeMillis();) {
-        final IIrcMessage msg = gtm.nextMsg();
-
-        if (msg == null) { // booh, no new message
-            return;
-        }
-
-        if (logTab != null) {
-            logTab.appendText(msg.getIrcForm());
-        }
-
-        boolean processed = processChanLog(msg);
-
-        if (!processed) {
-            processed = processPrivateLog(msg);
-        }
-        if (!processed) {
-            processed = processServerLog(msg);
-        }
-        if (!processed) {
-            LOG.error("Unprocessed msg: " + msg);
-        }
-        //        }
     }
 }

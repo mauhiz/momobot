@@ -17,6 +17,27 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 
 public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
 
+    private static Set<IrcUser> findNudgeableUsers(IrcChannel chan, IrcUser from, IrcUser myself) {
+        Set<IrcUser> nudgeableUsers = new TreeSet<IrcUser>();
+        for (IrcUser nextIrcUser : chan) {
+            if (nextIrcUser.isService()) {
+                /* no bots */
+                LOG.debug("skipping bot : " + nextIrcUser.getNick());
+                continue;
+            } else if (nextIrcUser.equals(from)) {
+                /* no caller */
+                LOG.debug("skipping caller : " + nextIrcUser.getNick());
+                continue;
+            } else if (nextIrcUser.equals(myself)) {
+                /* no self */
+                LOG.debug("skipping myself : " + nextIrcUser.getNick());
+                continue;
+            }
+            nudgeableUsers.add(nextIrcUser);
+        }
+        return nudgeableUsers;
+    }
+
     /**
      * @param trigger
      *            le trigger
@@ -41,23 +62,7 @@ public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
 
         LOG.debug("MassHlTrigger : " + chan.fullName() + " has " + chan.size() + " users");
         IrcUser from = (IrcUser) cme.getFrom();
-        Set<IrcUser> nudgeableUsers = new TreeSet<IrcUser>();
-        for (IrcUser nextIrcUser : chan) {
-            if (nextIrcUser.isService()) {
-                /* no bots */
-                LOG.debug("skipping bot : " + nextIrcUser.getNick());
-                continue;
-            } else if (nextIrcUser.equals(from)) {
-                /* no caller */
-                LOG.debug("skipping caller : " + nextIrcUser.getNick());
-                continue;
-            } else if (nextIrcUser.equals(cme.getServerPeer().getMyself())) {
-                /* no self */
-                LOG.debug("skipping myself : " + nextIrcUser.getNick());
-                continue;
-            }
-            nudgeableUsers.add(nextIrcUser);
-        }
+        Set<IrcUser> nudgeableUsers = findNudgeableUsers(chan, from, cme.getServerPeer().getMyself());
 
         if (nudgeableUsers.isEmpty()) {
             return;

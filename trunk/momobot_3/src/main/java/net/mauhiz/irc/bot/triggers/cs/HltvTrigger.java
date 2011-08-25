@@ -94,20 +94,23 @@ public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
      * @see net.mauhiz.irc.base.trigger.IPrivmsgTrigger#doTrigger(Privmsg, IIrcControl)
      */
     public void doTrigger(Privmsg im, IIrcControl control) {
-        String reply;
-        try {
-            reply = doTrigger(getArgs(im));
-
-        } catch (SocketTimeoutException ste) {
-            reply = "HLTV server offline: " + hltv.getIp();
-
-        } catch (IOException e) {
-            LOG.warn(e, e);
-            reply = "Error while connecting to HLTV: " + e;
-        }
+        String reply = getReply(im);
 
         Privmsg msg = new Privmsg(im, reply);
         control.sendMsg(msg);
+    }
+
+    private String getReply(Privmsg im) {
+        try {
+            return doTrigger(getArgs(im));
+
+        } catch (SocketTimeoutException ste) {
+            return "HLTV server offline: " + hltv.getIp();
+
+        } catch (IOException e) {
+            LOG.warn(e, e);
+            return "Error while connecting to HLTV: " + e;
+        }
     }
 
     @Override

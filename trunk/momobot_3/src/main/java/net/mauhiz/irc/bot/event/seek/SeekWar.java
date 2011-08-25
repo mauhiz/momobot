@@ -324,7 +324,7 @@ public class SeekWar {
         for (String element : cmd) {
 
             /* hey, xoring! */
-            if (element.charAt(0) == '\"' ^ element.charAt(element.length() - 1) == '\"') {
+            if (element.codePointAt(0) == '\"' ^ element.codePointAt(element.length() - 1) == '\"') {
                 inquote = !inquote;
             }
 

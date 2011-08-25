@@ -2,7 +2,6 @@ package net.mauhiz.irc.bot.triggers.fun;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,11 +27,11 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * The KENNYLETTERS in alphabetical order. Big Letters are the Same with the only difference That the First char is
      * UpperCase
      */
-    private static final Map<String, Character> KENNY_TO_NORMAL = new TreeMap<String, Character>();
+    private static final Map<String, String> KENNY_TO_NORMAL = new TreeMap<String, String>();
     /**
      * 
      */
-    private static final Map<Character, String> NORMAL_TO_KENNY = new TreeMap<Character, String>();
+    private static final Map<String, String> NORMAL_TO_KENNY = new TreeMap<String, String>();
 
     /**
      * @param toTest
@@ -43,10 +42,10 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         if (toTest.length() % 3 != 0) {
             return false;
         }
-        char ch;
-        for (char loopChar : toTest.toCharArray()) {
+        for (int i = 0; i < toTest.length(); i++) {
+            int loopChar = toTest.codePointAt(i);
             if (Character.isLetter(loopChar)) {
-                ch = Character.toLowerCase(loopChar);
+                int ch = Character.toLowerCase(loopChar);
                 if (ch != 'm' && ch != 'f' && ch != 'p') {
                     return false;
                 }
@@ -71,16 +70,14 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
             if (!NORMAL_TO_KENNY.isEmpty()) {
                 NORMAL_TO_KENNY.clear();
             }
-            Character chara;
-            String mpf;
             for (String ligne : lignes) {
                 if (ligne.length() < 2) {
                     continue;
                 }
-                chara = Character.valueOf(ligne.charAt(0));
-                mpf = ligne.substring(2);
-                NORMAL_TO_KENNY.put(chara, mpf);
-                KENNY_TO_NORMAL.put(mpf, chara);
+                String normalLetter = ligne.substring(0, 1);
+                String kennyLetter = ligne.substring(2);
+                NORMAL_TO_KENNY.put(normalLetter, kennyLetter);
+                KENNY_TO_NORMAL.put(kennyLetter, normalLetter);
             }
         } catch (IOException ioe) {
             LOG.warn(ioe, ioe);
@@ -92,7 +89,7 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      *            String to Translate
      * @return translated String
      */
-    public static StringBuilder translate(String toTranslate) {
+    public static CharSequence translate(String toTranslate) {
         if (isKenny(toTranslate)) {
             return translateKennyToNormal(toTranslate);
         }
@@ -104,16 +101,17 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      *            la string a traduire
      * @return ...
      */
-    private static char translateKennyLetterToNormalLetter(String toTranslate) {
+    private static String translateKennyLetterToNormalLetter(String toTranslate) {
         if (KENNY_TO_NORMAL.isEmpty()) {
             loadKenny();
         }
         if (toTranslate.length() != KENNY_LETTER_LEN) {
             throw new IllegalArgumentException(toTranslate + " n'est pas en Kennyspeak");
         }
-        char retour = KENNY_TO_NORMAL.get(toTranslate.toLowerCase(Locale.FRANCE)).charValue();
-        if (Character.isUpperCase(toTranslate.charAt(0))) {
-            return Character.toUpperCase(retour);
+        // use default Locale is OK
+        String retour = KENNY_TO_NORMAL.get(toTranslate.toLowerCase());
+        if (Character.isUpperCase(toTranslate.codePointAt(0))) {
+            return retour.toUpperCase();
         }
         return retour;
     }
@@ -122,14 +120,17 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * @param toTranslate
      * @return ...
      */
-    private static StringBuilder translateKennyToNormal(String toTranslate) {
+    private static CharSequence translateKennyToNormal(String toTranslate) {
         StringBuilder result = new StringBuilder();
-        int index = 0;
-        while (index < toTranslate.length()) {
-            while (Character.toUpperCase(toTranslate.charAt(index)) != 'M'
-                    && Character.toUpperCase(toTranslate.charAt(index)) != 'P'
-                    && Character.toUpperCase(toTranslate.charAt(index)) != 'F') {
-                result.append(toTranslate.charAt(index));
+
+        for (int index = 0; index < toTranslate.length();) {
+            while (true) {
+                int utfChar = toTranslate.codePointAt(index);
+                if (Character.toUpperCase(utfChar) == 'M' || Character.toUpperCase(utfChar) == 'P'
+                        || Character.toUpperCase(utfChar) == 'F') {
+                    break;
+                }
+                result.append(utfChar);
                 ++index;
                 if (toTranslate.length() == index) {
                     return result;
@@ -146,16 +147,17 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
     }
 
     /**
-     * @param ch
+     * @param normalLetter
      *            un caractere.
      * @return une kennylettre.
      */
-    private static String translateNormalLetterToKennyLetter(char ch) {
+    private static String translateNormalLetterToKennyLetter(String normalLetter) {
         if (NORMAL_TO_KENNY.isEmpty()) {
             loadKenny();
         }
-        String retour = NORMAL_TO_KENNY.get(Character.valueOf(Character.toLowerCase(ch)));
-        if (Character.isUpperCase(ch)) {
+        // use default Locale is OK
+        String retour = NORMAL_TO_KENNY.get(normalLetter.toLowerCase());
+        if (Character.isUpperCase(normalLetter.codePointAt(0))) {
             return StringUtils.capitalize(retour);
         }
         return retour;
@@ -166,14 +168,15 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      *            un string
      * @return ...
      */
-    private static StringBuilder translateNormalToKenny(String toTranslate) {
+    private static CharSequence translateNormalToKenny(String toTranslate) {
         StringBuilder result = new StringBuilder();
-        for (char ch : toTranslate.toCharArray()) {
+        for (int i = 0; i < toTranslate.length(); i++) {
+            int ch = toTranslate.codePointAt(i);
             /* Ordered according to optimisations suggested by Stuart */
             if (ch < 'A' || ch > 'Z' && ch < 'a' || ch > 'z') {
                 result.append(ch);
             } else {
-                result.append(translateNormalLetterToKennyLetter(ch));
+                result.append(translateNormalLetterToKennyLetter(toTranslate.substring(i, i + 1)));
             }
         }
         return result;

@@ -1,8 +1,7 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
-import static org.apache.commons.lang3.StringUtils.substringAfter;
-
 import java.io.IOException;
+import java.nio.CharBuffer;
 
 import net.mauhiz.util.FileUtil;
 
@@ -67,7 +66,8 @@ class RconClient extends ValveUdpClient implements IRconClient {
      *             en cas de pepin!
      */
     public void getRconChallenge() throws IOException {
-        rconChallenge = substringAfter(new String(sendAndRcvValveCmd(CHALLENGE), FileUtil.ASCII), CHALLENGE + " ");
+        CharBuffer challengeResp = FileUtil.ASCII.decode(sendAndRcvValveCmd(CHALLENGE));
+        rconChallenge = StringUtils.substringAfter(challengeResp.toString(), CHALLENGE + " ");
     }
 
     IRconServer getServer() {
@@ -82,70 +82,76 @@ class RconClient extends ValveUdpClient implements IRconClient {
         rl.tstart();
     }
 
+    private void obeyMyMaster(String action) throws IOException {
+        IRconServer rcs = getServer();
+        if ("!rs".equals(action)) {
+            rcs.svRestart(1);
+        } else if ("!3rs".equals(action)) {
+            rcs.svRestart(1);
+            rcs.svRestart(1);
+            rcs.svRestart(3);
+        } else {
+            if (action.startsWith(CMD_MAP)) {
+                rcs.changelevel(action.substring(CMD_MAP.length()));
+            }
+        }
+    }
+
     /**
-     * @param string
-     *            la ligne e etudier
+     * @param line
+     *            la ligne a etudier
      */
-    public void processLine(String string) {
-        String line = StringUtils.trim(string.substring(Integer.SIZE / Byte.SIZE));
+    public void processLine(String line) {
         if (line.startsWith("log ")) {
             try {
-                processLog(substringAfter(line, ": "));
+                processLog(StringUtils.substringAfter(line, ": "));
             } catch (IOException ioe) {
                 LOG.warn(ioe, ioe);
             }
-        } else if ("1Bad rcon_password.".equals(line)) {
-            LOG.warn("mauvais rcon");
-            unsetRcon();
-        } else if ("9Bad challenge.".equals(line)) {
-            LOG.warn("mauvais challenge");
-            rconChallenge = null;
         } else {
-            line = line.substring(1);
-            /* reponse au status */
-            if (line.startsWith("hostname")) {
-                processStatus(line);
-                return;
-            }
-            /* cvar quelconque. Forme : "sv_restart" "1" */
-            if (line.charAt(0) == '"') {
-                String[] pair = StringUtils.split(line, '"');
-                LOG.debug("CVAR : " + pair[0] + " = " + pair[2]);
+            // String retCode = line.substring(0, 1);
+            String realLine = line.substring(1);
+            if ("Bad rcon_password.".equals(realLine)) {
+                LOG.warn("mauvais rcon");
+                unsetRcon();
+            } else if ("Bad challenge.".equals(realLine)) {
+                LOG.warn("mauvais challenge");
+                rconChallenge = null;
+            } else {
+                /* reponse au status */
+                if (realLine.startsWith("hostname")) {
+                    processStatus(realLine);
+                    return;
+                }
+                /* cvar quelconque. Forme : "sv_restart" "1" */
+                if (realLine.codePointAt(0) == '"') {
+                    String[] pair = StringUtils.split(realLine, '"');
+                    LOG.debug("CVAR : " + pair[0] + " = " + pair[2]);
+                }
             }
         }
     }
 
     /**
      * @param log
-     *            le log e etudier
+     *            le log a etudier
      */
     private void processLog(String log) throws IOException {
         LOG.debug(log);
-        if (log.charAt(0) != '"') {
+        if (log.codePointAt(0) != '"') {
             return;
         }
         String temp = StringUtils.stripStart(log, "\"");
         String playerName = StringUtils.substringBefore(temp, "<");
-        temp = substringAfter(temp, "<");
-        String steamid = substringAfter(temp, "<");
+        temp = StringUtils.substringAfter(temp, "<");
+        String steamid = StringUtils.substringAfter(temp, "<");
         steamid = steamid.substring(0, steamid.indexOf('>'));
         String action = temp.substring(temp.indexOf('"') + 2);
         if (action.startsWith("say_team") && PlayerDB.isMaster(steamid)) {
-            IRconServer rcs = getServer();
-            action = action.substring(10, action.lastIndexOf('"'));
-            LOG.info(playerName + " (" + steamid + ") orders me :" + action);
-            if ("!rs".equals(action)) {
-                rcs.svRestart(1);
-            } else if ("!3rs".equals(action)) {
-                rcs.svRestart(1);
-                rcs.svRestart(1);
-                rcs.svRestart(3);
-            } else {
-                if (action.startsWith(CMD_MAP)) {
-                    action = action.substring(CMD_MAP.length());
-                    rcs.changelevel(action);
-                }
-            }
+            String realAction = action.substring(10, action.lastIndexOf('"'));
+            LOG.info(playerName + " (" + steamid + ") orders me :" + realAction);
+            obeyMyMaster(realAction);
+
         }
     }
 
@@ -161,7 +167,7 @@ class RconClient extends ValveUdpClient implements IRconClient {
         StrTokenizer lignes = new StrTokenizer(status);
         // 1 - hostname
         // 1hostname: Counter-Strike dedicated server
-        server.setName(substringAfter(lignes.nextToken(), ":").trim());
+        server.setName(StringUtils.substringAfter(lignes.nextToken(), ":").trim());
         // 2 - version (osef)
         // version : 47/1.1.2.5/2.0.0.0 2834 insecure
         lignes.nextToken();
@@ -170,13 +176,13 @@ class RconClient extends ValveUdpClient implements IRconClient {
         lignes.nextToken();
         // 4 - map
         // map : de_airstrip at: 0 x, 0 y, 0 z
-        String map = substringAfter(lignes.nextToken(), ":").trim();
+        String map = StringUtils.substringAfter(lignes.nextToken(), ":").trim();
         server.setMap(StringUtils.substringBefore(map, " "));
         // 5 - player count
         // players : 0 active (24 max)
-        String players = substringAfter(lignes.nextToken(), ":").trim();
+        String players = StringUtils.substringAfter(lignes.nextToken(), ":").trim();
         server.setPlayerCount(Byte.parseByte(StringUtils.substringBefore(players, " ")));
-        players = substringAfter(players, "(");
+        players = StringUtils.substringAfter(players, "(");
         server.setMaxPlayers(Byte.parseByte(StringUtils.substringBefore(players, " ")));
         // 7 - ligne inutile
         // # name userid uniqueid frag time ping loss adr
@@ -185,7 +191,7 @@ class RconClient extends ValveUdpClient implements IRconClient {
         server.resetPlayers();
         while (lignes.hasNext()) {
             String line = lignes.nextToken();
-            if (line.charAt(0) != '#') {
+            if (line.codePointAt(0) != '#') {
                 break;
             }
             traiteLigneJoueur(line.substring(2));

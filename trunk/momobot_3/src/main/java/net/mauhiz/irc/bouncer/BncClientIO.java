@@ -1,7 +1,7 @@
 package net.mauhiz.irc.bouncer;
 
 import java.io.IOException;
-import java.net.Socket;
+import java.nio.channels.AsynchronousSocketChannel;
 
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
@@ -26,9 +26,10 @@ public class BncClientIO extends AbstractIrcIO {
     private Account account;
     private String nick;
     private final BncServerConnection server;
-    private final Socket socket;
+    private final AsynchronousSocketChannel socket;
 
-    protected BncClientIO(BncClientControl ircControl, Socket socket, ClientPeer peer, BncServerConnection server) {
+    protected BncClientIO(BncClientControl ircControl, AsynchronousSocketChannel socket, ClientPeer peer,
+            BncServerConnection server) {
         super(ircControl, peer);
         this.server = server;
         this.socket = socket;
@@ -40,18 +41,21 @@ public class BncClientIO extends AbstractIrcIO {
             output.tstop();
             ThreadUtils.safeSleep(2000);
         }
-        if (socket.isConnected()) {
-            try {
-                socket.close();
-            } catch (IOException ioe) {
-                LOG.error(ioe, ioe);
-            }
+        try {
+            socket.close();
+        } catch (IOException ioe) {
+            LOG.error(ioe, ioe);
         }
         status = IOStatus.DISCONNECTED;
     }
 
-    public String getHostName() {
-        return socket.getInetAddress().getHostName();
+    private String getHostName() {
+        try {
+            return "from " + socket.getRemoteAddress().toString();
+        } catch (IOException ioe) {
+            LOG.error("Could not read remote address", ioe);
+            return "";
+        }
     }
 
     // private long connectionTime = System.currentTimeMillis();
@@ -99,11 +103,11 @@ public class BncClientIO extends AbstractIrcIO {
                 if (acc != null) {
                     account = acc;
                     acc.getRelatedManager().currentlyConnected.add(this);
-                    LOG.info(acc.getUsername() + " logged in successfully from " + getHostName());
+                    LOG.info(acc.getUsername() + " logged in successfully " + getHostName());
                     return;
                 }
 
-                LOG.info("Failed login attempt from " + getHostName() + " (" + login + "/" + password + ")");
+                LOG.info("Failed login attempt " + getHostName() + " (" + login + "/" + password + ")");
             }
             NoticeAuth pasBon = new NoticeAuth(pmsg.getServerPeer(), "Invalid login or password.");
             sendMsg(pasBon.getIrcForm());
@@ -142,7 +146,7 @@ public class BncClientIO extends AbstractIrcIO {
         sendMsg(na3.getIrcForm());
     }
 
-    void start() throws IOException {
+    public void tstart() {
         output = new BncClientOutput(socket);
         output.tstart();
 

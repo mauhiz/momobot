@@ -2,6 +2,7 @@ package net.mauhiz.irc.bot;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Locale;
 
 import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IIrcControl;
@@ -43,6 +44,7 @@ public class Launcher {
             throw new IllegalArgumentException("Please specify profile names to be loaded");
         }
         LOG.info("Default charset : " + Charset.defaultCharset());
+        LOG.info("Default locale : " + Locale.getDefault());
         HierarchicalConfiguration config = new XMLConfiguration("momobot.xml");
         loadProfiles(new Launcher(config), args);
     }

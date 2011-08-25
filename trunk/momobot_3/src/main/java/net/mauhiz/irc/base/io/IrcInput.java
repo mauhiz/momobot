@@ -1,12 +1,16 @@
 package net.mauhiz.irc.base.io;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.FileUtil;
+import net.mauhiz.util.ThreadUtils;
 
 import org.apache.log4j.Logger;
 
@@ -14,35 +18,42 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class IrcInput extends AbstractDaemon implements IIrcInput {
+    private static final Pattern linePattern = Pattern.compile(".*[\r\n]+");
     private static final Logger LOGGER = Logger.getLogger(IrcInput.class);
-
     private final IIrcIO io;
-    private final BufferedReader reader;
+    private final AsynchronousSocketChannel sclient; //
 
     /**
      * @param io1
-     * @param socket
-     * @throws IOException
+     * @param sclient
      */
-    protected IrcInput(IIrcIO io1, Socket socket) throws IOException {
+    protected IrcInput(IIrcIO io1, AsynchronousSocketChannel sclient) {
         super("IRC Input");
         io = io1;
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), FileUtil.ISO8859_15));
+        this.sclient = sclient;
     }
 
     @Override
     public void trun() {
         while (isRunning()) {
             try {
-                String nextRaw = reader.readLine();
-                if (nextRaw == null) {
+                ByteBuffer bb = ByteBuffer.allocate(FileUtil.BUF_SIZE);
+                Integer read = sclient.read(bb).get();
+                if (read.intValue() == -1) {
                     LOGGER.warn("disconnected");
                     break;
                 }
-                LOGGER.debug("<< " + nextRaw);
-                io.processMsg(nextRaw);
-            } catch (IOException e) {
-                LOGGER.warn("disconnected: " + e, e);
+                CharBuffer cb = FileUtil.ISO8859_15.decode(bb);
+                Matcher lm = linePattern.matcher(cb); // Line matcher
+                while (lm.find()) {
+                    String line = lm.group();
+                    LOGGER.debug("<< " + line);
+                    io.processMsg(line);
+                }
+            } catch (InterruptedException e) {
+                ThreadUtils.handleInterruption(e);
+            } catch (ExecutionException e) {
+                LOGGER.warn("Disconnected?", e.getCause());
                 break;
             }
         }
@@ -53,7 +64,7 @@ public class IrcInput extends AbstractDaemon implements IIrcInput {
     public void tstop() {
         super.tstop();
         try {
-            reader.close();
+            sclient.close();
         } catch (IOException ioe) {
             LOGGER.warn("Could not close input stream: " + ioe, ioe);
         }

@@ -66,7 +66,7 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * @param cal
      * @return msg
      */
-    private String doTrigger(IPrivateIrcMessage imsg, Calendar cal) {
+    protected String doTrigger(IPrivateIrcMessage imsg, Calendar cal) {
         Date date = new java.sql.Date(cal.getTimeInMillis());
         Collection<String> heure1Dispo = new LinkedList<String>();
         Collection<String> heure1Pala = new LinkedList<String>();

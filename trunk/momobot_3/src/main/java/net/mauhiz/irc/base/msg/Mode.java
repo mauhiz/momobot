@@ -11,8 +11,8 @@ import net.mauhiz.irc.base.data.Target;
  */
 public class Mode extends AbstractIrcMessage implements IrcChannelMessage {
 
-    public static boolean isModifier(char c) {
-        return c == '+' || c == '-';
+    public static boolean isModifier(int utfChar) {
+        return utfChar == '+' || utfChar == '-';
     }
 
     private final ArgumentList modeArgs;

@@ -38,7 +38,8 @@ public class AdminaddTrigger extends AbstractTextTrigger implements IPrivmsgTrig
         super(trigger);
     }
 
-    private void addToPickup(Pickup pick, ArgumentList args, IIrcControl control, IrcChannel chan, IIrcServerPeer server) {
+    protected void addToPickup(Pickup pick, ArgumentList args, IIrcControl control, IrcChannel chan,
+            IIrcServerPeer server) {
         List<String> whos = args.asList();
         String team = whos.get(whos.size() - 1);
         int max = whos.size();

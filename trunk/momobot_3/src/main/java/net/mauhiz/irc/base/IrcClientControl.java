@@ -92,7 +92,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         serverToIo.clear();
     }
 
-    private void handleKick(Kick kick) {
+    protected void handleKick(Kick kick) {
         IIrcServerPeer serverPeer = kick.getServerPeer();
         IrcChannel chan = kick.getChan();
         IrcUser target = kick.getTarget();
@@ -102,7 +102,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         }
     }
 
-    private void handleNamReply(ServerMsg msg) {
+    protected void handleNamReply(ServerMsg msg) {
         IrcNetwork network = msg.getServerPeer().getNetwork();
         ArgumentList args = msg.getArgs();
         args.poll(); // =
@@ -114,7 +114,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
 
         ArgumentList prefixedNames = new ArgumentList(msg.getMsg());
         for (String prefixedName : prefixedNames) {
-            char prefix = prefixedName.charAt(0);
+            int prefix = prefixedName.codePointAt(0);
             if (UserChannelMode.isDisplay(prefix)) {
                 prefixedName = prefixedName.substring(1);
             }
@@ -139,7 +139,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         message.getServerPeer().introduceMyself(newNick, oldMyself.getMask().getUser(), oldMyself.getFullName());
     }
 
-    private boolean handleNotice(Notice notice, IIrcIO io) {
+    protected boolean handleNotice(Notice notice, IIrcIO io) {
         if (io != null && io.getStatus() == IOStatus.CONNECTING) {
             if (notice.getFrom() != null) {
                 IIrcServerPeer serverPeer = notice.getServerPeer();
@@ -153,7 +153,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         return false;
     }
 
-    private void handleQuit(Quit message) {
+    protected void handleQuit(Quit message) {
         IrcUser quitter = (IrcUser) message.getFrom();
         if (quitter != null) {
             IrcNetwork network = message.getServerPeer().getNetwork();
@@ -164,7 +164,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         }
     }
 
-    private void handleRplList(ServerMsg message) {
+    protected void handleRplList(ServerMsg message) {
         IIrcServerPeer peer = message.getServerPeer();
         IrcNetwork nw = peer.getNetwork();
         String chanName = message.getArgs().poll();
@@ -172,7 +172,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         IrcChannel chan = nw.findChannel(chanName, true);
         ArgumentList chanDetails = new ArgumentList(message.getMsg());
         String modes = chanDetails.peek();
-        if (StringUtils.isNotEmpty(modes) && modes.endsWith("]") && modes.charAt(0) == ']') {
+        if (StringUtils.isNotEmpty(modes) && modes.endsWith("]") && modes.codePointAt(0) == ']') {
             chanDetails.poll();
             processMode(new Mode(peer, peer, chan, new ArgumentList(modes)));
         }
@@ -186,7 +186,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
 
     }
 
-    private void handleRplTopic(ServerMsg rplTopic) {
+    protected void handleRplTopic(ServerMsg rplTopic) {
         IrcNetwork network = rplTopic.getServerPeer().getNetwork();
         String chanName = rplTopic.getArgs().peek();
         String topic = rplTopic.getMsg();
@@ -197,7 +197,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         }
     }
 
-    private void handleWhoisChannels(ServerMsg whoisChannels) {
+    protected void handleWhoisChannels(ServerMsg whoisChannels) {
         IrcNetwork network = whoisChannels.getServerPeer().getNetwork();
         String nick = whoisChannels.getArgs().peek();
         IrcUser ircUser = network.findUser(nick, true);
@@ -214,7 +214,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         }
     }
 
-    private void handleWhoisUser(ServerMsg whoisUser) {
+    protected void handleWhoisUser(ServerMsg whoisUser) {
         ArgumentList args = whoisUser.getArgs();
         String nick = args.poll();
         IrcUser ircUser = whoisUser.getServerPeer().getNetwork().findUser(nick, true);
@@ -280,7 +280,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         return false;
     }
 
-    private void processMode(Mode message) {
+    protected void processMode(Mode message) {
         ArgumentList toks = message.getArgs();
 
         if (message.getModifiedObject() instanceof IrcChannel) {
@@ -289,14 +289,14 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
             boolean set = false;
 
             for (int idx = 0; idx < modeInfo.length(); idx++) {
-                char next = modeInfo.charAt(idx);
+                int next = modeInfo.codePointAt(idx);
 
                 if (Mode.isModifier(next)) {
                     set = next == '+';
                     continue;
                 }
 
-                char modeItem = modeInfo.charAt(idx);
+                int modeItem = modeInfo.codePointAt(idx);
                 UserChannelMode newMode = UserChannelMode.fromCmd(modeItem);
 
                 if (newMode == null) {
@@ -320,8 +320,8 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         } else {
             IrcUser target = (IrcUser) message.getModifiedObject();
             String modeQuery = toks.poll();
-            char modifier = modeQuery.charAt(0);
-            char mode = modeQuery.charAt(1);
+            int modifier = modeQuery.codePointAt(0);
+            int mode = modeQuery.codePointAt(1);
             if (mode == 'i') {
                 target.getProperties().setInvisible(modifier == '+');
 
@@ -343,104 +343,104 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
             return;
         }
         switch (reply) {
-        case RPL_UMODEIS:
-            handleYourModeIs(message);
-            break;
-        case RPL_TOPIC:
-            handleRplTopic(message);
-            break;
-        case RPL_TOPICINFO:
-            LOG.info("topic info: " + message.getArgs());
-            break;
-        case RPL_LUSERCLIENT:
-            LOG.info("client statistics: " + message.getMsg());
-            break;
-        case RPL_LUSERCHANNELS:
-            LOG.info("number of channels: " + message.getArgs());
-            break;
-        case RPL_LUSERME:
-            LOG.info("server userme: " + message.getMsg());
-            break;
-        case RPL_MOTD:
-            LOG.info("Motd LINE: " + message.getMsg());
-            break;
-        case RPL_NAMREPLY:
-            handleNamReply(message);
-            break;
-        case RPL_ENDOFNAMES:
-            LOG.debug("End of Names Reply");
-            break;
-        case RPL_LUSEROP:
-            LOG.info("number of operators: " + message.getArgs());
-            break;
-        case RPL_MOTDSTART:
-            LOG.debug("Start of MOTD: " + message.getArgs());
-            break;
-        case ERR_NOTEXTTOSEND:
-            LOG.warn("Server told me that I tried to send an empty msg");
-            break;
-        case RPL_ENDOFMOTD:
-            LOG.debug("End of MOTD");
-            break;
-        case RPL_LUSERUNKNOWN:
-            LOG.info("number of unknown users: " + message.getArgs());
-            break;
-        case ERR_QNETSERVICEIMMUNE:
-            LOG.warn("I cannot do harm to a service! " + message.getArgs());
-            break;
-        case RPL_WHOISUSER:
-            handleWhoisUser(message);
-            break;
-        case ERR_NOSUCHNICK:
-            WhoisRequest.end(message.getArgs(), false);
-            break;
-        case RPL_WHOISCHANNELS:
-            handleWhoisChannels(message);
-            break;
-        case RPL_WHOISSERVER:
-            ArgumentList args = message.getArgs();
-            LOG.info(args.poll() + " is on node " + args.poll());
-            break;
-        case RPL_WHOISAUTH: // this message is specific to Qnet Servers
-            ((QnetServer) message.getServerPeer().getNetwork()).handleWhois(message.getArgs());
-            break;
-        case RPL_ENDOFWHOIS:
-            WhoisRequest.end(message.getArgs(), true);
-            break;
-        case ERR_CHANOPRIVSNEEDED:
-            LOG.warn("I am not channel operator. " + message.getArgs().peek());
-            break;
-        case ERR_NOTREGISTERED:
-            LOG.warn("I should register before sending commands!");
-            break;
-        case RPL_WHOISIDLE:
-            LOG.debug("User has been idle : " + message.getArgs().peek());
-            break;
-        case RPL_WHOISOPERATOR:
-            args = message.getArgs();
-            WhoisRequest.end(args, true);
-            LOG.debug(args + " " + message.getMsg());
-            break;
-        case ERR_NICKNAMEINUSE:
-            handleNickInUse(message);
-            break;
-        case ERR_NOTONCHANNEL:
-        case ERR_NOSUCHCHANNEL:
-            LOG.warn("[TODO process] " + message.getArgs());
-            break;
-        case RPL_LISTSTART:
-            LOG.info("Starting to receive channels list");
-            break;
-        case RPL_LISTEND:
-            LOG.info("Finished receiving channels list");
-            break;
-        case RPL_LIST:
-            handleRplList(message);
-            break;
-        default:
-            // TODO 42, 265, 266, 439 on Rizon
-            LOG.warn("Unhandled server reply : " + message);
-            break;
+            case RPL_UMODEIS:
+                handleYourModeIs(message);
+                break;
+            case RPL_TOPIC:
+                handleRplTopic(message);
+                break;
+            case RPL_TOPICINFO:
+                LOG.info("topic info: " + message.getArgs());
+                break;
+            case RPL_LUSERCLIENT:
+                LOG.info("client statistics: " + message.getMsg());
+                break;
+            case RPL_LUSERCHANNELS:
+                LOG.info("number of channels: " + message.getArgs());
+                break;
+            case RPL_LUSERME:
+                LOG.info("server userme: " + message.getMsg());
+                break;
+            case RPL_MOTD:
+                LOG.info("Motd LINE: " + message.getMsg());
+                break;
+            case RPL_NAMREPLY:
+                handleNamReply(message);
+                break;
+            case RPL_ENDOFNAMES:
+                LOG.debug("End of Names Reply");
+                break;
+            case RPL_LUSEROP:
+                LOG.info("number of operators: " + message.getArgs());
+                break;
+            case RPL_MOTDSTART:
+                LOG.debug("Start of MOTD: " + message.getArgs());
+                break;
+            case ERR_NOTEXTTOSEND:
+                LOG.warn("Server told me that I tried to send an empty msg");
+                break;
+            case RPL_ENDOFMOTD:
+                LOG.debug("End of MOTD");
+                break;
+            case RPL_LUSERUNKNOWN:
+                LOG.info("number of unknown users: " + message.getArgs());
+                break;
+            case ERR_QNETSERVICEIMMUNE:
+                LOG.warn("I cannot do harm to a service! " + message.getArgs());
+                break;
+            case RPL_WHOISUSER:
+                handleWhoisUser(message);
+                break;
+            case ERR_NOSUCHNICK:
+                WhoisRequest.end(message.getArgs(), false);
+                break;
+            case RPL_WHOISCHANNELS:
+                handleWhoisChannels(message);
+                break;
+            case RPL_WHOISSERVER:
+                ArgumentList args = message.getArgs();
+                LOG.info(args.poll() + " is on node " + args.poll());
+                break;
+            case RPL_WHOISAUTH: // this message is specific to Qnet Servers
+                ((QnetServer) message.getServerPeer().getNetwork()).handleWhois(message.getArgs());
+                break;
+            case RPL_ENDOFWHOIS:
+                WhoisRequest.end(message.getArgs(), true);
+                break;
+            case ERR_CHANOPRIVSNEEDED:
+                LOG.warn("I am not channel operator. " + message.getArgs().peek());
+                break;
+            case ERR_NOTREGISTERED:
+                LOG.warn("I should register before sending commands!");
+                break;
+            case RPL_WHOISIDLE:
+                LOG.debug("User has been idle : " + message.getArgs().peek());
+                break;
+            case RPL_WHOISOPERATOR:
+                args = message.getArgs();
+                WhoisRequest.end(args, true);
+                LOG.debug(args + " " + message.getMsg());
+                break;
+            case ERR_NICKNAMEINUSE:
+                handleNickInUse(message);
+                break;
+            case ERR_NOTONCHANNEL:
+            case ERR_NOSUCHCHANNEL:
+                LOG.warn("[TODO process] " + message.getArgs());
+                break;
+            case RPL_LISTSTART:
+                LOG.info("Starting to receive channels list");
+                break;
+            case RPL_LISTEND:
+                LOG.info("Finished receiving channels list");
+                break;
+            case RPL_LIST:
+                handleRplList(message);
+                break;
+            default:
+                // TODO 42, 265, 266, 439 on Rizon
+                LOG.warn("Unhandled server reply : " + message);
+                break;
         }
     }
 

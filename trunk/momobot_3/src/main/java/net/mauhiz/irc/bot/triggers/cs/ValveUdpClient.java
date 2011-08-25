@@ -1,9 +1,9 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 
 import net.mauhiz.irc.bot.triggers.cs.query.ChallengeQuery;
 import net.mauhiz.irc.bot.triggers.cs.query.IValveQuery;
@@ -12,21 +12,21 @@ import net.mauhiz.irc.bot.triggers.cs.query.PingQuery;
 import net.mauhiz.irc.bot.triggers.cs.query.PlayersQuery;
 import net.mauhiz.irc.bot.triggers.cs.query.RulesQuery;
 import net.mauhiz.util.FileUtil;
-import net.mauhiz.util.NetUtils;
 
-import org.apache.commons.net.DatagramSocketClient;
-import org.apache.commons.net.DefaultDatagramSocketFactory;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
-class ValveUdpClient extends DatagramSocketClient implements IClient {
+class ValveUdpClient implements IClient {
 
     /**
      * logger.
      */
     protected static final Logger LOG = Logger.getLogger(ValveUdpClient.class);
+
+    private final DatagramChannel channel;
 
     /**
      * Serveur associe.
@@ -37,14 +37,15 @@ class ValveUdpClient extends DatagramSocketClient implements IClient {
      * @param server1
      *            le serveur
      */
-    public ValveUdpClient(IServer server1) {
+    public ValveUdpClient(IServer server1) throws IOException {
         super();
         server = server1;
+        channel = DatagramChannel.open();
     }
 
     private void doQuery(IValveQuery qry) throws IOException {
         qry.beforeSend();
-        byte[] result = sendAndRcvValveCmd(qry.getCmd());
+        ByteBuffer result = sendAndRcvValveCmd(qry.getCmd());
         qry.afterReceive(result);
     }
 
@@ -93,15 +94,11 @@ class ValveUdpClient extends DatagramSocketClient implements IClient {
         doQuery(new RulesQuery(server));
     }
 
-    /**
-     * @return la socket
-     */
-    protected DatagramSocket getSocket() {
-        return _socket_;
-    }
-
-    public void receive(DatagramPacket receivePacket) throws IOException {
-        getSocket().receive(receivePacket);
+    @Override
+    public SocketAddress receive(ByteBuffer dest) throws IOException {
+        SocketAddress ret = channel.receive(dest);
+        dest.getInt(); // skip 1 int
+        return ret;
     }
 
     /**
@@ -111,34 +108,30 @@ class ValveUdpClient extends DatagramSocketClient implements IClient {
      * @throws IOException
      *             en cas de prob rezo
      */
-    protected byte[] sendAndRcvValveCmd(byte[] cmd) throws IOException {
+    protected ByteBuffer sendAndRcvValveCmd(ByteBuffer cmd) throws IOException {
         sendValveCmd(cmd);
-        DatagramPacket recPacket = NetUtils.createDatagramPacket();
-        _socket_.receive(recPacket);
-        return recPacket.getData();
+        ByteBuffer ret = ByteBuffer.allocate(FileUtil.BUF_SIZE);
+        receive(ret);
+        return ret;
     }
 
-    protected byte[] sendAndRcvValveCmd(String str) throws IOException {
-        return sendAndRcvValveCmd(FileUtil.getBytes(str, FileUtil.ASCII));
+    protected ByteBuffer sendAndRcvValveCmd(String str) throws IOException {
+        LOG.info("Sending and receiving : " + str + " to " + server.getIp() + ":" + server.getPort());
+        return sendAndRcvValveCmd(FileUtil.ASCII.encode(str));
     }
 
-    private void sendValveCmd(byte[] cmdBytes) throws IOException {
-        if (null == _socket_) {
-            _socket_ = new DefaultDatagramSocketFactory().createDatagramSocket();
-            /* timeout en ms : 10s */
-            _socket_.setSoTimeout(10000);
-        }
+    private void sendValveCmd(ByteBuffer cmdBytes) throws IOException {
+        /* timeout : 10s */
 
-        ByteBuffer sendBuf = ByteBuffer.allocate(cmdBytes.length + 5);
-        sendBuf.putInt(-1);
+        ByteBuffer sendBuf = ByteBuffer.allocate(cmdBytes.limit() + 5);
+        sendBuf.putInt(NumberUtils.INTEGER_MINUS_ONE.intValue());
         sendBuf.put(cmdBytes);
-        sendBuf.put((byte) 0);
-        LOG.info("Sending : " + new String(cmdBytes, FileUtil.ASCII) + " to " + server.getIp() + ":" + server.getPort());
-        DatagramPacket sendPacket = new DatagramPacket(sendBuf.array(), sendBuf.capacity(), server.getIpay());
-        _socket_.send(sendPacket);
+        sendBuf.put(NumberUtils.INTEGER_ZERO.byteValue());
+        channel.send(sendBuf, server.getIpay());
     }
 
-    protected void sendValveCmd(String string) throws IOException {
-        sendValveCmd(FileUtil.getBytes(string, FileUtil.ASCII));
+    protected void sendValveCmd(String str) throws IOException {
+        LOG.info("Sending and receiving : " + str + " to " + server.getIp() + ":" + server.getPort());
+        sendValveCmd(FileUtil.ASCII.encode(str));
     }
 }

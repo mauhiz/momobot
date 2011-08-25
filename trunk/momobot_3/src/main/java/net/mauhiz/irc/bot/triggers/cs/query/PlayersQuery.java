@@ -17,10 +17,8 @@ public class PlayersQuery extends AbstractQuery implements ServerFlags {
         super(server);
     }
 
-    public void afterReceive(byte[] resp) {
-        ByteBuffer result = ByteBuffer.wrap(resp);
-        result.getInt(); // skip int -1
-        char state = (char) result.get(); // skip char 'D'
+    public void afterReceive(ByteBuffer result) {
+        char state = readByteAsChar(result); // skip char 'D'
         if (state == S2C_CHALLENGE) { // response is not players, but challenge
             ChallengeQuery.processChallenge(server, result);
             return;
@@ -52,11 +50,11 @@ public class PlayersQuery extends AbstractQuery implements ServerFlags {
         server.resetPlayers();
     }
 
-    public byte[] getCmd() {
-        byte[] cmd = FileUtil.getBytes(Character.toString(A2S_PLAYERS), FileUtil.ASCII);
-        ByteBuffer buf = ByteBuffer.allocate(cmd.length + 4);
+    public ByteBuffer getCmd() {
+        ByteBuffer cmd = FileUtil.ASCII.encode(Character.toString(A2S_PLAYERS));
+        ByteBuffer buf = ByteBuffer.allocate(cmd.limit() + 4);
         buf.put(cmd);
         buf.putInt(server.getChallenge());
-        return buf.array();
+        return buf;
     }
 }

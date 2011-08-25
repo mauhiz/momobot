@@ -1,13 +1,12 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
 import java.util.Random;
 
 import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.FileUtil;
-import net.mauhiz.util.NetUtils;
 
 import org.apache.log4j.Logger;
 
@@ -49,12 +48,17 @@ class RconListener extends AbstractDaemon implements IRconListener {
     /**
      * @param receivePacket
      */
-    private void processLine(DatagramPacket receivePacket) {
-        rc.processLine(new String(receivePacket.getData(), 0, receivePacket.getLength(), FileUtil.ASCII));
+    private void processLine(ByteBuffer receivePacket) {
+        rc.processLine(FileUtil.ASCII.decode(receivePacket).toString());
     }
 
-    private void runLoop(DatagramPacket receivePacket) {
+    /**
+     * @see java.lang.Runnable#run()
+     */
+    @Override
+    public void trun() {
         while (isRunning()) {
+            ByteBuffer receivePacket = ByteBuffer.allocate(FileUtil.BUF_SIZE);
             try {
                 rc.receive(receivePacket);
                 processLine(receivePacket);
@@ -63,14 +67,5 @@ class RconListener extends AbstractDaemon implements IRconListener {
                 break;
             }
         }
-    }
-
-    /**
-     * @see java.lang.Runnable#run()
-     */
-    @Override
-    public void trun() {
-        DatagramPacket receivePacket = NetUtils.createDatagramPacket();
-        runLoop(receivePacket);
     }
 }

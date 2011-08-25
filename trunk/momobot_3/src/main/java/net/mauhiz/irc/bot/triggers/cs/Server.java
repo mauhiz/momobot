@@ -2,6 +2,7 @@ package net.mauhiz.irc.bot.triggers.cs;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class Server implements IServer {
     /**
      * Ip et port du serveur.
      */
-    protected InetSocketAddress ipay;
+    protected SocketAddress ipay;
     /**
      * map actuelle.
      */
@@ -62,10 +63,10 @@ public class Server implements IServer {
      * @param ipay1
      *            l'IP et port du serveur.
      */
-    public Server(InetSocketAddress ipay1) {
+    public Server(SocketAddress ipay1) {
         super();
         ipay = ipay1;
-        vuc = new ValveUdpClient(this);
+
     }
 
     /**
@@ -75,7 +76,10 @@ public class Server implements IServer {
         return challenge;
     }
 
-    public IClient getClient() {
+    public IClient getClient() throws IOException {
+        if (vuc == null) {
+            vuc = new ValveUdpClient(this);
+        }
         return vuc;
     }
 
@@ -94,14 +98,15 @@ public class Server implements IServer {
      * @return ip
      */
     public String getIp() {
-        return ipay.getAddress().getHostAddress();
+        return getIpay().getAddress().getHostAddress();
     }
 
     /**
+     * Assumes the ipay is a network ipay
      * @return ipay
      */
     public InetSocketAddress getIpay() {
-        return ipay;
+        return (InetSocketAddress) ipay;
     }
 
     /**
@@ -171,7 +176,7 @@ public class Server implements IServer {
      * @return port
      */
     public int getPort() {
-        return ipay.getPort();
+        return getIpay().getPort();
     }
 
     public void resetPlayers() {

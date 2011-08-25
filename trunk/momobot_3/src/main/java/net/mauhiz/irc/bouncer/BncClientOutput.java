@@ -1,7 +1,6 @@
 package net.mauhiz.irc.bouncer;
 
-import java.io.IOException;
-import java.net.Socket;
+import java.nio.channels.AsynchronousSocketChannel;
 
 import net.mauhiz.irc.base.io.IrcOutput;
 
@@ -10,10 +9,7 @@ import net.mauhiz.irc.base.io.IrcOutput;
  */
 public class BncClientOutput extends IrcOutput {
 
-    /**
-     * @throws IOException
-     */
-    public BncClientOutput(Socket socket) throws IOException {
+    public BncClientOutput(AsynchronousSocketChannel socket) {
         super(socket);
         setName("Bnc Client Output");
     }

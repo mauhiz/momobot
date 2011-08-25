@@ -1,5 +1,7 @@
 package net.mauhiz.irc.bot.triggers.math;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -21,12 +23,13 @@ public class Sha512Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
 
     /**
      * @param input
-     * @return le md5
+     * @return le sha-512
      * @throws NoSuchAlgorithmException
      */
-    static String computeSha512(byte[] input) throws NoSuchAlgorithmException {
-        byte[] output = MessageDigest.getInstance("SHA-512").digest(input);
-        return new String(Hex.encodeHex(output));
+    static CharBuffer computeSha512(ByteBuffer input) throws NoSuchAlgorithmException {
+        MessageDigest mdi = MessageDigest.getInstance("SHA-512");
+        Hex hex = new Hex(FileUtil.ASCII.name());
+        return FileUtil.ASCII.decode(ByteBuffer.wrap(hex.encode(mdi.digest(input.array()))));
     }
 
     /**
@@ -47,8 +50,7 @@ public class Sha512Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
         } else {
             Privmsg resp;
             try {
-                resp = new Privmsg(cme, "sha-512 de " + args + ": "
-                        + computeSha512(FileUtil.getBytes(args, FileUtil.ISO8859_15)));
+                resp = new Privmsg(cme, "sha-512 de " + args + ": " + computeSha512(FileUtil.ISO8859_15.encode(args)));
             } catch (NoSuchAlgorithmException nsae) {
                 resp = new Privmsg(cme, "J'ai pas de sha-512. Sry.");
             }

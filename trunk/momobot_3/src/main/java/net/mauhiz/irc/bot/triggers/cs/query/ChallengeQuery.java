@@ -17,14 +17,12 @@ public class ChallengeQuery extends AbstractQuery {
         super(server);
     }
 
-    public void afterReceive(byte[] resp) {
-        ByteBuffer result = ByteBuffer.wrap(resp);
-        result.getInt(); // skip int -1
-        result.get(); // skip char 'A'
+    public void afterReceive(ByteBuffer result) {
+        readByteAsChar(result); // skip char 'A'
         processChallenge(server, result);
     }
 
-    public byte[] getCmd() {
-        return FileUtil.getBytes(Character.toString(A2S_SERVERQUERY_GETCHALLENGE), FileUtil.ASCII);
+    public ByteBuffer getCmd() {
+        return FileUtil.ASCII.encode(Character.toString(A2S_SERVERQUERY_GETCHALLENGE));
     }
 }

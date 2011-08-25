@@ -1,5 +1,8 @@
 package net.mauhiz.irc.base.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.msg.IIrcMessage;
@@ -26,12 +29,34 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
 
     private static final IIrcDecoder INSTANCE = new IrcDecoder();
 
+    private static String getCmd(ArgumentList args, String raw) {
+        String cmd = args.poll();
+
+        if (cmd == null) {
+            throw new IllegalArgumentException("Malformed IRC message: " + raw);
+        }
+        return cmd;
+    }
+
     public static IIrcDecoder getInstance() {
         return INSTANCE;
     }
 
-    public static ArgumentList tokenizeArgs(String argumentStr) {
-        return new ArgumentList(argumentStr);
+    private static IrcChannel[] toIrcChannels(IrcNetwork network, String[] chans) {
+        List<IrcChannel> channels = new ArrayList<IrcChannel>(chans.length);
+        for (String chan : chans) {
+            channels.add(network.findChannel(chan));
+        }
+        return channels.toArray(new IrcChannel[channels.size()]);
+    }
+
+    private static ArgumentList tokenizeArgs(String raw) {
+        String argumentStr = StringUtils.substringBefore(raw, " :");
+        ArgumentList args = new ArgumentList(argumentStr);
+        if (args.isEmpty()) {
+            throw new IllegalArgumentException("Malformed IRC message: " + raw);
+        }
+        return args;
     }
 
     private IrcDecoder() {
@@ -56,23 +81,17 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
             case JOIN:
                 String[] chans = StringUtils.split(args.poll(), ',');
                 String[] keys = StringUtils.split(args.poll(), ',');
-                IrcChannel[] channels = new IrcChannel[chans.length];
-                for (int i = 0; i < chans.length; i++) {
-                    channels[i] = server.getNetwork().findChannel(chans[i]);
-                }
+                IrcChannel[] channels = toIrcChannels(server.getNetwork(), chans);
                 return new Join(server, (IrcUser) from, channels, keys);
 
             case PART:
                 chans = StringUtils.split(args.poll(), ',');
-                channels = new IrcChannel[chans.length];
-                for (int i = 0; i < chans.length; i++) {
-                    channels[i] = server.getNetwork().findChannel(chans[i]);
-                }
+                channels = toIrcChannels(server.getNetwork(), chans);
                 return new Part(server, (IrcUser) from, msg, channels);
 
             case PRIVMSG:
                 to = decodeTarget(server, args.poll());
-                if (msg.charAt(0) == QUOTE_STX) {
+                if (msg.codePointAt(0) == QUOTE_STX) {
                     String ctcpContent = StringUtils.strip(msg, Character.toString(QUOTE_STX));
                     return CtcpFactory.decode(server, from, to, ctcpContent);
                 }
@@ -107,21 +126,10 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
      * @return raw IRC msg
      */
     public IIrcMessage buildFromRaw(IIrcServerPeer server, String raw) {
-        String argumentStr = StringUtils.substringBefore(raw, " :");
-        ArgumentList args = tokenizeArgs(argumentStr);
-
-        if (args.isEmpty()) {
-            throw new IllegalArgumentException("Malformed IRC message: " + raw);
-        }
-
+        ArgumentList args = tokenizeArgs(raw);
         String next = args.peek();
-        String fromStr = next != null && next.charAt(0) == ':' ? args.poll().substring(1) : null;
-        String cmd = args.poll();
-
-        if (cmd == null) {
-            throw new IllegalArgumentException("Malformed IRC message: " + raw);
-        }
-
+        String fromStr = next != null && next.codePointAt(0) == ':' ? args.poll().substring(1) : null;
+        String cmd = getCmd(args, raw);
         String msg = StringUtils.substringAfter(raw, " :");
         Target from = decodeTarget(server, fromStr);
 
@@ -144,9 +152,8 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
         if (fromStr == null) {
             return null;
         }
-        IrcNetwork server = peer.getNetwork();
         if (MomoStringUtils.isChannelName(fromStr)) {
-            return server.findChannel(fromStr);
+            return peer.getNetwork().findChannel(fromStr);
         }
 
         HostMask mask = HostMask.getInstance(fromStr);
@@ -157,9 +164,9 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
                 return peer;
             }
 
-            return server.findUser(fromStr, true);
+            return peer.getNetwork().findUser(fromStr, true);
         }
 
-        return server.findUser(mask, true);
+        return peer.getNetwork().findUser(mask, true);
     }
 }

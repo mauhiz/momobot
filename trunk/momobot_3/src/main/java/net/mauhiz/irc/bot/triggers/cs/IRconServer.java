@@ -6,7 +6,7 @@ public interface IRconServer extends IServer {
 
     boolean changelevel(String newMap) throws IOException;
 
-    IRconClient getClient();
+    IRconClient getClient() throws IOException;
 
     void svRestart(int delay) throws IOException;
 
