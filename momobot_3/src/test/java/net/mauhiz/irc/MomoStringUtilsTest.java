@@ -20,16 +20,16 @@ public class MomoStringUtilsTest {
     }
 
     /**
-     * Test for {@link MomoStringUtils#effaceAccents(String)}
+     * Test for {@link MomoStringUtils#normalizeAscii(String)}
      */
     @Test
     public void testEffaceAccents() {
         String input = "âäàçéèëïîñôöqù ";
-        String output = MomoStringUtils.effaceAccents(input);
+        String output = MomoStringUtils.normalizeAscii(input);
         Assert.assertEquals("aaaceeeiinooqu ", output);
 
         input = "ého";
-        output = MomoStringUtils.effaceAccents(input);
+        output = MomoStringUtils.normalizeAscii(input);
         Assert.assertEquals("eho", output);
 
     }
