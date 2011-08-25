@@ -1,15 +1,16 @@
 package net.mauhiz.irc.base.ident;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.BindException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.charset.CharacterCodingException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.util.AbstractDaemon;
@@ -24,17 +25,10 @@ public class IdentServer extends AbstractDaemon implements IIdentServer {
 
     private static final Logger LOGGER = Logger.getLogger(IdentServer.class);
     /**
-     * le port sur lequel on ecoute.
+     * listening port
      */
     private static final int PORT = 113;
-    /**
-     * Timeout en millisecondes.
-     */
-    private static final int SO_TIMEOUT = 60 * 1000;
-    /**
-     * le serversocket.
-     */
-    private ServerSocket ss;
+    private AsynchronousServerSocketChannel ss;
     private final String user;
 
     /**
@@ -45,6 +39,18 @@ public class IdentServer extends AbstractDaemon implements IIdentServer {
         user = user1.getMask().getUser();
     }
 
+    private void ident(Future<AsynchronousSocketChannel> socketFuture) throws CharacterCodingException,
+            InterruptedException, ExecutionException, TimeoutException {
+        AsynchronousSocketChannel socket = socketFuture.get(5, TimeUnit.SECONDS);
+        ByteBuffer bb = ByteBuffer.allocate(4096);
+        Integer bytesRead = socket.read(bb).get(5, TimeUnit.SECONDS);
+        if (bytesRead.intValue() != -1) {
+            CharBuffer cb = FileUtil.ASCII.newDecoder().decode(bb);
+            cb.put(" : USERID : UNIX : " + user);
+            socket.write(FileUtil.ASCII.newEncoder().encode(cb));
+        }
+    }
+
     /**
      * @see java.lang.Runnable#run()
      */
@@ -52,46 +58,25 @@ public class IdentServer extends AbstractDaemon implements IIdentServer {
     public void trun() {
 
         try {
-            ss = new ServerSocket(PORT);
-            ss.setSoTimeout(SO_TIMEOUT);
+            ss = AsynchronousServerSocketChannel.open();
+            ss.bind(new InetSocketAddress("localhost", PORT), 1);
 
-            Socket socket = ss.accept();
-            socket.setSoTimeout(SO_TIMEOUT);
-            OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(), FileUtil.ASCII);
-            try {
-                PrintWriter writer = new PrintWriter(osw, true);
-
-                try {
-                    InputStreamReader isr = new InputStreamReader(socket.getInputStream(), FileUtil.ASCII);
-                    try {
-                        Scanner scan = new Scanner(isr);
-                        try {
-                            String line = scan.nextLine();
-                            writer.println(line + " : USERID : UNIX : " + user);
-                        } finally {
-                            scan.close();
-                        }
-
-                    } catch (NoSuchElementException nse) {
-
-                    } finally {
-                        isr.close();
-                    }
-                } finally {
-                    writer.close();
-                }
-            } finally {
-                osw.close();
-            }
-
-        } catch (BindException be) {
-            LOGGER.error("Could not bind on port: " + PORT, be);
-
-        } catch (SocketTimeoutException ste) {
-            LOGGER.debug(ste);
-            // nevermind
         } catch (IOException ioe) {
             LOGGER.error(ioe, ioe);
+        }
+
+        if (ss != null) {
+            try {
+                ident(ss.accept());
+            } catch (InterruptedException e) {
+                handleInterruption(e);
+            } catch (ExecutionException e) {
+                LOGGER.error(e.getCause(), e.getCause());
+            } catch (TimeoutException e) {
+                LOGGER.info("Server did not connect to me in time", e);
+            } catch (CharacterCodingException e) {
+                LOGGER.error(e, e);
+            }
         }
         tstop();
     }
