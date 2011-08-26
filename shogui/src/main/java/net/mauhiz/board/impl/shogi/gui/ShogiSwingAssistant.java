@@ -61,7 +61,7 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 		LOG.debug("Init bottom pocket: " + pocket);
 	}
 
-	private JPanel newPocket() {
+	protected JPanel newPocket() {
 		JPanel pocket = new JPanel();
 		GridLayout layout = new GridLayout(1, 7);
 		pocket.setLayout(layout);

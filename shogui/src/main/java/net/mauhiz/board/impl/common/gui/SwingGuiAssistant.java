@@ -23,9 +23,9 @@ import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
 import net.mauhiz.board.model.gui.BoardGui;
 import net.mauhiz.board.remote.NewRemoteGameAction;
+import net.mauhiz.util.AbstractNamedRunnable;
 import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.IAction;
-import net.mauhiz.util.NamedRunnable;
 import net.mauhiz.util.PerformanceMonitor;
 import net.mauhiz.util.ThreadUtils;
 
@@ -33,7 +33,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 
 public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
-	final class ButtonInitializer extends NamedRunnable {
+	final class ButtonInitializer extends AbstractNamedRunnable {
 		private final Color bgColor;
 		private final RotatingJButton button;
 
@@ -62,7 +62,7 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 	protected final JPanel boardPanel = new JPanel();
 	private final Map<Square, RotatingJButton> buttons = new HashMap<Square, RotatingJButton>();
 	protected final JFrame frame = new JFrame();
-	protected final JList historyPanel = new JList();
+	protected final JList<String> historyPanel = new JList<String>();
 
 	public SwingGuiAssistant(BoardGui parent) {
 		super(parent);

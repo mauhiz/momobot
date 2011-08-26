@@ -9,8 +9,8 @@ import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
 import net.mauhiz.board.model.gui.PocketGuiAssistant;
+import net.mauhiz.util.AbstractNamedRunnable;
 import net.mauhiz.util.ExecutionType;
-import net.mauhiz.util.NamedRunnable;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
@@ -37,7 +37,7 @@ public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements P
 	public void clear() {
 		super.clear();
 
-		new NamedRunnable("Remove Pockets") {
+		new AbstractNamedRunnable("Remove Pockets") {
 
 			@Override
 			protected ExecutionType getExecutionType() {
@@ -55,7 +55,7 @@ public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements P
 	}
 
 	public void clearPockets() {
-		new NamedRunnable("Clear Pockets") {
+		new AbstractNamedRunnable("Clear Pockets") {
 
 			@Override
 			protected ExecutionType getExecutionType() {

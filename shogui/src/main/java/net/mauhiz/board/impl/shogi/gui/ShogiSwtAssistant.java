@@ -9,8 +9,8 @@ import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
+import net.mauhiz.util.AbstractNamedRunnable;
 import net.mauhiz.util.ExecutionType;
-import net.mauhiz.util.NamedRunnable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.MessageBox;
 
 public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGuiAssistant {
-	static class ButtonDecorator extends NamedRunnable {
+	static class ButtonDecorator extends AbstractNamedRunnable {
 		private final Button button;
 		private final PieceType piece;
 		private final PlayerType player;
@@ -52,7 +52,7 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		}
 	}
 
-	class PocketInitializer extends NamedRunnable {
+	class PocketInitializer extends AbstractNamedRunnable {
 		private final Map<PlayerType, Composite> lpockets;
 
 		PocketInitializer(Map<PlayerType, Composite> lpockets) {
