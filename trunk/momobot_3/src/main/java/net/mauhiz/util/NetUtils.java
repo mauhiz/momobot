@@ -16,7 +16,8 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class NetUtils {
+public enum NetUtils {
+    ;
     /**
      * masque pour signer
      */

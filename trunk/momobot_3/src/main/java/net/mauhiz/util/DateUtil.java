@@ -14,7 +14,8 @@ import org.apache.commons.lang3.time.StopWatch;
 /**
  * @author mauhiz
  */
-public class DateUtil {
+public enum DateUtil {
+    ;
     /**
      * mon format de date local.
      */

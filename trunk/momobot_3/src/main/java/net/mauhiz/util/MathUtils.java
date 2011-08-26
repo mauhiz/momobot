@@ -3,7 +3,8 @@ package net.mauhiz.util;
 /**
  * @author mauhiz
  */
-public class MathUtils {
+public enum MathUtils {
+    ;
     /**
      * @param a
      * @param b
@@ -30,7 +31,7 @@ public class MathUtils {
         }
         return recursiveLongPower(a, b);
     }
-    
+
     /**
      * @param a
      * @param b
@@ -44,7 +45,7 @@ public class MathUtils {
         }
         throw new ArithmeticException("a^b > Integer.MAX_VALUE. use longPower");
     }
-    
+
     /**
      * @param a
      *            int != 2

@@ -21,7 +21,7 @@ public abstract class AbstractIrcControl implements IIrcControl {
      */
     public void decodeIrcRawMsg(String raw, IIrcIO io) {
         IIrcServerPeer peer = io.getServerPeer();
-        IIrcMessage msg = IrcDecoder.getInstance().buildFromRaw(peer, raw);
+        IIrcMessage msg = IrcDecoder.INSTANCE.buildFromRaw(peer, raw);
 
         // FIXME implement basic processing as a trigger manager
         if (process(msg, io)) {

@@ -9,7 +9,6 @@ public class PerformanceMonitor extends StopWatch {
 
     private static String getTimestamp() {
         return DateFormatUtils.format(System.currentTimeMillis(), "[HH:mm:ss.SSS] ");
-
     }
 
     private final long errThrsh;

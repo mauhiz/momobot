@@ -2,7 +2,8 @@ package net.mauhiz.util;
 
 import org.apache.log4j.Logger;
 
-public class ThreadUtils {
+public enum ThreadUtils {
+    ;
 
     /**
      * logger.

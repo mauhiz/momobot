@@ -1,6 +1,5 @@
 package net.mauhiz.irc.gui;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -233,7 +232,7 @@ public class SwtIrcClient {
      * SWT GUI.
      * One default CTabFolder + 1 per channel/private conversation
      */
-    public void start() throws IOException {
+    public void start() {
         gtm.addTrigger(cut);
         initMenus();
 

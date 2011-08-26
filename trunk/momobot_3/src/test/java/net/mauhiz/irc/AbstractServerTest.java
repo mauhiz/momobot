@@ -12,14 +12,13 @@ import net.mauhiz.irc.base.data.IrcServerFactory;
  * @author mauhiz
  */
 public abstract class AbstractServerTest {
-    protected final IIrcDecoder DECODER;
+    protected final IIrcDecoder DECODER = IrcDecoder.INSTANCE;
     protected final IrcNetwork QNET;
     protected final IIrcServerPeer TO_QNET = IrcServerFactory.createServer("Quakenet", "irc://uk.quakenet.org:6667/");
 
-    public AbstractServerTest() {
+    protected AbstractServerTest() {
         super();
         TO_QNET.introduceMyself("momobot3", "mmb", "MMB v3");
         QNET = TO_QNET.getNetwork();
-        DECODER = IrcDecoder.getInstance();
     }
 }
