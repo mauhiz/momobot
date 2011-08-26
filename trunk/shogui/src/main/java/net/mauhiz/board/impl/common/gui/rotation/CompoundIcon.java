@@ -25,11 +25,23 @@ public class CompoundIcon implements Icon {
 	public final static float LEFT = 0.0f;
 	public final static float RIGHT = 1.0f;
 	public final static float TOP = 0.0f;
+
+	/**
+	 *  When the icon value is smaller than the maximum value of all icons the
+	 *  icon needs to be aligned appropriately. Calculate the offset to be used
+	 *  when painting the icon to achieve the proper alignment.
+	 */
+	private static int getOffset(int maxValue, int iconValue, float alignment) {
+		float offset = (maxValue - iconValue) * alignment;
+		return Math.round(offset);
+	}
+
 	private float alignmentX = CENTER;
 	private float alignmentY = CENTER;
-	private Axis axis;
-	private int gap;
-	private Icon[] icons;
+	private final Axis axis;
+	private final int gap;
+
+	private final Icon[] icons;
 
 	/**
 	 *  Convenience contructor for creating a CompoundIcon where the
@@ -198,16 +210,6 @@ public class CompoundIcon implements Icon {
 		}
 
 		return width;
-	}
-
-	/**
-	 *  When the icon value is smaller than the maximum value of all icons the
-	 *  icon needs to be aligned appropriately. Calculate the offset to be used
-	 *  when painting the icon to achieve the proper alignment.
-	 */
-	private int getOffset(int maxValue, int iconValue, float alignment) {
-		float offset = (maxValue - iconValue) * alignment;
-		return Math.round(offset);
 	}
 
 	/**

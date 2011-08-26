@@ -10,7 +10,7 @@ import net.mauhiz.board.model.data.Square;
 
 public class GoRule extends AbstractPocketRule {
 
-	private boolean canDrop(Board board, Square to) {
+	protected boolean canDrop(Board board, Square to) {
 		return board.getPieceAt(to) == null;
 	}
 

@@ -7,9 +7,9 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
+import net.mauhiz.util.AbstractNamedRunnable;
 import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.MonitoredRunnable;
-import net.mauhiz.util.NamedRunnable;
 import net.mauhiz.util.PerformanceMonitor;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,7 +61,7 @@ public class RotatingJButton extends JButton {
 		}
 	}
 
-	class SetIcon extends NamedRunnable {
+	class SetIcon extends AbstractNamedRunnable {
 		private final Icon realIcon;
 
 		SetIcon(String name, Icon realIcon) {

@@ -26,7 +26,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 
-public class PgnAdapter implements MoveReader, MoveWriter {
+public enum PgnAdapter implements MoveReader, MoveWriter {
+	INSTANCE;
 	private static final Pattern CASTLE = Pattern.compile("O-O(-O)?([+#=])?");
 	private static final Pattern SAN_MOVE = Pattern
 			.compile("([a-hRNBQKP])?([a-h]?[1-8]?)?(x)?([a-h])([1-8])(=[RNBQ])?([+#=])?");
@@ -62,25 +63,7 @@ public class PgnAdapter implements MoveReader, MoveWriter {
 		return SquareImpl.getInstance(col - 'a', row - '1');
 	}
 
-	static Status readStatus(String statusLine) {
-		if (statusLine != null) {
-			if (StringUtils.contains(statusLine, '#')) {
-				return Status.MATE;
-			} else if (StringUtils.contains(statusLine, '+')) {
-				return Status.CHECK;
-			} else if (StringUtils.contains(statusLine, '=')) {
-				return Status.DRAW;
-			}
-		}
-
-		return null;
-	}
-
-	public static char[] squareToPosition(Square square) {
-		return new char[] { (char) (square.getX() + 'a'), (char) (square.getY() + '1') };
-	}
-
-	private void read(Game game, String pgnMove) {
+	private static void read(Game game, String pgnMove) {
 		PlayerType player = game.getTurn();
 		Move cm;
 		Matcher castle = CASTLE.matcher(pgnMove);
@@ -116,6 +99,24 @@ public class PgnAdapter implements MoveReader, MoveWriter {
 			}
 		}
 		game.applyMove(cm);
+	}
+
+	static Status readStatus(String statusLine) {
+		if (statusLine != null) {
+			if (StringUtils.contains(statusLine, '#')) {
+				return Status.MATE;
+			} else if (StringUtils.contains(statusLine, '+')) {
+				return Status.CHECK;
+			} else if (StringUtils.contains(statusLine, '=')) {
+				return Status.DRAW;
+			}
+		}
+
+		return null;
+	}
+
+	public static char[] squareToPosition(Square square) {
+		return new char[] { (char) (square.getX() + 'a'), (char) (square.getY() + '1') };
 	}
 
 	public Game readAll(InputStream data) throws IOException {

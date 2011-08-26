@@ -10,9 +10,9 @@ import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
 import net.mauhiz.board.model.gui.BoardGui;
+import net.mauhiz.util.AbstractNamedRunnable;
 import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.IAction;
-import net.mauhiz.util.NamedRunnable;
 import net.mauhiz.util.ThreadUtils;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 
-	static class ButtonClearer extends NamedRunnable {
+	static class ButtonClearer extends AbstractNamedRunnable {
 		private final Map<Square, Button> lButtons;
 
 		ButtonClearer(Map<Square, Button> lButtons) {
@@ -53,7 +53,7 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	class LayoutInitializer extends NamedRunnable {
+	class LayoutInitializer extends AbstractNamedRunnable {
 		private final Dimension size;
 
 		LayoutInitializer(Dimension size) {
@@ -76,7 +76,7 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	class SquareAppender extends NamedRunnable {
+	class SquareAppender extends AbstractNamedRunnable {
 		private final Map<Square, Button> lButtons;
 		private final Square square;
 		private final int x;
@@ -106,7 +106,7 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	static class SquareDisabler extends NamedRunnable {
+	static class SquareDisabler extends AbstractNamedRunnable {
 		private final IAction action;
 		private final Button button;
 
@@ -129,7 +129,7 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	static class SquareEnabler extends NamedRunnable {
+	static class SquareEnabler extends AbstractNamedRunnable {
 		private final IAction action;
 		private final Button button;
 		private final IAction old;
@@ -267,7 +267,7 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	public void refreshBoard() {
-		new NamedRunnable("Shell Redraw") {
+		new AbstractNamedRunnable("Shell Redraw") {
 			@Override
 			protected ExecutionType getExecutionType() {
 				return ExecutionType.GUI_ASYNCHRONOUS;

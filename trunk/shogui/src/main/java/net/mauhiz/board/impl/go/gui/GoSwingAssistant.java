@@ -45,7 +45,7 @@ public class GoSwingAssistant extends PocketSwingGuiAssistant {
 		addPocket(GoPlayerType.WHITE, pocket);
 	}
 
-	private JPanel newPocket() {
+	protected JPanel newPocket() {
 		JPanel pocket = new JPanel();
 		pocket.setLayout(new GridLayout(1, 7));
 		pocket.setSize(7 * 30, 30);

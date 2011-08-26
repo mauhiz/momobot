@@ -7,8 +7,8 @@ import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.BoardGui;
+import net.mauhiz.util.AbstractNamedRunnable;
 import net.mauhiz.util.ExecutionType;
-import net.mauhiz.util.NamedRunnable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class SwtChessGuiAssistant extends SwtGuiAssistant implements IChessGuiAssistant {
-	static class ButtonDecorator extends NamedRunnable {
+	static class ButtonDecorator extends AbstractNamedRunnable {
 		private final Button button;
 		private final PieceType piece;
 		private final PlayerType player;
