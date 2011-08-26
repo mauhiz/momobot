@@ -75,14 +75,14 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
         List<Dispo> dispos = DispoDb.getInstance(imsg.getServerPeer().getNetwork()).getDispo(
                 ((IrcChannel) imsg.getTo()).fullName(), date);
         for (Dispo dispo : dispos) {
-            if (dispo.getPresent1() == Dispo.Present.LA) {
+            if (dispo.getPresent1() == Present.LA) {
                 heure1Dispo.add(dispo.getQauth());
-            } else if (dispo.getPresent1() == Dispo.Present.PAS_LA) {
+            } else if (dispo.getPresent1() == Present.PAS_LA) {
                 heure1Pala.add(dispo.getQauth());
             }
-            if (dispo.getPresent2() == Dispo.Present.LA) {
+            if (dispo.getPresent2() == Present.LA) {
                 heure2Dispo.add(dispo.getQauth());
-            } else if (dispo.getPresent2() == Dispo.Present.PAS_LA) {
+            } else if (dispo.getPresent2() == Present.PAS_LA) {
                 heure2Pala.add(dispo.getQauth());
             }
         }

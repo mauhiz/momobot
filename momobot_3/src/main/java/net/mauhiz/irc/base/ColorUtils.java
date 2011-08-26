@@ -10,7 +10,8 @@ import org.apache.commons.lang3.text.StrBuilder;
 /**
  * @author mauhiz
  */
-public final class ColorUtils implements IrcSpecialChars {
+public enum ColorUtils implements IrcSpecialChars {
+    ;
     private static String getCloseTag(String tagName) {
         return "</" + tagName + ">";
     }
@@ -241,12 +242,5 @@ public final class ColorUtils implements IrcSpecialChars {
      */
     public static String toUnderline(String string) {
         return DELIM_UNDERLINE + string + DELIM_UNDERLINE;
-    }
-
-    /**
-     * constructeur par defaut.
-     */
-    private ColorUtils() {
-        super();
     }
 }

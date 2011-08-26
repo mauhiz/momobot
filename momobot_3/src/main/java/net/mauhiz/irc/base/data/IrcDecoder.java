@@ -25,9 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @author mauhiz
  */
-public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
-
-    private static final IIrcDecoder INSTANCE = new IrcDecoder();
+public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
+    INSTANCE;
 
     private static String getCmd(ArgumentList args, String raw) {
         String cmd = args.poll();
@@ -36,10 +35,6 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
             throw new IllegalArgumentException("Malformed IRC message: " + raw);
         }
         return cmd;
-    }
-
-    public static IIrcDecoder getInstance() {
-        return INSTANCE;
     }
 
     private static IrcChannel[] toIrcChannels(IrcNetwork network, String[] chans) {
@@ -57,10 +52,6 @@ public class IrcDecoder implements IrcSpecialChars, IIrcDecoder {
             throw new IllegalArgumentException("Malformed IRC message: " + raw);
         }
         return args;
-    }
-
-    private IrcDecoder() {
-        super();
     }
 
     private IIrcMessage buildFromCommand(IrcCommands command, IIrcServerPeer server, ArgumentList args, Target from,

@@ -8,7 +8,9 @@ import net.mauhiz.irc.base.msg.DccChatRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class CtcpFactory {
+public enum CtcpFactory {
+    ;
+    private static final Logger LOG = Logger.getLogger(CtcpFactory.class);
 
     public static Ctcp decode(IIrcServerPeer server, Target from, Target to, String msg) {
         final String command = StringUtils.substringBefore(msg, " ");
@@ -26,7 +28,7 @@ public class CtcpFactory {
             }
         }
 
-        Logger.getLogger(CtcpFactory.class).warn("Unknwon CTCP: " + command);
+        LOG.warn("Unknown CTCP: " + command);
         return new Ctcp(server, from, to, ctcpContent) {
 
             @Override

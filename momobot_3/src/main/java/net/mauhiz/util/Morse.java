@@ -11,7 +11,8 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class Morse {
+public enum Morse {
+    ;
     /**
      * mon tableau avec le code morse.
      */

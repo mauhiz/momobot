@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.mauhiz.util.FileUtil;
 import net.mauhiz.util.NetUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -67,20 +68,23 @@ public class WebQuery {
     private URI url;
 
     /**
-     * @param type1
+     * @param type
      *            le type
-     * @param query1
+     * @param rawQuery
      *            la requete
      */
-    public WebQuery(String type1, String query1) {
-        type = type1;
+    public WebQuery(String type, String rawQuery) {
+        this.type = type;
         try {
-            query = URLEncoder.encode(query1, "UTF-8");
-            setUrl();
+            this.query = URLEncoder.encode(rawQuery, FileUtil.UTF8.name());
+
         } catch (UnsupportedEncodingException uee) {
-            LOG.warn(uee, uee);
+            throw new IllegalStateException(uee);
+        }
+        try {
+            setUrl();
         } catch (URISyntaxException urie) {
-            LOG.warn(urie, urie);
+            throw new IllegalStateException(urie);
         }
         len = resultSep.length();
     }

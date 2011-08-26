@@ -1,7 +1,5 @@
 package net.mauhiz.irc.base;
 
-import java.io.IOException;
-
 import net.mauhiz.irc.base.io.IIrcIO;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.trigger.ITriggerManager;
@@ -18,10 +16,7 @@ public interface IIrcControl {
      */
     void decodeIrcRawMsg(String raw, IIrcIO io);
 
-    /**
-     * @throws IOException
-     */
-    void exit() throws IOException;
+    void exit();
 
     ITriggerManager[] getManagers();
 

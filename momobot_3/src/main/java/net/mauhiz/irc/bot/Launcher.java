@@ -1,9 +1,8 @@
 package net.mauhiz.irc.bot;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Locale;
 
+import net.mauhiz.irc.CommonLauncher;
 import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcClientControl;
@@ -13,11 +12,9 @@ import net.mauhiz.irc.base.data.IrcServerFactory;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -25,45 +22,27 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class Launcher {
+public class Launcher extends CommonLauncher {
 
     private static final Logger LOG = Logger.getLogger(Launcher.class);
-
-    private static void loadProfiles(Launcher launcher, String[] args) {
-        for (String arg : args) {
-            launcher.loadProfile(arg);
-        }
-    }
 
     /**
      * @param args
      * @throws ConfigurationException
      */
     public static void main(String... args) throws ConfigurationException {
-        if (ArrayUtils.isEmpty(args)) {
-            throw new IllegalArgumentException("Please specify profile names to be loaded");
-        }
-        LOG.info("Default charset : " + Charset.defaultCharset());
-        LOG.info("Default locale : " + Locale.getDefault());
-        HierarchicalConfiguration config = new XMLConfiguration("momobot.xml");
-        loadProfiles(new Launcher(config), args);
+        showDefaults();
+        new Launcher(new XMLConfiguration("momobot.xml")).loadProfiles(args);
     }
-
-    /**
-     * configuration
-     */
-    private final Configuration config;
 
     /**
      * @param config
      */
-    public Launcher(HierarchicalConfiguration config) {
-        this.config = config;
-        config.setExpressionEngine(new XPathExpressionEngine());
+    protected Launcher(HierarchicalConfiguration config) {
+        super(config);
     }
 
     private void autoJoin(String profileCriteria, IIrcControl control, IIrcServerPeer peer) {
-
         String[] joins = config.getStringArray(profileCriteria + "/autoconnect/join");
         LOG.debug(StringUtils.join(joins, ' '));
         for (String chan : joins) {
@@ -103,7 +82,8 @@ public class Launcher {
     /**
      * @param profile
      */
-    private void loadProfile(String profile) {
+    @Override
+    protected void loadProfile(String profile) {
         LOG.info("loading profile: " + profile);
         String profileCriteria = "profil[@name='" + profile + "']";
         String nick = config.getString(profileCriteria + "/@nick");
@@ -117,6 +97,14 @@ public class Launcher {
         IIrcClientControl control = new IrcClientControl(mtm);
         String[] serverNames = config.getStringArray(profileCriteria + "/autoconnect/@server");
         loadServerProfiles(serverNames, profileCriteria, nick, login, fullName, control, mtm);
+    }
+
+    @Override
+    protected void loadProfiles(String... args) {
+        if (ArrayUtils.isEmpty(args)) {
+            throw new IllegalArgumentException("Please specify profile names to be loaded");
+        }
+        super.loadProfiles(args);
     }
 
     private void loadServerProfiles(String[] serverNames, String profileCriteria, String nick, String login,

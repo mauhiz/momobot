@@ -16,7 +16,6 @@ import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
-import net.mauhiz.irc.bot.triggers.dispo.Dispo.Present;
 import net.mauhiz.util.DateUtil;
 
 import org.apache.commons.lang3.StringUtils;

@@ -6,7 +6,8 @@ import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 
-public class Messages {
+public enum Messages {
+    ;
     public static String get(Class<?> caller, String key, Object... params) {
         return get(caller.getPackage(), key, params);
     }

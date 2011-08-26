@@ -67,7 +67,7 @@ public class BncClientIO extends AbstractIrcIO {
     @Override
     public void processMsg(String raw) {
         if (status == IOStatus.CONNECTING) {
-            IIrcMessage msg = IrcDecoder.getInstance().buildFromRaw(null, raw);
+            IIrcMessage msg = IrcDecoder.INSTANCE.buildFromRaw(null, raw);
 
             if (nick == null) {
                 if (msg instanceof Nick) {

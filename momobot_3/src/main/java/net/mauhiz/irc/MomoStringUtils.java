@@ -10,7 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @author mauhiz
  */
-public class MomoStringUtils {
+public enum MomoStringUtils {
+    ;
     private static final Random RANDOM = new Random();
 
     /**

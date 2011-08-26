@@ -9,7 +9,8 @@ import org.hibernate.cfg.Configuration;
  * 
  * @author mauhiz
  */
-public class HibernateUtils {
+public enum HibernateUtils {
+    ;
     /**
      * session
      */
