@@ -17,11 +17,11 @@ import net.mauhiz.irc.base.trigger.IKickTrigger;
 import net.mauhiz.irc.base.trigger.IPartTrigger;
 import net.mauhiz.irc.base.trigger.IQuitTrigger;
 import net.mauhiz.util.ExecutionType;
-import net.mauhiz.util.NamedRunnable;
+import net.mauhiz.util.AbstractNamedRunnable;
 
 public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTrigger, IKickTrigger {
 
-    static class UserListUpdater extends NamedRunnable {
+    static class UserListUpdater extends AbstractNamedRunnable {
         private final IrcChannel channel;
         private final org.eclipse.swt.widgets.List userList;
 

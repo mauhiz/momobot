@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <momobot>
-  <server alias="Quakenet" uri="irc://irc.quakenet.org:6667/" />
-  <server alias="Localhost" uri="irc://localhost:6667/" />
+  <server alias="irc.quakenet.org" uri="irc://irc.quakenet.org:6667/" class="net.mauhiz.irc.base.data.qnet.QnetServer"/>
+  <server alias="localhost" uri="irc://localhost:6667/" />
   <profil name="default" nick="momobot3" login="mmb" fullName="MMB v3">
-    <autoconnect server="Quakenet" fullName="MMB v3 - Qnet Special">
+    <autoconnect server="irc.quakenet.org" fullName="MMB v3 - Qnet Special">
       <join>#tsi.fr</join>
       <!--join>#cos_squad</join-->
       <join>#prolama</join>
@@ -22,7 +22,7 @@
     <loadtriggerpack prefix="$" bundle="dispo" />
   </profil>
   <profil name="seekbot" nick="mom0" login="mom0" fullName="Pv moi si t'es mon ami">
-    <autoconnect server="Quakenet">
+    <autoconnect server="irc.quakenet.org">
       <join>#tsi.fr</join>
     </autoconnect>
     <loadtriggerpack prefix="$" bundle="admin" />
@@ -31,14 +31,14 @@
     <loadtriggerpack prefix="$" bundle="gather" />
   </profil>
   <profil name="cwwb" nick="cwwb_" login="mom0" fullName="Clanwar Watcher (TM)">
-    <autoconnect server="Quakenet">
+    <autoconnect server="irc.quakenet.org">
       <join>#clanwar.fr</join>
     </autoconnect>
     <loadtriggerpack prefix="$" bundle="admin" />
     <loadtriggerpack bundle="cwwb" />
   </profil>
   <profil name="local" nick="momobot3" login="mmb" fullName="MMB v3">
-    <autoconnect server="Localhost" fullName="MMB v3 - Localhost">
+    <autoconnect server="localhost" fullName="MMB v3 - Localhost">
       <join>#test</join>
     </autoconnect>
     <loadtriggerpack prefix="$" bundle="admin" />

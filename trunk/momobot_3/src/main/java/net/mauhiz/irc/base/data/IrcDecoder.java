@@ -28,34 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
     INSTANCE;
 
-    private static String getCmd(ArgumentList args, String raw) {
-        String cmd = args.poll();
-
-        if (cmd == null) {
-            throw new IllegalArgumentException("Malformed IRC message: " + raw);
-        }
-        return cmd;
-    }
-
-    private static IrcChannel[] toIrcChannels(IrcNetwork network, String[] chans) {
-        List<IrcChannel> channels = new ArrayList<IrcChannel>(chans.length);
-        for (String chan : chans) {
-            channels.add(network.findChannel(chan));
-        }
-        return channels.toArray(new IrcChannel[channels.size()]);
-    }
-
-    private static ArgumentList tokenizeArgs(String raw) {
-        String argumentStr = StringUtils.substringBefore(raw, " :");
-        ArgumentList args = new ArgumentList(argumentStr);
-        if (args.isEmpty()) {
-            throw new IllegalArgumentException("Malformed IRC message: " + raw);
-        }
-        return args;
-    }
-
-    private IIrcMessage buildFromCommand(IrcCommands command, IIrcServerPeer server, ArgumentList args, Target from,
-            String msg) {
+    private static IIrcMessage buildFromCommand(IrcCommands command, IIrcServerPeer server, ArgumentList args,
+            Target from, String msg) {
 
         switch (command) {
             case NOTICE:
@@ -112,6 +86,54 @@ public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
         }
     }
 
+    private static Target decodeTarget(IIrcServerPeer peer, String fromStr) {
+        if (fromStr == null) {
+            return null;
+        }
+        if (MomoStringUtils.isChannelName(fromStr)) {
+            return peer.getNetwork().findChannel(fromStr);
+        }
+
+        HostMask mask = HostMask.getInstance(fromStr);
+
+        if (mask == null) { // not a host mask
+            if (StringUtils.contains(fromStr, '.')) {
+                peer.setIrcForm(fromStr);
+                return peer;
+            }
+
+            return peer.getNetwork().findUser(fromStr, true);
+        }
+
+        return peer.getNetwork().findUser(mask, true);
+    }
+
+    private static String getCmd(ArgumentList args, String raw) {
+        String cmd = args.poll();
+
+        if (cmd == null) {
+            throw new IllegalArgumentException("Malformed IRC message: " + raw);
+        }
+        return cmd;
+    }
+
+    private static IrcChannel[] toIrcChannels(IrcNetwork network, String[] chans) {
+        List<IrcChannel> channels = new ArrayList<IrcChannel>(chans.length);
+        for (String chan : chans) {
+            channels.add(network.findChannel(chan));
+        }
+        return channels.toArray(new IrcChannel[channels.size()]);
+    }
+
+    private static ArgumentList tokenizeArgs(String raw) {
+        String argumentStr = StringUtils.substringBefore(raw, " :");
+        ArgumentList args = new ArgumentList(argumentStr);
+        if (args.isEmpty()) {
+            throw new IllegalArgumentException("Malformed IRC message: " + raw);
+        }
+        return args;
+    }
+
     /**
      * @param raw
      * @return raw IRC msg
@@ -137,27 +159,5 @@ public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
         }
 
         return ircMessage;
-    }
-
-    protected Target decodeTarget(IIrcServerPeer peer, String fromStr) {
-        if (fromStr == null) {
-            return null;
-        }
-        if (MomoStringUtils.isChannelName(fromStr)) {
-            return peer.getNetwork().findChannel(fromStr);
-        }
-
-        HostMask mask = HostMask.getInstance(fromStr);
-
-        if (mask == null) { // not a host mask
-            if (StringUtils.contains(fromStr, '.')) {
-                peer.setIrcForm(fromStr);
-                return peer;
-            }
-
-            return peer.getNetwork().findUser(fromStr, true);
-        }
-
-        return peer.getNetwork().findUser(mask, true);
     }
 }

@@ -14,7 +14,7 @@ import net.mauhiz.irc.base.data.IrcServerFactory;
 public abstract class AbstractServerTest {
     protected final IIrcDecoder DECODER = IrcDecoder.INSTANCE;
     protected final IrcNetwork QNET;
-    protected final IIrcServerPeer TO_QNET = IrcServerFactory.createServer("Quakenet", "irc://uk.quakenet.org:6667/");
+    protected final IIrcServerPeer TO_QNET = IrcServerFactory.createServer("irc://irc.quakenet.org:6667/");
 
     protected AbstractServerTest() {
         super();

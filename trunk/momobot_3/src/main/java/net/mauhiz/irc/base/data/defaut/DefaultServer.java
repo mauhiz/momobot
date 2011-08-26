@@ -1,11 +1,13 @@
 package net.mauhiz.irc.base.data.defaut;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 import net.mauhiz.irc.base.data.AbstractIrcNetwork;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.irc.base.msg.NumericReplies;
+import net.mauhiz.irc.base.msg.ServerMsg;
 
 /**
  * @author mauhiz
@@ -22,8 +24,13 @@ public class DefaultServer extends AbstractIrcNetwork {
         return 127; // TODO confirm?
     }
 
-    public Set<String> getServiceNicks() {
+    public Collection<String> getServiceNicks() {
         return Collections.emptySet();
+    }
+
+    @Override
+    public void handleSpecific(ServerMsg message, NumericReplies reply) {
+        LOG.warn("Unhandled server reply : " + message);
     }
 
     /**

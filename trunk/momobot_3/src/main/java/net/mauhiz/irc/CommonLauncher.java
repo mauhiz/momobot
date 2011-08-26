@@ -3,6 +3,10 @@ package net.mauhiz.irc;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
+import net.mauhiz.irc.base.data.IIrcServerPeer;
+import net.mauhiz.irc.base.data.IrcNetwork;
+import net.mauhiz.irc.base.data.IrcServerFactory;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
@@ -35,5 +39,17 @@ public abstract class CommonLauncher {
         for (String arg : args) {
             loadProfile(arg);
         }
+    }
+
+    protected IIrcServerPeer loadServerClass(String serverClass, String serverName, String uri) {
+        if (serverClass != null) {
+            try {
+                Class<? extends IrcNetwork> clazz = Class.forName(serverClass).asSubclass(IrcNetwork.class);
+                IrcServerFactory.registerServerClass(serverName, clazz);
+            } catch (ClassNotFoundException cnfe) {
+                LOG.error(cnfe, cnfe);
+            }
+        }
+        return IrcServerFactory.createServer(serverName, uri);
     }
 }

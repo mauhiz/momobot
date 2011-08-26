@@ -3,11 +3,15 @@ package net.mauhiz.util;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -18,18 +22,6 @@ import org.apache.log4j.Logger;
  */
 public enum NetUtils {
     ;
-    /**
-     * masque pour signer
-     */
-    static final int BYTE_MASK = -1;
-    /**
-     * 256.
-     */
-    public static final int IP_FIELD_RANGE = 0x100;
-    /**
-     * nombre de champs dans l'Ipv4.
-     */
-    public static final int IP_FIELDS = 4;
 
     /**
      * logger.
@@ -37,55 +29,28 @@ public enum NetUtils {
     private static final Logger LOG = Logger.getLogger(NetUtils.class);
 
     /**
-     * A convenient method that accepts an IP address represented by a byte[] of size 4 and returns this as a long
-     * representation of the same IP address.
-     * 
-     * @since PircBot 0.9.4
      * @param address
      *            the byte[] of size 4 representing the IP address.
      * @return a long representation of the IP address.
      */
-    public static long byteTabToLong(byte[] address) {
-        assert address.length == IP_FIELDS : "address.length must be " + IP_FIELDS;
-        long ipNum = 0;
-        long multiplier = 1;
-        for (int i = address.length - 1; i >= 0; --i) {
-            int byteVal = (address[i] + IP_FIELD_RANGE) % IP_FIELD_RANGE;
-            ipNum += byteVal * multiplier;
-            multiplier *= IP_FIELD_RANGE;
+    private static long byteTabToLong(byte[] address) {
+        ByteBuffer buf = ByteBuffer.allocate(Long.SIZE / Byte.SIZE);
+
+        // if IP is IPv4, we need to add trailing zeroes
+        for (int i = address.length; i < buf.capacity(); i++) {
+            buf.put((byte) 0);
         }
-        return ipNum;
+
+        buf.put(address).rewind();
+        return buf.getLong();
     }
 
-    /**
-     * Une IP vaut 32 bits, un int aussi. Par contre l'entier est signe...
-     * 
-     * @param addr
-     *            l'adresse
-     * @return ?
-     */
-    public static int byteTabToSignedInt(byte[] addr) {
-        return (int) byteTabToLong(addr);
-    }
-
-    /**
-     * @param ip
-     *            l'IP
-     * @return ?
-     */
-    public static InetAddress charTabToIa(char[] ip) {
-        assert ip.length == IP_FIELDS : "ip.length must be " + IP_FIELDS;
-        try {
-            StringBuilder name = new StringBuilder();
-            for (char ipField : ip) {
-                name.append('.');
-                name.append((int) ipField);
-            }
-            return InetAddress.getByName(name.substring(1));
-        } catch (UnknownHostException uhe) {
-            LOG.warn(uhe, uhe);
+    public static boolean checkPortRange(SocketAddress sa, int minPort, int maxPort) {
+        if (sa instanceof InetSocketAddress) {
+            int port = ((InetSocketAddress) sa).getPort();
+            return port >= minPort && port <= maxPort;
         }
-        return null;
+        return false;
     }
 
     public static String doHttpGet(String url) throws IOException, URISyntaxException {
@@ -104,49 +69,23 @@ public enum NetUtils {
      * @return un kikoo
      */
     public static long iaToLong(InetAddress address) {
-        byte[] ip = address.getAddress();
-        long ipNum = 0;
-        long multiplier = 1;
-        int byteVal;
-        for (int i = IP_FIELDS - 1; i >= 0; --i) {
-            /* byte is unsigned in IP */
-            byteVal = (ip[i] + IP_FIELD_RANGE) % IP_FIELD_RANGE;
-            ipNum += byteVal * multiplier;
-            multiplier *= IP_FIELD_RANGE;
-        }
-        return ipNum;
-    }
-
-    /**
-     * @param addr
-     *            l'adresse
-     * @return ?
-     */
-    public static byte[] intToBytes(int addr) {
-        byte[] result = new byte[IP_FIELDS];
-        for (int i = 0; i < result.length; i++) {
-            int lmask = BYTE_MASK << Byte.SIZE * (IP_FIELDS - i - 1);
-            result[i] = (byte) ((addr & lmask) >> Byte.SIZE * (IP_FIELDS - i - 1));
-        }
-        return result;
+        return byteTabToLong(address.getAddress());
     }
 
     /**
      * A convenient method that accepts an IP address represented as a long and returns an integer array of size 4
      * representing the same IP address.
      * 
-     * @param address1
+     * @param address
      *            the long value representing the IP address.
-     * @return A short[] of size 4.
      */
-    public static char[] longToCharTab(long address1) {
-        long address = address1;
-        char[] ip = new char[IP_FIELDS];
-        for (int i = IP_FIELDS - 1; i >= 0; --i) {
-            ip[i] = (char) (address % IP_FIELD_RANGE);
-            address /= IP_FIELD_RANGE;
+    private static ByteBuffer longToByteTab(long address) {
+        ByteBuffer buf = ByteBuffer.allocate(Long.SIZE / Byte.SIZE);
+        buf.putLong(address).rewind();
+        if (buf.getInt() == 0) { // this IP is IPv4, we need to remove trailing zeroes
+            return ByteBuffer.allocate(Integer.SIZE / Byte.SIZE).put(buf);
         }
-        return ip;
+        return buf;
     }
 
     /**
@@ -154,8 +93,8 @@ public enum NetUtils {
      *            une ip
      * @return une inetaddress
      */
-    public static InetAddress longToIa(long longip) {
-        return charTabToIa(longToCharTab(longip));
+    public static InetAddress longToIa(long longip) throws UnknownHostException {
+        return InetAddress.getByAddress(longToByteTab(longip).array());
     }
 
     /**
@@ -163,37 +102,12 @@ public enum NetUtils {
      *            la chaine a parser
      * @return ?
      */
-    public static InetSocketAddress makeISA(String str) {
-        int index = str.indexOf(':');
-        if (index > -1) {
-            try {
-                InetAddress ip = InetAddress.getByName(str.substring(0, index));
-                int port = Integer.parseInt(str.substring(index + 1));
-                return new InetSocketAddress(ip, port);
-
-            } catch (UnknownHostException uhe) {
-                LOG.debug(uhe, uhe);
-
-            } catch (IllegalArgumentException iae) {
-                LOG.debug(iae, iae);
-            }
+    public static SocketAddress makeISA(String str) {
+        String[] parts = StringUtils.split(str, ':');
+        if (ArrayUtils.getLength(parts) == 2) {
+            int port = Integer.parseInt(parts[1]);
+            return new InetSocketAddress(parts[0], port);
         }
-        return null;
-    }
-
-    /**
-     * @param uns
-     *            un long non signe
-     * @return un tableau d'octets qui represente un entier non signe
-     */
-    public static byte[] unsIntToByteTab(long uns) {
-        byte[] retour = new byte[Integer.SIZE / Byte.SIZE];
-        int shift = Integer.SIZE;
-
-        for (char i = 0; i < retour.length; i++) {
-            shift -= Byte.SIZE;
-            retour[i] = (byte) (uns >> shift & BYTE_MASK);
-        }
-        return retour;
+        throw new IllegalArgumentException("The address and the port must be separated by a dot.");
     }
 }

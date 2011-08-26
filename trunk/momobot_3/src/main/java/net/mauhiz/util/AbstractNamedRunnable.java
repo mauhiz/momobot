@@ -1,10 +1,10 @@
 package net.mauhiz.util;
 
-public abstract class NamedRunnable extends AbstractRunnable {
+public abstract class AbstractNamedRunnable extends AbstractRunnable {
 
-    private String name;
+    private final String name;
 
-    public NamedRunnable(String name) {
+    public AbstractNamedRunnable(String name) {
         super();
         this.name = name;
     }

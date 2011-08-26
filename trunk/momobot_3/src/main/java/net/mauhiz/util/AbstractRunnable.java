@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Display;
  */
 abstract class AbstractRunnable implements IRunnable {
     static class CleanerThread extends AbstractDaemon {
-        private static long CLEANER_SLEEP = 5000;
+        private static final long CLEANER_SLEEP = 5000;
 
         public CleanerThread() {
             super("Future Cleaner");

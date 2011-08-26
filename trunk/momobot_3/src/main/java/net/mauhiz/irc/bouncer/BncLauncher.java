@@ -1,6 +1,7 @@
 package net.mauhiz.irc.bouncer;
 
 import net.mauhiz.irc.CommonLauncher;
+import net.mauhiz.irc.base.data.IIrcServerPeer;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
@@ -30,11 +31,19 @@ public class BncLauncher extends CommonLauncher {
     }
 
     @Override
-    protected void loadProfile(String arg) {
-        AccountStore dummy = new DummyAccountStore();
+    protected void loadProfile(String profile) {
+        String uri = config.getString("server/@uri");
+        String serverName = config.getString("server/@alias");
+        String serverClass = config.getString("server/@class");
+        IIrcServerPeer serverPeer = loadServerClass(serverClass, serverName, uri);
+        AccountStore dummy = new DummyAccountStore(serverPeer);
         dummy.reload();
 
-        BncServerConnection bouncer = new BncServerConnection(dummy, 6667);
+        LOG.info("loading profile: " + profile);
+        String profileCriteria = "profil[@name='" + profile + "']";
+
+        int port = config.getInt(profileCriteria + "/@port");
+        BncServerConnection bouncer = new BncServerConnection(dummy, port);
         bouncer.tstart();
     }
 }

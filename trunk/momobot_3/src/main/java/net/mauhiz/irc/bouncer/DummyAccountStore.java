@@ -1,15 +1,14 @@
 package net.mauhiz.irc.bouncer;
 
-import net.mauhiz.irc.base.data.IrcServerFactory;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcUser;
 
 public class DummyAccountStore extends AccountStore {
-    private static final IIrcServerPeer QNET;
+    private final IIrcServerPeer serverPeer;
 
-    static {
-        QNET = IrcServerFactory.createServer("irc://uk.quakenet.org:6667/");
-        QNET.introduceMyself("MomoBouncer", null, null);
+    public DummyAccountStore(IIrcServerPeer serverPeer) {
+        this.serverPeer = serverPeer;
+        serverPeer.introduceMyself("MomoBouncer", null, null);
     }
 
     @Override
@@ -19,9 +18,9 @@ public class DummyAccountStore extends AccountStore {
             acc.setUsername("mauhiz");
             acc.setPassword("mauhiz");
             /* beware */
-            acc.setServer(QNET.getNetwork());
+            acc.setServer(serverPeer.getNetwork());
             /* cette technique ne marche que pour 1 seul account */
-            IrcUser myself = QNET.getMyself();
+            IrcUser myself = serverPeer.getMyself();
             myself.getMask().setUser(acc.getUsername());
             myself.setNick(acc.getUsername());
             ACCOUNTS.add(acc);

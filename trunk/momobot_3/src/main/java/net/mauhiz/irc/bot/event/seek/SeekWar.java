@@ -1,6 +1,6 @@
 package net.mauhiz.irc.bot.event.seek;
 
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,7 +34,7 @@ public class SeekWar {
     /**
      * port maxi
      */
-    private static final int MAX_SRV_PORT = 65535;
+    private static final int MAX_SRV_PORT = Character.MAX_VALUE;
     /**
      * port mini
      */
@@ -458,13 +458,17 @@ public class SeekWar {
 
         Matcher m = IP_PATTERN.matcher(msg);
         if (m.find()) {
-            InetSocketAddress add1 = NetUtils.makeISA(m.group());
-            if (add1.getPort() > MIN_SRV_PORT && add1.getPort() < MAX_SRV_PORT) {
-                // On regarde si l'user est deja dans la liste
-                if (!userpv.contains(provenance)) {
-                    userpv.add(provenance);
+            try {
+                SocketAddress add1 = NetUtils.makeISA(m.group());
+                if (NetUtils.checkPortRange(add1, MIN_SRV_PORT, MAX_SRV_PORT)) {
+                    // On regarde si l'user est deja dans la liste
+                    if (!userpv.contains(provenance)) {
+                        userpv.add(provenance);
+                    }
+                    return true;
                 }
-                return true;
+            } catch (IllegalArgumentException iae) {
+                return false;
             }
         }
 

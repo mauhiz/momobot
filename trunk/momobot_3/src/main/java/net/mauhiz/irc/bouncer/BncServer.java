@@ -5,6 +5,8 @@ import java.util.Collections;
 
 import net.mauhiz.irc.base.data.AbstractIrcNetwork;
 import net.mauhiz.irc.base.data.IrcChannel;
+import net.mauhiz.irc.base.msg.NumericReplies;
+import net.mauhiz.irc.base.msg.ServerMsg;
 
 public class BncServer extends AbstractIrcNetwork {
 
@@ -19,6 +21,11 @@ public class BncServer extends AbstractIrcNetwork {
 
     public Collection<String> getServiceNicks() {
         return Collections.emptySet();
+    }
+
+    @Override
+    public void handleSpecific(ServerMsg message, NumericReplies reply) {
+        LOG.warn("Unhandled command: " + message);
     }
 
     public IrcChannel newChannel(String chanLowerCase) {

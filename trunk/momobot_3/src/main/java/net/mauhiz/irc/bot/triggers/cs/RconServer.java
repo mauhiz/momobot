@@ -1,7 +1,7 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 /**
  * une sorte de gros bean. Les joueurs presents: Cle = steamId, Valeur = objet Player associe.
@@ -16,7 +16,7 @@ public class RconServer extends Server implements IRconServer {
      * @param ipay1
      *            l'IP et port du serveur.
      */
-    public RconServer(InetSocketAddress ipay1, String rcon) throws IOException {
+    public RconServer(SocketAddress ipay1, String rcon) throws IOException {
         super(ipay1);
         vuc = new RconClient(this, rcon);
     }

@@ -16,7 +16,7 @@ public class Hooks<S> {
      * value = hooks associes
      */
     private static final Map<Object, Hooks<?>> HOOKS_HOLDER = new HashMap<Object, Hooks<?>>();
-    
+
     /**
      * @param <S>
      * @param <J>
@@ -26,45 +26,15 @@ public class Hooks<S> {
      */
     public static <S, J> void addHook(S esse, J jambon) {
         Hooks<S> hTable = getHooks(esse);
-        
+
         if (hTable == null) {
             hTable = new Hooks<S>(esse);
         }
-        
+
         hTable.addHook(jambon);
     }
-    
-    /**
-     * @param <J>
-     * @param <S>
-     * @param esse
-     * @param hookClass
-     * @return jambon
-     */
-    public static <J, S> J getHook(S esse, Class<J> hookClass) {
-        Hooks<S> hTable = getHooks(esse);
-        if (hTable == null) {
-            return null;
-        }
-        
-        return hTable.getHook(hookClass);
-    }
-    
-    /**
-     * @param <S>
-     * @param esse
-     * @return hooks
-     */
-    public static <S> Hooks<S> getHooks(S esse) {
-        return (Hooks<S>) HOOKS_HOLDER.get(esse);
-    }
-    
-    /**
-     * @param <J>
-     * @param jambon
-     */
-    public static <J> void remove(J jambon) {
-        Class<?> jClass = jambon.getClass();
+
+    private static <J> void findAndRemove(Class<? extends J> jClass) {
         for (Iterator<Hooks<?>> iHooks = HOOKS_HOLDER.values().iterator(); iHooks.hasNext();) { // parcours des hooks
             Hooks<?> hs = iHooks.next();
             for (Iterator<Class<?>> iClasses = hs.jambons.keySet().iterator(); iClasses.hasNext();) {
@@ -77,26 +47,59 @@ public class Hooks<S> {
                 iHooks.remove();
             }
         }
-        
     }
-    
+
+    /**
+     * @param <J>
+     * @param <S>
+     * @param esse
+     * @param hookClass
+     * @return jambon
+     */
+    public static <J, S> J getHook(S esse, Class<J> hookClass) {
+        Hooks<S> hTable = getHooks(esse);
+        if (hTable == null) {
+            return null;
+        }
+
+        return hTable.getHook(hookClass);
+    }
+
+    /**
+     * @param <S>
+     * @param esse
+     * @return hooks
+     */
+    public static <S> Hooks<S> getHooks(S esse) {
+        return (Hooks<S>) HOOKS_HOLDER.get(esse);
+    }
+
+    /**
+     * @param <J>
+     * @param jambon
+     */
+    public static <J> void remove(J jambon) {
+        findAndRemove(jambon.getClass());
+    }
+
     /**
      * key = class of jambon<br>
      * value = jambon itself
      */
     private final Map<Class<?>, Object> jambons = new HashMap<Class<?>, Object>();
-    
+
     /**
      * @param esse
      */
     public Hooks(S esse) {
+        super();
         HOOKS_HOLDER.put(esse, this);
     }
-    
+
     public <J> void addHook(J jambon) {
         jambons.put(jambon.getClass(), jambon);
     }
-    
+
     /**
      * @param <J>
      * @param hookClass
@@ -104,6 +107,7 @@ public class Hooks<S> {
      */
     public <J> J getHook(Class<J> hookClass) {
         Object jambon = jambons.get(hookClass);
+
         if (jambon == null) {
             for (Object value : jambons.values()) {
                 if (hookClass.isAssignableFrom(value.getClass())) {
@@ -112,7 +116,7 @@ public class Hooks<S> {
                 }
             }
         }
-        
-        return (J) jambon;
+
+        return hookClass.cast(jambon);
     }
 }

@@ -1,6 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.Target;
@@ -13,7 +14,19 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class DccChatRequest extends Ctcp {
     public static final String COMMAND = "DCC";
+
+    private static InetAddress decodeAddress(String addrLong) {
+        try {
+            return NetUtils.longToIa(Long.parseLong(addrLong));
+        } catch (UnknownHostException uhe) {
+            return null;
+        } catch (IllegalArgumentException iae) {
+            return null;
+        }
+    }
+
     private final InetAddress address;
+
     private final int port;
 
     public DccChatRequest(IIrcServerPeer server, Target from, Target to, InetAddress address, int port) {
@@ -25,8 +38,7 @@ public class DccChatRequest extends Ctcp {
     public DccChatRequest(IIrcServerPeer server, Target from, Target to, String ctcpContent) {
         super(server, from, to, ctcpContent);
         String[] tokens = StringUtils.split(ctcpContent, ' ');
-        long addrLong = Long.parseLong(tokens[2]);
-        address = NetUtils.longToIa(addrLong);
+        address = decodeAddress(tokens[2]);
         port = Integer.parseInt(tokens[3]);
     }
 
