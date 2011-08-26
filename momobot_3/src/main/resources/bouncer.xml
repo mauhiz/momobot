@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bouncer port="6667">
-  
+<bouncer>
+	<server alias="irc.quakenet.org" uri="irc://irc.quakenet.org:6667/" class="net.mauhiz.irc.base.data.qnet.QnetServer"/>
+	<profile name="default" port="6667" />
 </bouncer>

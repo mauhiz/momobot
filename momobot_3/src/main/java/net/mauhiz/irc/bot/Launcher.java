@@ -7,8 +7,6 @@ import net.mauhiz.irc.base.IIrcClientControl;
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.IrcClientControl;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
-import net.mauhiz.irc.base.data.IrcNetwork;
-import net.mauhiz.irc.base.data.IrcServerFactory;
 import net.mauhiz.irc.base.msg.Join;
 import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
 
@@ -55,15 +53,7 @@ public class Launcher extends CommonLauncher {
         String uri = config.getString("server[@alias='" + serverName + "']/@uri");
         LOG.debug("uri=" + uri);
         String serverClass = config.getString("server[@alias='" + serverName + "']/@class");
-        if (serverClass != null) {
-            try {
-                Class<? extends IrcNetwork> clazz = Class.forName(serverClass).asSubclass(IrcNetwork.class);
-                IrcServerFactory.registerServerClass(serverName, clazz);
-            } catch (ClassNotFoundException cnfe) {
-                LOG.error(cnfe, cnfe);
-            }
-        }
-        IIrcServerPeer peer = IrcServerFactory.createServer(serverName, uri);
+        IIrcServerPeer peer = loadServerClass(serverClass, serverName, uri);
         defineIdentity(profileCriteria, nick, login, fullName, peer);
 
         LOG.info("autoconnect: " + peer.getNetwork().getAlias());

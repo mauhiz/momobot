@@ -17,7 +17,6 @@ import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.base.data.Topic;
 import net.mauhiz.irc.base.data.UserChannelMode;
 import net.mauhiz.irc.base.data.WhoisRequest;
-import net.mauhiz.irc.base.data.qnet.QnetServer;
 import net.mauhiz.irc.base.ident.IdentServer;
 import net.mauhiz.irc.base.io.IIrcIO;
 import net.mauhiz.irc.base.io.IOStatus;
@@ -401,9 +400,6 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
                 ArgumentList args = message.getArgs();
                 LOG.info(args.poll() + " is on node " + args.poll());
                 break;
-            case RPL_WHOISAUTH: // this message is specific to Qnet Servers
-                ((QnetServer) message.getServerPeer().getNetwork()).handleWhois(message.getArgs());
-                break;
             case RPL_ENDOFWHOIS:
                 WhoisRequest.end(message.getArgs(), true);
                 break;
@@ -438,8 +434,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
                 handleRplList(message);
                 break;
             default:
-                // TODO 42, 265, 266, 439 on Rizon
-                LOG.warn("Unhandled server reply : " + message);
+                message.getServerPeer().getNetwork().handleSpecific(message, reply);
                 break;
         }
     }

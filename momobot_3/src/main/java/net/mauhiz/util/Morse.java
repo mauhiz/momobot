@@ -84,10 +84,9 @@ public enum Morse {
             loadMorse();
         }
         StringBuilder output = new StringBuilder();
-        String upper = work.toUpperCase();
-        for (int i = 0; i < upper.length(); i++) {
-            String element = upper.substring(i, i + 1);
-            output.append(CODE_MORSE.get(element));
+        for (int i = 0; i < work.length(); i++) {
+            String element = work.substring(i, i + 1);
+            output.append(CODE_MORSE.get(element.toUpperCase()));
         }
         return output.toString();
     }

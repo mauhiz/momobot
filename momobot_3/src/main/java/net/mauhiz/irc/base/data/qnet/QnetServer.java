@@ -1,16 +1,18 @@
 package net.mauhiz.irc.base.data.qnet;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
-import net.mauhiz.irc.base.data.AbstractIrcNetwork;
 import net.mauhiz.irc.base.data.ArgumentList;
 import net.mauhiz.irc.base.data.HostMask;
+import net.mauhiz.irc.base.data.defaut.DefaultServer;
+import net.mauhiz.irc.base.msg.NumericReplies;
+import net.mauhiz.irc.base.msg.ServerMsg;
 
 /**
  * @author mauhiz
  */
-public class QnetServer extends AbstractIrcNetwork {
+public class QnetServer extends DefaultServer {
 
     public QnetServer(String alias) {
         super(alias);
@@ -31,8 +33,20 @@ public class QnetServer extends AbstractIrcNetwork {
         return 255; // confirmed
     }
 
-    public List<String> getServiceNicks() {
+    @Override
+    public Collection<String> getServiceNicks() {
         return Arrays.asList("Q", "L");
+    }
+
+    @Override
+    public void handleSpecific(ServerMsg message, NumericReplies reply) {
+        switch (reply) {
+            case RPL_WHOISAUTH:
+                handleWhois(message.getArgs());
+                break;
+            default:
+                super.handleSpecific(message, reply);
+        }
     }
 
     public void handleWhois(ArgumentList args) {
@@ -44,6 +58,7 @@ public class QnetServer extends AbstractIrcNetwork {
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newChannel(java.lang.String)
      */
+    @Override
     public QnetChannel newChannel(String chanLowerCase) {
         return new QnetChannel(chanLowerCase);
     }
@@ -51,6 +66,7 @@ public class QnetServer extends AbstractIrcNetwork {
     /**
      * @see net.mauhiz.irc.base.data.AbstractIrcNetwork#newUser(java.lang.String)
      */
+    @Override
     public QnetUser newUser(String nick) {
         return new QnetUser(nick);
     }

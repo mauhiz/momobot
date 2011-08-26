@@ -4,6 +4,9 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Set;
 
+import net.mauhiz.irc.base.msg.NumericReplies;
+import net.mauhiz.irc.base.msg.ServerMsg;
+
 /**
  * @author mauhiz
  * 
@@ -52,6 +55,8 @@ public interface IrcNetwork {
     int getLineMaxLength();
 
     Collection<String> getServiceNicks();
+
+    void handleSpecific(ServerMsg message, NumericReplies reply);
 
     IrcChannel newChannel(String chanLowerCase);
 

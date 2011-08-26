@@ -1,6 +1,6 @@
 package net.mauhiz.irc.bot.event.seek;
 
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -93,9 +93,11 @@ public class SeekWar2 extends AbstractChannelEvent {
     public static boolean isMatchIp(final String st) {
         Matcher m = IP_PATTERN.matcher(st);
         if (m.find()) {
-            InetSocketAddress add1 = NetUtils.makeISA(m.group());
-            if (add1 != null && add1.getPort() > MIN_SRV_PORT) {
-                return true;
+            try {
+                SocketAddress add1 = NetUtils.makeISA(m.group());
+                return NetUtils.checkPortRange(add1, MIN_SRV_PORT, Character.MAX_VALUE);
+            } catch (IllegalArgumentException iae) {
+                return false;
             }
         }
         return false;

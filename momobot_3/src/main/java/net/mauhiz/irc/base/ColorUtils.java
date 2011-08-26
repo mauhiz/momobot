@@ -1,9 +1,10 @@
 package net.mauhiz.irc.base;
 
+import java.util.ArrayDeque;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Stack;
 
 import org.apache.commons.lang3.text.StrBuilder;
 
@@ -149,7 +150,7 @@ public enum ColorUtils implements IrcSpecialChars {
 
     public static String toHTML(String text) {
         StringBuilder result = new StringBuilder();
-        Stack<String> openTags = new Stack<String>();
+        Deque<String> openTags = new ArrayDeque<String>();
         for (int i = 0; i < text.length(); i++) {
             int next = text.codePointAt(i);
             if (next == DELIM_COLOR) {

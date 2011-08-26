@@ -1,7 +1,6 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 
 import net.mauhiz.irc.base.IIrcControl;
@@ -45,18 +44,15 @@ public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
 
         } else if (CONNECT.equalsIgnoreCase(cmd)) {
 
-            String ip = args0.poll();
-            InetSocketAddress ipay = NetUtils.makeISA(ip);
-            if (ipay == null) {
-                return "Invalid server IP: " + ip;
-            } else if (hltv == null) {
+            if (hltv == null) {
                 return "Please select a HLTV before";
-            } else {
-                String pass = args0.poll();
-                hltv.getClient().rconCmd("serverpassword " + pass);
-                hltv.getClient().rconCmd("connect " + ip);
-                return "Connecting...";
             }
+            String ip = args0.poll();
+            String pass = args0.poll();
+            hltv.getClient().rconCmd("serverpassword " + pass);
+            NetUtils.makeISA(ip);
+            hltv.getClient().rconCmd("connect " + ip);
+            return "Connecting...";
         } else if (DISCONNECT.equalsIgnoreCase(cmd)) {
             recording = false;
             hltv.getClient().rconCmd("disconnect");
@@ -104,8 +100,11 @@ public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         try {
             return doTrigger(getArgs(im));
 
+        } catch (IllegalArgumentException iae) {
+            return "Invalid syntax: " + iae;
+
         } catch (SocketTimeoutException ste) {
-            return "HLTV server offline: " + hltv.getIp();
+            return "HLTV server offline: " + hltv.getIpay();
 
         } catch (IOException e) {
             LOG.warn(e, e);

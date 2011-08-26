@@ -14,7 +14,7 @@ import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.util.ExecutionType;
-import net.mauhiz.util.NamedRunnable;
+import net.mauhiz.util.AbstractNamedRunnable;
 
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.log4j.Logger;
@@ -27,7 +27,7 @@ public class DefaultTriggerManager implements ITriggerManager {
      * @author mauhiz
      * 
      */
-    class TriggerLoop extends NamedRunnable {
+    class TriggerLoop extends AbstractNamedRunnable {
         private final IIrcControl control;
         private final IIrcMessage msg;
 

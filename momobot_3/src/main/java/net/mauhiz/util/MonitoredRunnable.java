@@ -1,6 +1,6 @@
 package net.mauhiz.util;
 
-public abstract class MonitoredRunnable extends NamedRunnable {
+public abstract class MonitoredRunnable extends AbstractNamedRunnable {
 
     protected String logMsg;
 
