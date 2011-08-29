@@ -152,10 +152,18 @@ public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
             return new ServerMsg(server, from, Integer.parseInt(cmd), args, msg);
         }
 
-        IrcCommands command = IrcCommands.valueOf(cmd);
+        IrcCommands command;
+
+        try {
+            command = IrcCommands.valueOf(cmd);
+
+        } catch (IllegalArgumentException iae) {
+            throw new NotImplementedException("Unknown command on network " + server.getNetwork() + ": " + cmd);
+        }
+
         IIrcMessage ircMessage = buildFromCommand(command, server, args, from, msg);
         if (ircMessage == null) {
-            throw new NotImplementedException("Unknown message on network " + server.getNetwork() + ": " + raw);
+            throw new NotImplementedException("Unsupported command on network " + server.getNetwork() + ": " + command);
         }
 
         return ircMessage;

@@ -1,6 +1,5 @@
 package net.mauhiz.irc.base;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,27 +58,6 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         super(managers);
     }
 
-    public void connect(IIrcServerPeer peer) {
-        if (serverToIo.containsKey(peer)) {
-            /* already connected */
-            return;
-        }
-
-        IrcUser myself = peer.getMyself();
-        if (myself == null) {
-            throw new IllegalArgumentException("I have no name. Who am I?");
-        }
-        new IdentServer(myself).tstart();
-        IrcClientIO ircio = new IrcClientIO(this, peer);
-        try {
-            ircio.connect();
-            serverToIo.put(peer, ircio);
-            ircio.waitForConnection();
-        } catch (IOException e) {
-            LOG.error(e, e); // cannot connect
-        }
-    }
-
     /**
      * @see net.mauhiz.irc.base.IIrcControl#close()
      */
@@ -89,6 +67,24 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
             io.disconnect();
         }
         serverToIo.clear();
+    }
+
+    public boolean connect(IIrcServerPeer peer) {
+        IIrcIO existing = serverToIo.get(peer);
+        if (existing != null) {
+            /* already connected */
+            return existing.getStatus() == IOStatus.CONNECTED;
+        }
+
+        IrcUser myself = peer.getMyself();
+        if (myself == null) {
+            throw new IllegalArgumentException("I have no name. Who am I?");
+        }
+        new IdentServer(myself).tstart();
+        IrcClientIO ircio = new IrcClientIO(this, peer);
+        ircio.connect();
+        serverToIo.put(peer, ircio);
+        return ircio.waitForConnection() == IOStatus.CONNECTED;
     }
 
     protected void handleKick(Kick kick) {
@@ -138,7 +134,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         message.getServerPeer().introduceMyself(newNick, oldMyself.getMask().getUser(), oldMyself.getFullName());
     }
 
-    protected boolean handleNotice(Notice notice, IIrcIO io) {
+    protected MsgState handleNotice(Notice notice, IIrcIO io) {
         if (io != null && io.getStatus() == IOStatus.CONNECTING) {
             if (notice.getFrom() != null) {
                 IIrcServerPeer serverPeer = notice.getServerPeer();
@@ -147,9 +143,9 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
                 LOG.info("connected to " + network.getAlias());
             }
             /* dont let it be processed */
-            return true;
+            return MsgState.NO_MORE_PROCESSING;
         }
-        return false;
+        return MsgState.AVAILABLE;
     }
 
     protected void handleQuit(Quit message) {
@@ -229,12 +225,12 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
     }
 
     @Override
-    public boolean process(IIrcMessage message, IIrcIO io) {
+    public MsgState process(IIrcMessage message, IIrcIO io) {
 
         if (message instanceof Ping) {
             IIrcServerPeer serverPeer = message.getServerPeer();
             sendMsg(new Pong(serverPeer, ((Ping) message).getPingId()));
-            return true;
+            return MsgState.NO_MORE_PROCESSING;
         } else if (message instanceof Join) {
             IrcChannel[] joined = ((Join) message).getChans();
             IrcUser joiner = ((Join) message).getFrom();
@@ -276,7 +272,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         } else if (message instanceof Notice) {
             return handleNotice((Notice) message, io);
         }
-        return false;
+        return MsgState.AVAILABLE;
     }
 
     protected void processMode(Mode message) {
@@ -462,14 +458,16 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
 
         String ircForm = msg.getIrcForm();
         IIrcIO io = serverToIo.get(msg.getServerPeer());
-        io.sendMsg(ircForm);
+        if (io.getStatus() != IOStatus.DISCONNECTED) {
+            io.sendMsg(ircForm);
 
-        if (msg instanceof IPrivateIrcMessage) {
-            io.processMsg(ircForm); // process it back
-        }
+            if (msg instanceof IPrivateIrcMessage) {
+                io.processMsg(ircForm); // process it back
+            }
 
-        if (msg instanceof Quit) {
-            quit(msg.getServerPeer());
+            if (msg instanceof Quit) {
+                quit(msg.getServerPeer());
+            }
         }
     }
 }

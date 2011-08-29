@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mauhiz.irc.base.AbstractIrcControl;
+import net.mauhiz.irc.base.MsgState;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.io.IIrcIO;
 import net.mauhiz.irc.base.msg.IIrcMessage;
@@ -41,7 +42,7 @@ public class BncClientControl extends AbstractIrcControl {
     }
 
     @Override
-    protected boolean process(IIrcMessage message, IIrcIO io) {
+    protected MsgState process(IIrcMessage message, IIrcIO io) {
         throw new NotImplementedException(); // TODO?
     }
 

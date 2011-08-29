@@ -14,12 +14,11 @@ public abstract class AbstractIrcIO implements IIrcIO {
     protected IIrcOutput output;
     protected final IrcPeer peer;
 
-    protected IOStatus status = IOStatus.DISCONNECTED;
+    protected IOStatus status;
 
     protected AbstractIrcIO(IIrcControl control, IrcPeer peer) {
         super();
         this.control = control;
-        status = IOStatus.CONNECTING;
         this.peer = peer;
     }
 
@@ -57,7 +56,7 @@ public abstract class AbstractIrcIO implements IIrcIO {
     /**
      * @see net.mauhiz.irc.base.io.IIrcIO#setStatus(IOStatus)
      */
-    public void setStatus(IOStatus status1) {
-        status = status1;
+    public void setStatus(IOStatus status) {
+        this.status = status;
     }
 }

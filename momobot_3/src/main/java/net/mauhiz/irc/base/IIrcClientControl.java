@@ -10,10 +10,11 @@ import net.mauhiz.irc.base.msg.IIrcMessage;
 public interface IIrcClientControl extends IIrcControl {
     /**
      * @param peer
+     * @return OK if succeeded
      */
-    void connect(IIrcServerPeer peer);
+    boolean connect(IIrcServerPeer peer);
 
-    boolean process(IIrcMessage message, IIrcIO io);
+    MsgState process(IIrcMessage message, IIrcIO io);
 
     void quit(IIrcServerPeer peer);
 }

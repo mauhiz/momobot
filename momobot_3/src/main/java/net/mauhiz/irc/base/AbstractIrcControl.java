@@ -24,12 +24,13 @@ public abstract class AbstractIrcControl implements IIrcControl {
         IIrcMessage msg = IrcDecoder.INSTANCE.buildFromRaw(peer, raw);
 
         // FIXME implement basic processing as a trigger manager
-        if (process(msg, io)) {
-            return;
-        } // common actions
-
-        for (ITriggerManager itm : managers) {
-            itm.processMsg(msg, this); // specific client actions
+        if (process(msg, io) == MsgState.AVAILABLE) {
+            for (ITriggerManager itm : managers) {
+                MsgState state = itm.processMsg(msg, this); // specific client actions
+                if (state != MsgState.AVAILABLE) {
+                    break;
+                }
+            }
         }
     }
 
@@ -40,5 +41,5 @@ public abstract class AbstractIrcControl implements IIrcControl {
         return managers;
     }
 
-    protected abstract boolean process(IIrcMessage message, IIrcIO io);
+    protected abstract MsgState process(IIrcMessage message, IIrcIO io);
 }
