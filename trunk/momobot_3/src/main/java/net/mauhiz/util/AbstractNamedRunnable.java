@@ -1,5 +1,7 @@
 package net.mauhiz.util;
 
+import java.util.Objects;
+
 public abstract class AbstractNamedRunnable extends AbstractRunnable {
 
     private final String name;
@@ -11,7 +13,7 @@ public abstract class AbstractNamedRunnable extends AbstractRunnable {
 
     @Override
     public String getName() {
-        return name == null ? super.getName() : name;
+        return Objects.toString(name, super.getName());
     }
 
 }

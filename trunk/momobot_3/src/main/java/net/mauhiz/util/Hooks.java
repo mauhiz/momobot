@@ -58,11 +58,7 @@ public class Hooks<S> {
      */
     public static <J, S> J getHook(S esse, Class<J> hookClass) {
         Hooks<S> hTable = getHooks(esse);
-        if (hTable == null) {
-            return null;
-        }
-
-        return hTable.getHook(hookClass);
+        return hTable == null ? null : hTable.getHook(hookClass);
     }
 
     /**

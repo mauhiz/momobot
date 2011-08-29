@@ -20,10 +20,7 @@ public final class DispoDb {
      */
     public static DispoDb getInstance(IrcNetwork server) {
         DispoDb ret = Hooks.getHook(server, DispoDb.class);
-        if (ret == null) {
-            return new DispoDb(server);
-        }
-        return ret;
+        return ret == null ? new DispoDb(server) : ret;
     }
 
     /**

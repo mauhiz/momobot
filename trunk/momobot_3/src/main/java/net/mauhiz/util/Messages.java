@@ -16,10 +16,7 @@ public enum Messages {
         try {
             ResourceBundle bundle = ResourceBundle.getBundle(caller.getName());
             String value = bundle.getString(key);
-            if (params == null) {
-                return value;
-            }
-            return MessageFormat.format(value, params);
+            return params == null ? value : MessageFormat.format(value, params);
         } catch (MissingResourceException mre) {
             Logger.getLogger(Messages.class).error("Bundle not found: " + caller.getName());
             return "???";

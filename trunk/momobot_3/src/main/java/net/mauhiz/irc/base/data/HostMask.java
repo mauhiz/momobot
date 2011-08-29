@@ -1,5 +1,6 @@
 package net.mauhiz.irc.base.data;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +11,7 @@ public class HostMask implements Target {
     private static final Pattern HOSTMASK_PATTERN = Pattern.compile("(.*)!(.*)@(.*)");
 
     public static HostMask getInstance(String raw) {
-        assert raw != null;
+        Objects.requireNonNull(raw);
 
         Matcher m = HOSTMASK_PATTERN.matcher(raw);
         if (m.matches()) {

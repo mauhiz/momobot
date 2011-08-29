@@ -19,6 +19,8 @@ import net.mauhiz.irc.base.trigger.IQuitTrigger;
 import net.mauhiz.util.AbstractNamedRunnable;
 import net.mauhiz.util.ExecutionType;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTrigger, IKickTrigger {
 
     static class UserListUpdater extends AbstractNamedRunnable {
@@ -69,8 +71,7 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTr
     }
 
     public void doUpdate(IrcChannel... channels) {
-        Collection<IrcChannel> chans = channels == null || channels.length == 0 ? userLists.keySet() : Arrays
-                .asList(channels);
+        Collection<IrcChannel> chans = ArrayUtils.isEmpty(channels) ? userLists.keySet() : Arrays.asList(channels);
         for (IrcChannel channel : chans) {
             org.eclipse.swt.widgets.List userList = userLists.get(channel);
 
