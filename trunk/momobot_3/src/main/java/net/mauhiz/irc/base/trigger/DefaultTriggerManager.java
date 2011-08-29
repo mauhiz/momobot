@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.MsgState;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 
 import org.apache.commons.beanutils.ConstructorUtils;
@@ -100,16 +101,13 @@ public class DefaultTriggerManager implements ITriggerManager {
         }
     }
 
-    /**
-     * @see net.mauhiz.irc.base.trigger.ITriggerManager#processMsg(IIrcMessage, IIrcControl)
-     */
-    public boolean processMsg(IIrcMessage msg, IIrcControl control) {
+    public MsgState processMsg(IIrcMessage msg, IIrcControl control) {
         if (msg == null) {
             LOG.warn("received null msg");
-            return true;
+            return MsgState.INVALID;
         }
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
         new TriggerLoop(this, msg, control).launch(null);
-        return false;
+        return MsgState.AVAILABLE;
     }
 }

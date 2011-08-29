@@ -11,8 +11,11 @@ import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
 
+import org.apache.log4j.Logger;
+
 public class TriggerTask extends RecursiveAction {
 
+    private static final Logger LOG = Logger.getLogger(TriggerTask.class);
     private final IIrcControl control;
     private final IIrcMessage msg;
     private final ITrigger trigger;
@@ -25,6 +28,14 @@ public class TriggerTask extends RecursiveAction {
 
     @Override
     protected void compute() {
+        try {
+            tryTrigger();
+        } catch (RuntimeException unexpected) {
+            LOG.error(unexpected, unexpected);
+        }
+    }
+
+    private void tryTrigger() {
         if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
             IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
             Privmsg priv = (Privmsg) msg;
