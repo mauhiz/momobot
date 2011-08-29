@@ -16,4 +16,9 @@ public abstract class AbstractPeer implements IrcPeer {
     public InetSocketAddress getAddress() {
         return hostPort;
     }
+
+    @Override
+    public String toString() {
+        return hostPort.toString();
+    }
 }
