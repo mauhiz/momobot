@@ -1,5 +1,7 @@
 package net.mauhiz.irc.base.msg;
 
+import java.util.Objects;
+
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
@@ -45,10 +47,7 @@ public abstract class AbstractIrcMessage implements IIrcMessage {
     }
 
     protected String niceFromDisplay() {
-        if (from == null) {
-            return server.getMyself().toString();
-        }
-        return from.toString();
+        return Objects.toString(from, server.getMyself().toString());
     }
 
     /**

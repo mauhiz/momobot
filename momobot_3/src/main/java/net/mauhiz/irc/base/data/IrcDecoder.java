@@ -89,8 +89,8 @@ public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
     private static Target decodeTarget(IIrcServerPeer peer, String fromStr) {
         if (fromStr == null) {
             return null;
-        }
-        if (MomoStringUtils.isChannelName(fromStr)) {
+
+        } else if (MomoStringUtils.isChannelName(fromStr)) {
             return peer.getNetwork().findChannel(fromStr);
         }
 

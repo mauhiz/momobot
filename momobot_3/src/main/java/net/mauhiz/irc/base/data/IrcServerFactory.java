@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import net.mauhiz.irc.base.data.defaut.DefaultServer;
 
@@ -14,7 +15,7 @@ public enum IrcServerFactory {
     private static final Map<String, Class<? extends IrcNetwork>> NETWORK_TYPES = new HashMap<>();
 
     public static IrcNetwork createNetwork(String alias, URI uri) {
-        String name = alias == null ? guessAlias(uri) : alias;
+        String name = Objects.toString(alias, guessAlias(uri));
         Class<? extends IrcNetwork> registeredClass = NETWORK_TYPES.get(name);
 
         if (registeredClass == null) {

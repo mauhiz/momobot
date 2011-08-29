@@ -154,10 +154,7 @@ public class Match implements Serializable {
      * @return true si
      */
     public boolean isReady() {
-        if (team2 == null) {
-            return false;
-        }
-        return true;
+        return team2 != null;
     }
 
     /**
@@ -165,15 +162,7 @@ public class Match implements Serializable {
      * @return isTeamIn
      */
     public boolean isTeamIn(TournamentTeam team) {
-        if (winner == null) {
-            if (team1.getId() == team.getId()) {
-                return true;
-            }
-            if (team2 != null && team2.getId() == team.getId()) {
-                return true;
-            }
-        }
-        return false;
+        return winner == null && (team1.getId() == team.getId() || team2 != null && team2.getId() == team.getId());
     }
 
     /**

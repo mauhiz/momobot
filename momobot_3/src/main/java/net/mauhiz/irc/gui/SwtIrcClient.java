@@ -16,6 +16,7 @@ import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.SetTopic;
 import net.mauhiz.irc.gui.actions.ExitAction;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -127,7 +128,7 @@ public class SwtIrcClient {
         if (msg instanceof IrcChannelMessage) {
             channels = ((IrcChannelMessage) msg).getChans();
 
-            if (channels == null || channels.length == 0) {
+            if (ArrayUtils.isEmpty(channels)) {
                 return false;
             }
 

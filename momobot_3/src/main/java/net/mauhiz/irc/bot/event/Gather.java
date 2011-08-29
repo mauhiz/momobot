@@ -1,5 +1,7 @@
 package net.mauhiz.irc.bot.event;
 
+import java.util.Objects;
+
 import net.mauhiz.irc.base.Color;
 import net.mauhiz.irc.base.ColorUtils;
 import net.mauhiz.irc.base.data.IrcChannel;
@@ -74,7 +76,7 @@ public class Gather extends AbstractChannelEvent {
      * @return le message d'ajout, jamais <code>null</code>.
      */
     public String add(IrcUser element) {
-        assert element != null;
+        Objects.requireNonNull(element);
         StringBuilder retour = new StringBuilder();
         retour.append(element.getNick());
 

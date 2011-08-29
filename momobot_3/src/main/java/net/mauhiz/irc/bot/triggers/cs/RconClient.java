@@ -2,6 +2,7 @@ package net.mauhiz.irc.bot.triggers.cs;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
+import java.util.Objects;
 
 import net.mauhiz.util.FileUtil;
 
@@ -38,12 +39,12 @@ class RconClient extends ValveUdpClient implements IRconClient {
     private final IRconListener rl;
 
     /**
-     * @param server1
+     * @param server
      *            le serveur
      */
-    public RconClient(IRconServer server1, String rcon) throws IOException {
-        super(server1);
-        this.rcon = rcon;
+    public RconClient(IRconServer server, String rcon) throws IOException {
+        super(server);
+        changeRcon(rcon);
         rl = new RconListener(this);
     }
 
@@ -77,7 +78,7 @@ class RconClient extends ValveUdpClient implements IRconClient {
     /**
      */
     public void initLogThread() {
-        assert StringUtils.isNotEmpty(rcon) : "pas de rcon defini";
+        Objects.requireNonNull(rcon, "No defined rcon password");
         rl.setName("Valve Udp Listener on " + server.getIp());
         rl.tstart();
     }
@@ -204,13 +205,9 @@ class RconClient extends ValveUdpClient implements IRconClient {
      */
     public void rconCmd(String cmd) throws IOException {
         /* antiban */
-        if (StringUtils.isEmpty(rcon)) {
-            LOG.warn("Pas de rcon defini");
-            return;
-        } else if (StringUtils.isEmpty(rconChallenge)) {
-            LOG.warn("Pas de challenge defini");
-            return;
-        }
+        Objects.requireNonNull(rcon, "No defined rcon password");
+        Objects.requireNonNull(rconChallenge, "Did not receive rcon challenge");
+
         sendValveCmd("rcon " + rconChallenge + " \"" + rcon + "\" " + cmd);
     }
 

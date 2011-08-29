@@ -1,5 +1,7 @@
 package net.mauhiz.irc.base.data;
 
+import java.util.Objects;
+
 /**
  * @author mauhiz
  */
@@ -41,10 +43,7 @@ public abstract class AbstractIrcUser implements IrcUser {
     }
 
     public String getIrcForm() {
-        if (mask == null) {
-            return nick;
-        }
-        return mask.getIrcForm();
+        return mask == null ? nick : mask.getIrcForm();
     }
 
     public HostMask getMask() {
@@ -98,7 +97,7 @@ public abstract class AbstractIrcUser implements IrcUser {
      * @see net.mauhiz.irc.base.data.IrcUser#setNick(java.lang.String)
      */
     public void setNick(String nick) {
-        assert nick != null;
+        Objects.requireNonNull(nick);
         this.nick = nick;
     }
 

@@ -3,6 +3,7 @@ package net.mauhiz.irc.base.data;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -80,7 +81,6 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
     }
 
     public IrcUser findUser(String nick, boolean addIfNotFound) {
-        assert nick != null;
         if (nick.contains("!") || nick.contains(" ")) { // TODO better regexp
             throw new IllegalArgumentException("invalid nick : " + nick);
         }
@@ -131,9 +131,7 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
     }
 
     public final IIrcServerPeer newServerPeer() {
-        if (defaultUri == null) {
-            throw new IllegalStateException();
-        }
+        Objects.requireNonNull(defaultUri);
         return new IrcServerPeer(this, defaultUri);
     }
 
