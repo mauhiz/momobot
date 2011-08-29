@@ -7,7 +7,9 @@ import net.mauhiz.irc.base.trigger.ITriggerManager;
 /**
  * @author mauhiz
  */
-public interface IIrcControl {
+public interface IIrcControl extends AutoCloseable {
+
+    void close();
 
     /**
      * @param raw
@@ -15,8 +17,6 @@ public interface IIrcControl {
      * @param io
      */
     void decodeIrcRawMsg(String raw, IIrcIO io);
-
-    void exit();
 
     ITriggerManager[] getManagers();
 

@@ -81,9 +81,9 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
     }
 
     /**
-     * @see net.mauhiz.irc.base.IIrcControl#exit()
+     * @see net.mauhiz.irc.base.IIrcControl#close()
      */
-    public void exit() {
+    public void close() {
         Collection<IIrcIO> ios = serverToIo.values();
         for (IIrcIO io : ios) {
             io.disconnect();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,14 +73,12 @@ public class Tournament extends AbstractChannelEvent {
 
             String remoteFileName = remotePath.substring(slash);
             LOG.debug("storing to " + remoteFileName);
-            InputStream is = new FileInputStream(temp);
-            try {
+
+            try (InputStream is = new FileInputStream(temp);) {
                 boolean success = client.storeFile(ftpURI.getPath(), is);
                 if (!success) {
                     LOG.warn("Could not upload to " + ftpURI);
                 }
-            } finally {
-                is.close();
             }
 
         } else {
@@ -115,7 +114,7 @@ public class Tournament extends AbstractChannelEvent {
     private final StopWatch sw = new StopWatch();
 
     /**
-     * l'ensemble de joueurs. Ne sera jamais <code>null</code>
+     * l'ensemble de joueurs.
      */
     private final List<TournamentTeam> teamList = new ArrayList<>();
 
@@ -153,12 +152,11 @@ public class Tournament extends AbstractChannelEvent {
         context.put("maps", maps.substring(1));
 
         VelocityEngine ve = new VelocityEngine();
-        File temp = new File(CFG.getString("tn.tempfile.name"));
-
         ve.init();
-        FileWriterWithEncoding writer = new FileWriterWithEncoding(temp, FileUtil.UTF8);
 
-        try {
+        File temp = File.createTempFile(CFG.getString("tn.tempfile.name"), null);
+
+        try (Writer writer = new FileWriterWithEncoding(temp, FileUtil.UTF8)) {
             Template plate = ve.getTemplate(CFG.getString("tn.vm"));
             plate.initDocument();
             plate.merge(context, writer);
@@ -166,9 +164,6 @@ public class Tournament extends AbstractChannelEvent {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(FileUtils.readFileToString(temp));
             }
-
-        } finally {
-            writer.close();
         }
         return temp;
     }
@@ -179,11 +174,7 @@ public class Tournament extends AbstractChannelEvent {
     public void generateTemplate() {
         try {
             File temp = createTemplateFile();
-            try {
-                uploadFile(temp);
-            } finally {
-                FileUtils.deleteQuietly(temp);
-            }
+            uploadFile(temp);
         } catch (IOException ioe) {
             LOG.error(ioe, ioe);
         }

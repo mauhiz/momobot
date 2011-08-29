@@ -15,11 +15,9 @@ public enum FileUtil {
     public static final Charset UTF8 = Charset.forName("UTF-8");
 
     public static List<String> readFileInCp(String fileName, Charset encoding) throws IOException {
-        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
-        try {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try (InputStream is = classLoader.getResourceAsStream(fileName)) {
             return IOUtils.readLines(is, encoding.name());
-        } finally {
-            is.close();
         }
     }
 }
