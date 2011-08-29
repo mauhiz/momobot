@@ -11,4 +11,6 @@ public interface ITriggerManager {
      * @return true if message was consumed
      */
     boolean processMsg(IIrcMessage msg, IIrcControl ircControl);
+
+    public abstract Iterable<ITrigger> getTriggers();
 }

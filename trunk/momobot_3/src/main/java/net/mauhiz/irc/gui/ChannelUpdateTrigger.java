@@ -34,7 +34,7 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTr
         }
 
         @Override
-        protected ExecutionType getExecutionType() {
+        public ExecutionType getExecutionType() {
             return ExecutionType.GUI_ASYNCHRONOUS;
         }
 

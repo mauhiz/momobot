@@ -7,5 +7,9 @@ import org.eclipse.swt.widgets.Display;
  */
 public interface IRunnable extends Runnable {
 
+    ExecutionType getExecutionType();
+
+    String getName();
+
     void launch(Display display);
 }

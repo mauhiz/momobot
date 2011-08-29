@@ -28,7 +28,7 @@ public class SendNoticeAction extends AbstractAction {
     }
 
     @Override
-    protected ExecutionType getExecutionType() {
+    public ExecutionType getExecutionType() {
         return ExecutionType.GUI_ASYNCHRONOUS; // this should be quick 
     }
 
