@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.mauhiz.contest.codejam.CodejamLineChunkSolver;
-import net.mauhiz.contest.codejam.practice.AlienNumbers;
 
 public class BotTrust extends CodejamLineChunkSolver {
 	static enum Robot {
