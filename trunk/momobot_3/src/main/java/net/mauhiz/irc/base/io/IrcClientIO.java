@@ -67,7 +67,7 @@ public class IrcClientIO extends AbstractIrcIO {
         if (input != null) {
             input.tstop();
         }
-        ThreadUtils.safeSleep(2000);
+        ThreadUtils.safeSleep(2_000);
         try {
             sclient.close();
         } catch (IOException ioe) {

@@ -10,7 +10,7 @@ import org.apache.commons.io.IOUtils;
 public enum FileUtil {
     ;
     public static final Charset ASCII = Charset.forName("ASCII");
-    public static final int BUF_SIZE = 0x2000; // 8K corresponds to an optimum with L1 cache size, and 2 NTFS clusters
+    public static final int BUF_SIZE = 0x2_000; // 8K corresponds to an optimum with L1 cache size, and 2 NTFS clusters
     public static final Charset ISO8859_15 = Charset.forName("ISO-8859-15");
     public static final Charset UTF8 = Charset.forName("UTF-8");
 

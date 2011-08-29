@@ -14,6 +14,7 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
  * @author abby
  */
 public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
+    private static final int defaultmax = 10_000;
     private static final Random RANDOM = new Random();
 
     /**
@@ -32,8 +33,6 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
         String args = getTriggerContent(im);
         boolean engueuler = false;
 
-        // 1000 par defaut;
-        int defaultmax = 1000;
         int max;
         try {
             // Pour pas se faire lamer
@@ -43,12 +42,11 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
             // 
             max = Integer.parseInt(args);
         } catch (NumberFormatException e) {
-
             max = defaultmax;
         }
 
         // Fourchette arbitraire
-        if (max <= 1 || max > 10000) {
+        if (max <= 1 || max > defaultmax) {
             engueuler = true;
         }
 
@@ -57,10 +55,9 @@ public class RollTheDiceTrigger extends AbstractTextTrigger implements IPrivmsgT
 
         // Un parametre est incorrect, on s'arrete la avec un message d'erreur.
         if (engueuler) {
-            Privmsg msg = new Privmsg(
-                    im,
-                    user.getNick()
-                            + ", me prend pas pour un con, je suis quand meme le momobot, et je lance les des entre 2 et 10000.");
+            Privmsg msg = new Privmsg(im, user.getNick()
+                    + ", me prend pas pour un con, je suis quand meme le momobot, et je lance les des entre 2 et "
+                    + defaultmax + ".");
             control.sendMsg(msg);
             return;
         }

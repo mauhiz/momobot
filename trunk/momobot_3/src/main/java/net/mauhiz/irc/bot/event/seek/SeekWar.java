@@ -94,7 +94,7 @@ public class SeekWar {
     /**
      * Temps de time out : 6min par defaut
      */
-    private final long seekTimeOut = 6 * 60 * 1000;
+    private final long seekTimeOut = 6 * 60 * 1_000;
     /**
      * si on a splite
      */
@@ -502,10 +502,10 @@ public class SeekWar {
 
         // On test si il faut renvoyer le msg de seek au channel
 
-        if (sw.getTime() > 30 * 1000) {
+        if (sw.getTime() > 30 * 1_000) {
             IIrcServerPeer server = im.getServerPeer();
             if (split) {
-                if (sw.getSplitTime() > 60 * 1000 && !sWarning) {
+                if (sw.getSplitTime() > 60 * 1_000 && !sWarning) {
                     sw.split();
                     seekMessage = "." + seekMessage + ".";
                     for (String seekChan : SEEK_CHANS) {

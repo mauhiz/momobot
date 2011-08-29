@@ -176,7 +176,7 @@ public class SwtIrcClient {
 
     private void processLoop(SwtLogTab logTab) {
 
-        //        long maxLoopTime = 5000;
+        //        long maxLoopTime = 5_000;
         //        for (long startTime = System.currentTimeMillis(); startTime + maxLoopTime <= System.currentTimeMillis();) {
         final IIrcMessage msg = gtm.nextMsg();
 

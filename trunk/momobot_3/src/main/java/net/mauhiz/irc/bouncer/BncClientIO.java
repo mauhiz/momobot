@@ -39,7 +39,7 @@ public class BncClientIO extends AbstractIrcIO {
         status = IOStatus.DISCONNECTING;
         if (output != null) {
             output.tstop();
-            ThreadUtils.safeSleep(2000);
+            ThreadUtils.safeSleep(2_000);
         }
         try {
             socket.close();
