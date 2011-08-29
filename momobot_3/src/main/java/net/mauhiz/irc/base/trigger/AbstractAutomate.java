@@ -45,7 +45,7 @@ public abstract class AbstractAutomate extends AbstractDaemon {
     /**
      * le temps d'attente dans un thread.
      */
-    protected static final long SLEEPTIME = 1000;
+    protected static final long SLEEPTIME = 1_000;
     /**
      * indique que l automate est demarre.
      */

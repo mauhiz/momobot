@@ -26,7 +26,7 @@ public enum MathUtils {
         } else if (b > Long.SIZE) {
             throw new ArithmeticException("b > Long.SIZE. use Math.pow with floating point precision");
         } else if (a == 2L) {
-            /* 2^x = 0000001000, ou 1 est en xieme position */
+            /* 2^x = 0b0000001000, ou 1 est en xieme position */
             return 1L << b;
         }
         return recursiveLongPower(a, b);

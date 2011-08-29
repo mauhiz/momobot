@@ -18,14 +18,14 @@ class RconListener extends AbstractDaemon implements IRconListener {
     /**
      * port mini
      */
-    private static final int MIN_PORT = 1024;
+    private static final int MIN_PORT = 0x400;
     private static final Random RANDOM = new Random();
 
     /**
      * @return un port au hasard, > {@link #MIN_PORT}.
      */
     static int generateRandomPort() {
-        return MIN_PORT + RANDOM.nextInt(5000); // TODO ensure port availability
+        return MIN_PORT + RANDOM.nextInt(5_000); // TODO ensure port availability
     }
 
     /**
