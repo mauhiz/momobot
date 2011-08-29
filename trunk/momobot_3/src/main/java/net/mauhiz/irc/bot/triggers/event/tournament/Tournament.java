@@ -15,7 +15,7 @@ import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
 import net.mauhiz.irc.bot.event.AbstractChannelEvent;
 import net.mauhiz.util.FileUtil;
-import net.mauhiz.util.MathUtils;
+import net.mauhiz.util.Power;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -126,7 +126,7 @@ public class Tournament extends AbstractChannelEvent {
         super(chan);
         sw.start();
         numberPlayerPerTeam = CFG.getInt("tn.numberPlayerPerTeam");
-        numberTeams = MathUtils.power(2, maps.size()); // 2^4=16
+        numberTeams = Power.power(2, maps.size()); // 2^4=16
         // On cree les teams
         if (LOG.isDebugEnabled()) {
             LOG.debug("Lancement d'un tn sur: " + chan.fullName() + " maps: " + StringUtils.join(maps, ' '));
@@ -249,7 +249,7 @@ public class Tournament extends AbstractChannelEvent {
         }
         int id = team.getId();
         // int newID = id / nombreMatchPerSide;
-        int newID = id / MathUtils.power(2, mapList.size() - newphase) / MathUtils.power(2, mapList.size() - newphase);
+        int newID = id / Power.power(2, mapList.size() - newphase) / Power.power(2, mapList.size() - newphase);
         int testMatch = getMatchId(newphase, newID);
         if (testMatch == -1) {
             // le match n'existe pas
