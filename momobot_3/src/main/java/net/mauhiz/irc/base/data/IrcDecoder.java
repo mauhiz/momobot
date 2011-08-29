@@ -118,7 +118,7 @@ public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
     }
 
     private static IrcChannel[] toIrcChannels(IrcNetwork network, String[] chans) {
-        List<IrcChannel> channels = new ArrayList<IrcChannel>(chans.length);
+        List<IrcChannel> channels = new ArrayList<>(chans.length);
         for (String chan : chans) {
             channels.add(network.findChannel(chan));
         }

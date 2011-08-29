@@ -21,13 +21,13 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
     /**
      * a chaque server sa liste de channels.
      */
-    private final SortedSet<IrcChannel> channels = new TreeSet<IrcChannel>();
+    private final SortedSet<IrcChannel> channels = new TreeSet<>();
 
     private URI defaultUri;
     /**
      * a chaque server sa liste d users.
      */
-    private final SortedSet<IrcUser> users = new TreeSet<IrcUser>();
+    private final SortedSet<IrcUser> users = new TreeSet<>();
 
     protected AbstractIrcNetwork(String alias) {
         super();
@@ -106,7 +106,7 @@ public abstract class AbstractIrcNetwork implements IrcNetwork {
     }
 
     public Set<IrcChannel> getChannelsForUser(IrcUser smith) {
-        Set<IrcChannel> chans = new HashSet<IrcChannel>();
+        Set<IrcChannel> chans = new HashSet<>();
         for (IrcChannel chan : channels) {
             if (chan.contains(smith)) {
                 chans.add(chan);

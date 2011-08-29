@@ -24,7 +24,7 @@ public class BadWordTrigger extends AbstractTextTrigger implements IPrivmsgTrigg
     /**
      * TODO utiliser SQL.
      */
-    private static final Set<String> BADWORDS = new TreeSet<String>();
+    private static final Set<String> BADWORDS = new TreeSet<>();
     static {
         BADWORDS.add("caca");
         BADWORDS.add("prout");

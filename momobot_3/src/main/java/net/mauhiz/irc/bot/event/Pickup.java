@@ -22,7 +22,7 @@ public class Pickup extends AbstractChannelEvent {
     /**
      * les teams.
      */
-    private final List<Team> teams = new ArrayList<Team>(NB_TEAMS);
+    private final List<Team> teams = new ArrayList<>(NB_TEAMS);
 
     // private Server serv = null;
     /**
@@ -147,7 +147,7 @@ public class Pickup extends AbstractChannelEvent {
      * @return un $status
      */
     public String shake() {
-        List<IrcUser> listeUser = new ArrayList<IrcUser>(NB_TEAMS * SIZE);
+        List<IrcUser> listeUser = new ArrayList<>(NB_TEAMS * SIZE);
 
         synchronized (teams) {
 

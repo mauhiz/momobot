@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
  */
 public class ChannelProperties implements IChannelProperties {
     private static final Logger LOG = Logger.getLogger(ChannelProperties.class);
-    private final List<HostMask> bans = new ArrayList<HostMask>();
+    private final List<HostMask> bans = new ArrayList<>();
     private boolean inviteOnly;
     private String key;
     private Integer limit;

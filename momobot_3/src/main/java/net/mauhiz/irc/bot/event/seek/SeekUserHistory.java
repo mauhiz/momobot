@@ -10,7 +10,7 @@ import net.mauhiz.irc.base.data.IrcUser;
  * @author Topper
  */
 public class SeekUserHistory implements Iterable<String> {
-    private final List<String> history = new ArrayList<String>();
+    private final List<String> history = new ArrayList<>();
     private SeekStatus status;
     private final IrcUser user;
 

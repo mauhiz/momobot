@@ -16,8 +16,8 @@ import net.mauhiz.irc.base.trigger.IJoinTrigger;
 import net.mauhiz.irc.base.trigger.IKickTrigger;
 import net.mauhiz.irc.base.trigger.IPartTrigger;
 import net.mauhiz.irc.base.trigger.IQuitTrigger;
-import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.AbstractNamedRunnable;
+import net.mauhiz.util.ExecutionType;
 
 public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTrigger, IKickTrigger {
 
@@ -46,7 +46,7 @@ public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTr
         }
     }
 
-    private final Map<IrcChannel, org.eclipse.swt.widgets.List> userLists = new HashMap<IrcChannel, org.eclipse.swt.widgets.List>();
+    private final Map<IrcChannel, org.eclipse.swt.widgets.List> userLists = new HashMap<>();
 
     public void addChannel(IrcChannel channel, org.eclipse.swt.widgets.List list) {
         userLists.put(channel, list);

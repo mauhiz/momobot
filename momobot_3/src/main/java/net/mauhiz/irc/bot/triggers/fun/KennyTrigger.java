@@ -27,11 +27,11 @@ public class KennyTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      * The KENNYLETTERS in alphabetical order. Big Letters are the Same with the only difference That the First char is
      * UpperCase
      */
-    private static final Map<String, String> KENNY_TO_NORMAL = new TreeMap<String, String>();
+    private static final Map<String, String> KENNY_TO_NORMAL = new TreeMap<>();
     /**
      * 
      */
-    private static final Map<String, String> NORMAL_TO_KENNY = new TreeMap<String, String>();
+    private static final Map<String, String> NORMAL_TO_KENNY = new TreeMap<>();
 
     /**
      * @param toTest

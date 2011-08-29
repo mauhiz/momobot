@@ -16,7 +16,7 @@ public enum Morse {
     /**
      * mon tableau avec le code morse.
      */
-    private static final SortedMap<String, String> CODE_MORSE = new TreeMap<String, String>();
+    private static final SortedMap<String, String> CODE_MORSE = new TreeMap<>();
     /**
      * logger.
      */
@@ -24,7 +24,7 @@ public enum Morse {
     /**
      * mon tableau avec le code morse inverse.
      */
-    private static final SortedMap<String, String> REVERSE_MORSE = new TreeMap<String, String>();
+    private static final SortedMap<String, String> REVERSE_MORSE = new TreeMap<>();
 
     /**
      * les lettres doivent etre separees par un espace.

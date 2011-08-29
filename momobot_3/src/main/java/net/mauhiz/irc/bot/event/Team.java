@@ -27,7 +27,7 @@ public class Team implements Iterable<IrcUser> {
         super();
         capacity = size1;
         nom = nom1;
-        members = new ArrayList<IrcUser>(size1);
+        members = new ArrayList<>(size1);
     }
 
     public boolean add(IrcUser a) {

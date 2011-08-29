@@ -63,7 +63,7 @@ abstract class AbstractRunnable implements IRunnable {
     }
 
     protected static final ExecutorService DEFAULT_EXECUTOR = Executors.newCachedThreadPool();
-    static final Map<Future<?>, String> FUTURES = new HashMap<Future<?>, String>();
+    static final Map<Future<?>, String> FUTURES = new HashMap<>();
 
     /**
      * logger.

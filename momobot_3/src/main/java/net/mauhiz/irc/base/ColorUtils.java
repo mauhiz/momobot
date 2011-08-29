@@ -150,7 +150,7 @@ public enum ColorUtils implements IrcSpecialChars {
 
     public static String toHTML(String text) {
         StringBuilder result = new StringBuilder();
-        Deque<String> openTags = new ArrayDeque<String>();
+        Deque<String> openTags = new ArrayDeque<>();
         for (int i = 0; i < text.length(); i++) {
             int next = text.codePointAt(i);
             if (next == DELIM_COLOR) {

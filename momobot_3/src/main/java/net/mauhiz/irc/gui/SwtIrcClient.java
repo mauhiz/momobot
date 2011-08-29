@@ -27,12 +27,12 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SwtIrcClient {
     static final Logger LOG = Logger.getLogger(SwtIrcClient.class);
-    final Map<IrcChannel, SwtChanTab> chanTabs = new HashMap<IrcChannel, SwtChanTab>();
+    final Map<IrcChannel, SwtChanTab> chanTabs = new HashMap<>();
     protected final ChannelUpdateTrigger cut = new ChannelUpdateTrigger();
     protected CTabFolder folderBar;
     protected final GuiTriggerManager gtm = new GuiTriggerManager();
-    protected final Map<IrcUser, SwtPrivateTab> privateTabs = new HashMap<IrcUser, SwtPrivateTab>();
-    protected final Map<IIrcServerPeer, SwtServerTab> serverTabs = new HashMap<IIrcServerPeer, SwtServerTab>();
+    protected final Map<IrcUser, SwtPrivateTab> privateTabs = new HashMap<>();
+    protected final Map<IIrcServerPeer, SwtServerTab> serverTabs = new HashMap<>();
     protected final Shell shell;
 
     public SwtIrcClient() {
