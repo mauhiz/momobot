@@ -15,18 +15,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
 
 /**
  * @author mauhiz
  */
 public enum NetUtils {
     ;
-
-    /**
-     * logger.
-     */
-    private static final Logger LOG = Logger.getLogger(NetUtils.class);
 
     /**
      * @param address
