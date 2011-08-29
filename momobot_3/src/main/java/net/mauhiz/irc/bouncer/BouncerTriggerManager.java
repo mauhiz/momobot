@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.mauhiz.irc.base.IIrcControl;
+import net.mauhiz.irc.base.MsgState;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
 
@@ -14,7 +15,7 @@ public class BouncerTriggerManager extends DefaultTriggerManager implements Runn
     List<BncClientIO> currentlyConnected = new ArrayList<>();
 
     @Override
-    public boolean processMsg(IIrcMessage msg, IIrcControl ircControl) {
+    public MsgState processMsg(IIrcMessage msg, IIrcControl ircControl) {
         // FIXME this is nonsense. do something cool to handle :
         // multi-accounts
         // multi-clients (per account)
@@ -23,7 +24,7 @@ public class BouncerTriggerManager extends DefaultTriggerManager implements Runn
             client.sendMsg(msg.getIrcForm());
         }
 
-        return true;
+        return MsgState.NO_MORE_PROCESSING;
     }
 
     /**
