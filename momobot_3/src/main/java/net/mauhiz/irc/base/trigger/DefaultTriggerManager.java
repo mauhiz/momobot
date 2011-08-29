@@ -115,13 +115,7 @@ public class DefaultTriggerManager implements ITriggerManager {
         try {
             ITrigger trigger = (ITrigger) ConstructorUtils.invokeConstructor(triggerClass, params);
             addTrigger(trigger);
-        } catch (InstantiationException e) {
-            LOG.warn(e, e);
-        } catch (IllegalAccessException e) {
-            LOG.warn(e, e);
-        } catch (InvocationTargetException e) {
-            LOG.warn(e, e);
-        } catch (NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             LOG.warn(e, e);
         }
     }

@@ -38,13 +38,10 @@ public class IrcClientIO extends AbstractIrcIO {
         Future<Void> f = sclient.connect(address);
         try {
             f.get(4, TimeUnit.SECONDS);
-        } catch (TimeoutException te) {
-            LOG.error("could not connect to " + address, te);
-            return;
         } catch (InterruptedException e) {
             ThreadUtils.handleInterruption(e);
-        } catch (ExecutionException e) {
-            LOG.error("could not connect to " + address, e.getCause());
+        } catch (TimeoutException | ExecutionException e) {
+            LOG.error("could not connect to " + address, e);
             return;
         }
         output = new IrcOutput(sclient);

@@ -24,13 +24,9 @@ public enum IrcServerFactory {
         try {
             return registeredClass.getConstructor(String.class).newInstance(name);
 
-        } catch (InvocationTargetException ite) {
-            throw new IllegalArgumentException(ite);
-        } catch (InstantiationException e) {
+        } catch (InvocationTargetException | InstantiationException e) {
             throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
-            throw new NotImplementedException(e);
-        } catch (NoSuchMethodException e) {
+        } catch (IllegalAccessException | NoSuchMethodException e) {
             throw new NotImplementedException(e);
         }
     }

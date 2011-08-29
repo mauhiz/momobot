@@ -18,9 +18,7 @@ public class DccChatRequest extends Ctcp {
     private static InetAddress decodeAddress(String addrLong) {
         try {
             return NetUtils.longToIa(Long.parseLong(addrLong));
-        } catch (UnknownHostException uhe) {
-            return null;
-        } catch (IllegalArgumentException iae) {
+        } catch (UnknownHostException | IllegalArgumentException e) {
             return null;
         }
     }
