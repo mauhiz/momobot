@@ -241,10 +241,8 @@ public class SwtIrcClient {
 
         /* go afficher */
         initShell();
-        try {
+        try (IIrcControl client = gtm.getClient()) {
             swtLoop(logTab);
-        } finally {
-            gtm.getClient().exit();
         }
     }
 

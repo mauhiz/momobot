@@ -31,9 +31,9 @@ public class BncClientControl extends AbstractIrcControl {
     }
 
     /**
-     * @see net.mauhiz.irc.base.IIrcControl#exit()
+     * @see net.mauhiz.irc.base.IIrcControl#close()
      */
-    public void exit() {
+    public void close() {
         Collection<BncClientIO> ios = clientToIo.values();
         for (IIrcIO io : ios) {
             io.disconnect();
