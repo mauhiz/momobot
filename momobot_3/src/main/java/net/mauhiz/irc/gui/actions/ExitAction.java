@@ -21,7 +21,7 @@ public class ExitAction extends AbstractAction {
     }
 
     @Override
-    protected ExecutionType getExecutionType() {
+    public ExecutionType getExecutionType() {
         return ExecutionType.GUI_SYNCHRONOUS; // I want to quit now!
     }
 

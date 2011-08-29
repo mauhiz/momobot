@@ -47,7 +47,7 @@ public class SwtChanTab extends AbstractSwtTab {
         }
 
         @Override
-        protected ExecutionType getExecutionType() {
+        public ExecutionType getExecutionType() {
             return ExecutionType.PARALLEL_CACHED;
         }
     }
@@ -118,7 +118,7 @@ public class SwtChanTab extends AbstractSwtTab {
     class SetTopicAction extends AbstractAction {
 
         @Override
-        protected ExecutionType getExecutionType() {
+        public ExecutionType getExecutionType() {
             return ExecutionType.GUI_ASYNCHRONOUS;
         }
 

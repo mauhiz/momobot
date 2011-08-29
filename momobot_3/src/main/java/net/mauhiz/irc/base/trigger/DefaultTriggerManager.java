@@ -7,14 +7,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.msg.IIrcMessage;
-import net.mauhiz.irc.base.msg.Invite;
-import net.mauhiz.irc.base.msg.Join;
-import net.mauhiz.irc.base.msg.Kick;
-import net.mauhiz.irc.base.msg.Notice;
-import net.mauhiz.irc.base.msg.Part;
-import net.mauhiz.irc.base.msg.Privmsg;
-import net.mauhiz.util.AbstractNamedRunnable;
-import net.mauhiz.util.ExecutionType;
 
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.log4j.Logger;
@@ -23,66 +15,6 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class DefaultTriggerManager implements ITriggerManager {
-    /**
-     * @author mauhiz
-     * 
-     */
-    class TriggerLoop extends AbstractNamedRunnable {
-        private final IIrcControl control;
-        private final IIrcMessage msg;
-
-        /**
-         * @param control1
-         * @param msg1
-         */
-        public TriggerLoop(IIrcMessage msg1, IIrcControl control1) {
-            super("Trigger Loop");
-            control = control1;
-            msg = msg1;
-        }
-
-        @Override
-        protected ExecutionType getExecutionType() {
-            return ExecutionType.PARALLEL_CACHED;
-        }
-
-        @Override
-        public void trun() {
-            try {
-                for (ITrigger trigger : getTriggers()) {
-                    tryTrigger(trigger);
-                }
-
-            } catch (RuntimeException unexpected) {
-                LOG.error(unexpected, unexpected);
-            }
-        }
-
-        private void tryTrigger(ITrigger trigger) {
-            if (msg instanceof Privmsg && trigger instanceof IPrivmsgTrigger) {
-                IPrivmsgTrigger trig = (IPrivmsgTrigger) trigger;
-                Privmsg priv = (Privmsg) msg;
-                if (trig.isActivatedBy(priv.getMessage())) {
-                    trig.doTrigger(priv, control);
-                }
-            } else if (msg instanceof Notice && trigger instanceof INoticeTrigger) {
-                INoticeTrigger trig = (INoticeTrigger) trigger;
-                Notice notice = (Notice) msg;
-                if (trig.isActivatedBy(notice.getMessage())) {
-                    trig.doTrigger(notice, control);
-                }
-            } else if (msg instanceof Join && trigger instanceof IJoinTrigger) {
-                ((IJoinTrigger) trigger).doTrigger((Join) msg, control);
-            } else if (msg instanceof Part && trigger instanceof IPartTrigger) {
-                ((IPartTrigger) trigger).doTrigger((Part) msg, control);
-            } else if (msg instanceof Invite && trigger instanceof IInviteTrigger) {
-                ((IInviteTrigger) trigger).doTrigger((Invite) msg, control);
-            } else if (msg instanceof Kick && trigger instanceof IKickTrigger) {
-                ((IKickTrigger) trigger).doTrigger((Kick) msg, control);
-            }
-        }
-    }
-
     /**
      * logger
      */
@@ -136,6 +68,7 @@ public class DefaultTriggerManager implements ITriggerManager {
     /**
      * @return une vue (read-only) des triggers
      */
+    @Override
     public Iterable<ITrigger> getTriggers() {
         return myKeeper;
     }
@@ -176,7 +109,7 @@ public class DefaultTriggerManager implements ITriggerManager {
             return true;
         }
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
-        new TriggerLoop(msg, control).launch(null);
+        new TriggerLoop(this, msg, control).launch(null);
         return false;
     }
 }
