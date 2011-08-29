@@ -1,13 +1,17 @@
 package net.mauhiz.irc.base.io;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import net.mauhiz.util.AbstractDaemon;
 import net.mauhiz.util.FileUtil;
+import net.mauhiz.util.ThreadUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -68,7 +72,22 @@ public class IrcOutput extends AbstractDaemon implements IIrcOutput {
                 continue;
             }
             LOGGER.debug(">> " + toWrite);
-            socket.write(FileUtil.ISO8859_15.encode(CharBuffer.wrap(toWrite + "\r\n")));
+            ByteBuffer bytesToWrite = FileUtil.ISO8859_15.encode(CharBuffer.wrap(toWrite + "\r\n"));
+            Future<Integer> fWritten = socket.write(bytesToWrite);
+            try {
+                int written = fWritten.get().intValue();
+                if (written == -1) {
+                    LOGGER.warn("Disconnected");
+                    break;
+                } else if (written != bytesToWrite.limit()) {
+                    LOGGER.error("Could not write all (" + written + "/" + bytesToWrite.limit() + ")");
+                }
+            } catch (InterruptedException e) {
+                ThreadUtils.handleInterruption(e);
+            } catch (ExecutionException e) {
+                LOGGER.error("Could not write to socket", e.getCause());
+                break;
+            }
         }
         tstop();
     }

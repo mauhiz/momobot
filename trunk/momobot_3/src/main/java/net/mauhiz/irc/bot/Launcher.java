@@ -57,8 +57,9 @@ public class Launcher extends CommonLauncher {
         defineIdentity(profileCriteria, nick, login, fullName, peer);
 
         LOG.info("autoconnect: " + peer.getNetwork().getAlias());
-        control.connect(peer);
-        autoJoin(profileCriteria, control, peer);
+        if (control.connect(peer)) {
+            autoJoin(profileCriteria, control, peer);
+        }
     }
 
     private void defineIdentity(String profileCriteria, String nick, String login, String fullName, IIrcServerPeer peer) {

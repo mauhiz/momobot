@@ -76,7 +76,7 @@ public class IdentServer extends AbstractDaemon implements IIdentServer {
             } catch (ExecutionException e) {
                 LOGGER.error(e.getCause(), e.getCause());
             } catch (TimeoutException e) {
-                LOGGER.info("Server did not connect to me in time", e);
+                LOGGER.info("Server did not connect to me in time");
             }
         }
         tstop();

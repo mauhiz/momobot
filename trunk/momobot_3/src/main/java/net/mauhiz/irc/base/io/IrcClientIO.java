@@ -29,19 +29,29 @@ public class IrcClientIO extends AbstractIrcIO {
         super(control, server);
     }
 
-    /**
-     * @throws IOException
-     */
-    public void connect() throws IOException {
+    public void connect() {
+        status = IOStatus.CONNECTING;
         InetSocketAddress address = peer.getAddress();
-        sclient = AsynchronousSocketChannel.open();
+        try {
+            sclient = AsynchronousSocketChannel.open();
+        } catch (IOException ioe) {
+            LOG.error("could not create socket to " + address, ioe);
+            status = IOStatus.DISCONNECTED;
+            return;
+        }
+
         Future<Void> f = sclient.connect(address);
         try {
-            f.get(4, TimeUnit.SECONDS);
+            f.get(1, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             ThreadUtils.handleInterruption(e);
-        } catch (TimeoutException | ExecutionException e) {
-            LOG.error("could not connect to " + address, e);
+        } catch (TimeoutException e) {
+            LOG.error("could not connect to " + address + " within given time");
+            status = IOStatus.DISCONNECTED;
+            return;
+        } catch (ExecutionException e) {
+            LOG.error("could not connect to " + address, e.getCause());
+            status = IOStatus.DISCONNECTED;
             return;
         }
         output = new IrcOutput(sclient);
@@ -78,15 +88,15 @@ public class IrcClientIO extends AbstractIrcIO {
         return (IIrcServerPeer) peer; // server is my partner.
     }
 
-    public void reconnect() throws IOException {
+    public void reconnect() {
         disconnect();
         connect();
     }
 
-    public void waitForConnection() {
+    public IOStatus waitForConnection() {
         while (true) {
-            if (status == IOStatus.CONNECTED) {
-                return;
+            if (status == IOStatus.CONNECTED || status == IOStatus.DISCONNECTED) {
+                return status;
             }
             ThreadUtils.safeSleep(100);
         }
