@@ -16,8 +16,8 @@ public abstract class CommonLauncher {
     private static final Logger LOG = Logger.getLogger(CommonLauncher.class);
 
     protected static void showDefaults() {
-        LOG.info("Default charset : " + Charset.defaultCharset());
-        LOG.info("Default locale : " + Locale.getDefault());
+        LOG.info("Default charset: " + Charset.defaultCharset());
+        LOG.info("Default locale: " + Locale.getDefault());
     }
 
     /**
