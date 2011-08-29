@@ -15,7 +15,7 @@ import net.mauhiz.util.ThreadUtils;
  */
 public class GuiTriggerManager extends DefaultTriggerManager {
     IIrcClientControl client = new IrcClientControl(this);
-    private final BlockingQueue<IIrcMessage> incoming = new LinkedBlockingQueue<IIrcMessage>();
+    private final BlockingQueue<IIrcMessage> incoming = new LinkedBlockingQueue<>();
 
     /**
      * @return the client

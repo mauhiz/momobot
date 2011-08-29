@@ -68,10 +68,10 @@ public class YaquiTrigger extends AbstractTextTrigger implements IPrivmsgTrigger
      */
     protected String doTrigger(IPrivateIrcMessage imsg, Calendar cal) {
         Date date = new java.sql.Date(cal.getTimeInMillis());
-        Collection<String> heure1Dispo = new LinkedList<String>();
-        Collection<String> heure1Pala = new LinkedList<String>();
-        Collection<String> heure2Dispo = new LinkedList<String>();
-        Collection<String> heure2Pala = new LinkedList<String>();
+        Collection<String> heure1Dispo = new LinkedList<>();
+        Collection<String> heure1Pala = new LinkedList<>();
+        Collection<String> heure2Dispo = new LinkedList<>();
+        Collection<String> heure2Pala = new LinkedList<>();
         List<Dispo> dispos = DispoDb.getInstance(imsg.getServerPeer().getNetwork()).getDispo(
                 ((IrcChannel) imsg.getTo()).fullName(), date);
         for (Dispo dispo : dispos) {

@@ -1,10 +1,10 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import net.mauhiz.util.HibernateUtils;
 
@@ -22,12 +22,12 @@ public class PlayerDB {
     /**
      * mes maîtres
      */
-    private static final Set<String> MASTERS = new TreeSet<String>();
+    private static final Set<String> MASTERS = new TreeSet<>();
     /**
      * (steamid, qauth).
      */
-    private static final Map<String, String> PLAYERS = new TreeMap<String, String>();
-    
+    private static final Map<String, String> PLAYERS = new TreeMap<>();
+
     /**
      * @param auth
      *            l'auth
@@ -36,21 +36,21 @@ public class PlayerDB {
     public static boolean authIsKnown(String auth) {
         return PLAYERS.containsValue(auth);
     }
-    
+
     /**
      * @return le nbre de players
      */
     public static int countPlayers() {
         return PLAYERS.size();
     }
-    
+
     /**
      * @return les players
      */
     public static Iterable<Entry<String, String>> getPlayers() {
         return PLAYERS.entrySet();
     }
-    
+
     /**
      * @param steamid
      *            un steam_id
@@ -59,14 +59,14 @@ public class PlayerDB {
     public static boolean isMaster(String steamid) {
         return MASTERS.contains(steamid);
     }
-    
+
     /**
      * Charge la liste des joueurs CS
      */
     public static void loadPlayerDB() {
         SQLQuery sqlq = HibernateUtils.currentSession().createSQLQuery(
                 "SELECT `steamid`, `qauth`, `adminlvl` FROM `players`");
-        
+
         for (Object next : sqlq.list()) {
             String[] line = (String[]) next;
             String steamid = line[0];
@@ -79,7 +79,7 @@ public class PlayerDB {
         }
         LOG.debug("PlayerDB loaded");
     }
-    
+
     /**
      * @param steamid
      *            le steam_id
@@ -94,7 +94,7 @@ public class PlayerDB {
         sqlq.executeUpdate();
         return "Joueur enregistre";
     }
-    
+
     /**
      * @param steamid
      *            le steam_id

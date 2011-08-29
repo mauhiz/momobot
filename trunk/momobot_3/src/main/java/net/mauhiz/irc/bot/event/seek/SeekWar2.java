@@ -158,7 +158,7 @@ public class SeekWar2 extends AbstractChannelEvent {
     /**
      * Liste des utilisateurs qui sont d�j� rentr�s en contact avec le bot lorsqu'il �tait en train de seeker
      */
-    private final List<SeekUserHistory> listIrcSeekUser = new ArrayList<SeekUserHistory>();
+    private final List<SeekUserHistory> listIrcSeekUser = new ArrayList<>();
 
     private final int nbPlayers;
 

@@ -23,7 +23,7 @@ public class FractionContinueTrigger extends AbstractTextTrigger implements IPri
      * @return une fraction continue de type [a0; a1, a2, ...]
      */
     static String computeFractionContinue(double nombre) {
-        List<Integer> fraction = new LinkedList<Integer>();
+        List<Integer> fraction = new LinkedList<>();
         double work = nombre;
 
         for (int count = 0; count < LIMIT; ++count) {

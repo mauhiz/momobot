@@ -37,9 +37,9 @@ public class SwtChanTab extends AbstractSwtTab {
 
     abstract class AbstractUserMenuAction extends AbstractAction {
         protected List<IrcUser> findUsers() {
-            List<IrcUser> users = new ArrayList<IrcUser>();
-
             String[] selectedNicks = usersInChan.getSelection();
+            List<IrcUser> users = new ArrayList<>(selectedNicks.length);
+
             for (String selectedNick : selectedNicks) {
                 users.add(server.getNetwork().findUser(selectedNick, false));
             }

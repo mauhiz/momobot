@@ -53,7 +53,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
     /**
      * key = {@link IIrcServerPeer}, value = {@link IIrcIO}.
      */
-    private final Map<IIrcServerPeer, IIrcIO> serverToIo = new HashMap<IIrcServerPeer, IIrcIO>();
+    private final Map<IIrcServerPeer, IIrcIO> serverToIo = new HashMap<>();
 
     public IrcClientControl(ITriggerManager... managers) {
         super(managers);

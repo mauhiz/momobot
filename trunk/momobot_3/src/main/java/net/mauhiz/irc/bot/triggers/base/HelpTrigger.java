@@ -40,7 +40,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
     }
 
     private static SortedSet<String> listCmds(IIrcControl control, Class<? extends ITextTrigger> trigIface) {
-        SortedSet<String> cmds = new TreeSet<String>();
+        SortedSet<String> cmds = new TreeSet<>();
         for (ITrigger trig : getTriggers(control)) {
             if (trig instanceof ICommand && trigIface.isInstance(trig)) {
                 cmds.add(((ICommand) trig).getTriggerText());

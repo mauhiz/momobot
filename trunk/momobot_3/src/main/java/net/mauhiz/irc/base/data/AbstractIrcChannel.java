@@ -29,7 +29,7 @@ public abstract class AbstractIrcChannel implements IrcChannel {
     /**
      * users sur le channel
      */
-    protected Map<IrcUser, Set<UserChannelMode>> users = new ConcurrentHashMap<IrcUser, Set<UserChannelMode>>();
+    protected Map<IrcUser, Set<UserChannelMode>> users = new ConcurrentHashMap<>();
 
     /**
      * @param chanName

@@ -20,7 +20,7 @@ public class WhoisRequest extends AbstractDaemon {
     /**
      * tous les whois en cours.
      */
-    private static final Map<String, WhoisRequest> ALL_WHOIS = new HashMap<String, WhoisRequest>();
+    private static final Map<String, WhoisRequest> ALL_WHOIS = new HashMap<>();
     private static final Logger LOGGER = Logger.getLogger(WhoisRequest.class);
 
     /**

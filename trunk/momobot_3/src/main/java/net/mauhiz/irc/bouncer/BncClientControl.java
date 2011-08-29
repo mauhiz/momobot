@@ -24,7 +24,7 @@ public class BncClientControl extends AbstractIrcControl {
      */
     private static final Logger LOG = Logger.getLogger(BncClientControl.class);
 
-    private final Map<ClientPeer, BncClientIO> clientToIo = new HashMap<ClientPeer, BncClientIO>();
+    private final Map<ClientPeer, BncClientIO> clientToIo = new HashMap<>();
 
     public BncClientControl() {
         super(new BouncerTriggerManager());

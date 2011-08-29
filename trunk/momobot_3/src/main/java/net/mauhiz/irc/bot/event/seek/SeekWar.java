@@ -112,7 +112,7 @@ public class SeekWar {
     /**
      * Liste des users qui ont pv le bot
      */
-    private final List<IrcUser> userpv = new ArrayList<IrcUser>();
+    private final List<IrcUser> userpv = new ArrayList<>();
 
     public SeekWar() {
         super();
@@ -317,7 +317,7 @@ public class SeekWar {
      */
     @Deprecated
     List<String> split(String[] cmd) {
-        List<String> cmdNormalise = new ArrayList<String>();
+        List<String> cmdNormalise = new ArrayList<>();
         String tmpStg = "";
 
         boolean inquote = false;
@@ -399,7 +399,7 @@ public class SeekWar {
             seekServ1 = "";
         }
 
-        List<String> listMatch = new ArrayList<String>();
+        List<String> listMatch = new ArrayList<>();
         int player = numberPlayers;
         for (String element : SEPARATEUR) {
             listMatch.add(player + element + player);
@@ -498,7 +498,7 @@ public class SeekWar {
 
     public List<Privmsg> submitSeekMessage(Privmsg im) {
 
-        List<Privmsg> resultPrivmsg = new ArrayList<Privmsg>(3);
+        List<Privmsg> resultPrivmsg = new ArrayList<>(3);
 
         // On test si il faut renvoyer le msg de seek au channel
 

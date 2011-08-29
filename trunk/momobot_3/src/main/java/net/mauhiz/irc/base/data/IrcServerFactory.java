@@ -11,7 +11,7 @@ import org.apache.commons.lang.NotImplementedException;
 
 public enum IrcServerFactory {
     ;
-    private static final Map<String, Class<? extends IrcNetwork>> NETWORK_TYPES = new HashMap<String, Class<? extends IrcNetwork>>();
+    private static final Map<String, Class<? extends IrcNetwork>> NETWORK_TYPES = new HashMap<>();
 
     public static IrcNetwork createNetwork(String alias, URI uri) {
         String name = alias == null ? guessAlias(uri) : alias;

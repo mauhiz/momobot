@@ -15,7 +15,7 @@ public class Hooks<S> {
      * key = esse<br>
      * value = hooks associes
      */
-    private static final Map<Object, Hooks<?>> HOOKS_HOLDER = new HashMap<Object, Hooks<?>>();
+    private static final Map<Object, Hooks<?>> HOOKS_HOLDER = new HashMap<>();
 
     /**
      * @param <S>
@@ -28,7 +28,7 @@ public class Hooks<S> {
         Hooks<S> hTable = getHooks(esse);
 
         if (hTable == null) {
-            hTable = new Hooks<S>(esse);
+            hTable = new Hooks<>(esse);
         }
 
         hTable.addHook(jambon);
@@ -86,7 +86,7 @@ public class Hooks<S> {
      * key = class of jambon<br>
      * value = jambon itself
      */
-    private final Map<Class<?>, Object> jambons = new HashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> jambons = new HashMap<>();
 
     /**
      * @param esse

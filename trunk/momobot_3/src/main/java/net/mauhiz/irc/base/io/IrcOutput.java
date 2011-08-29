@@ -22,7 +22,7 @@ public class IrcOutput extends AbstractDaemon implements IIrcOutput {
     private static final long DELAY = 100;
     private static final Logger LOGGER = Logger.getLogger(IrcOutput.class);
     private static final int MAX_SIZE = 50;
-    private final BlockingQueue<String> queue = new LinkedBlockingQueue<String>(MAX_SIZE);
+    private final BlockingQueue<String> queue = new LinkedBlockingQueue<>(MAX_SIZE);
     private final AsynchronousSocketChannel socket;
 
     /**

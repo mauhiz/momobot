@@ -13,8 +13,8 @@ import net.mauhiz.irc.base.msg.Kick;
 import net.mauhiz.irc.base.msg.Notice;
 import net.mauhiz.irc.base.msg.Part;
 import net.mauhiz.irc.base.msg.Privmsg;
-import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.AbstractNamedRunnable;
+import net.mauhiz.util.ExecutionType;
 
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.log4j.Logger;
@@ -105,7 +105,7 @@ public class DefaultTriggerManager implements ITriggerManager {
     /**
      * keeper of the seven keys
      */
-    private final Set<ITrigger> myKeeper = new CopyOnWriteArraySet<ITrigger>();
+    private final Set<ITrigger> myKeeper = new CopyOnWriteArraySet<>();
 
     /**
      * @param triggerClass

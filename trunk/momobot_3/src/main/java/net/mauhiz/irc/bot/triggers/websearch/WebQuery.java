@@ -76,7 +76,7 @@ public class WebQuery {
     public WebQuery(String type, String rawQuery) {
         this.type = type;
         try {
-            this.query = URLEncoder.encode(rawQuery, FileUtil.UTF8.name());
+            query = URLEncoder.encode(rawQuery, FileUtil.UTF8.name());
 
         } catch (UnsupportedEncodingException uee) {
             throw new IllegalStateException(uee);
@@ -105,18 +105,16 @@ public class WebQuery {
             return null;
         }
 
-        List<String> results = new ArrayList<String>(numResult);
-        int index;
-        String work;
+        List<String> results = new ArrayList<>(numResult);
         if (GAMETIGER.equals(type)) {
             for (int k = 0; k < numResult; ++k) {
-                index = page.indexOf(resultSep);
+                int index = page.indexOf(resultSep);
                 if (index == -1) {
                     break;
                 }
                 page = page.substring(index + len);
                 index = page.indexOf('>');
-                work = page.substring(0, index);
+                String work = page.substring(0, index);
                 if ("\"".equals(work)) {
                     break;
                 }
@@ -127,14 +125,14 @@ public class WebQuery {
             page = page.substring(page.indexOf("<h2>RESULTATS WEB</h2>"));
             forloop: for (int k = 0; k < numResult; ++k) {
                 while (!page.startsWith(HTTP) && !page.startsWith(FTP)) {
-                    index = page.indexOf(resultSep);
+                    int index = page.indexOf(resultSep);
                     if (index < 0) {
                         break forloop;
                     }
                     page = page.substring(index + len);
                 }
-                index = page.indexOf('>');
-                work = page.substring(0, index - 1);
+                int index = page.indexOf('>');
+                String work = page.substring(0, index - 1);
                 if (work.endsWith(" target=_blank")) {
                     /* Ce resultat est pas bon, faudra en prendre un autre */
                     ++numResult;
@@ -149,7 +147,7 @@ public class WebQuery {
                 page = page.substring(start);
                 forloop: for (int k = 0; k < numResult; ++k) {
                     while (true) {
-                        index = page.indexOf(resultSep);
+                        int index = page.indexOf(resultSep);
                         if (index == -1) {
                             break forloop;
                         }
@@ -158,8 +156,8 @@ public class WebQuery {
                             break;
                         }
                     }
-                    index = page.indexOf("\" ");
-                    work = page.substring(0, index);
+                    int index = page.indexOf("\" ");
+                    String work = page.substring(0, index);
                     /* TODO virer les liens de traduction */
                     results.add(work);
                     page = page.substring(index);

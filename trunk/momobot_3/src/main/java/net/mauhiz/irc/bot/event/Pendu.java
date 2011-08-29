@@ -80,7 +80,7 @@ public class Pendu extends AbstractChannelEvent {
     /**
      * lettres deja proposees.
      */
-    private final Set<String> alreadyTried = new TreeSet<String>();
+    private final Set<String> alreadyTried = new TreeSet<>();
     /**
      * le mot en cours de devinage (negatif).
      */

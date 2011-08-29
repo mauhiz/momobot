@@ -18,7 +18,7 @@ import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
 public class MassHlTrigger extends AbstractTextTrigger implements IPrivmsgTrigger {
 
     private static Set<IrcUser> findNudgeableUsers(IrcChannel chan, IrcUser from, IrcUser myself) {
-        Set<IrcUser> nudgeableUsers = new TreeSet<IrcUser>();
+        Set<IrcUser> nudgeableUsers = new TreeSet<>();
         for (IrcUser nextIrcUser : chan) {
             if (nextIrcUser.isService()) {
                 /* no bots */

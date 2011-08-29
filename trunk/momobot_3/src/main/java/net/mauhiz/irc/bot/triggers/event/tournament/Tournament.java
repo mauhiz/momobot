@@ -95,11 +95,11 @@ public class Tournament extends AbstractChannelEvent {
     /**
      * 
      */
-    private final List<String> mapList = new ArrayList<String>();
+    private final List<String> mapList = new ArrayList<>();
     /**
      * 
      */
-    private final List<Match> matchList = new ArrayList<Match>();
+    private final List<Match> matchList = new ArrayList<>();
     /**
      * 
      */
@@ -117,7 +117,7 @@ public class Tournament extends AbstractChannelEvent {
     /**
      * l'ensemble de joueurs. Ne sera jamais <code>null</code>
      */
-    private final List<TournamentTeam> teamList = new ArrayList<TournamentTeam>();
+    private final List<TournamentTeam> teamList = new ArrayList<>();
 
     /**
      * @param chan
@@ -193,7 +193,7 @@ public class Tournament extends AbstractChannelEvent {
      * @return listTeam
      */
     public List<String> getListTeam() {
-        List<String> reply = new ArrayList<String>();
+        List<String> reply = new ArrayList<>();
         for (TournamentTeam element : teamList) {
             reply.add(element.toString());
         }
@@ -287,7 +287,7 @@ public class Tournament extends AbstractChannelEvent {
      */
 
     public List<String> setScore(int idTeam, int score01, int score02) {
-        List<String> reply = new ArrayList<String>();
+        List<String> reply = new ArrayList<>();
         int score1 = score01;
         int score2 = score02;
 
@@ -360,8 +360,8 @@ public class Tournament extends AbstractChannelEvent {
     public String toString() {
 
         Match finale = null;
-        List<Match> enCours = new ArrayList<Match>();
-        List<Match> enAttente = new ArrayList<Match>();
+        List<Match> enCours = new ArrayList<>();
+        List<Match> enAttente = new ArrayList<>();
         for (Match element : matchList) {
             if (element.getWinner() == -1) {
                 if (element.isReady()) {

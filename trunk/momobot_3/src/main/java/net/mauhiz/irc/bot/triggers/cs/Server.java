@@ -51,7 +51,7 @@ public class Server implements IServer {
     /**
      * 
      */
-    private final List<Player> players = new ArrayList<Player>();
+    private final List<Player> players = new ArrayList<>();
     /**
      * Le client Valve UDP.
      */

@@ -11,7 +11,7 @@ import net.mauhiz.irc.base.trigger.DefaultTriggerManager;
  * @author mauhiz
  */
 public class BouncerTriggerManager extends DefaultTriggerManager implements Runnable {
-    List<BncClientIO> currentlyConnected = new ArrayList<BncClientIO>();
+    List<BncClientIO> currentlyConnected = new ArrayList<>();
 
     @Override
     public boolean processMsg(IIrcMessage msg, IIrcControl ircControl) {

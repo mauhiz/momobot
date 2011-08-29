@@ -14,7 +14,7 @@ public enum HibernateUtils {
     /**
      * session
      */
-    public static final ThreadLocal<Session> SESSION = new ThreadLocal<Session>();
+    public static final ThreadLocal<Session> SESSION = new ThreadLocal<>();
 
     /**
      * session factory
