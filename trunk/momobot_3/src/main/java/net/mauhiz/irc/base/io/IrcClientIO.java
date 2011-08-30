@@ -8,6 +8,9 @@ import java.nio.channels.CompletionHandler;
 import net.mauhiz.irc.base.IrcClientControl;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcPeer;
+import net.mauhiz.irc.base.io.input.IIrcInput;
+import net.mauhiz.irc.base.io.input.IrcInput;
+import net.mauhiz.irc.base.io.output.IrcOutput;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.User;
 import net.mauhiz.util.ThreadUtils;
@@ -23,9 +26,9 @@ public class IrcClientIO extends AbstractIrcIO {
         @Override
         public void completed(Void result, Void attachment) {
             output = new IrcOutput(sclient);
-            output.tstart();
+            output.launch();
             input = new IrcInput(IrcClientIO.this, sclient);
-            input.tstart();
+            input.launch();
             IIrcServerPeer server = getServerPeer();
             sendMsg(new Nick(server).getIrcForm());
             sendMsg(new User(server).getIrcForm());

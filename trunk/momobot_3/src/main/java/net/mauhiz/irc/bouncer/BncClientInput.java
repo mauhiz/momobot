@@ -3,7 +3,7 @@ package net.mauhiz.irc.bouncer;
 import java.nio.channels.AsynchronousSocketChannel;
 
 import net.mauhiz.irc.base.io.IIrcIO;
-import net.mauhiz.irc.base.io.IrcInput;
+import net.mauhiz.irc.base.io.input.IrcInput;
 
 /**
  * @author viper

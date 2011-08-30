@@ -66,7 +66,6 @@ public class Server implements IServer {
     public Server(SocketAddress ipay1) {
         super();
         ipay = ipay1;
-
     }
 
     /**
@@ -88,10 +87,12 @@ public class Server implements IServer {
      * VDW </a>
      */
     public void getDetails() throws IOException {
-        vuc.getInfo();
-        vuc.getPlayers();
-        vuc.getPlayers(); // 2eme fois pour utiliser le Challenge
-        vuc.getRules();
+        try (IClient client = getClient()) {
+            client.getInfo();
+            client.getPlayers();
+            client.getPlayers(); // 2eme fois pour utiliser le Challenge
+            client.getRules();
+        }
     }
 
     /**

@@ -1,7 +1,6 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
 import java.io.IOException;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
@@ -33,14 +32,16 @@ class ValveUdpClient implements IClient {
      */
     protected final IServer server;
 
-    /**
-     * @param server1
-     *            le serveur
-     */
-    public ValveUdpClient(IServer server1) throws IOException {
+    public ValveUdpClient(IServer server) throws IOException {
         super();
-        server = server1;
+        this.server = server;
         channel = DatagramChannel.open();
+        channel.connect(server.getIpay());
+    }
+
+    @Override
+    public void close() throws IOException {
+        channel.close();
     }
 
     private void doQuery(IValveQuery qry) throws IOException {
@@ -95,10 +96,9 @@ class ValveUdpClient implements IClient {
     }
 
     @Override
-    public SocketAddress receive(ByteBuffer dest) throws IOException {
-        SocketAddress ret = channel.receive(dest);
+    public void receive(ByteBuffer dest) throws IOException {
+        channel.read(dest);
         dest.getInt(); // skip 1 int
-        return ret;
     }
 
     /**
@@ -127,7 +127,7 @@ class ValveUdpClient implements IClient {
         sendBuf.putInt(NumberUtils.INTEGER_MINUS_ONE.intValue());
         sendBuf.put(cmdBytes);
         sendBuf.put(NumberUtils.INTEGER_ZERO.byteValue());
-        channel.send(sendBuf, server.getIpay());
+        channel.write(sendBuf);
     }
 
     protected void sendValveCmd(String str) throws IOException {

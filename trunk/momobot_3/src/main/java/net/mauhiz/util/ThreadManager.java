@@ -11,16 +11,17 @@ import java.util.concurrent.Future;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
 
-public class ThreadManager {
-    protected static final ExecutorService DEFAULT_EXECUTOR = Executors.newCachedThreadPool();
+public enum ThreadManager {
+    ;
+    private static final ExecutorService DEFAULT_EXECUTOR = Executors.newCachedThreadPool();
     private static final Map<Future<?>, String> FUTURES = new HashMap<>();
-
-    /**
-     * logger.
-     */
     private static final Logger LOG = Logger.getLogger(ThreadManager.class);
     static {
         new CleanerThread(FUTURES).tstart();
+    }
+
+    public static void launch(IRunnable runn) {
+        launch(runn, null);
     }
 
     public static void launch(IRunnable runn, Display display) {
@@ -68,6 +69,10 @@ public class ThreadManager {
             default:
                 throw new IllegalStateException("Unknown excution type: " + et);
         }
+    }
+
+    public static void shutdown() {
+        DEFAULT_EXECUTOR.shutdown();
     }
 
 }

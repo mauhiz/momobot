@@ -16,10 +16,7 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 public class DefaultTriggerManager implements ITriggerManager {
-    /**
-     * logger
-     */
-    static final Logger LOG = Logger.getLogger(DefaultTriggerManager.class);
+    private static final Logger LOG = Logger.getLogger(DefaultTriggerManager.class);
 
     private static Class<? extends ITrigger> findClass(String trigClassFull) {
         try {
@@ -107,7 +104,7 @@ public class DefaultTriggerManager implements ITriggerManager {
             return MsgState.INVALID;
         }
         LOG.debug("received " + msg.getClass().getSimpleName() + ": " + msg);
-        new TriggerLoop(this, msg, control).launch(null);
+        new TriggerLoop(this, msg, control).launch();
         return MsgState.AVAILABLE;
     }
 }

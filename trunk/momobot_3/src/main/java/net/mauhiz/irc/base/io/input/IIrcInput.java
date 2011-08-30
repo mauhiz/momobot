@@ -1,4 +1,4 @@
-package net.mauhiz.irc.base.io;
+package net.mauhiz.irc.base.io.input;
 
 import net.mauhiz.util.IDaemon;
 

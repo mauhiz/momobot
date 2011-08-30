@@ -3,7 +3,7 @@ package net.mauhiz.util;
 /**
  * @author mauhiz
  */
-public interface IDaemon extends Runnable {
+public interface IDaemon extends IRunnable {
 
     /**
      * @return si le runnable est lance.
