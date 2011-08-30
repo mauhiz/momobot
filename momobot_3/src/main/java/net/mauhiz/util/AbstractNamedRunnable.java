@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public abstract class AbstractNamedRunnable extends AbstractRunnable {
 
-    private final String name;
+    private String name;
 
     public AbstractNamedRunnable(String name) {
         super();
@@ -14,6 +14,10 @@ public abstract class AbstractNamedRunnable extends AbstractRunnable {
     @Override
     public String getName() {
         return Objects.toString(name, super.getName());
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

@@ -16,19 +16,18 @@ import net.mauhiz.irc.base.trigger.IJoinTrigger;
 import net.mauhiz.irc.base.trigger.IKickTrigger;
 import net.mauhiz.irc.base.trigger.IPartTrigger;
 import net.mauhiz.irc.base.trigger.IQuitTrigger;
-import net.mauhiz.util.AbstractNamedRunnable;
+import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 public class ChannelUpdateTrigger implements IJoinTrigger, IPartTrigger, IQuitTrigger, IKickTrigger {
 
-    static class UserListUpdater extends AbstractNamedRunnable {
+    static class UserListUpdater extends AbstractAction {
         private final IrcChannel channel;
         private final org.eclipse.swt.widgets.List userList;
 
         public UserListUpdater(org.eclipse.swt.widgets.List userList, IrcChannel channel) {
-            super("User List Updater");
             this.userList = userList;
             this.channel = channel;
         }

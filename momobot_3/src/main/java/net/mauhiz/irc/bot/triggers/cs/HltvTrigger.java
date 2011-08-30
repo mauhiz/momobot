@@ -23,6 +23,12 @@ public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     private static final String STATUS = "status";
     private static final String STOP = "stop";
 
+    private static void closeCurrent() {
+        try (IRconServer toClose = hltv) {
+            // close any current hltv rcon connection
+        }
+    }
+
     /**
      * @param trigger
      *            le trigger
@@ -37,7 +43,7 @@ public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         if (SELECT.equalsIgnoreCase(cmd)) {
             String ip = args0.poll();
             String rcon = args0.poll();
-
+            closeCurrent();
             hltv = new RconServer(NetUtils.makeISA(ip), rcon);
             hltv.getClient().changeRcon(rcon);
             return "HLTV selected: " + ip;
@@ -94,6 +100,12 @@ public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
 
         Privmsg msg = new Privmsg(im, reply);
         control.sendMsg(msg);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        closeCurrent();
+        super.finalize();
     }
 
     private String getReply(Privmsg im) {

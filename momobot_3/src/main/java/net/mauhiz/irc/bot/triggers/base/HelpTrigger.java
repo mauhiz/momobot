@@ -33,7 +33,7 @@ public class HelpTrigger extends AbstractTextTrigger implements IPrivmsgTrigger,
         ITriggerManager[] managers = realControl.getManagers();
         for (ITriggerManager manager : managers) {
             if (manager instanceof DefaultTriggerManager) {
-                return ((ITriggerManager) manager).getTriggers();
+                return manager.getTriggers();
             }
         }
         return Collections.emptySet();

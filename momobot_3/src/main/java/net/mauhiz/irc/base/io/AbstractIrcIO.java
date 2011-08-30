@@ -2,7 +2,9 @@ package net.mauhiz.irc.base.io;
 
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IrcPeer;
+import net.mauhiz.irc.base.io.output.IIrcOutput;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -33,7 +35,7 @@ public abstract class AbstractIrcIO implements IIrcIO {
      * @see net.mauhiz.irc.base.io.IIrcIO#processMsg(java.lang.String)
      */
     public void processMsg(String msg) {
-        if (msg == null) {
+        if (StringUtils.isEmpty(msg)) {
             return;
         }
         try {

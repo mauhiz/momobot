@@ -8,8 +8,8 @@ import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcDecoder;
 import net.mauhiz.irc.base.data.Target;
 import net.mauhiz.irc.base.io.AbstractIrcIO;
-import net.mauhiz.irc.base.io.IIrcInput;
 import net.mauhiz.irc.base.io.IOStatus;
+import net.mauhiz.irc.base.io.input.IIrcInput;
 import net.mauhiz.irc.base.msg.IIrcMessage;
 import net.mauhiz.irc.base.msg.Nick;
 import net.mauhiz.irc.base.msg.Privmsg;
@@ -140,17 +140,16 @@ public class BncClientIO extends AbstractIrcIO {
                 "WThis is an IRC proxy/bouncer. Unauthorized users must disconnect immediately.");
         sendMsg(na2.getIrcForm());
 
-        NoticeAuth na3 = new NoticeAuth(bncServer, "To connect, enter your password by typing "
-                + ColorUtils.toBold("/msg " + myNick + " " + ColorUtils.toUnderline("login") + " "
-                        + ColorUtils.toUnderline("password")));
+        NoticeAuth na3 = new NoticeAuth(bncServer, "To connect, tell me your password by typing like: "
+                + ColorUtils.toBold(ColorUtils.toUnderline("login") + " " + ColorUtils.toUnderline("password")));
         sendMsg(na3.getIrcForm());
     }
 
     public void tstart() {
         output = new BncClientOutput(socket);
-        output.tstart();
+        output.launch();
 
         IIrcInput input = new BncClientInput(this, socket);
-        input.tstart();
+        input.launch();
     }
 }

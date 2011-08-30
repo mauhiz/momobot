@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
  * @author mauhiz
  */
 class RconListener extends AbstractDaemon implements IRconListener {
-    private static final Logger LOGGER = Logger.getLogger(RconListener.class);
+    private static final Logger LOG = Logger.getLogger(RconListener.class);
     /**
      * port mini
      */
@@ -63,7 +63,7 @@ class RconListener extends AbstractDaemon implements IRconListener {
                 rc.receive(receivePacket);
                 processLine(receivePacket);
             } catch (IOException ioe) {
-                LOGGER.error(ioe, ioe);
+                LOG.error(ioe, ioe);
                 break;
             }
         }

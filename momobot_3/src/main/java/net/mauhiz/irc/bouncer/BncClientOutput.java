@@ -2,7 +2,7 @@ package net.mauhiz.irc.bouncer;
 
 import java.nio.channels.AsynchronousSocketChannel;
 
-import net.mauhiz.irc.base.io.IrcOutput;
+import net.mauhiz.irc.base.io.output.IrcOutput;
 
 /**
  * @author mauhiz

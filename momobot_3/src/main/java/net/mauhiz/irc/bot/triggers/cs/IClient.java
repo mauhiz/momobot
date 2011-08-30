@@ -1,10 +1,11 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
 import java.io.IOException;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 
-public interface IClient {
+public interface IClient extends AutoCloseable {
+
+    void close() throws IOException;
 
     void getInfo() throws IOException;
 
@@ -12,5 +13,5 @@ public interface IClient {
 
     void getRules() throws IOException;
 
-    SocketAddress receive(ByteBuffer dest) throws IOException;
+    void receive(ByteBuffer dest) throws IOException;
 }

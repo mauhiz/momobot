@@ -2,6 +2,7 @@ package net.mauhiz.util;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.log4j.Logger;
 
 public class PerformanceMonitor extends StopWatch {
     private static final long SLOW_THRESHOLD = 100; // time in ms
@@ -25,18 +26,16 @@ public class PerformanceMonitor extends StopWatch {
         start();
     }
 
-    public void perfLog(String toLog) {
+    public void perfLog(String toLog, Class<?> clazz) {
         stop();
         if (getTime() > outThrsh) {
             String logMsg = getTimestamp() + ThreadUtils.getThread() + ThreadUtils.getCaller() + toLog + " in [" + this
                     + "]";
-            // do not mix output (System.err and System.out)
-            synchronized (System.class) {
-                if (getTime() > errThrsh) {
-                    System.err.println(logMsg);
-                } else {
-                    System.out.println(logMsg);
-                }
+            if (getTime() > errThrsh) {
+                Logger.getLogger(clazz).error(logMsg);
+            } else {
+                Logger.getLogger(clazz).warn(logMsg);
+
             }
 
         }

@@ -1,15 +1,9 @@
 package net.mauhiz.irc.base.ident;
 
-import java.io.IOException;
+import net.mauhiz.util.IDaemon;
 
 /**
  * @author mauhiz
  */
-public interface IIdentServer {
-    void start();
-    
-    /**
-     * @throws IOException
-     */
-    void stop() throws IOException;
+public interface IIdentServer extends IDaemon {
 }

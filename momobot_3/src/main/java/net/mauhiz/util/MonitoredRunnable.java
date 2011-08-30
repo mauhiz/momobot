@@ -27,6 +27,6 @@ public abstract class MonitoredRunnable extends AbstractNamedRunnable {
     public final void trun() {
         PerformanceMonitor mon = new PerformanceMonitor();
         mrun();
-        mon.perfLog(getLogMsg());
+        mon.perfLog(getLogMsg(), getClass());
     }
 }
