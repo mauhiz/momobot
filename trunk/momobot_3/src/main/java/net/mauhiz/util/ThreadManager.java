@@ -17,7 +17,7 @@ public enum ThreadManager {
     private static final Map<Future<?>, String> FUTURES = new HashMap<>();
     private static final Logger LOG = Logger.getLogger(ThreadManager.class);
     static {
-        new CleanerThread(FUTURES).tstart();
+        new CleanerThread(FUTURES).launch();
     }
 
     public static void launch(IRunnable runn) {
@@ -31,7 +31,7 @@ public enum ThreadManager {
                 runn.run();
                 break;
             case DAEMON:
-                new DaemonRunnable(runn).tstart();
+                new DaemonRunnable(runn).launch();
                 break;
             case PARALLEL_CACHED:
                 synchronized (FUTURES) {

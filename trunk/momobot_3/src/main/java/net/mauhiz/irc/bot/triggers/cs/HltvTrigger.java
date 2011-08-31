@@ -23,7 +23,7 @@ public class HltvTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
     private static final String STATUS = "status";
     private static final String STOP = "stop";
 
-    private static void closeCurrent() {
+    private static void closeCurrent() throws IOException {
         try (IRconServer toClose = hltv) {
             // close any current hltv rcon connection
         }

@@ -30,6 +30,6 @@ public class SpamTrigger extends AbstractTextTrigger implements IPrivmsgTrigger 
         Privmsg spamMsg = new Privmsg(im.getServerPeer(), null, target, msg);
         long delay = 150;
         SpamRunnable spam = new SpamRunnable(spamMsg, control, delay);
-        spam.tstart();
+        spam.launch();
     }
 }

@@ -313,9 +313,7 @@ public class SeekWar {
      * @param cmd
      *            String[] non normalise
      * @return un message
-     * @deprecated unused
      */
-    @Deprecated
     List<String> split(String[] cmd) {
         List<String> cmdNormalise = new ArrayList<>();
         String tmpStg = "";

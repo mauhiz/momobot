@@ -44,6 +44,6 @@ public class BncLauncher extends CommonLauncher {
 
         int port = config.getInt(profileCriteria + "/@port");
         BncServerConnection bouncer = new BncServerConnection(dummy, port);
-        bouncer.tstart();
+        bouncer.launch();
     }
 }

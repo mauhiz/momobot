@@ -42,7 +42,7 @@ public enum HibernateUtils {
         if (s == null) {
             KeepAlive ka = new KeepAlive(SESSION_FACTORY);
             s = ka.getSession();
-            ka.tstart();
+            ka.launch();
             SESSION.set(s);
         }
         return s;
