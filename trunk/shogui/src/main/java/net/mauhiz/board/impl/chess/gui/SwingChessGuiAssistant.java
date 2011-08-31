@@ -8,8 +8,8 @@ import javax.swing.JDialog;
 
 import net.mauhiz.board.impl.chess.data.ChessPieceType;
 import net.mauhiz.board.impl.chess.data.ChessPlayerType;
-import net.mauhiz.board.impl.common.gui.SwingGuiAssistant;
-import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
+import net.mauhiz.board.impl.common.assistant.swing.SwingGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;

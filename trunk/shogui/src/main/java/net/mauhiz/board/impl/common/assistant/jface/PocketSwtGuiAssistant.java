@@ -1,15 +1,16 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.assistant.jface;
 
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.mauhiz.board.impl.common.action.SelectPocketAction;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
 import net.mauhiz.board.model.gui.PocketGuiAssistant;
-import net.mauhiz.util.AbstractNamedRunnable;
+import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -20,6 +21,36 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements PocketGuiAssistant {
+	final class PocketClearer extends AbstractAction {
+		@Override
+		public ExecutionType getExecutionType() {
+			return ExecutionType.GUI_ASYNCHRONOUS;
+		}
+
+		@Override
+		protected void trun() {
+			for (Composite pocket : pockets.values()) {
+				for (Control control : pocket.getChildren()) {
+					control.dispose();
+				}
+			}
+		}
+	}
+
+	final class PocketRemover extends AbstractAction {
+		@Override
+		public ExecutionType getExecutionType() {
+			return ExecutionType.GUI_ASYNCHRONOUS;
+		}
+
+		@Override
+		protected void trun() {
+			for (Composite pocket : pockets.values()) {
+				pocket.dispose();
+			}
+		}
+	}
+
 	private static final Logger LOG = Logger.getLogger(PocketSwtGuiAssistant.class);
 	protected final Map<PlayerType, Composite> pockets = new HashMap<PlayerType, Composite>();
 
@@ -36,42 +67,11 @@ public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements P
 	@Override
 	public void clear() {
 		super.clear();
-
-		new AbstractNamedRunnable("Remove Pockets") {
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.GUI_ASYNCHRONOUS;
-			}
-
-			@Override
-			protected void trun() {
-				for (Composite pocket : pockets.values()) {
-					pocket.dispose();
-				}
-			}
-
-		}.launch(getShell().getDisplay());
+		new PocketRemover().launch(getShell().getDisplay());
 	}
 
 	public void clearPockets() {
-		new AbstractNamedRunnable("Clear Pockets") {
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.GUI_ASYNCHRONOUS;
-			}
-
-			@Override
-			protected void trun() {
-				for (Composite pocket : pockets.values()) {
-					for (Control control : pocket.getChildren()) {
-						control.dispose();
-					}
-				}
-			}
-		}.launch(getShell().getDisplay());
-
+		new PocketClearer().launch(getShell().getDisplay());
 	}
 
 	@Override

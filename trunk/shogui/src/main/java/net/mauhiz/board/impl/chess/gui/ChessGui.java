@@ -7,7 +7,7 @@ import net.mauhiz.board.impl.chess.data.ChessBoard;
 import net.mauhiz.board.impl.chess.data.ChessPiece;
 import net.mauhiz.board.impl.chess.data.ChessPieceType;
 import net.mauhiz.board.impl.chess.data.ChessRule;
-import net.mauhiz.board.impl.common.gui.AbstractInteractiveBoardGui;
+import net.mauhiz.board.impl.common.controller.AbstractInteractiveBoardGui;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PlayerType;

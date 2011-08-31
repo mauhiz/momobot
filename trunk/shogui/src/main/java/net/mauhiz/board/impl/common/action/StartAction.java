@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.action;
 
 import net.mauhiz.board.model.gui.BoardGui;
 import net.mauhiz.util.AbstractAction;
@@ -17,7 +17,7 @@ public class StartAction extends AbstractAction {
 	}
 
 	@Override
-	protected ExecutionType getExecutionType() {
+	public ExecutionType getExecutionType() {
 		return ExecutionType.PARALLEL_CACHED;
 	}
 

@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui.rotation;
+package net.mauhiz.board.impl.common.assistant.swing.button;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -29,14 +29,17 @@ import javax.swing.JComponent;
  *  of its associated component. However, this class does allow you to override
  *  these properties.
  */
-public class HorizontalTextIcon extends TextIcon {
+public class VerticalTextIcon extends TextIcon {
+	private String[] chars = new String[0];
+	private int[] charWidths = new int[0];
+
 	/**
 	 *  Convenience constructor to create a TextIcon with a HORIZONTAL layout.
 	 *
 	 *  @param component  the component to which the icon will be added
 	 *  @param text       the text to be rendered on the Icon
 	 */
-	public HorizontalTextIcon(JComponent component, String text) {
+	public VerticalTextIcon(JComponent component, String text) {
 		super(component, text);
 	}
 
@@ -45,13 +48,28 @@ public class HorizontalTextIcon extends TextIcon {
 	 */
 	@Override
 	protected void calculateIconDimensions() {
+		int maxWidth = 0;
+		chars = new String[text.length()];
+		charWidths = new int[text.length()];
+
+		//  Find the widest character in the text string
 		Font lfont = getFont();
-
 		FontMetrics fm = component.getFontMetrics(lfont);
+		for (int i = 0; i < text.length(); i++) {
+			chars[i] = text.substring(i, i + 1);
+			charWidths[i] = fm.stringWidth(chars[i]);
+			maxWidth = Math.max(maxWidth, charWidths[i]);
+		}
 
-		iconWidth = fm.stringWidth(text) + padding * 2;
-		iconHeight = fm.getHeight();
+		//  Add a minimum of 2 extra pixels, plus the leading value,
+		//  on each side of the character.
+		iconWidth = maxWidth + (fm.getLeading() + 2) * 2;
 
+		//  Decrease then normal gap betweens lines of text by taking into
+		//  account the descent.
+		iconHeight = (fm.getHeight() - fm.getDescent()) * text.length();
+
+		iconHeight += padding * 2;
 		component.revalidate();
 	}
 
@@ -68,10 +86,18 @@ public class HorizontalTextIcon extends TextIcon {
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2.setFont(getFont());
 		g2.setColor(getForeground());
+		int offsetY = padding;
+		int incrementY;
 		synchronized (TextIcon.class) {
 			FontMetrics fm = g2.getFontMetrics();
-			g2.translate(x, y + fm.getAscent());
+			offsetY += fm.getAscent() - fm.getDescent();
+			incrementY = fm.getHeight() - fm.getDescent();
 		}
-		g2.drawString(text, padding, 0);
+
+		for (int i = 0; i < text.length(); i++) {
+			int offsetX = Math.round((getIconWidth() - charWidths[i]) / 2.0f);
+			g2.drawString(chars[i], x + offsetX, y + offsetY);
+			offsetY += incrementY;
+		}
 	}
 }

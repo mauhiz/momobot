@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.controller;
 
 import java.awt.Dimension;
 
@@ -166,6 +166,9 @@ public abstract class AbstractInteractiveBoardGui implements InteractiveBoardGui
 		PlayerType player = getController().receiveMove(move);
 		cancelSelection();
 		refreshDecorations();
+		if (player != null) {
+			getAssistant().addToHistory(move.toString(), null);
+		}
 		return player;
 	}
 }

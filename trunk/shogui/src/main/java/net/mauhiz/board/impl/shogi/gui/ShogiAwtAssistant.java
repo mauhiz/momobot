@@ -1,12 +1,15 @@
 package net.mauhiz.board.impl.shogi.gui;
 
 import java.awt.Button;
-import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.GridLayout;
-import java.awt.Panel;
 
-import net.mauhiz.board.impl.common.gui.PocketAwtGuiAssistant;
+import javax.swing.JPanel;
+
+import net.mauhiz.board.impl.common.assistant.applet.PocketAwtGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
+import net.mauhiz.board.impl.shogi.data.ShogiPieceType;
 import net.mauhiz.board.impl.shogi.data.ShogiPlayerType;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PieceType;
@@ -31,7 +34,7 @@ public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGu
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -53,7 +56,7 @@ public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGu
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -69,12 +72,17 @@ public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGu
 	}
 
 	@Override
-	public void decorate(Button button, PieceType op, PlayerType player) {
-		if (op == null) {
-			button.setLabel("");
+	public void decorate(RotatingJButton button, PieceType piece, PlayerType player) {
+		if (piece == null) {
+			button.setText("", false);
 		} else {
-			button.setLabel(op.toString());
-			button.setForeground(player == ShogiPlayerType.SENTE ? Color.BLACK : Color.WHITE);
+			String ji;
+			if (piece == ShogiPieceType.KING && player == ShogiPlayerType.SENTE) {
+				ji = "玉"; // special case!
+			} else {
+				ji = piece.toString();
+			}
+			button.setText(ji, player == ShogiPlayerType.GOTE);
 		}
 	}
 
@@ -84,16 +92,16 @@ public class ShogiAwtAssistant extends PocketAwtGuiAssistant implements IShogiGu
 	}
 
 	public void initPockets() {
-		Panel pocket = new Panel();
+		JPanel pocket = new JPanel();
 		frame.add(pocket, 0);
 		pockets.put(ShogiPlayerType.SENTE, pocket);
-		pocket = new Panel();
+		pocket = new JPanel();
 		frame.add(pocket);
 		pockets.put(ShogiPlayerType.GOTE, pocket);
 	}
 
-	public void showPromotionDialog(final NormalMove move) {
-		final Dialog popup = new Dialog(frame, "Promotion?");
+	public void showPromotionDialog(NormalMove move) {
+		Dialog popup = new Dialog(Frame.getFrames()[0], "Promotion?");
 		popup.setLayout(new GridLayout(1, 2, 10, 10));
 		popup.setModal(true);
 

@@ -1,8 +1,8 @@
 package net.mauhiz.board.impl.checkers.data;
 
-import net.mauhiz.board.impl.common.data.AbstractPiece;
+import net.mauhiz.board.impl.common.data.DefaultPiece;
 
-public class CheckersPiece extends AbstractPiece {
+public class CheckersPiece extends DefaultPiece {
 
 	public CheckersPiece(CheckersPlayerType playerType, CheckersPieceType pieceType) {
 		super(playerType, pieceType);

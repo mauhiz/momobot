@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.assistant.swing;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,7 +13,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
+import net.mauhiz.board.impl.common.action.SelectPocketAction;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
+import net.mauhiz.board.impl.common.data.DefaultPiece;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
@@ -39,13 +41,14 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 		}
 	}
 
-	public void addToPocket(PieceType pieceType, PlayerType player) {
+	public void addToPocket(final PieceType pieceType, final PlayerType player) {
 		RotatingJButton button = new RotatingJButton();
 		button.setBackground(getParent().getSquareBgcolor(null));
 		button.setSize(30, 30);
 		decorate(button, pieceType, player);
 		button.addActionListener(new SelectPocketAction(getParent(), pieceType, player));
 		getPocket(player).add(button);
+		pocketButtons.put(button, new DefaultPiece(player, pieceType));
 		LOG.debug("Adding to pocket: " + pieceType);
 		refreshPocketActions(player);
 	}
@@ -91,18 +94,16 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 	protected void initPanels() {
 		boardAndHistory.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		boardAndHistory.setSize(frame.getWidth() - 2, frame.getHeight() - 2);
+		boardAndHistory.setDividerLocation(0.8);
 		frame.add(boardAndHistory);
 		LOG.debug("Init board and history split panel: " + boardAndHistory);
 
-		boardAndPocketsPanel.setSize(boardAndHistory.getWidth() / 2 - 2, boardAndHistory.getHeight());
-		boardAndHistory.add(boardAndPocketsPanel, JSplitPane.LEFT);
+		boardAndHistory.setLeftComponent(boardAndPocketsPanel);
 		LOG.debug("Init Board and pockets: " + boardAndPocketsPanel);
 
-		boardAndPocketsPanel.setSize(boardAndHistory.getWidth() / 2 - 2, boardAndHistory.getHeight());
-		boardAndPocketsPanel.add(historyPanel, JSplitPane.RIGHT);
+		boardAndHistory.setRightComponent(historyPanel);
 		LOG.debug("Init History panel: " + historyPanel);
 
-		boardPanel.setSize(boardAndPocketsPanel.getWidth(), boardAndPocketsPanel.getHeight() - 100);
 		boardAndPocketsPanel.add(boardPanel);
 		LOG.debug("Init Board panel: " + boardPanel);
 	}

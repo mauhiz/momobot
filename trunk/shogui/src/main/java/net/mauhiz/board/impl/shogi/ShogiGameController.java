@@ -1,9 +1,8 @@
 package net.mauhiz.board.impl.shogi;
 
-import net.mauhiz.board.impl.common.AbstractPocketGameController;
+import net.mauhiz.board.impl.common.controller.AbstractPocketGameController;
 import net.mauhiz.board.impl.shogi.data.ShogiGame;
 import net.mauhiz.board.impl.shogi.data.ShogiRule;
-import net.mauhiz.board.impl.shogi.gui.ShogiGui;
 import net.mauhiz.board.model.BoardIO;
 import net.mauhiz.board.model.data.NormalMove;
 
@@ -20,11 +19,6 @@ public class ShogiGameController extends AbstractPocketGameController {
 	public PromoteMove convertToPromotion(NormalMove move) {
 		LOG.trace("Generating promotion from normal move: " + move);
 		return new PromoteMove(move);
-	}
-
-	@Override
-	public ShogiGui getBoardIO() {
-		return (ShogiGui) super.getBoardIO();
 	}
 
 	@Override

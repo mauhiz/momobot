@@ -1,20 +1,24 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.assistant.jface;
 
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.mauhiz.board.impl.common.action.ExitAction;
+import net.mauhiz.board.impl.common.action.StartAction;
+import net.mauhiz.board.impl.common.assistant.AbstractGuiAssistant;
 import net.mauhiz.board.impl.common.data.SquareImpl;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.data.Square;
 import net.mauhiz.board.model.gui.BoardGui;
-import net.mauhiz.util.AbstractNamedRunnable;
+import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.IAction;
 import net.mauhiz.util.ThreadUtils;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.ObjectUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -27,17 +31,15 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
-
-	static class ButtonClearer extends AbstractNamedRunnable {
+	static class ButtonClearer extends AbstractAction {
 		private final Map<Square, Button> lButtons;
 
 		ButtonClearer(Map<Square, Button> lButtons) {
-			super("Button Clearer");
 			this.lButtons = lButtons;
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -53,16 +55,15 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	class LayoutInitializer extends AbstractNamedRunnable {
+	class LayoutInitializer extends AbstractAction {
 		private final Dimension size;
 
 		LayoutInitializer(Dimension size) {
-			super("Init Layout");
 			this.size = size;
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -76,22 +77,34 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	class SquareAppender extends AbstractNamedRunnable {
+	final class ShellRedrawer extends AbstractAction {
+
+		@Override
+		public ExecutionType getExecutionType() {
+			return ExecutionType.GUI_ASYNCHRONOUS;
+		}
+
+		@Override
+		public void trun() {
+			getShell().redraw();
+		}
+	}
+
+	class SquareAppender extends AbstractAction {
+		private final java.awt.Color color;
 		private final Map<Square, Button> lButtons;
-		private final Square square;
 		private final int x;
 		private final int y;
 
-		SquareAppender(Map<Square, Button> lButtons, Square square, int x, int y) {
-			super("Square Appender");
+		SquareAppender(Map<Square, Button> lButtons, java.awt.Color color, int x, int y) {
 			this.lButtons = lButtons;
-			this.square = square;
+			this.color = color;
 			this.x = x;
 			this.y = y;
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -99,25 +112,24 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		public void trun() {
 			Button button = new Button(getShell(), SWT.PUSH | SWT.FLAT);
 			button.setSize(30, 30);
-			button.setBackground(fromAwt(getParent().getSquareBgcolor(square)));
+			button.setBackground(fromAwt(color));
 			synchronized (lButtons) {
 				lButtons.put(SquareImpl.getInstance(x, y), button);
 			}
 		}
 	}
 
-	static class SquareDisabler extends AbstractNamedRunnable {
+	static class SquareDisabler extends AbstractAction {
 		private final IAction action;
 		private final Button button;
 
 		public SquareDisabler(Button button, IAction action) {
-			super("Square Disabler");
 			this.button = button;
 			this.action = action;
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -129,20 +141,19 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	static class SquareEnabler extends AbstractNamedRunnable {
+	static class SquareEnabler extends AbstractAction {
 		private final IAction action;
 		private final Button button;
 		private final IAction old;
 
 		SquareEnabler(IAction action, Button button, IAction old) {
-			super("Enable Square");
 			this.action = action;
 			this.button = button;
 			this.old = old;
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_SYNCHRONOUS;
 		}
 
@@ -158,17 +169,23 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	private final Map<Square, Button> buttons = new HashMap<Square, Button>();
-	private Shell shell;
+
+	private Shell shell = new Shell(Display.getDefault());
 
 	public SwtGuiAssistant(BoardGui parent) {
 		super(parent);
+	}
+
+	@Override
+	public void addToHistory(String value, IAction action) {
+		throw new NotImplementedException();
 	}
 
 	public void appendSquares(Iterable<Square> squares, Dimension size) {
 		for (Square square : squares) {
 			int x = square.getX();
 			int y = size.height - square.getY() - 1;
-			new SquareAppender(buttons, square, x, y).launch(shell.getDisplay());
+			new SquareAppender(buttons, getParent().getSquareBgcolor(square), x, y).launch(shell.getDisplay());
 		}
 	}
 
@@ -232,8 +249,6 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	public void initDisplay() {
-		shell = new Shell(Display.getDefault());
-
 		initMenu();
 		shell.setText(getParent().getWindowTitle());
 
@@ -267,17 +282,7 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	public void refreshBoard() {
-		new AbstractNamedRunnable("Shell Redraw") {
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.GUI_ASYNCHRONOUS;
-			}
-
-			@Override
-			public void trun() {
-				getShell().redraw();
-			}
-		}.launch(shell.getDisplay());
+		new ShellRedrawer().launch(shell.getDisplay());
 	}
 
 	public void start() {

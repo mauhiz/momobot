@@ -5,8 +5,8 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
-import net.mauhiz.board.impl.common.gui.PocketSwingGuiAssistant;
-import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
+import net.mauhiz.board.impl.common.assistant.swing.PocketSwingGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
 import net.mauhiz.board.impl.go.data.GoPlayerType;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;

@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui.rotation;
+package net.mauhiz.board.impl.common.assistant.swing.button;
 
 import java.awt.Component;
 import java.awt.Graphics;
@@ -38,10 +38,10 @@ public class CompoundIcon implements Icon {
 
 	private float alignmentX = CENTER;
 	private float alignmentY = CENTER;
-	private final Axis axis;
-	private final int gap;
+	private Axis axis;
+	private int gap;
 
-	private final Icon[] icons;
+	private Icon[] icons;
 
 	/**
 	 *  Convenience contructor for creating a CompoundIcon where the

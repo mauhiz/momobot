@@ -3,11 +3,13 @@ package net.mauhiz.board.impl.chess.gui;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.GridLayout;
 
 import net.mauhiz.board.impl.chess.data.ChessPieceType;
 import net.mauhiz.board.impl.chess.data.ChessPlayerType;
-import net.mauhiz.board.impl.common.gui.AwtGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.applet.AwtGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
@@ -23,17 +25,17 @@ public class AwtChessGuiAssistant extends AwtGuiAssistant implements IChessGuiAs
 	}
 
 	@Override
-	public void decorate(Button button, PieceType op, PlayerType player) {
+	public void decorate(RotatingJButton button, PieceType op, PlayerType player) {
 		if (op == null) {
-			button.setLabel("");
+			button.setText("");
 		} else {
-			button.setLabel(op.toString());
+			button.setText(op.toString());
 			button.setForeground(player == ChessPlayerType.BLACK ? Color.BLACK : Color.WHITE);
 		}
 	}
 
 	public void showPromotionDialog(ChessPieceType[] promotions, NormalMove nmove) {
-		final Dialog popup = new Dialog(frame, "Promotion?");
+		final Dialog popup = new Dialog(Frame.getFrames()[0], "Promotion?");
 		popup.setLayout(new GridLayout(1, promotions.length));
 		popup.setModal(true);
 

@@ -2,14 +2,14 @@ package net.mauhiz.board.impl.shogi.gui;
 
 import java.util.Map;
 
-import net.mauhiz.board.impl.common.gui.PocketSwtGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.jface.PocketSwtGuiAssistant;
 import net.mauhiz.board.impl.shogi.data.ShogiPieceType;
 import net.mauhiz.board.impl.shogi.data.ShogiPlayerType;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
-import net.mauhiz.util.AbstractNamedRunnable;
+import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
 
 import org.eclipse.swt.SWT;
@@ -19,20 +19,19 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.MessageBox;
 
 public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGuiAssistant {
-	static class ButtonDecorator extends AbstractNamedRunnable {
+	static class ButtonDecorator extends AbstractAction {
 		private final Button button;
 		private final PieceType piece;
 		private final PlayerType player;
 
 		ButtonDecorator(Button button, PieceType piece, PlayerType player) {
-			super("Button Decorator");
 			this.button = button;
 			this.piece = piece;
 			this.player = player;
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_SYNCHRONOUS;
 		}
 
@@ -52,16 +51,15 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		}
 	}
 
-	class PocketInitializer extends AbstractNamedRunnable {
+	class PocketInitializer extends AbstractAction {
 		private final Map<PlayerType, Composite> lpockets;
 
 		PocketInitializer(Map<PlayerType, Composite> lpockets) {
-			super("Pocket Initializer");
 			this.lpockets = lpockets;
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -95,11 +93,11 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		mb.setMessage("Promote?");
 		int buttonID = mb.open();
 		switch (buttonID) {
-			case SWT.YES:
-				getParent().afterPromotionDialog(move, true);
-				break;
-			default:
-				getParent().afterPromotionDialog(move, false);
+		case SWT.YES:
+			getParent().afterPromotionDialog(move, true);
+			break;
+		default:
+			getParent().afterPromotionDialog(move, false);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 package net.mauhiz.board.impl.go;
 
-import net.mauhiz.board.impl.common.AbstractPocketGameController;
-import net.mauhiz.board.impl.common.gui.AbstractInteractiveBoardGui;
+import net.mauhiz.board.impl.common.controller.AbstractInteractiveBoardGui;
+import net.mauhiz.board.impl.common.controller.AbstractPocketGameController;
 import net.mauhiz.board.impl.go.data.GoGame;
 import net.mauhiz.board.impl.go.data.GoRule;
 import net.mauhiz.board.model.BoardIO;

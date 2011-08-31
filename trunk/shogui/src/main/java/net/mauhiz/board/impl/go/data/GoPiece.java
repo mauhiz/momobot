@@ -1,8 +1,8 @@
 package net.mauhiz.board.impl.go.data;
 
-import net.mauhiz.board.impl.common.data.AbstractPiece;
+import net.mauhiz.board.impl.common.data.DefaultPiece;
 
-public class GoPiece extends AbstractPiece {
+public class GoPiece extends DefaultPiece {
 
 	public GoPiece(GoPlayerType playerType, GoPieceType pieceType) {
 		super(playerType, pieceType);

@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui.rotation;
+package net.mauhiz.board.impl.common.assistant.swing.button;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

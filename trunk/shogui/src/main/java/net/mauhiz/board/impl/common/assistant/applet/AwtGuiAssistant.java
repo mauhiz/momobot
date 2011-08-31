@@ -1,19 +1,20 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.assistant.applet;
 
-import java.awt.Button;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridLayout;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
-import java.awt.MenuShortcut;
-import java.awt.Panel;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JApplet;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import net.mauhiz.board.impl.common.action.ExitAction;
+import net.mauhiz.board.impl.common.action.StartAction;
+import net.mauhiz.board.impl.common.assistant.AbstractGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
 import net.mauhiz.board.impl.common.data.SquareImpl;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PieceType;
@@ -22,22 +23,23 @@ import net.mauhiz.board.model.data.Square;
 import net.mauhiz.board.model.gui.BoardGui;
 import net.mauhiz.util.IAction;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 
 public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	private static final Logger LOG = Logger.getLogger(AwtGuiAssistant.class);
-	private final Map<Square, Button> buttons = new HashMap<Square, Button>();
-
-	protected Frame frame = new Frame();
-	protected Panel panel;
+	private final Map<Square, RotatingJButton> buttons = new HashMap<Square, RotatingJButton>();
+	protected final JApplet frame = new JApplet();
+	protected final JPanel panel = new JPanel();
 
 	public AwtGuiAssistant(BoardGui parent) {
 		super(parent);
 	}
 
-	public void afterInit() {
-		frame.pack();
+	@Override
+	public void addToHistory(String value, IAction action) {
+		throw new NotImplementedException();
 	}
 
 	public void appendSquares(Iterable<Square> squares, Dimension size) {
@@ -45,7 +47,7 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 		for (Square square : squares) {
 			int x = square.getX();
 			int y = size.height - square.getY() - 1;
-			Button button = new Button();
+			RotatingJButton button = new RotatingJButton();
 			buttons.put(SquareImpl.getInstance(x, y), button);
 			button.setBackground(getParent().getSquareBgcolor(square));
 			button.setSize(30, 30);
@@ -55,7 +57,7 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	public void clear() {
-		for (Button button : buttons.values()) {
+		for (RotatingJButton button : buttons.values()) {
 			panel.remove(button);
 		}
 		buttons.clear();
@@ -63,13 +65,13 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	}
 
 	public void close() {
-		frame.dispose();
+		frame.destroy();
 	}
 
-	protected abstract void decorate(Button button, PieceType piece, PlayerType player);
+	protected abstract void decorate(RotatingJButton button, PieceType piece, PlayerType player);
 
 	public void decorate(Square square, Piece piece) {
-		Button button = getButton(square);
+		RotatingJButton button = getButton(square);
 		if (piece == null) {
 			decorate(button, null, null);
 		} else {
@@ -80,7 +82,7 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	public void disableSquare(Square square) {
 		ActionListener action = removeListener(square);
 		if (action != null) {
-			Button button = getButton(square);
+			RotatingJButton button = getButton(square);
 			button.removeActionListener(action);
 			button.setEnabled(false);
 		}
@@ -92,7 +94,7 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 			return;
 		}
 
-		Button button = getButton(square);
+		RotatingJButton button = getButton(square);
 		if (former == null) {
 			LOG.debug("Square: " + square + ", enabled with action: " + action);
 			button.addActionListener(action);
@@ -104,13 +106,13 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	public Button getButton(Square at) {
+	public RotatingJButton getButton(Square at) {
 		return buttons.get(at);
 	}
 
 	public void initDisplay() {
 		initMenu();
-		frame.setTitle(getParent().getWindowTitle());
+		frame.setName(getParent().getWindowTitle());
 
 		Dimension defaultSize = getParent().getDefaultSize();
 		frame.setSize(defaultSize);
@@ -118,7 +120,6 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 		Dimension minSize = getParent().getMinimumSize();
 		frame.setMinimumSize(minSize);
 
-		panel = new Panel();
 		frame.add(panel);
 		frame.setVisible(true);
 	}
@@ -133,19 +134,17 @@ public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	protected void initMenu() {
 
 		/* menu */
-		MenuBar menuBar = new MenuBar();
-		Menu fileMenu = new Menu("File");
+		Container menuBar = new Container();
+		menuBar.setLayout(new GridLayout(1, 2));
 
-		MenuItem fileStartItem = new MenuItem("New Game", new MenuShortcut(KeyEvent.VK_G));
-		fileMenu.add(fileStartItem);
+		JButton fileStartItem = new JButton("New Game");
 		fileStartItem.addActionListener(new StartAction(getParent()));
+		menuBar.add(fileStartItem);
 
-		MenuItem fileExitItem = new MenuItem("Exit", new MenuShortcut(KeyEvent.VK_X));
-		fileMenu.add(fileExitItem);
+		JButton fileExitItem = new JButton("Exit");
 		fileExitItem.addActionListener(new ExitAction(getParent()));
-
-		menuBar.add(fileMenu);
-		frame.setMenuBar(menuBar);
+		menuBar.add(fileExitItem);
+		frame.add(menuBar);
 	}
 
 	public void refreshBoard() {
