@@ -1,8 +1,8 @@
 package net.mauhiz.board.impl.chess.data;
 
-import net.mauhiz.board.impl.common.data.AbstractPiece;
+import net.mauhiz.board.impl.common.data.DefaultPiece;
 
-public class ChessPiece extends AbstractPiece {
+public class ChessPiece extends DefaultPiece {
 
 	public ChessPiece(ChessPlayerType playerType, ChessPieceType pieceType) {
 		super(playerType, pieceType);

@@ -8,6 +8,8 @@ import net.mauhiz.util.IAction;
 
 public interface GuiAssistant {
 
+	void addToHistory(String value, IAction action);
+
 	void appendSquares(Iterable<Square> squares, Dimension size);
 
 	void clear();

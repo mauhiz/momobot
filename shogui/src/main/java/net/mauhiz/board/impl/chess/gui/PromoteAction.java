@@ -21,7 +21,7 @@ public class PromoteAction extends AbstractAction {
 	}
 
 	@Override
-	protected ExecutionType getExecutionType() {
+	public ExecutionType getExecutionType() {
 		return ExecutionType.GUI_SYNCHRONOUS;
 	}
 

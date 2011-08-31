@@ -2,20 +2,17 @@ package net.mauhiz.board.impl.shogi.gui;
 
 import java.awt.GridLayout;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import net.mauhiz.board.impl.common.gui.PocketSwingGuiAssistant;
-import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
+import net.mauhiz.board.impl.common.assistant.swing.PocketSwingGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
 import net.mauhiz.board.impl.shogi.data.ShogiPieceType;
 import net.mauhiz.board.impl.shogi.data.ShogiPlayerType;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.PocketBoardGui;
-import net.mauhiz.util.AbstractAction;
-import net.mauhiz.util.ExecutionType;
 
 import org.apache.log4j.Logger;
 
@@ -72,44 +69,7 @@ public class ShogiSwingAssistant extends PocketSwingGuiAssistant implements ISho
 
 	public void showPromotionDialog(final NormalMove move) {
 		LOG.debug("Showing promotion dialog for move: " + move);
-		final JDialog popup = new JDialog(frame, "Promotion?");
-		popup.setLayout(new GridLayout(1, 2, 10, 10));
-		popup.setModal(true);
-
-		JButton promoButton = new JButton();
-		promoButton.setText("Yes");
-		promoButton.addActionListener(new AbstractAction() {
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.GUI_ASYNCHRONOUS;
-			}
-
-			@Override
-			public void trun() {
-				getParent().afterPromotionDialog(move, true);
-				popup.dispose();
-			}
-		});
-		popup.add(promoButton);
-
-		JButton cancelButton = new JButton("No");
-		cancelButton.addActionListener(new AbstractAction() {
-
-			@Override
-			protected ExecutionType getExecutionType() {
-				return ExecutionType.GUI_ASYNCHRONOUS;
-			}
-
-			@Override
-			public void trun() {
-				getParent().afterPromotionDialog(move, false);
-				popup.dispose();
-			}
-		});
-		popup.add(cancelButton);
-
-		popup.pack();
-		popup.setVisible(true);
+		int result = JOptionPane.showConfirmDialog(null, "Promotion?", "Promotion?", JOptionPane.YES_NO_OPTION);
+		getParent().afterPromotionDialog(move, result == JOptionPane.YES_OPTION);
 	}
 }

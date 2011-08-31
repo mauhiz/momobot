@@ -3,8 +3,8 @@ package net.mauhiz.board.impl.checkers.gui;
 import java.awt.Color;
 
 import net.mauhiz.board.impl.checkers.data.CheckersPlayerType;
-import net.mauhiz.board.impl.common.gui.SwingGuiAssistant;
-import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
+import net.mauhiz.board.impl.common.assistant.swing.SwingGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.BoardGui;

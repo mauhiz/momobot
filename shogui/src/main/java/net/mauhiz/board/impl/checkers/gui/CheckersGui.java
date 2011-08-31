@@ -5,7 +5,7 @@ import java.awt.Color;
 import net.mauhiz.board.impl.checkers.CheckersGameController;
 import net.mauhiz.board.impl.checkers.data.CheckersBoard;
 import net.mauhiz.board.impl.checkers.data.CheckersRule;
-import net.mauhiz.board.impl.common.gui.AbstractInteractiveBoardGui;
+import net.mauhiz.board.impl.common.controller.AbstractInteractiveBoardGui;
 import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.Square;

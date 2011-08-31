@@ -4,11 +4,11 @@ import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 
-public class AbstractPiece implements Piece {
+public class DefaultPiece implements Piece {
 	private final PieceType pieceType;
 	private final PlayerType playerType;
 
-	public AbstractPiece(PlayerType playerType, PieceType pieceType) {
+	public DefaultPiece(PlayerType playerType, PieceType pieceType) {
 		super();
 		this.playerType = playerType;
 		this.pieceType = pieceType;

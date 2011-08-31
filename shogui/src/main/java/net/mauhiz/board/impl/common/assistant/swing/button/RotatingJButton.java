@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui.rotation;
+package net.mauhiz.board.impl.common.assistant.swing.button;
 
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -15,6 +15,7 @@ import net.mauhiz.util.PerformanceMonitor;
 import org.apache.commons.lang.StringUtils;
 
 public class RotatingJButton extends JButton {
+
 	class ButtonDecorator extends MonitoredRunnable {
 
 		public ButtonDecorator() {
@@ -22,7 +23,7 @@ public class RotatingJButton extends JButton {
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.PARALLEL_CACHED;
 		}
 
@@ -32,7 +33,7 @@ public class RotatingJButton extends JButton {
 			final Icon realIcon = flip ? getRotatedIcon(ti) : ti;
 
 			if (getIcon() != realIcon) {
-				new SetIcon("Set Icon", realIcon).launch(null);
+				new SetIcon("Set Icon", realIcon).launch();
 			}
 		}
 	}
@@ -46,7 +47,7 @@ public class RotatingJButton extends JButton {
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -70,7 +71,7 @@ public class RotatingJButton extends JButton {
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_ASYNCHRONOUS;
 		}
 
@@ -81,7 +82,9 @@ public class RotatingJButton extends JButton {
 	}
 
 	static final Map<String, TextIcon> ICON_CACHE = new HashMap<String, TextIcon>();
+
 	static final Map<Icon, RotatedIcon> ROTATION_CACHE = new HashMap<Icon, RotatedIcon>();
+	private static final long serialVersionUID = -4947530979709086579L;
 	boolean flip;
 
 	String iconText = "";
@@ -115,7 +118,7 @@ public class RotatingJButton extends JButton {
 				PerformanceMonitor pm = new PerformanceMonitor();
 				ti = new HorizontalTextIcon(RotatingJButton.this, iconText);
 				ICON_CACHE.put(iconText, ti);
-				pm.perfLog("Text Icon '" + iconText + "' created");
+				pm.perfLog("Text Icon '" + iconText + "' created", getClass());
 			}
 
 			return ti;
@@ -132,7 +135,7 @@ public class RotatingJButton extends JButton {
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		new ButtonEnabler(enabled).launch(null);
+		new ButtonEnabler(enabled).launch();
 	}
 
 	public void setText(String iconText, boolean flip) {
@@ -147,7 +150,7 @@ public class RotatingJButton extends JButton {
 		}
 		this.flip = flip;
 		this.iconText = iconText;
-		new ButtonDecorator().launch(null);
+		new ButtonDecorator().launch();
 	}
 
 	void superEnable(boolean enabled) {

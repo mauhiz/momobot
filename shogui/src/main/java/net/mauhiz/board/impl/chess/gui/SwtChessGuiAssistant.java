@@ -2,12 +2,12 @@ package net.mauhiz.board.impl.chess.gui;
 
 import net.mauhiz.board.impl.chess.data.ChessPieceType;
 import net.mauhiz.board.impl.chess.data.ChessPlayerType;
-import net.mauhiz.board.impl.common.gui.SwtGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.jface.SwtGuiAssistant;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
 import net.mauhiz.board.model.gui.BoardGui;
-import net.mauhiz.util.AbstractNamedRunnable;
+import net.mauhiz.util.AbstractAction;
 import net.mauhiz.util.ExecutionType;
 
 import org.eclipse.swt.SWT;
@@ -19,20 +19,19 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class SwtChessGuiAssistant extends SwtGuiAssistant implements IChessGuiAssistant {
-	static class ButtonDecorator extends AbstractNamedRunnable {
+	static class ButtonDecorator extends AbstractAction {
 		private final Button button;
 		private final PieceType piece;
 		private final PlayerType player;
 
 		ButtonDecorator(Button button, PieceType piece, PlayerType player) {
-			super("Button decorator");
 			this.button = button;
 			this.piece = piece;
 			this.player = player;
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_SYNCHRONOUS;
 		}
 
@@ -64,10 +63,10 @@ public class SwtChessGuiAssistant extends SwtGuiAssistant implements IChessGuiAs
 		mb.setMessage("Promote?");
 		int buttonID = mb.open();
 		switch (buttonID) {
-			case SWT.YES:
-				return true;
-			default:
-				return false;
+		case SWT.YES:
+			return true;
+		default:
+			return false;
 		}
 	}
 

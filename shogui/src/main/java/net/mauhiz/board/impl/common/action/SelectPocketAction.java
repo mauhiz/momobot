@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.action;
 
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
@@ -20,7 +20,7 @@ public class SelectPocketAction extends AbstractAction {
 	}
 
 	@Override
-	protected ExecutionType getExecutionType() {
+	public ExecutionType getExecutionType() {
 		return ExecutionType.GUI_SYNCHRONOUS;
 	}
 

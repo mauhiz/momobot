@@ -46,7 +46,7 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 			} else {
 				LOG.warn("Player: " + playerType + " had no such piece: " + pieceType + " in his pocket");
 			}
-			pm.perfLog("Drop applied: " + drop);
+			pm.perfLog("Drop applied: " + drop, getClass());
 
 		} else if (move instanceof NormalMove) {
 			PerformanceMonitor pm = new PerformanceMonitor();
@@ -61,7 +61,7 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 				Collections.sort(pocket);
 				LOG.trace("New pocket: " + pocket);
 			}
-			pm.perfLog("Normal move applied: " + nmove);
+			pm.perfLog("Normal move applied: " + nmove, getClass());
 		} else if (move instanceof PromoteMove) {
 			PerformanceMonitor pm = new PerformanceMonitor();
 			PromoteMove pmove = (PromoteMove) move;
@@ -70,7 +70,7 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 			ShogiPiece moved = setPieceAt(parentMove.getTo(), null);
 			setPieceAt(parentMove.getTo(), new ShogiPiece((ShogiPlayerType) pmove.getPlayerType(), moved.getPieceType()
 					.getPromotion()));
-			pm.perfLog("Promote move applied: " + pmove);
+			pm.perfLog("Promote move applied: " + pmove, getClass());
 		}
 	}
 

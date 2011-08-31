@@ -3,7 +3,7 @@ package net.mauhiz.board.impl.shogi.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 
-import net.mauhiz.board.impl.common.gui.AbstractPocketInteractiveBoardGui;
+import net.mauhiz.board.impl.common.controller.AbstractPocketInteractiveBoardGui;
 import net.mauhiz.board.impl.shogi.ShogiGameController;
 import net.mauhiz.board.impl.shogi.data.ShogiBoard;
 import net.mauhiz.board.impl.shogi.data.ShogiRule;
@@ -90,7 +90,7 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 
 		if (piece != null && piece.getPlayerType() == getTurn()) {
 			addSelectAction(square);
-			sw.perfLog("Select action added at " + square);
+			sw.perfLog("Select action added at " + square, getClass());
 			return;
 		}
 
@@ -99,20 +99,20 @@ public class ShogiGui extends AbstractPocketInteractiveBoardGui {
 			Move move = getRule().generateMove(getSelectedSquare(), square, getGame());
 
 			if (move != null) {
-				sw.perfLog("Move generated: " + move);
+				sw.perfLog("Move generated: " + move, getClass());
 				sw.start();
 				addMoveAction(square, move);
-				sw.perfLog("Move action added at: " + square);
+				sw.perfLog("Move action added at: " + square, getClass());
 				return;
 			}
 		} else if (isPieceSelected()) { // from the pocket
 			Drop drop = getRule().generateMove(selectedPiece, square, getGame());
 
 			if (drop != null) {
-				sw.perfLog("Drop generated: " + drop);
+				sw.perfLog("Drop generated: " + drop, getClass());
 				sw.start();
 				addMoveAction(square, drop);
-				sw.perfLog("Drop action added at " + square);
+				sw.perfLog("Drop action added at " + square, getClass());
 				return;
 			}
 		}

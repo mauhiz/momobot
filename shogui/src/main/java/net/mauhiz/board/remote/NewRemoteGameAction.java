@@ -1,6 +1,6 @@
 package net.mauhiz.board.remote;
 
-import net.mauhiz.board.impl.common.gui.StartAction;
+import net.mauhiz.board.impl.common.action.StartAction;
 import net.mauhiz.board.model.gui.BoardGui;
 
 /**

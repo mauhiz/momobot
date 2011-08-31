@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.assistant;
 
 import java.util.HashMap;
 import java.util.Map;

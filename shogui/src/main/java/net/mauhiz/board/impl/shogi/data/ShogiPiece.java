@@ -1,8 +1,8 @@
 package net.mauhiz.board.impl.shogi.data;
 
-import net.mauhiz.board.impl.common.data.AbstractPiece;
+import net.mauhiz.board.impl.common.data.DefaultPiece;
 
-public class ShogiPiece extends AbstractPiece {
+public class ShogiPiece extends DefaultPiece {
 
 	public ShogiPiece(ShogiPlayerType playerType, ShogiPieceType pieceType) {
 		super(playerType, pieceType);

@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common.gui;
+package net.mauhiz.board.impl.common.assistant.swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -15,8 +16,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import net.mauhiz.board.impl.common.action.ExitAction;
+import net.mauhiz.board.impl.common.action.StartAction;
+import net.mauhiz.board.impl.common.assistant.AbstractGuiAssistant;
+import net.mauhiz.board.impl.common.assistant.swing.button.RotatingJButton;
 import net.mauhiz.board.impl.common.data.SquareImpl;
-import net.mauhiz.board.impl.common.gui.rotation.RotatingJButton;
 import net.mauhiz.board.model.data.Piece;
 import net.mauhiz.board.model.data.PieceType;
 import net.mauhiz.board.model.data.PlayerType;
@@ -44,7 +48,7 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		}
 
 		@Override
-		protected ExecutionType getExecutionType() {
+		public ExecutionType getExecutionType() {
 			return ExecutionType.GUI_SYNCHRONOUS;
 		}
 
@@ -62,10 +66,16 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 	protected final JPanel boardPanel = new JPanel();
 	private final Map<Square, RotatingJButton> buttons = new HashMap<Square, RotatingJButton>();
 	protected final JFrame frame = new JFrame();
-	protected final JList<String> historyPanel = new JList<String>();
+	protected final JList<String> historyPanel = new JList<String>(new DefaultListModel<String>());
 
 	public SwingGuiAssistant(BoardGui parent) {
 		super(parent);
+	}
+
+	@Override
+	public void addToHistory(String value, IAction action) {
+		DefaultListModel<String> dlm = (DefaultListModel<String>) historyPanel.getModel();
+		dlm.addElement(value);
 	}
 
 	public void appendSquares(Iterable<Square> squares, Dimension size) {
@@ -73,7 +83,7 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		for (Square square : squares) {
 			Square cartesianSquare = SquareImpl.getInstance(square.getX(), size.height - square.getY() - 1);
 			RotatingJButton button = new RotatingJButton();
-			new ButtonInitializer(getParent().getSquareBgcolor(square), button).launch(null);
+			new ButtonInitializer(getParent().getSquareBgcolor(square), button).launch();
 			synchronized (buttons) {
 				buttons.put(cartesianSquare, button);
 			}
@@ -86,9 +96,14 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 			boardPanel.removeAll();
 			LOG.debug("Board panel cleared");
 		}
-		if (historyPanel.getComponentCount() > 0) {
-			historyPanel.removeAll();
-			LOG.debug("History panel cleared");
+		synchronized (historyPanel) {
+			DefaultListModel<String> model = (DefaultListModel<String>) historyPanel.getModel();
+			model.clear();
+			if (historyPanel.getComponentCount() > 0) {
+				historyPanel.removeAll();
+				LOG.debug("History panel cleared");
+			}
+
 		}
 		synchronized (buttons) {
 			buttons.clear();
@@ -156,6 +171,8 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 	public void initDisplay() {
 		initMenu();
+		initPanels();
+
 		frame.setTitle(getParent().getWindowTitle());
 
 		Dimension defaultSize = getParent().getDefaultSize();
@@ -163,21 +180,14 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 		Dimension minSize = getParent().getMinimumSize();
 		frame.setMinimumSize(minSize);
-
-		PerformanceMonitor sw = new PerformanceMonitor();
-		initPanels();
-		sw.perfLog("Panels initialized");
-
-		sw.start();
 		frame.setVisible(true);
-		sw.perfLog("Frame set to visible");
 	}
 
 	public void initLayout(Dimension size) {
 		PerformanceMonitor sw = new PerformanceMonitor();
 		GridLayout gridLayout = new GridLayout(size.width, size.height, 0, 0);
 		boardPanel.setLayout(gridLayout);
-		sw.perfLog("Board layout initialized: " + boardPanel.getLayout());
+		sw.perfLog("Board layout initialized: " + boardPanel.getLayout(), getClass());
 	}
 
 	protected void initMenu() {
@@ -200,7 +210,7 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 
 		menuBar.add(fileMenu);
 		frame.setJMenuBar(menuBar);
-		sw.perfLog("Menu ready");
+		sw.perfLog("Menu ready", getClass());
 	}
 
 	protected void initPanels() {
@@ -210,18 +220,18 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 		LOG.debug("Init board and history split panel: " + boardAndHistory);
 
 		boardPanel.setSize(boardAndHistory.getWidth() / 2 - 2, boardAndHistory.getHeight());
-		boardAndHistory.add(boardPanel, JSplitPane.LEFT);
+		boardAndHistory.setLeftComponent(boardPanel);
 		LOG.debug("Init board panel: " + boardPanel);
 
 		historyPanel.setSize(boardAndHistory.getWidth() / 2 - 2, boardAndHistory.getHeight());
-		boardAndHistory.add(historyPanel, JSplitPane.RIGHT);
+		boardAndHistory.setRightComponent(historyPanel);
 		LOG.debug("Init history panel: " + historyPanel);
 	}
 
 	public void refreshBoard() {
 		PerformanceMonitor sw = new PerformanceMonitor();
 		boardAndHistory.validate();
-		sw.perfLog("Repainted: " + boardAndHistory);
+		sw.perfLog("Repainted: " + boardAndHistory, getClass());
 	}
 
 	public void start() {

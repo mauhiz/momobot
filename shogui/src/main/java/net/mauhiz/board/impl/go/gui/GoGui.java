@@ -2,7 +2,7 @@ package net.mauhiz.board.impl.go.gui;
 
 import java.awt.Color;
 
-import net.mauhiz.board.impl.common.gui.AbstractPocketInteractiveBoardGui;
+import net.mauhiz.board.impl.common.controller.AbstractPocketInteractiveBoardGui;
 import net.mauhiz.board.impl.go.GoGameController;
 import net.mauhiz.board.impl.go.data.GoBoard;
 import net.mauhiz.board.impl.go.data.GoRule;

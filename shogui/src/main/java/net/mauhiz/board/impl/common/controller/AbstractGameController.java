@@ -1,4 +1,4 @@
-package net.mauhiz.board.impl.common;
+package net.mauhiz.board.impl.common.controller;
 
 import net.mauhiz.board.model.BoardIO;
 import net.mauhiz.board.model.GameController;
