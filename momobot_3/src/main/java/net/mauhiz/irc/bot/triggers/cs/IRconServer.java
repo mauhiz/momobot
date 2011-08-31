@@ -1,8 +1,9 @@
 package net.mauhiz.irc.bot.triggers.cs;
 
+import java.io.Closeable;
 import java.io.IOException;
 
-public interface IRconServer extends IServer, AutoCloseable {
+public interface IRconServer extends IServer, Closeable {
 
     boolean changelevel(String newMap) throws IOException;
 

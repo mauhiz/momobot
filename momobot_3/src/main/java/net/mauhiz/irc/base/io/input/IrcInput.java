@@ -1,5 +1,7 @@
 package net.mauhiz.irc.base.io.input;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -8,11 +10,14 @@ import net.mauhiz.util.AbstractThread;
 import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.FileUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author mauhiz
  */
-public class IrcInput extends AbstractThread implements IIrcInput {
+public class IrcInput extends AbstractThread implements IIrcInput, Closeable {
 
+    private static final Logger LOG = Logger.getLogger(IrcInput.class);
     private final IIrcIO io;
     private final AsynchronousSocketChannel sclient;
 
@@ -44,6 +49,15 @@ public class IrcInput extends AbstractThread implements IIrcInput {
     @Override
     public void tstop() {
         super.tstop();
+        try {
+            close();
+        } catch (IOException ioe) {
+            LOG.warn(ioe, ioe);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
         try (AsynchronousSocketChannel toClose = sclient) {
             io.disconnect();
         }

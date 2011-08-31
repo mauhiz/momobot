@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 public class TriggerTask extends RecursiveAction {
 
     private static final Logger LOG = Logger.getLogger(TriggerTask.class);
+    private static final long serialVersionUID = 1L;
     private final IIrcControl control;
     private final IIrcMessage msg;
     private final ITrigger trigger;

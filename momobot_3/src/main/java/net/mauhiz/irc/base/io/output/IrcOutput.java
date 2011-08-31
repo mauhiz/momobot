@@ -1,5 +1,7 @@
 package net.mauhiz.irc.base.io.output;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -15,7 +17,7 @@ import org.apache.log4j.Logger;
 /**
  * @author mauhiz
  */
-public class IrcOutput extends AbstractDaemon implements IIrcOutput {
+public class IrcOutput extends AbstractDaemon implements IIrcOutput, Closeable {
     /**
      * antiflood en ms
      */
@@ -31,6 +33,12 @@ public class IrcOutput extends AbstractDaemon implements IIrcOutput {
     public IrcOutput(AsynchronousSocketChannel socket) {
         super("IRC Output");
         this.socket = socket;
+    }
+
+    @Override
+    public void close() throws IOException {
+        try (AsynchronousSocketChannel toClose = socket) {
+        }
     }
 
     /**
@@ -71,16 +79,18 @@ public class IrcOutput extends AbstractDaemon implements IIrcOutput {
                 }
             } catch (InterruptedException ie) {
                 handleInterruption(ie);
-                break;
             }
         }
         tstop();
     }
-
+    
     @Override
     public void tstop() {
         super.tstop();
-        try (AsynchronousSocketChannel toClose = socket) {
+        try {
+            close();
+        } catch (IOException ioe) {
+            LOG.warn(ioe, ioe);
         }
     }
 

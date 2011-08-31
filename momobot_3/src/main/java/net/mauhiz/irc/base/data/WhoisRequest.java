@@ -49,7 +49,7 @@ public class WhoisRequest extends AbstractDaemon {
         for (String arg : args) {
             WhoisRequest wr = new WhoisRequest(server, control, arg);
             wr.setReportTo(reportTo);
-            wr.tstart();
+            wr.launch();
         }
     }
 

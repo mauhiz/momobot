@@ -8,6 +8,9 @@ import java.util.concurrent.RecursiveTask;
  * @author mauhiz
  */
 public class Power extends RecursiveTask<Long> {
+
+    private static final long serialVersionUID = -7167942143806652482L;
+
     /**
      * @param a
      * @param b
