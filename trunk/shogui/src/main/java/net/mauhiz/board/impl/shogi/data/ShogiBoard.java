@@ -25,8 +25,7 @@ import org.apache.log4j.Logger;
 public class ShogiBoard extends AbstractBoard implements PocketBoard {
 	private static final Logger LOG = Logger.getLogger(ShogiBoard.class);
 	public static final int SIZE = 9;
-	protected final Map<ShogiPlayerType, List<ShogiPieceType>> pockets = new HashMap<ShogiPlayerType, List<ShogiPieceType>>(
-			2);
+	protected final Map<ShogiPlayerType, List<ShogiPieceType>> pockets = new HashMap<>(2);
 
 	public ShogiBoard(ShogiRule rule) {
 		super(rule);
@@ -78,13 +77,13 @@ public class ShogiBoard extends AbstractBoard implements PocketBoard {
 		ShogiBoard copy = new ShogiBoard(null);
 		super.copyInto(copy);
 		for (Entry<ShogiPlayerType, List<ShogiPieceType>> ent : pockets.entrySet()) {
-			copy.pockets.put(ent.getKey(), new ArrayList<ShogiPieceType>(ent.getValue()));
+			copy.pockets.put(ent.getKey(), new ArrayList<>(ent.getValue()));
 		}
 		return copy;
 	}
 
 	public Collection<ShogiPiece> getAllPocketPieces() {
-		List<ShogiPiece> pieces = new ArrayList<ShogiPiece>();
+		List<ShogiPiece> pieces = new ArrayList<>();
 		for (Entry<ShogiPlayerType, List<ShogiPieceType>> ent : pockets.entrySet()) {
 			ShogiPlayerType playerType = ent.getKey();
 

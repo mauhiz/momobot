@@ -81,9 +81,9 @@ public class RotatingJButton extends JButton {
 		}
 	}
 
-	static final Map<String, TextIcon> ICON_CACHE = new HashMap<String, TextIcon>();
+	static final Map<String, TextIcon> ICON_CACHE = new HashMap<>();
 
-	static final Map<Icon, RotatedIcon> ROTATION_CACHE = new HashMap<Icon, RotatedIcon>();
+	static final Map<Icon, RotatedIcon> ROTATION_CACHE = new HashMap<>();
 	private static final long serialVersionUID = -4947530979709086579L;
 	boolean flip;
 

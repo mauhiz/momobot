@@ -28,8 +28,8 @@ public abstract class PocketSwingGuiAssistant extends SwingGuiAssistant implemen
 
 	private static final Logger LOG = Logger.getLogger(PocketSwingGuiAssistant.class);
 	protected final JPanel boardAndPocketsPanel = new JPanel();
-	private final Map<RotatingJButton, Piece> pocketButtons = new HashMap<RotatingJButton, Piece>();
-	private final SortedMap<PlayerType, JPanel> pockets = new TreeMap<PlayerType, JPanel>();
+	private final Map<RotatingJButton, Piece> pocketButtons = new HashMap<>();
+	private final SortedMap<PlayerType, JPanel> pockets = new TreeMap<>();
 
 	public PocketSwingGuiAssistant(PocketBoardGui parent) {
 		super(parent);

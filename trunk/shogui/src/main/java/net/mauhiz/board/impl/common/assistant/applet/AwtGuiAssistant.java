@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 
 public abstract class AwtGuiAssistant extends AbstractGuiAssistant {
 	private static final Logger LOG = Logger.getLogger(AwtGuiAssistant.class);
-	private final Map<Square, RotatingJButton> buttons = new HashMap<Square, RotatingJButton>();
+	private final Map<Square, RotatingJButton> buttons = new HashMap<>();
 	protected final JApplet frame = new JApplet();
 	protected final JPanel panel = new JPanel();
 

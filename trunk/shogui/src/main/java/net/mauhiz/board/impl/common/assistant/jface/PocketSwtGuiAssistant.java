@@ -52,7 +52,7 @@ public abstract class PocketSwtGuiAssistant extends SwtGuiAssistant implements P
 	}
 
 	private static final Logger LOG = Logger.getLogger(PocketSwtGuiAssistant.class);
-	protected final Map<PlayerType, Composite> pockets = new HashMap<PlayerType, Composite>();
+	protected final Map<PlayerType, Composite> pockets = new HashMap<>();
 
 	public PocketSwtGuiAssistant(PocketBoardGui parent) {
 		super(parent);

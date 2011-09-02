@@ -11,8 +11,7 @@ import net.mauhiz.util.ExecutionType;
  * @author mauhiz
  */
 public class CancelAction extends AbstractAction {
-	private static final Map<InteractiveBoardGui, CancelAction> INSTANCES = new HashMap<InteractiveBoardGui, CancelAction>(
-			1);
+	private static final Map<InteractiveBoardGui, CancelAction> INSTANCES = new HashMap<>(1);
 
 	public static final CancelAction getInstance(InteractiveBoardGui gui) {
 		CancelAction instance = INSTANCES.get(gui);

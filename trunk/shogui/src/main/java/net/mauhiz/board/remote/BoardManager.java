@@ -26,8 +26,8 @@ public class BoardManager {
 		return INSTANCE;
 	}
 
-	private final Map<String, RemoteBoardAdapter> games = new HashMap<String, RemoteBoardAdapter>();
-	private final Map<String, Set<IrcOpponent>> opponents = new HashMap<String, Set<IrcOpponent>>();
+	private final Map<String, RemoteBoardAdapter> games = new HashMap<>();
+	private final Map<String, Set<IrcOpponent>> opponents = new HashMap<>();
 
 	private String findGame(RemoteBoardAdapter rba) {
 		for (Entry<String, RemoteBoardAdapter> ent : games.entrySet()) {
