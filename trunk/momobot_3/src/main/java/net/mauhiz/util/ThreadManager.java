@@ -31,7 +31,7 @@ public enum ThreadManager {
                 runn.run();
                 break;
             case DAEMON:
-                new DaemonRunnable(runn).launch();
+                new DaemonRunnable(runn).tstart(); // important, calling launch would recurse
                 break;
             case PARALLEL_CACHED:
                 synchronized (FUTURES) {

@@ -52,7 +52,7 @@ public abstract class AbstractThread extends AbstractNamedRunnable implements ID
      * @deprecated call launch()
      */
     @Deprecated
-    public final void tstart() {
+    public void tstart() {
         new Thread(this).start();
     }
 
