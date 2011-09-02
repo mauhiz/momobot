@@ -168,9 +168,9 @@ public abstract class SwtGuiAssistant extends AbstractGuiAssistant {
 		}
 	}
 
-	private final Map<Square, Button> buttons = new HashMap<Square, Button>();
+	private final Map<Square, Button> buttons = new HashMap<>();
 
-	private Shell shell = new Shell(Display.getDefault());
+	private final Shell shell = new Shell(Display.getDefault());
 
 	public SwtGuiAssistant(BoardGui parent) {
 		super(parent);

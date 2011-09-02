@@ -18,7 +18,7 @@ import net.mauhiz.board.model.data.PocketBoard;
 import net.mauhiz.board.model.data.Square;
 
 public class GoBoard extends AbstractBoard implements PocketBoard {
-	protected final Map<GoPlayerType, List<GoPieceType>> captures = new HashMap<GoPlayerType, List<GoPieceType>>(2);
+	protected final Map<GoPlayerType, List<GoPieceType>> captures = new HashMap<>(2);
 
 	public GoBoard(GoRule rule) {
 		super(rule);
@@ -40,13 +40,13 @@ public class GoBoard extends AbstractBoard implements PocketBoard {
 		GoBoard copy = new GoBoard(null);
 		super.copyInto(copy);
 		for (Entry<GoPlayerType, List<GoPieceType>> ent : captures.entrySet()) {
-			copy.captures.put(ent.getKey(), new ArrayList<GoPieceType>(ent.getValue()));
+			copy.captures.put(ent.getKey(), new ArrayList<>(ent.getValue()));
 		}
 		return copy;
 	}
 
 	public Collection<GoPiece> getAllPocketPieces() {
-		List<GoPiece> pieces = new ArrayList<GoPiece>();
+		List<GoPiece> pieces = new ArrayList<>();
 		for (GoPlayerType playerType : GoPlayerType.values()) {
 			pieces.add(new GoPiece(playerType, GoPieceType.STONE));
 		}

@@ -15,7 +15,7 @@ import net.mauhiz.board.model.gui.PocketGuiAssistant;
 
 public abstract class PocketAwtGuiAssistant extends AwtGuiAssistant implements PocketGuiAssistant {
 
-	protected Map<PlayerType, JPanel> pockets = new HashMap<PlayerType, JPanel>();
+	protected Map<PlayerType, JPanel> pockets = new HashMap<>();
 
 	public PocketAwtGuiAssistant(PocketBoardGui parent) {
 		super(parent);

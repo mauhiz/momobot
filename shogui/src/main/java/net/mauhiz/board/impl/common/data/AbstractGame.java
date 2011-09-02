@@ -19,8 +19,8 @@ import org.apache.log4j.Logger;
 public abstract class AbstractGame implements Game {
 	private static final Logger LOG = Logger.getLogger(AbstractGame.class);
 
-	protected final List<Board> boards = new ArrayList<Board>();
-	protected final List<Move> moves = new ArrayList<Move>();
+	protected final List<Board> boards = new ArrayList<>();
+	protected final List<Move> moves = new ArrayList<>();
 	protected final Rule rule;
 
 	public AbstractGame(Rule rule) {

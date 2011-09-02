@@ -63,7 +63,7 @@ public abstract class AbstractBoard implements Board {
 		return getXmove(from, to) == 0;
 	}
 
-	private final Map<Square, Piece> piecesMap = new HashMap<Square, Piece>();
+	private final Map<Square, Piece> piecesMap = new HashMap<>();
 
 	public AbstractBoard(Rule rule) {
 		super();

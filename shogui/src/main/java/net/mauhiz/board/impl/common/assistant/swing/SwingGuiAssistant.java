@@ -64,9 +64,9 @@ public abstract class SwingGuiAssistant extends AbstractGuiAssistant {
 	private static final Logger LOG = Logger.getLogger(SwingGuiAssistant.class);
 	protected final JSplitPane boardAndHistory = new JSplitPane();
 	protected final JPanel boardPanel = new JPanel();
-	private final Map<Square, RotatingJButton> buttons = new HashMap<Square, RotatingJButton>();
+	private final Map<Square, RotatingJButton> buttons = new HashMap<>();
 	protected final JFrame frame = new JFrame();
-	protected final JList<String> historyPanel = new JList<String>(new DefaultListModel<String>());
+	protected final JList<String> historyPanel = new JList<>(new DefaultListModel<String>());
 
 	public SwingGuiAssistant(BoardGui parent) {
 		super(parent);

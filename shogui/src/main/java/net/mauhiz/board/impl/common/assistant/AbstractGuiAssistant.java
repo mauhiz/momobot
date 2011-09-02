@@ -10,7 +10,7 @@ import net.mauhiz.util.IAction;
 
 public abstract class AbstractGuiAssistant implements GuiAssistant {
 
-	private final Map<Square, IAction> listeners = new HashMap<Square, IAction>();
+	private final Map<Square, IAction> listeners = new HashMap<>();
 
 	protected BoardGui parent;
 
