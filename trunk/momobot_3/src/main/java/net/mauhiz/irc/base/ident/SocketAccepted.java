@@ -1,6 +1,7 @@
 package net.mauhiz.irc.base.ident;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
@@ -11,7 +12,7 @@ import net.mauhiz.util.FileUtil;
 
 import org.apache.log4j.Logger;
 
-class SocketAccepted implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
+public class SocketAccepted implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
 
     private static final Logger LOG = Logger.getLogger(SocketAccepted.class);
     private final String user;
@@ -28,9 +29,11 @@ class SocketAccepted implements CompletionHandler<AsynchronousSocketChannel, Asy
 
     @Override
     public void failed(Throwable exc, AsynchronousServerSocketChannel attachment) {
-        if (exc instanceof TimeoutException) {
+        try {
+            throw exc;
+        } catch (AsynchronousCloseException | TimeoutException e) {
             LOG.info("Server did not connect to me in time");
-        } else {
+        } catch (Throwable t) {
             LOG.warn(exc, exc);
         }
     }
