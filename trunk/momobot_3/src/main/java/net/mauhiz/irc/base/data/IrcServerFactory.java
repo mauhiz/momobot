@@ -19,7 +19,7 @@ public enum IrcServerFactory {
         Class<? extends IrcNetwork> registeredClass = NETWORK_TYPES.get(name);
 
         if (registeredClass == null) {
-            return new DefaultServer(alias);
+            return new DefaultServer(name);
         }
 
         try {
