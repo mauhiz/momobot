@@ -9,7 +9,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 public abstract class TextIcon implements Icon, PropertyChangeListener {
-	private static boolean AUTO_RESIZE = true; // false ne marche pas encore
+	private static final boolean AUTO_RESIZE = true; // false ne marche pas encore
 	protected JComponent component;
 	protected Font font;
 	protected Color foreground;
