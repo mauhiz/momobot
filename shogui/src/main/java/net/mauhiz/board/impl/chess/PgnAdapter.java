@@ -34,9 +34,9 @@ public enum PgnAdapter implements MoveReader, MoveWriter {
 
 	private static Square findFrom(Game game, String fromPosition, Square to, PieceType moved, PlayerType player) {
 		if (fromPosition != null && fromPosition.length() == 2) {
-			return positionToSquare(fromPosition.charAt(0), fromPosition.charAt(2));
+			return positionToSquare(fromPosition.codePointAt(0), fromPosition.codePointAt(2));
 		}
-		char position = fromPosition == null ? 0 : fromPosition.charAt(0);
+		int position = fromPosition == null ? 0 : fromPosition.codePointAt(0);
 		int col = 0;
 		int row = 0;
 		if (Character.isDigit(position)) {
@@ -59,7 +59,7 @@ public enum PgnAdapter implements MoveReader, MoveWriter {
 		return null;
 	}
 
-	private static Square positionToSquare(char col, char row) {
+	private static Square positionToSquare(int col, int row) {
 		return SquareImpl.getInstance(col - 'a', row - '1');
 	}
 
@@ -81,8 +81,8 @@ public enum PgnAdapter implements MoveReader, MoveWriter {
 				ChessPieceType moved = ChessPieceType.fromName(movedPiece == null ? "P" : movedPiece);
 				String fromPosition = m.group(++i);
 				++i; // capture
-				char toX = m.group(++i).charAt(0);
-				char toY = m.group(++i).charAt(0);
+				int toX = m.group(++i).codePointAt(0);
+				int toY = m.group(++i).codePointAt(0);
 				Square to = positionToSquare(toX, toY);
 				Square from = findFrom(game, fromPosition, to, moved, player);
 
@@ -115,8 +115,12 @@ public enum PgnAdapter implements MoveReader, MoveWriter {
 		return null;
 	}
 
-	public static char[] squareToPosition(Square square) {
-		return new char[] { (char) (square.getX() + 'a'), (char) (square.getY() + '1') };
+	/**
+	 * @param square
+	 * @return a pair of characters
+	 */
+	public static int[] squareToPosition(Square square) {
+		return new int[] { square.getX() + 'a', square.getY() + '1' };
 	}
 
 	public Game readAll(InputStream data) throws IOException {

@@ -1,11 +1,13 @@
 package net.mauhiz.irc.base.data;
 
+import net.mauhiz.util.UtfChar;
+
 public enum UserChannelMode {
     HALFOP('h', '%'), OP('o', '@'), VOICE('v', '+');
 
-    public static UserChannelMode fromCmd(int utfChar) {
+    public static UserChannelMode fromCmd(UtfChar utfChar) {
         for (UserChannelMode ucm : values()) {
-            if (ucm.getCmd() == utfChar) {
+            if (ucm.getCmd().equals(utfChar)) {
                 return ucm;
             }
         }
@@ -13,9 +15,9 @@ public enum UserChannelMode {
         return null;
     }
 
-    public static UserChannelMode fromDisplay(int utfChar) {
+    public static UserChannelMode fromDisplay(UtfChar utfChar) {
         for (UserChannelMode ucm : values()) {
-            if (ucm.getDisplay() == utfChar) {
+            if (ucm.getDisplay().equals(utfChar)) {
                 return ucm;
             }
         }
@@ -23,23 +25,27 @@ public enum UserChannelMode {
         return null;
     }
 
-    public static boolean isDisplay(int utfChar) {
+    public static boolean isDisplay(UtfChar utfChar) {
         return fromDisplay(utfChar) != null;
     }
 
-    private final char cmdFlag;
-    private final char displayFlag;
+    private final UtfChar cmdFlag;
+    private final UtfChar displayFlag;
 
     private UserChannelMode(char cmdFlag, char displayFlag) {
+        this(UtfChar.valueOf(cmdFlag), UtfChar.valueOf(displayFlag));
+    }
+
+    private UserChannelMode(UtfChar cmdFlag, UtfChar displayFlag) {
         this.cmdFlag = cmdFlag;
         this.displayFlag = displayFlag;
     }
 
-    public char getCmd() {
+    public UtfChar getCmd() {
         return cmdFlag;
     }
 
-    public char getDisplay() {
+    public UtfChar getDisplay() {
         return displayFlag;
     }
 }

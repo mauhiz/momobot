@@ -18,6 +18,7 @@ import net.mauhiz.irc.base.msg.Quit;
 import net.mauhiz.irc.base.msg.ServerError;
 import net.mauhiz.irc.base.msg.ServerMsg;
 import net.mauhiz.irc.base.msg.SetTopic;
+import net.mauhiz.util.UtfChar;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -56,8 +57,8 @@ public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
 
             case PRIVMSG:
                 to = decodeTarget(server, args.poll());
-                if (msg.codePointAt(0) == QUOTE_STX) {
-                    String ctcpContent = StringUtils.strip(msg, Character.toString(QUOTE_STX));
+                if (QUOTE_STX.equals(UtfChar.charAt(msg, 0))) {
+                    String ctcpContent = StringUtils.strip(msg, QUOTE_STX.toString());
                     return CtcpFactory.decode(server, from, to, ctcpContent);
                 }
                 return new Privmsg(server, from, to, msg);
@@ -141,7 +142,7 @@ public enum IrcDecoder implements IrcSpecialChars, IIrcDecoder {
     public IIrcMessage buildFromRaw(IIrcServerPeer server, String raw) {
         ArgumentList args = tokenizeArgs(raw);
         String next = args.peek();
-        String fromStr = next != null && next.codePointAt(0) == ':' ? args.poll().substring(1) : null;
+        String fromStr = next != null && UtfChar.charAt(next, 0).isEquals(':') ? args.poll().substring(1) : null;
         String cmd = getCmd(args, raw);
         String msg = StringUtils.substringAfter(raw, " :");
         Target from = decodeTarget(server, fromStr);

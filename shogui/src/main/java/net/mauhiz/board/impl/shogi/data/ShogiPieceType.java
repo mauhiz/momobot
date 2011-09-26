@@ -1,6 +1,7 @@
 package net.mauhiz.board.impl.shogi.data;
 
 import net.mauhiz.board.model.data.PieceType;
+import net.mauhiz.util.UtfChar;
 
 public enum ShogiPieceType implements PieceType {
 	BISHOP("角") {
@@ -88,19 +89,19 @@ public enum ShogiPieceType implements PieceType {
 		}
 	};
 
-	public static ShogiPieceType fromKanji(char piece) {
+	public static ShogiPieceType fromKanji(UtfChar piece) {
 		for (ShogiPieceType spt : values()) {
-			if (spt.kanji.charAt(0) == piece) {
+			if (spt.kanji.equals(piece)) {
 				return spt;
 			}
 		}
 		return null;
 	}
 
-	private String kanji;
+	private UtfChar kanji;
 
 	private ShogiPieceType(String kanji) {
-		this.kanji = kanji;
+		this.kanji = UtfChar.charAt(kanji, 0);
 	}
 
 	public boolean canPromote() {
@@ -108,32 +109,32 @@ public enum ShogiPieceType implements PieceType {
 	}
 
 	public String getName() {
-		return kanji;
+		return toString();
 	}
 
 	public abstract ShogiPieceType getPromotion();
 
 	public ShogiPieceType reversePromotion() {
 		switch (this) {
-		case TOKIN:
-			return PAWN;
-		case PROMOTED_KNIGHT:
-			return KNIGHT;
-		case PROMOTED_LANCE:
-			return LANCE;
-		case PROMOTED_SILVER:
-			return SILVER;
-		case HORSE:
-			return BISHOP;
-		case DRAGON:
-			return ROOK;
-		default:
-			return this;
+			case TOKIN:
+				return PAWN;
+			case PROMOTED_KNIGHT:
+				return KNIGHT;
+			case PROMOTED_LANCE:
+				return LANCE;
+			case PROMOTED_SILVER:
+				return SILVER;
+			case HORSE:
+				return BISHOP;
+			case DRAGON:
+				return ROOK;
+			default:
+				return this;
 		}
 	}
 
 	@Override
 	public String toString() {
-		return kanji;
+		return kanji.toString();
 	}
 }

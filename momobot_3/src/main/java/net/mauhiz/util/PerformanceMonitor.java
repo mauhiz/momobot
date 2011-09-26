@@ -52,7 +52,7 @@ public class PerformanceMonitor extends StopWatch {
     }
 
     @Override
-    public void start() {
+    public final void start() {
         try {
             super.start();
         } catch (IllegalStateException ise) {

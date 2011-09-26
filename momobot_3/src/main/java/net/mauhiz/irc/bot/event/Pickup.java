@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcUser;
+import net.mauhiz.util.UtfChar;
 
 /**
  * @author mauhiz
@@ -31,8 +32,8 @@ public class Pickup extends AbstractChannelEvent {
      */
     public Pickup(IrcChannel channel1) {
         super(channel1);
-        for (char nom = 'a'; teams.size() < NB_TEAMS; ++nom) {
-            teams.add(new Team(SIZE, Character.toString(nom)));
+        for (int i = 0; teams.size() < NB_TEAMS; i++) {
+            teams.add(new Team(SIZE, UtfChar.valueOf('a' + i).toString()));
         }
     }
 

@@ -10,16 +10,11 @@ public abstract class AbstractDaemon extends AbstractThread {
     public ExecutionType getExecutionType() {
         return ExecutionType.DAEMON;
     }
-    
+
     @Override
     public void tstart() {
         Thread thread = new Thread(this);
         thread.setDaemon(true);
         thread.start();
-    }
-
-    @Override
-    public void run() {
-        super.run();
     }
 }

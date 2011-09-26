@@ -5,6 +5,7 @@ import java.nio.CharBuffer;
 import java.util.Objects;
 
 import net.mauhiz.util.FileUtil;
+import net.mauhiz.util.UtfChar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrTokenizer;
@@ -125,7 +126,7 @@ class RconClient extends ValveUdpClient implements IRconClient {
                     return;
                 }
                 /* cvar quelconque. Forme : "sv_restart" "1" */
-                if (realLine.codePointAt(0) == '"') {
+                if (UtfChar.charAt(realLine, 0).isEquals('"')) {
                     String[] pair = StringUtils.split(realLine, '"');
                     LOG.debug("CVAR : " + pair[0] + " = " + pair[2]);
                 }
@@ -139,7 +140,7 @@ class RconClient extends ValveUdpClient implements IRconClient {
      */
     private void processLog(String log) throws IOException {
         LOG.debug(log);
-        if (log.codePointAt(0) != '"') {
+        if (!UtfChar.charAt(log, 0).isEquals('"')) {
             return;
         }
         String temp = StringUtils.stripStart(log, "\"");
@@ -192,7 +193,7 @@ class RconClient extends ValveUdpClient implements IRconClient {
         server.resetPlayers();
         while (lignes.hasNext()) {
             String line = lignes.nextToken();
-            if (line.codePointAt(0) != '#') {
+            if (!UtfChar.charAt(line, 0).isEquals('#')) {
                 break;
             }
             traiteLigneJoueur(line.substring(2));

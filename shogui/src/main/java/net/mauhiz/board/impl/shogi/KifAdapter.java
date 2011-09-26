@@ -21,6 +21,7 @@ import net.mauhiz.board.model.data.Move;
 import net.mauhiz.board.model.data.NormalMove;
 import net.mauhiz.board.model.data.Square;
 import net.mauhiz.util.FileUtil;
+import net.mauhiz.util.UtfChar;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.IllegalClassException;
@@ -45,22 +46,22 @@ import org.apache.commons.lang.IllegalClassException;
  * - the next token (between brackets) is the originating square, in arab numerals ($file$row)
  */
 public class KifAdapter implements MoveReader {
-	private static final char DOU = '同';
-	private static final String KANRYOU = "投了";
-	private static final char NARI = '成';
-	private static final char UCHI = '打';
+	private static final UtfChar DOU = UtfChar.valueOf('同');
+	private static final UtfChar NARI = UtfChar.valueOf('成');
+	private static final String TOURYOU = "投了";
+	private static final UtfChar UCHI = UtfChar.valueOf('打');
 
-	private static Square getSquareAA(char originFile, char originRow) {
-		int originX = originFile - '0';
-		int originY = originRow - '0';
+	private static Square getSquareAA(UtfChar originFile, UtfChar originRow) {
+		int originX = originFile.getCodePoint() - '0';
+		int originY = originRow.getCodePoint() - '0';
 		// in shogi, both are reversed
 		return SquareImpl.getInstance(ShogiBoard.SIZE - originX, ShogiBoard.SIZE - originY);
 	}
 
-	private static Square getSquareAJ(char originFile, char originRow) {
-		int originX = originFile - '０'; // full-width arab numeral
+	private static Square getSquareAJ(UtfChar originFile, UtfChar originRow) {
+		int originX = originFile.getCodePoint() - '０'; // full-width arab numeral
 		// the Japanese numerals are not aligned in UTF-8
-		int originY = JapaneseNumeral.valueOf(Character.toString(originRow)).getValue(); // kanji
+		int originY = JapaneseNumeral.valueOf(originRow.toString()).getValue(); // kanji
 		// in shogi, both are reversed
 		return SquareImpl.getInstance(ShogiBoard.SIZE - originX, ShogiBoard.SIZE - originY);
 	}
@@ -92,9 +93,9 @@ public class KifAdapter implements MoveReader {
 		i += 5;
 
 		// destination file (arab numeral)
-		char destFile = line.charAt(i++);
+		UtfChar destFile = UtfChar.charAt(line, i++);
 		Square dest;
-		if (destFile == DOU) {
+		if (DOU.equals(destFile)) {
 			if (game.getLastMove() instanceof InitMove) {
 				// impossible!!
 				throw new IllegalStateException("No previous move!");
@@ -110,30 +111,30 @@ public class KifAdapter implements MoveReader {
 				throw new IllegalClassException("Unsupported move class: " + previous.getClass());
 			}
 			i++; // skip space
-		} else if (KANRYOU.charAt(0) == destFile) {
+		} else if (UtfChar.charAt(TOURYOU, 0) == destFile) {
 			return; // not a move, rather a status update
 		} else {
 			// the destination row (japanese numeral)
-			char destRow = line.charAt(i++);
+			UtfChar destRow = UtfChar.charAt(line, i++);
 			try {
 				dest = getSquareAJ(destFile, destRow);
 			} catch (IllegalArgumentException iae) {
 				throw new IllegalStateException("Invalid move: " + line);
 			}
 		}
-		char piece = line.charAt(i++);
+		UtfChar piece = UtfChar.charAt(line, i++);
 		// special move (or opening bracket if none)
-		char special = line.charAt(i++);
-		if (special == UCHI) {
+		UtfChar special = UtfChar.charAt(line, i++);
+		if (UCHI.equals(special)) {
 			game.applyMove(new DropImpl(game.getTurn(), ShogiPieceType.fromKanji(piece), dest));
 			return;
-		} else if (special != '(') {
+		} else if (!special.isEquals('(')) {
 			i++;
 		}
 		// origin file (arab numeral)
-		char originFile = line.charAt(i++);
+		UtfChar originFile = UtfChar.charAt(line, i++);
 		// origin row (arab numeral)
-		char originRow = line.charAt(i++);
+		UtfChar originRow = UtfChar.charAt(line, i++);
 		Square origin = getSquareAA(originFile, originRow);
 		NormalMove move = new NormalMoveImpl(game.getTurn(), origin, dest);
 		if (special == NARI) {

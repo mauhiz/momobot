@@ -6,7 +6,8 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.text.StrBuilder;
+import net.mauhiz.util.StringUtil;
+import net.mauhiz.util.UtfChar;
 
 /**
  * @author mauhiz
@@ -41,42 +42,42 @@ public enum ColorUtils implements IrcSpecialChars {
         int length = line.length();
         StringBuilder buffer = new StringBuilder();
         for (int index = 0; index < length;) {
-            int car = line.codePointAt(index);
-            if (car == DELIM_NORMAL) {
+            UtfChar car = UtfChar.charAt(line, index);
+            if (DELIM_NORMAL.equals(car)) {
                 ++index;
                 continue;
-            } else if (car == DELIM_COLOR) {
+            } else if (DELIM_COLOR.equals(car)) {
                 if (++index >= length) {
                     break;
                 }
                 /* Skip "x" or "xy" (foreground color). */
-                car = line.codePointAt(index);
-                if (Character.isDigit(car)) {
+                car = UtfChar.charAt(line, index);
+                if (car.isDigit()) {
                     if (++index >= length) {
                         break;
                     }
-                    car = line.codePointAt(index);
-                    if (Character.isDigit(car)) {
+                    car = UtfChar.charAt(line, index);
+                    if (car.isDigit()) {
                         ++index;
                     }
                     /* Now skip ",x" or ",xy" (background color). */
                     if (index >= length) {
                         break;
                     }
-                    car = line.codePointAt(index);
-                    if (car == ',') {
+                    car = UtfChar.charAt(line, index);
+                    if (car.isEquals(',')) {
                         if (++index >= length) {
                             /* Keep the comma. */
                             --index;
                             continue;
                         }
-                        car = line.codePointAt(index);
-                        if (Character.isDigit(car)) {
+                        car = UtfChar.charAt(line, index);
+                        if (car.isDigit()) {
                             if (++index >= length) {
                                 break;
                             }
-                            car = line.codePointAt(index);
-                            if (Character.isDigit(car)) {
+                            car = UtfChar.charAt(line, index);
+                            if (car.isDigit()) {
                                 ++index;
                             }
                             continue;
@@ -101,8 +102,7 @@ public enum ColorUtils implements IrcSpecialChars {
      * @return the same text, but without any bold, underlining, reverse, etc.
      */
     public static String removeFormatting(String line) {
-        return new StrBuilder(line).deleteAll(DELIM_NORMAL).deleteAll(DELIM_BOLD).deleteAll(DELIM_UNDERLINE)
-                .deleteAll(DELIM_REVERSE).toString();
+        return StringUtil.remove(line, new UtfChar[] { DELIM_NORMAL, DELIM_BOLD, DELIM_UNDERLINE, DELIM_REVERSE });
     }
 
     /**
@@ -152,20 +152,20 @@ public enum ColorUtils implements IrcSpecialChars {
         StringBuilder result = new StringBuilder();
         Deque<String> openTags = new ArrayDeque<>();
         for (int i = 0; i < text.length(); i++) {
-            int next = text.codePointAt(i);
-            if (next == DELIM_COLOR) {
+            UtfChar next = UtfChar.charAt(text, i);
+            if (next.equals(DELIM_COLOR)) {
                 if ("font".equals(openTags.peek())) {
                     result.append(getCloseTag("font"));
                     continue;
                 }
-                int fgcolor1 = text.codePointAt(i + 1);
-                if (!Character.isDigit(fgcolor1)) {
+                UtfChar fgcolor1 = UtfChar.charAt(text, i + 1);
+                if (!fgcolor1.isDigit()) {
                     continue;
                 }
                 i++; // consuming
-                int fgcolor2 = text.codePointAt(i + 1);
+                UtfChar fgcolor2 = UtfChar.charAt(text, i + 1);
                 String fgColorStr;
-                if (Character.isDigit(fgcolor2)) {
+                if (fgcolor2.isDigit()) {
                     i++; // consuming
                     fgColorStr = text.substring(i - 2, i);
                 } else {
@@ -173,13 +173,13 @@ public enum ColorUtils implements IrcSpecialChars {
                 }
                 Color fgcolor = Color.fromCode(fgColorStr);
                 Color bgcolor = null;
-                if (text.codePointAt(i + 1) == ',') {
-                    int bgcolor1 = text.codePointAt(i + 2);
-                    if (Character.isDigit(bgcolor1)) {
+                if (UtfChar.charAt(text, i + 1).isEquals(',')) {
+                    UtfChar bgcolor1 = UtfChar.charAt(text, i + 2);
+                    if (bgcolor1.isDigit()) {
                         i += 2;
-                        int bgcolor2 = text.codePointAt(i + 1);
+                        UtfChar bgcolor2 = UtfChar.charAt(text, i + 1);
                         String bgColorStr;
-                        if (Character.isDigit(bgcolor2)) {
+                        if (bgcolor2.isDigit()) {
                             i++; // consuming
                             bgColorStr = text.substring(i - 2, i);
                         } else {

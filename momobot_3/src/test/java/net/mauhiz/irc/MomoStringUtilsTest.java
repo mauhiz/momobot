@@ -1,5 +1,7 @@
 package net.mauhiz.irc;
 
+import net.mauhiz.util.StringUtil;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,16 +22,16 @@ public class MomoStringUtilsTest {
     }
 
     /**
-     * Test for {@link MomoStringUtils#normalizeAscii(String)}
+     * Test for {@link StringUtil#normalizeToAscii(String)}
      */
     @Test
     public void testEffaceAccents() {
         String input = "âäàçéèëïîñôöqù ";
-        String output = MomoStringUtils.normalizeAscii(input);
+        String output = StringUtil.normalizeToAscii(input);
         Assert.assertEquals("aaaceeeiinooqu ", output);
 
         input = "ého";
-        output = MomoStringUtils.normalizeAscii(input);
+        output = StringUtil.normalizeToAscii(input);
         Assert.assertEquals("eho", output);
 
     }

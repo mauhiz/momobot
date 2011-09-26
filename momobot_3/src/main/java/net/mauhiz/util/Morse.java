@@ -16,7 +16,7 @@ public enum Morse {
     /**
      * mon tableau avec le code morse.
      */
-    private static final SortedMap<String, String> CODE_MORSE = new TreeMap<>();
+    private static final SortedMap<UtfChar, String> CODE_MORSE = new TreeMap<>();
     /**
      * logger.
      */
@@ -24,7 +24,7 @@ public enum Morse {
     /**
      * mon tableau avec le code morse inverse.
      */
-    private static final SortedMap<String, String> REVERSE_MORSE = new TreeMap<>();
+    private static final SortedMap<String, UtfChar> REVERSE_MORSE = new TreeMap<>();
 
     /**
      * les lettres doivent etre separees par un espace.
@@ -39,7 +39,7 @@ public enum Morse {
         }
         StringBuilder output = new StringBuilder();
         for (String element : new StrTokenizer(work).getTokenArray()) {
-            output.append(REVERSE_MORSE.get(element));
+            REVERSE_MORSE.get(element).appendTo(output);
         }
         return output.toString();
     }
@@ -64,7 +64,7 @@ public enum Morse {
                 REVERSE_MORSE.clear();
             }
             for (String ligne : lignes) {
-                String normal = ligne.substring(0, 1);
+                UtfChar normal = UtfChar.charAt(ligne, 0);
                 String traitPoint = ligne.substring(2);
                 CODE_MORSE.put(normal, traitPoint);
                 REVERSE_MORSE.put(traitPoint, normal);
@@ -85,7 +85,7 @@ public enum Morse {
         }
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < work.length(); i++) {
-            String element = work.substring(i, i + 1);
+            UtfChar element = UtfChar.charAt(work, i);
             output.append(CODE_MORSE.get(element.toUpperCase()));
         }
         return output.toString();

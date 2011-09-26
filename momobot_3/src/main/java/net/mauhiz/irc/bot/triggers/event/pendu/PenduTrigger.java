@@ -7,6 +7,7 @@ import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.event.IChannelEvent;
 import net.mauhiz.irc.bot.event.Pendu;
 import net.mauhiz.irc.bot.triggers.AbstractGourmandTrigger;
+import net.mauhiz.util.UtfChar;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,7 +44,7 @@ public class PenduTrigger extends AbstractGourmandTrigger implements IPrivmsgTri
                 Pendu pendu = (Pendu) evt;
                 String respMsg;
                 if (cme.getMessage().length() == 1) {
-                    respMsg = pendu.submitLettre(Character.toLowerCase(cme.getMessage().codePointAt(0)));
+                    respMsg = pendu.submitLettre(UtfChar.charAt(cme.getMessage(), 0).toLowerCase());
                 } else {
                     respMsg = pendu.submitMot(cme.getMessage()).toString();
                 }

@@ -1,5 +1,7 @@
 package net.mauhiz.irc.bot.event.seek;
 
+import java.util.Collection;
+
 import net.mauhiz.irc.base.IIrcControl;
 import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
@@ -21,7 +23,7 @@ public class StopSeekTrigger extends AbstractTextTrigger implements IPrivmsgTrig
      * @param server
      */
     static void leaveSeekChans(IIrcControl control, IIrcServerPeer server) {
-        String[] channelSeek = SeekWar.SEEK_CHANS;
+        Collection<String> channelSeek = SeekWar.SEEK_CHANS;
         for (String element : channelSeek) {
             Part leave = new Part(server, server.getNetwork().findChannel(element), null);
             control.sendMsg(leave);

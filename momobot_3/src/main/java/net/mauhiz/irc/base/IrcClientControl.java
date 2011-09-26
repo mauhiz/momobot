@@ -36,6 +36,7 @@ import net.mauhiz.irc.base.msg.ServerError;
 import net.mauhiz.irc.base.msg.ServerMsg;
 import net.mauhiz.irc.base.msg.SetTopic;
 import net.mauhiz.irc.base.trigger.ITriggerManager;
+import net.mauhiz.util.UtfChar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -109,7 +110,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
 
         ArgumentList prefixedNames = new ArgumentList(msg.getMsg());
         for (String prefixedName : prefixedNames) {
-            int prefix = prefixedName.codePointAt(0);
+            UtfChar prefix = UtfChar.charAt(prefixedName, 0);
             if (UserChannelMode.isDisplay(prefix)) {
                 prefixedName = prefixedName.substring(1);
             }
@@ -167,7 +168,7 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         IrcChannel chan = nw.findChannel(chanName, true);
         ArgumentList chanDetails = new ArgumentList(message.getMsg());
         String modes = chanDetails.peek();
-        if (StringUtils.isNotEmpty(modes) && modes.endsWith("]") && modes.codePointAt(0) == ']') {
+        if (StringUtils.isNotEmpty(modes) && modes.endsWith("]") && UtfChar.charAt(modes, 0).isEquals(']')) {
             chanDetails.poll();
             processMode(new Mode(peer, peer, chan, new ArgumentList(modes)));
         }
@@ -284,14 +285,14 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
             boolean set = false;
 
             for (int idx = 0; idx < modeInfo.length(); idx++) {
-                int next = modeInfo.codePointAt(idx);
+                UtfChar next = UtfChar.charAt(modeInfo, idx);
 
                 if (Mode.isModifier(next)) {
-                    set = next == '+';
+                    set = next.isEquals('+');
                     continue;
                 }
 
-                int modeItem = modeInfo.codePointAt(idx);
+                UtfChar modeItem = UtfChar.charAt(modeInfo, idx);
                 UserChannelMode newMode = UserChannelMode.fromCmd(modeItem);
 
                 if (newMode == null) {
@@ -315,10 +316,10 @@ public class IrcClientControl extends AbstractIrcControl implements IIrcClientCo
         } else {
             IrcUser target = (IrcUser) message.getModifiedObject();
             String modeQuery = toks.poll();
-            int modifier = modeQuery.codePointAt(0);
-            int mode = modeQuery.codePointAt(1);
-            if (mode == 'i') {
-                target.getProperties().setInvisible(modifier == '+');
+            UtfChar modifier = UtfChar.charAt(modeQuery, 0);
+            UtfChar mode = UtfChar.charAt(modeQuery, 1);
+            if (mode.isEquals('i')) {
+                target.getProperties().setInvisible(modifier.isEquals('+'));
 
             } else {
                 LOG.warn("TODO process user mode: " + modeQuery);

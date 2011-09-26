@@ -1,5 +1,10 @@
 package net.mauhiz.irc.base;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import net.mauhiz.util.UtfChar;
+
 /**
  * @author mauhiz
  */
@@ -7,109 +12,111 @@ public interface IrcSpecialChars {
     /**
      * .
      */
-    char BELL = 0x7;
+    UtfChar BELL = UtfChar.valueOf(0x7);
     /**
      * .
      */
-    char CHAN_DEFAULT = '#';
+    UtfChar CHAN_DEFAULT = UtfChar.valueOf('#');
     /**
      * .
      */
-    char CHAN_LOCAL = '&';
+    UtfChar CHAN_LOCAL = UtfChar.valueOf('&');
     /**
      * .
      */
-    char COLON = ':';
+    UtfChar COLON = UtfChar.valueOf(':');
     /**
      * Bold text.
      */
-    char DELIM_BOLD = 0x2;
+    UtfChar DELIM_BOLD = UtfChar.valueOf(0x2);
     /**
      * Colored text.
      */
-    char DELIM_COLOR = 3;
+    UtfChar DELIM_COLOR = UtfChar.valueOf(3);
     /**
      * Removes all previously applied color and formatting attributes.
      */
-    char DELIM_NORMAL = 0xf;
+    UtfChar DELIM_NORMAL = UtfChar.valueOf(0xf);
     /**
      * Reversed text (may be rendered as italic text in some clients).
      */
-    char DELIM_REVERSE = 0x16;
+    UtfChar DELIM_REVERSE = UtfChar.valueOf(0x16);
     /**
      * Underlined text.
      */
-    char DELIM_UNDERLINE = 0x1f;
+    UtfChar DELIM_UNDERLINE = UtfChar.valueOf(0x1f);
     /**
      * DLE.
      */
-    char M_QUOTE = 0x10;
+    UtfChar M_QUOTE = UtfChar.valueOf(0x10);
     /**
      * arobase.
      */
-    char MASK_AROBAZ = '@';
+    UtfChar MASK_AROBAZ = UtfChar.valueOf('@');
     /**
      * !.
      */
-    char MASK_EXCL = '!';
+    UtfChar MASK_EXCL = UtfChar.valueOf('!');
     /**
      * desactivation 'un mode.
      */
-    char MODE_MINUS = '-';
+    UtfChar MODE_MINUS = UtfChar.valueOf('-');
     /**
      * activation d'un mode.
      */
-    char MODE_PLUS = '+';
+    UtfChar MODE_PLUS = UtfChar.valueOf('+');
     /**
      * half-op.
      */
-    char PREFIX_HALFOP = '%';
+    UtfChar PREFIX_HALFOP = UtfChar.valueOf('%');
     /**
      * op.
      */
-    char PREFIX_OP = '@';
+    UtfChar PREFIX_OP = UtfChar.valueOf('@');
     /**
      * voice.
      */
-    char PREFIX_VOICE = '+';
+    UtfChar PREFIX_VOICE = UtfChar.valueOf('+');
     /**
      * .
      */
-    char QUOTE_BACKSLASH = '\\';
+    UtfChar QUOTE_BACKSLASH = UtfChar.valueOf('\\');
     /**
      * .
      */
-    char QUOTE_CR = '\r';
+    UtfChar QUOTE_CR = UtfChar.valueOf('\r');
     /**
      * .
      */
-    char QUOTE_LF = '\n';
+    UtfChar QUOTE_LF = UtfChar.valueOf('\n');
     /**
      * .
      */
-    char QUOTE_NUL = 0;
+    UtfChar QUOTE_NUL = UtfChar.valueOf(0);
     /**
      * .
      */
-    char QUOTE_SPC = ' ';
+    UtfChar QUOTE_SPC = UtfChar.valueOf(' ');
     /**
      * delimiteur CTCP
      */
-    char QUOTE_STX = 1;
+    UtfChar QUOTE_STX = UtfChar.valueOf(1);
     /**
      * .
      */
-    char[] WHITE = new char[]{QUOTE_NUL, QUOTE_LF, QUOTE_CR, QUOTE_SPC};
+    Collection<UtfChar> WHITE = Arrays.asList(QUOTE_NUL, QUOTE_LF, QUOTE_CR, QUOTE_SPC);
     /**
      * .
      */
-    char[] Z_NOTCHSTRING = new char[]{QUOTE_NUL, BELL, QUOTE_LF, QUOTE_CR, QUOTE_SPC, ','};
+    Collection<UtfChar> Z_NOTCHSTRING = Arrays.asList(QUOTE_NUL, BELL, QUOTE_LF, QUOTE_CR, QUOTE_SPC,
+            UtfChar.valueOf(','));
     /**
      * .
      */
-    char[] Z_SPCRLFCL = new char[]{QUOTE_NUL, QUOTE_CR, QUOTE_LF, QUOTE_SPC, COLON};
+    Collection<UtfChar> Z_SPCRLFCL = Arrays.asList(QUOTE_NUL, QUOTE_CR, QUOTE_LF, QUOTE_SPC, COLON);
     /**
      * .
      */
-    char[] Z_SPECIAL = new char[]{'-', '[', ']', QUOTE_BACKSLASH, '`', '^', '{', '}'};
+    Collection<UtfChar> Z_SPECIAL = Arrays.asList(UtfChar.valueOf('-'), UtfChar.valueOf('['), UtfChar.valueOf(']'),
+            QUOTE_BACKSLASH, UtfChar.valueOf('`'), UtfChar.valueOf('^'), UtfChar.valueOf('{'), UtfChar.valueOf('}'));
 }

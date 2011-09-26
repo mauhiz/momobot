@@ -8,7 +8,7 @@ import net.mauhiz.irc.base.msg.IIrcMessage;
  * @author mauhiz
  */
 public interface ITriggerManager {
-    public abstract Iterable<ITrigger> getTriggers();
+    Iterable<ITrigger> getTriggers();
 
     /**
      * @return true if message was consumed

@@ -1,6 +1,7 @@
 package net.mauhiz.irc.base.data.qnet;
 
 import net.mauhiz.irc.base.data.ChannelProperties;
+import net.mauhiz.util.UtfChar;
 
 /**
  * @author mauhiz
@@ -42,16 +43,16 @@ class QnetChannelProperties extends ChannelProperties {
     }
 
     @Override
-    public void process(boolean set, int mode, String... args) {
-        if (mode == 'd') {
+    public void process(boolean set, UtfChar mode, String... args) {
+        if (mode.isEquals('d')) {
             hiddenUsers = set;
-        } else if (mode == 'c') {
+        } else if (mode.isEquals('c')) {
             noControls = set;
-        } else if (mode == 'C') {
+        } else if (mode.isEquals('C')) {
             noCtcp = set;
-        } else if (mode == 'n') {
+        } else if (mode.isEquals('n')) {
             noExternal = set;
-        } else if (mode == 'N') {
+        } else if (mode.isEquals('N')) {
             noNotice = set;
         } else {
             super.process(set, mode, args);

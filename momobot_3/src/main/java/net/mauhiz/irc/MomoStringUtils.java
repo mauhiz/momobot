@@ -1,9 +1,8 @@
 package net.mauhiz.irc;
 
-import java.text.Normalizer;
-import java.util.Random;
-
 import net.mauhiz.irc.base.IrcSpecialChars;
+import net.mauhiz.util.StringUtil;
+import net.mauhiz.util.UtfChar;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum MomoStringUtils {
     ;
-    private static final Random RANDOM = new Random();
 
     /**
      * TODO utiliser un MessageFormat
@@ -34,11 +32,11 @@ public enum MomoStringUtils {
      * @return si le nom est un channel ou nom
      */
     public static boolean isChannelName(String toTest) {
-        if (StringUtils.isEmpty(toTest) || StringUtils.indexOfAny(toTest, IrcSpecialChars.Z_NOTCHSTRING) > 0) {
+        if (StringUtils.isEmpty(toTest) || StringUtil.containsAny(toTest, IrcSpecialChars.Z_NOTCHSTRING)) {
             return false;
         }
-        return toTest.codePointAt(0) == IrcSpecialChars.CHAN_DEFAULT
-                || toTest.codePointAt(0) == IrcSpecialChars.CHAN_LOCAL;
+        UtfChar first = UtfChar.charAt(toTest, 0);
+        return IrcSpecialChars.CHAN_DEFAULT.equals(first) || IrcSpecialChars.CHAN_LOCAL.equals(first);
     }
 
     /**
@@ -49,7 +47,7 @@ public enum MomoStringUtils {
      * @return un string propre.
      */
     public static String nettoieReponse(String work) {
-        String temp = normalizeAscii(work).replace('-', ' ').replace('\'', ' ').trim();
+        String temp = StringUtil.normalizeToAscii(work).replace('-', ' ').replace('\'', ' ').trim();
         String[] uselessWords = { "l ", "la ", "le ", "les ", "un ", "une ", "des ", "du ", "d ", "a ", "au ", "aux ",
                 "en ", "vers ", "chez ", "dans " };
         for (String toRemove : uselessWords) {
@@ -57,47 +55,6 @@ public enum MomoStringUtils {
         }
 
         return StringUtils.removeEnd(temp, "?");
-    }
-
-    /**
-     * @param input
-     *            la string a depouiller
-     * @return la string sans les accents
-     */
-    public static String normalizeAscii(String input) {
-        String temp = Normalizer.normalize(input, Normalizer.Form.NFD);
-        return temp.replaceAll("[^\\p{ASCII}]", "");
-    }
-
-    public static void removeCodePoint(StringBuilder sb, int index) {
-        int charCount = Character.charCount(sb.codePointAt(index));
-        for (int i = 0; i < charCount; i++) {
-            sb.deleteCharAt(index + i);
-        }
-    }
-
-    public static void setCodePointAt(StringBuilder sb, int index, int codePoint) {
-        char[] chrs = Character.toChars(codePoint);
-        sb.setCharAt(index, chrs[0]);
-        for (int i = 1; i < chrs.length; i++) {
-            sb.insert(index + i, chrs[i]);
-        }
-    }
-
-    /**
-     * @param seq
-     *            une chaine a shaker
-     * @return la chaine randomisee
-     */
-    public static String shuffle(String seq) {
-        StringBuilder input = new StringBuilder(seq);
-        StringBuilder output = new StringBuilder(seq.length());
-        for (int len = input.length(); len > 0; len--) {
-            int random = RANDOM.nextInt(len);
-            output.appendCodePoint(input.codePointAt(random));
-            removeCodePoint(input, random);
-        }
-        return output.toString();
     }
 
 }

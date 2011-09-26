@@ -26,6 +26,6 @@ public class DefaultPiece implements Piece {
 
 	@Override
 	public String toString() {
-		return playerType.toString().charAt(0) + "." + pieceType.toString();
+		return playerType.toString().substring(0, 1) + "." + pieceType.toString();
 	}
 }
