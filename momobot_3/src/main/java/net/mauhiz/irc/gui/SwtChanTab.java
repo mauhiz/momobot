@@ -48,7 +48,7 @@ public class SwtChanTab extends AbstractSwtTab {
 
         @Override
         public ExecutionType getExecutionType() {
-            return ExecutionType.PARALLEL_CACHED;
+            return ExecutionType.GUI_ASYNCHRONOUS; // access to swt list
         }
     }
 

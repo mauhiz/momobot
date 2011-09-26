@@ -14,7 +14,7 @@ class BytesRead implements CompletionHandler<Integer, ByteBuffer> {
     private static final Logger LOG = Logger.getLogger(BytesRead.class);
     private final IIrcIO io;
     private final IIrcInput ircInput;
-    private String unprocessedChunk;
+    private String unprocessedChunk = "";
 
     public BytesRead(IIrcInput ircInput, IIrcIO io) {
         this.ircInput = ircInput;

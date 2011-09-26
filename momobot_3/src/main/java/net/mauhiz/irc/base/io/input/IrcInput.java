@@ -4,11 +4,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.ReadPendingException;
 
 import net.mauhiz.irc.base.io.IIrcIO;
 import net.mauhiz.util.AbstractThread;
 import net.mauhiz.util.ExecutionType;
 import net.mauhiz.util.FileUtil;
+import net.mauhiz.util.ThreadUtils;
 
 import org.apache.log4j.Logger;
 
@@ -32,6 +34,13 @@ public class IrcInput extends AbstractThread implements IIrcInput, Closeable {
     }
 
     @Override
+    public void close() throws IOException {
+        try (AsynchronousSocketChannel toClose = sclient) {
+            io.disconnect();
+        }
+    }
+
+    @Override
     public ExecutionType getExecutionType() {
         return ExecutionType.PARALLEL_CACHED;
     }
@@ -42,7 +51,11 @@ public class IrcInput extends AbstractThread implements IIrcInput, Closeable {
         while (isRunning()) {
             // allocate a new buffer each time
             ByteBuffer bb = ByteBuffer.allocate(FileUtil.BUF_SIZE);
-            sclient.read(bb, bb, handler);
+            try {
+                sclient.read(bb, bb, handler);
+            } catch (ReadPendingException rpe) {
+                ThreadUtils.safeSleep(100);
+            }
         }
     }
 
@@ -53,13 +66,6 @@ public class IrcInput extends AbstractThread implements IIrcInput, Closeable {
             close();
         } catch (IOException ioe) {
             LOG.warn(ioe, ioe);
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        try (AsynchronousSocketChannel toClose = sclient) {
-            io.disconnect();
         }
     }
 }
