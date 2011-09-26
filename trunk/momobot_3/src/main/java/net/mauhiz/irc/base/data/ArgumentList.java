@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.mauhiz.util.UtfChar;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -13,6 +15,7 @@ public class ArgumentList implements Iterable<String> {
     private final String message;
 
     public ArgumentList(String message) {
+        assert message != null;
         this.message = message;
     }
 
@@ -64,7 +67,7 @@ public class ArgumentList implements Iterable<String> {
         // skip next whitespace utf characters
         if (consume) {
             int newIndex = endIndex;
-            while (Character.isSpaceChar(message.codePointAt(newIndex))) {
+            while (UtfChar.charAt(message, newIndex).isSpaceChar()) {
                 newIndex++;
             }
             index = newIndex;

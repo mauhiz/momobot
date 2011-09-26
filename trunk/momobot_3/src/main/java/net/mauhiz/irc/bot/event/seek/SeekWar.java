@@ -2,6 +2,8 @@ package net.mauhiz.irc.bot.event.seek;
 
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -42,15 +44,16 @@ public class SeekWar {
     /**
      * liste des channels de seek
      */
-    public static final String[] SEEK_CHANS = { "#clanwar.fr" };
+    public static final Collection<String> SEEK_CHANS = Arrays.asList("#clanwar.fr");
     /**
      * 
      */
-    static final String[] SEPARATEUR = { "vs", "v", "on", "o", "x" };
+    static final Collection<String> SEPARATEUR = Arrays.asList("vs", "v", "on", "o", "x");
     /**
      * black list pour un msg pv
      */
-    private final String[] blackList = { "www", "http", "://", ".com", ".fr", ".eu", ".info", "porn", "sex" };
+    private final Collection<String> blackList = Arrays.asList("www", "http", "://", ".com", ".fr", ".eu", ".info",
+            "porn", "sex");
     /**
      * channel sur lequel le seek a ete lance
      */
@@ -58,7 +61,8 @@ public class SeekWar {
     /**
      * 
      */
-    private final String[] greenList = { "ok", "oui", "go", "k", "ip", "pass", "yes", "lvl", "level", "yep", "moi" };
+    private final Collection<String> greenList = Arrays.asList("ok", "oui", "go", "k", "ip", "pass", "yes", "lvl",
+            "level", "yep", "moi");
     /**
      * IpPass du srv
      */
@@ -70,7 +74,7 @@ public class SeekWar {
     /**
      * Liste d'ordre croissante des lvl
      */
-    private final String[] lvl = { "noob", "low", "mid", "good", "skilled", "high", "roxor" };
+    private final List<String> lvl = Arrays.asList("noob", "low", "mid", "good", "skilled", "high", "roxor");
     /**
      * gather
      */
@@ -311,10 +315,10 @@ public class SeekWar {
 
     /**
      * @param cmd
-     *            String[] non normalise
+     *            Collection<String> non normalise
      * @return un message
      */
-    List<String> split(String[] cmd) {
+    List<String> split(Collection<String> cmd) {
         List<String> cmdNormalise = new ArrayList<>();
         String tmpStg = "";
 
@@ -322,7 +326,7 @@ public class SeekWar {
         for (String element : cmd) {
 
             /* hey, xoring! */
-            if (element.codePointAt(0) == '\"' ^ element.codePointAt(element.length() - 1) == '\"') {
+            if (element.startsWith("\"") ^ element.endsWith("\"")) {
                 inquote = !inquote;
             }
 
@@ -415,8 +419,8 @@ public class SeekWar {
 
             int i = -1;
             // On regarde si le seekLevel match avec la liste de lvl
-            for (int j = 0; j < lvl.length; j++) {
-                if (lvl[j].equals(seekLevel.toLowerCase(Locale.FRENCH))) {
+            for (int j = 0; j < lvl.size(); j++) {
+                if (lvl.get(j).equals(seekLevel.toLowerCase(Locale.FRENCH))) {
                     i = j;
                 }
             }
@@ -425,14 +429,14 @@ public class SeekWar {
                 if (StringUtils.containsIgnoreCase(stg, seekLevel)) {
                     return true;
                 }
-                if (i == 0 && StringUtils.containsIgnoreCase(stg, lvl[i + 1])) {
+                if (i == 0 && StringUtils.containsIgnoreCase(stg, lvl.get(i + 1))) {
                     return true;
-                } else if (i == lvl.length - 1 && StringUtils.containsIgnoreCase(stg, lvl[i - 1])) {
+                } else if (i == lvl.size() - 1 && StringUtils.containsIgnoreCase(stg, lvl.get(i - 1))) {
                     return true;
                 } else if (i != 0
-                        && i != lvl.length - 1
-                        && (StringUtils.containsIgnoreCase(stg, lvl[i + 1]) || StringUtils.containsIgnoreCase(stg,
-                                lvl[i - 1]))) {
+                        && i != lvl.size() - 1
+                        && (StringUtils.containsIgnoreCase(stg, lvl.get(i + 1)) || StringUtils.containsIgnoreCase(stg,
+                                lvl.get(i - 1)))) {
                     return true;
                 }
 
@@ -477,9 +481,9 @@ public class SeekWar {
             }
         }
         // GreenList1 LVL + GREENLIST
-        String[] greenList1 = new String[greenList.length + lvl.length];
-        System.arraycopy(greenList, 0, greenList1, 0, greenList.length);
-        System.arraycopy(lvl, 0, greenList1, greenList.length, lvl.length);
+        Collection<String> greenList1 = new ArrayList<>(greenList.size() + lvl.size());
+        greenList1.addAll(greenList);
+        greenList1.addAll(lvl);
 
         for (String element : greenList1) {
             if (lowerMsg.contains(element)) {

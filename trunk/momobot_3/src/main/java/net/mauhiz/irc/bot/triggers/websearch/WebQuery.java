@@ -109,7 +109,7 @@ public class WebQuery {
         if (GAMETIGER.equals(type)) {
             for (int k = 0; k < numResult; ++k) {
                 int index = page.indexOf(resultSep);
-                if (index == -1) {
+                if (index == StringUtils.INDEX_NOT_FOUND) {
                     break;
                 }
                 page = page.substring(index + len);
@@ -148,7 +148,7 @@ public class WebQuery {
                 forloop: for (int k = 0; k < numResult; ++k) {
                     while (true) {
                         int index = page.indexOf(resultSep);
-                        if (index == -1) {
+                        if (index == StringUtils.INDEX_NOT_FOUND) {
                             break forloop;
                         }
                         page = page.substring(index + len);

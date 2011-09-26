@@ -6,6 +6,7 @@ import net.mauhiz.irc.base.IrcSpecialChars;
 import net.mauhiz.irc.base.msg.Privmsg;
 import net.mauhiz.irc.base.trigger.IPrivmsgTrigger;
 import net.mauhiz.irc.bot.triggers.AbstractTextTrigger;
+import net.mauhiz.util.UtfChar;
 
 import org.apache.commons.lang3.text.StrBuilder;
 
@@ -38,20 +39,20 @@ public class Q3NickTrigger extends AbstractTextTrigger implements IPrivmsgTrigge
         StrBuilder colorCode = new StrBuilder();
         int inColor = 0;
         for (int i = 0; i < args.length(); i++) {
-            int c = args.codePointAt(i);
+            UtfChar c = UtfChar.charAt(args, i);
             if (c == DELIM_COLOR) {
                 inColor = 1;
                 continue;
             } else if (inColor == 1) {
                 colorCode.clear();
-                if (Character.isDigit(c)) {
+                if (c.isDigit()) {
                     colorCode.append(c);
                     ++inColor;
                 } else {
                     inColor = 0;
                 }
             } else if (inColor == 2) {
-                if (Character.isDigit(c)) {
+                if (c.isDigit()) {
                     colorCode.append(c);
                 }
                 q3nick.append(computeQ3ColorCode(colorCode.toString()));

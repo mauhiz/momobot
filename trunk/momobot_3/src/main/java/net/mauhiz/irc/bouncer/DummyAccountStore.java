@@ -7,6 +7,7 @@ public class DummyAccountStore extends AccountStore {
     private final IIrcServerPeer serverPeer;
 
     public DummyAccountStore(IIrcServerPeer serverPeer) {
+        super();
         this.serverPeer = serverPeer;
         serverPeer.introduceMyself("MomoBouncer", null, null);
     }

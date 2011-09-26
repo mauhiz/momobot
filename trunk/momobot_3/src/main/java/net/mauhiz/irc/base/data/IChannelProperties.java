@@ -2,6 +2,8 @@ package net.mauhiz.irc.base.data;
 
 import java.util.List;
 
+import net.mauhiz.util.UtfChar;
+
 public interface IChannelProperties {
 
     /**
@@ -52,7 +54,7 @@ public interface IChannelProperties {
      */
     boolean isPrive();
 
-    void process(boolean set, int mode, String... args);
+    void process(boolean set, UtfChar mode, String... args);
 
     /**
      * @param inviteOnly

@@ -3,6 +3,8 @@ package net.mauhiz.irc.base.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.mauhiz.util.UtfChar;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -90,25 +92,25 @@ public class ChannelProperties implements IChannelProperties {
         return prive;
     }
 
-    public void process(boolean set, int mode, String... args) {
-        if (mode == 'b') {
+    public void process(boolean set, UtfChar mode, String... args) {
+        if (mode.isEquals('b')) {
             HostMask hm = HostMask.getInstance(args[0]);
             if (set) {
                 bans.add(hm);
             } else {
                 bans.remove(hm);
             }
-        } else if (mode == 'i') {
+        } else if (mode.isEquals('i')) {
             inviteOnly = set;
-        } else if (mode == 'k') {
+        } else if (mode.isEquals('k')) {
             key = set ? args[0] : null;
-        } else if (mode == 'l') {
+        } else if (mode.isEquals('l')) {
             limit = set ? Integer.valueOf(args[0]) : null;
-        } else if (mode == 'm') {
+        } else if (mode.isEquals('m')) {
             moderated = set;
-        } else if (mode == 'n') {
+        } else if (mode.isEquals('n')) {
             noExt = set;
-        } else if (mode == 't') {
+        } else if (mode.isEquals('t')) {
             opTopic = set;
         } else {
             LOG.warn("TODO process mode=" + mode);

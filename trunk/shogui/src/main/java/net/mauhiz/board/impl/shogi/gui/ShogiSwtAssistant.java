@@ -55,6 +55,7 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		private final Map<PlayerType, Composite> lpockets;
 
 		PocketInitializer(Map<PlayerType, Composite> lpockets) {
+			super();
 			this.lpockets = lpockets;
 		}
 
@@ -93,11 +94,11 @@ public class ShogiSwtAssistant extends PocketSwtGuiAssistant implements IShogiGu
 		mb.setMessage("Promote?");
 		int buttonID = mb.open();
 		switch (buttonID) {
-		case SWT.YES:
-			getParent().afterPromotionDialog(move, true);
-			break;
-		default:
-			getParent().afterPromotionDialog(move, false);
+			case SWT.YES:
+				getParent().afterPromotionDialog(move, true);
+				break;
+			default:
+				getParent().afterPromotionDialog(move, false);
 		}
 	}
 }

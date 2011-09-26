@@ -20,6 +20,7 @@ public class RizonServer extends DefaultServer {
         switch (reply) {
             default:
                 super.handleSpecific(message, reply);
+                break;
         }
     }
 }

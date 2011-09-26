@@ -1,5 +1,6 @@
 package net.mauhiz.irc.bot.event.seek;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -26,15 +27,15 @@ public class SplitTest {
      */
     @Test
     public void testSplit() {
-        String[] str = { "ON", "\"127.06576.467:27015", "FAST", "ET", "BAN", "mdp:dtcdtc\"" };
+        List<String> str = Arrays.asList("ON", "\"127.06576.467:27015", "FAST", "ET", "BAN", "mdp:dtcdtc\"");
         SeekWar seekwar = new SeekWar();
         List<String> split = seekwar.split(str);
         String[] strout = split.toArray(new String[split.size()]);
         Assert.assertEquals(strout[0], "ON");
         Assert.assertEquals(strout[1], "\"127.06576.467:27015 FAST ET BAN mdp:dtcdtc\"");
 
-        String[] str1 = { "On", "\"127.06576.467:27015", "fast", "et", "ban", "mdp:dtcdtc\"", "mid", "\"seek", "%Pv%P",
-                "-", "%S", "-", "%L", "pm\"" };
+        List<String> str1 = Arrays.asList("On", "\"127.06576.467:27015", "fast", "et", "ban", "mdp:dtcdtc\"", "mid",
+                "\"seek", "%Pv%P", "-", "%S", "-", "%L", "pm\"");
         split = seekwar.split(str1);
         strout = split.toArray(new String[split.size()]);
         Assert.assertEquals(strout[0], "On");

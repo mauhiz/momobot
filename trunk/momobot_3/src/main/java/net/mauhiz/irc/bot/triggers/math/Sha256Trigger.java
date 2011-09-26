@@ -32,6 +32,14 @@ public class Sha256Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
         return FileUtil.ASCII.decode(ByteBuffer.wrap(hex.encode(mdi.digest(input.array()))));
     }
 
+    private static String getResp(String args) {
+        try {
+            return "sha-256 de " + args + ": " + computeSha256(FileUtil.ISO8859_15.encode(args));
+        } catch (NoSuchAlgorithmException nsae) {
+            return "J'ai pas de sha-256. Sry.";
+        }
+    }
+
     /**
      * @param trigger
      */
@@ -48,12 +56,8 @@ public class Sha256Trigger extends AbstractTextTrigger implements IPrivmsgTrigge
         if (StringUtils.isEmpty(args)) {
             showHelp(control, cme);
         } else {
-            Privmsg resp;
-            try {
-                resp = new Privmsg(cme, "sha-256 de " + args + ": " + computeSha256(FileUtil.ISO8859_15.encode(args)));
-            } catch (NoSuchAlgorithmException nsae) {
-                resp = new Privmsg(cme, "J'ai pas de sha-256. Sry.");
-            }
+            String respMsg = getResp(args);
+            Privmsg resp = new Privmsg(cme, respMsg);
             control.sendMsg(resp);
         }
     }

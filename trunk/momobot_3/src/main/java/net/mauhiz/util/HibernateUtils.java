@@ -19,7 +19,7 @@ public enum HibernateUtils {
     /**
      * session factory
      */
-    protected static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
+    private static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
 
     /**
      * closes Hibernate session

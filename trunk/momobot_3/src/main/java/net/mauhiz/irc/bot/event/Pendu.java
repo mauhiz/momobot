@@ -6,9 +6,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.mauhiz.irc.MomoStringUtils;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.util.FileUtil;
+import net.mauhiz.util.StringUtil;
+import net.mauhiz.util.UtfChar;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,7 +25,7 @@ public class Pendu extends AbstractChannelEvent {
     /**
      * le caractere underscore.
      */
-    private static final char UNDERSCORE = '_';
+    private static final UtfChar UNDERSCORE = UtfChar.valueOf('_');
 
     static {
         try {
@@ -80,7 +81,7 @@ public class Pendu extends AbstractChannelEvent {
     /**
      * lettres deja proposees.
      */
-    private final Set<String> alreadyTried = new TreeSet<>();
+    private final Set<UtfChar> alreadyTried = new TreeSet<>();
     /**
      * le mot en cours de devinage (negatif).
      */
@@ -109,10 +110,10 @@ public class Pendu extends AbstractChannelEvent {
     public Pendu(IrcChannel channel1) {
         super(channel1);
         solutionPure = getNextMot();
-        solution = MomoStringUtils.normalizeAscii(solutionPure);
+        solution = StringUtil.normalizeToAscii(solutionPure);
         mot.append(solution);
         vies = calibre(mot.length());
-        devinage.append(StringUtils.rightPad("", mot.length(), UNDERSCORE));
+        devinage.append(StringUtils.rightPad("", mot.length(), UNDERSCORE.toString()));
         LOG.debug(solutionPure);
     }
 
@@ -121,13 +122,13 @@ public class Pendu extends AbstractChannelEvent {
      *            la lettre
      * @return si la lettre est present ans le mot
      */
-    public boolean findLetter(int car) {
+    public boolean findLetter(UtfChar car) {
         boolean present = false;
         for (int index = 0; index < solution.length(); index++) {
-            if (car == mot.codePointAt(index)) {
+            if (UtfChar.charAt(mot, index).equals(car)) {
                 present = true;
-                MomoStringUtils.setCodePointAt(devinage, index, solutionPure.codePointAt(index));
-                MomoStringUtils.setCodePointAt(mot, index, UNDERSCORE);
+                StringUtil.setUtfChar(devinage, index, UtfChar.charAt(solutionPure, index));
+                StringUtil.setUtfChar(mot, index, UNDERSCORE);
             }
         }
         return present;
@@ -145,9 +146,9 @@ public class Pendu extends AbstractChannelEvent {
      *            la lettre
      * @return un message
      */
-    public String submitLettre(int i) {
-        if (Character.isLetter(i)) {
-            if (!alreadyTried.add(new String(Character.toChars(i)))) {
+    public String submitLettre(UtfChar i) {
+        if (i.isLetter()) {
+            if (!alreadyTried.add(i)) {
                 return "La lettre " + i + " a deja ete essayee";
             }
         } else {

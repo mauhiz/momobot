@@ -56,7 +56,7 @@ public abstract class AbstractTextTrigger implements ITextTrigger, ICommand {
      * @return les params du msg
      */
     protected String getTriggerContent(IPrivateIrcMessage im) {
-        return StringUtils.substringAfter(im.getMessage(), triggerText).trim();
+        return im == null ? null : StringUtils.substringAfter(im.getMessage(), triggerText).trim();
     }
 
     /**

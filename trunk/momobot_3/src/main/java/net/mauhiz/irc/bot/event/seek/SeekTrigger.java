@@ -1,5 +1,6 @@
 package net.mauhiz.irc.bot.event.seek;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +54,7 @@ public class SeekTrigger extends AbstractGourmandTrigger implements IPrivmsgTrig
                     reply = seek.start(getArgs(im), chan, gather.getNumberPlayers());
                     if (seek.isSeekInProgress()) {
                         // L'initialisation a reussi
-                        String[] channelSeek = SeekWar.SEEK_CHANS;
+                        Collection<String> channelSeek = SeekWar.SEEK_CHANS;
 
                         for (String element : channelSeek) {
                             Join go = new Join(im.getServerPeer(), im.getServerPeer().getNetwork().findChannel(element));

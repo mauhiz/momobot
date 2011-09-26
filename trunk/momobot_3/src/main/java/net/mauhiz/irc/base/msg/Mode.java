@@ -5,14 +5,15 @@ import net.mauhiz.irc.base.data.IIrcServerPeer;
 import net.mauhiz.irc.base.data.IrcChannel;
 import net.mauhiz.irc.base.data.IrcCommands;
 import net.mauhiz.irc.base.data.Target;
+import net.mauhiz.util.UtfChar;
 
 /**
  * @author mauhiz
  */
 public class Mode extends AbstractIrcMessage implements IrcChannelMessage {
 
-    public static boolean isModifier(int utfChar) {
-        return utfChar == '+' || utfChar == '-';
+    public static boolean isModifier(UtfChar utfChar) {
+        return utfChar.isEquals('+') || utfChar.isEquals('-');
     }
 
     private final ArgumentList modeArgs;
